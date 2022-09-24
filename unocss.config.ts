@@ -49,6 +49,7 @@ function desugar(str: string, { sign }: { sign?: string } = {}) {
 	return desugared
 }
 
+// TODO: DEPRECATE
 function untyped(raw: unknown, { sign }: { sign?: string } = {}) {
 	if (raw === "0") { return 0 }
 	if (!raw) { return }
@@ -56,6 +57,7 @@ function untyped(raw: unknown, { sign }: { sign?: string } = {}) {
 	return desugar(value, { sign })
 }
 
+// TODO: DEPRECATE
 function typed(raw: unknown, { sign }: { sign?: string } = {}) {
 	if (raw === "0") { return 0 }
 	if (!raw) { return }

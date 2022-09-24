@@ -5,8 +5,11 @@
 	--focus-ring-offset:        4px;
 	--focus-ring-thickness:     4px;
 
-	--focus-ring-color:       hsl(195deg 100% 60%);
-	--focus-ring-alpha-color: hsl(195deg 100% 60% / 15%);
+	--focus-ring-color:       hsl(195deg 100% 50%);
+	--focus-ring-alpha-color: hsl(195deg 100% 50% / 15%);
+
+	//// --focus-ring-color:       hsl(var(--theme-hue) var(--theme-saturation) var(--theme-lightness));
+	//// --focus-ring-alpha-color: hsl(var(--theme-hue) var(--theme-saturation) var(--theme-lightness) / 15%);
 }
 
 .focus-ring { position: relative; }
@@ -43,10 +46,10 @@
 ////////////////////////////////////////
 // .focus-ring
 
-.group:focus-visible > .focus-ring,
-.focus-ring:focus-visible {
-	background-color: var(--focus-ring-alpha-color);
-}
+//// .group:focus-visible > .focus-ring,
+//// .focus-ring:focus-visible {
+//// 	background-color: var(--focus-ring-alpha-color);
+//// }
 
 .group > .focus-ring::after,
 .focus-ring::after {
@@ -77,9 +80,10 @@
 //// .focus-ring-scroller::before {
 //// 	position: absolute;
 //// 	z-index: 100;
-//// 	inset: 16px;
+//// 	inset: calc(var(--focus-ring-offset) + var(--focus-ring-thickness) * 3)
+//// 		calc(var(--focus-ring-offset) + var(--focus-ring-thickness) * 4); // TODO
 //// 	background-color: transparent;
-//// 	border-radius: calc(var(--focus-ring-border-radius) + var(--focus-ring-offset));
+//// 	border-radius: calc(var(--focus-ring-border-radius));
 //// 	box-shadow: inset 0 0 0 var(--focus-ring-thickness) transparent;
 //// 	pointer-events: none;
 //// }

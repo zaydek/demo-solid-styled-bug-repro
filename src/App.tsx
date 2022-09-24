@@ -182,6 +182,7 @@ function Col2Contents() {
 					<div class="relative">
 						<Textarea />
 						<div class="absolute inset-b-($form-height/2) grid grid-cols-3 gap-$gap">
+							<div></div>
 							<For each={range(2)}>
 								{() => <>
 									<CheckboxButton />
@@ -217,8 +218,7 @@ function Col2Contents() {
 			</div>
 		</div>
 		<div ref={setRef2} class="flex-shrink:0">
-			{/* <hr class="collapsible" /> */}
-			<hr />
+			<hr class="collapsible" />
 			<section class="p-$p flex-row gap-16">
 				<div class="h-80 aspect-16/9 rounded-12 background-color:$text-200-color"></div>
 				<div class="flex-grow flex-col gap-6">
@@ -497,9 +497,9 @@ export function App() {
 				width: clamp(0px, var(--expanded-sidebar-width), 100vw);
 			}
 			/* Light mode: disable box-shadow */
-			:global(:root[data-theme=light]) [data-state-sidebar=expanded] .col-2 {
-				box-shadow: revert;
-			}
+			/* :global(:root[data-theme=light]) [data-state-sidebar=expanded] .col-2 { */
+			/* 	box-shadow: revert; */
+			/* } */
 
 			/********************************/
 
