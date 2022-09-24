@@ -1,62 +1,56 @@
-import { VoidProps } from "solid-js"
-
-export const Grow = () => <div class="flex-grow"></div>
+import { VoidComponent, VoidProps } from "solid-js"
+import { Dynamic } from "solid-js/web"
+import { CSSProps } from "./solid-utils/extra-types"
 
 export function Icon(props: VoidProps<{
-	h: string
+	icon: VoidComponent<CSSProps>
 
-	color: string
+	// CSS
+	h: string
 }>) {
 	return <>
 		<style jsx>{`
-			.icon-wrapper {
+			svg.icon {
+				height: ${props.h};
+				aspect-ratio: 1;
+				color: var(--text-100-color);
+			}
+		`}</style>
+		<Dynamic component={props.icon} class="icon" use:solid-styled />
+	</>
+}
+
+export function Iconless(props: VoidProps<{
+	h:      string
+	color?: string
+}>) {
+	return <>
+		<style jsx>{`
+			.icon {
 				height: ${props.h};
 				aspect-ratio: 1;
 				border-radius: var(--full);
-				background-color: red;
-			}
-			.icon {
-				height: 50%;
-				aspect-ratio: 1;
-				border-radius: var(--full);
-				background-color: white;
+				background-color: ${props.color ??
+					"var(--text-100-color)"};
 			}
 		`}</style>
-		<div class="icon-wrapper grid grid-center">
-			<div class="icon"></div>
-		</div>
+		<div class="icon"></div>
 	</>
 }
 
 export function Line(props: VoidProps<{
-	w: string
-
-	color: string
+	h?:     string,
+	w:      string
+	color?: string
 }>) {
 	return <>
 		<style jsx>{`
 			.line {
-				height: 6px;
+				height: ${props.h ?? "6px"};
 				width: ${props.w};
 				border-radius: var(--full);
-				background-color: ${props.color};
-			}
-		`}</style>
-		<div class="line"></div>
-	</>
-}
-
-export function LineByAspectRatio(props: VoidProps<{
-	aspect: string
-	color:  string
-}>) {
-	return <>
-		<style jsx>{`
-			.line {
-				height: 6px;
-				aspect-ratio: ${props.aspect};
-				border-radius: var(--full);
-				background-color: ${props.color};
+				background-color: ${props.color ??
+					"var(--text-100-color)"};
 			}
 		`}</style>
 		<div class="line"></div>

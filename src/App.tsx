@@ -1,215 +1,530 @@
-import { For, VoidProps } from "solid-js"
-import { Grow, Icon, Line } from "./primitives"
+import { createEffect, createSignal, For, onCleanup, ParentProps, VoidComponent, VoidProps } from "solid-js"
+import { Dynamic } from "solid-js/web"
+import { Smiley } from "./components/Smiley"
+import { Icon, Iconless, Line } from "./primitives"
+import { CSSProps } from "./solid-utils/extra-types"
+import { cx } from "./utils/cx"
+import { range } from "./utils/range"
 
-////////////////////////////////////////////////////////////////////////////////
-// Components
-
-function SearchBar() {
+function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 	return <>
 		<style jsx>{`
-			:global(:root) {
-				--height-search-bar: 40px;
-				--width-search-bar: 448px;
-			}
-			.search-bar {
-				padding: 0 calc(var(--height-search-bar) / 8);
-				height: var(--height-search-bar);
-				width: var(--width-search-bar);
+			/* Preamble */
+			.nav-icon-wrapper { position: relative; }
+			.nav-icon-wrapper::before { content: ""; }
+
+			/********************************/
+
+			.nav-icon-wrapper {
+				height: 48px;
+				aspect-ratio: 1;
 				border-radius: var(--full);
-				background-color: whitesmoke;
-				box-shadow: 0 0 0 1px hsl(0deg 0% 0% / 15%);
 			}
-			.search-bar-button {
-				height: 75%;
-				aspect-ratio: 6;
-				border-radius: var(--full);
-				background-color: red;
+			.nav-icon-wrapper::before {
+				position: absolute;
+				z-index: -10;
+				inset: 0;
+				border-radius: inherit;
+				background-color: transparent;
+				transform: scale(0);
+
+				/* TRANSITION */
+				transition: 150ms cubic-bezier(0, 1, 0.25, 1.15);
+				transition-property: transform;
+			}
+			.nav-icon-wrapper:hover::before {
+				background-color: var(--faded-base-color);
+				transform: scale(1);
+			}
+			.nav-icon-wrapper:hover:active::before {
+				background-color: var(--theme-color);
+				transform: scale(1);
+			}
+
+			/********************************/
+
+			svg.nav-icon {
+				height: 32px;
+				aspect-ratio: 1;
+				color: var(--text-100-color);
+			}
+			.nav-icon-wrapper:hover:active .nav-icon {
+				color: white;
 			}
 		`}</style>
-		<div class="search-bar flex-row flex-center-y gap-8">
-			<Icon h="75%" color="red" />
-			<Line w="25%" color="red" />
-			<Grow />
-			<div class="search-bar-button grid grid-center">
-				<Line w="50%" color="white" />
+		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-full" tabindex="0">
+			<Dynamic component={props.icon} class="nav-icon" use:solid-styled />
+		</div>
+	</>
+}
+
+////////////////////////////////////////
+
+function SectionToggle() {
+	return <>
+		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-full" tabindex="0">
+			<Icon icon={Smiley} h="16px" />
+			<Line w="25%" />
+			<div class="flex-grow:1"></div>
+			<Line w="10%" color="var(--text-200-color)" />
+		</div>
+	</>
+}
+
+function Radiobar() {
+	return <>
+		<div class="flex-row gap-$gap [&>*:nth-child(1)]:flex-grow:1 focus-ring focus-ring-full" tabindex="0">
+			<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-base-color flex-row flex-align-center gap-$gap">
+				<Icon icon={Smiley} h="16px" />
+				<Line w="40%" />
+			</div>
+			<div class="h-$reduced-form-height aspect-1 rounded-$full background-color:$form-color box-shadow:$inset-box-shadow grid grid-center">
+				<Iconless h="8px" />
 			</div>
 		</div>
 	</>
 }
 
-function Navbar() {
+function Textarea() {
+	return <>
+		<style jsx>{`
+			.textarea {
+				--height: var(--form-height);
+
+				padding: calc(var(--height) / 2);
+				height: 144px;
+				border-radius: calc(var(--height) / 2);
+				background-color: var(--base-color);
+				box-shadow: var(--inset-box-shadow);
+			}
+		`}</style>
+		<div class="textarea flex-col gap-6 focus-ring focus-ring-16" tabindex="0">
+			<Line w="70%" color="var(--text-200-color)" />
+			<Line w="90%" color="var(--text-200-color)" />
+			<Line w="80%" color="var(--text-200-color)" />
+			<Line w="60%" color="var(--text-200-color)" />
+		</div>
+	</>
+}
+
+function CheckboxButton() {
+	return <>
+		<style jsx>{`
+			.checkbox-button {
+				--height: var(--form-height);
+
+				padding: 0 calc(var(--height) / 2);
+				height: var(--height);
+				border-radius: var(--full);
+				background-color: var(--base-color);
+				box-shadow: var(--inset-box-shadow);
+			}
+		`}</style>
+		<div class="checkbox-button flex-row flex-center gap-$gap focus-ring focus-ring-full" tabindex="0">
+			<Icon icon={Smiley} h="16px" />
+			<Line w="35%" />
+			<Icon icon={Smiley} h="16px" />
+		</div>
+	</>
+}
+
+function Slider() {
+	return <>
+		{/* Use px-($reduced-form-height/2) because of <SectionToggle> */}
+		<div class="px-($reduced-form-height/2) h-$form-height flex-col flex-justify-center focus-ring focus-ring-full" tabindex="0">
+			<div class="h-6 rounded-$full background-color:$theme-color flex-row flex-center">
+				{/* TODO: Change box-shadow */}
+				<div class="h-$form-height aspect-1 rounded-$full background-color:$form-color box-shadow:inset_0_0_0_1px_$hairline-color" />
+			</div>
+		</div>
+	</>
+}
+
+function Col2Contents() {
+	const [ref1, setRef1] = createSignal<HTMLElement>()
+	const [ref2, setRef2] = createSignal<HTMLElement>()
+
+	const height = (): undefined | `${string}px` => {
+		if (!(ref1() && ref2())) { return }
+		return `${ref1()!.offsetHeight + ref2()!.offsetHeight}px`
+	}
+
+	return <>
+		<div ref={setRef1} class="flex-shrink:0">
+			<section class="px-$px h-$search-bar-height flex-row flex-align-center">
+				<NavIcon icon={Smiley} />
+				<div class="flex-grow:1"></div>
+				<NavIcon icon={Smiley} />
+				<NavIcon icon={Smiley} />
+			</section>
+			<hr />
+		</div>
+		<div class="flex-grow:1 flex-col focus-ring-scroller focus-ring-14" style={{ "height": height() }}>
+			<div class="flex-grow:1 overflow-y:auto">
+				<section class="p-$p flex-col gap-$gap">
+					<SectionToggle />
+					<For each={range(2)}>
+						{() => <>
+							<Radiobar />
+						</>}
+					</For>
+				</section>
+				<hr />
+				<section class="p-$p flex-col gap-$gap">
+					<SectionToggle />
+					<For each={range(2)}>
+						{() => <>
+							<Radiobar />
+						</>}
+					</For>
+					<div class="relative">
+						<Textarea />
+						<div class="absolute inset-b-($form-height/2) grid grid-cols-3 gap-$gap">
+							<For each={range(2)}>
+								{() => <>
+									<CheckboxButton />
+								</>}
+							</For>
+						</div>
+					</div>
+					<CheckboxButton />
+					<div class="grid grid-cols-3 gap-$gap">
+						<For each={range(3)}>
+							{() => <>
+								<CheckboxButton />
+							</>}
+						</For>
+					</div>
+				</section>
+				<hr />
+				<section class="p-$p flex-col gap-$gap">
+					<SectionToggle />
+					<Slider />
+				</section>
+				<hr />
+				<section class="p-$p flex-col gap-$gap">
+					<SectionToggle />
+					<Slider />
+				</section>
+				<hr />
+				<section class="p-$p flex-col gap-$gap">
+					<SectionToggle />
+					<Slider />
+				</section>
+				<hr />
+			</div>
+		</div>
+		<div ref={setRef2} class="flex-shrink:0">
+			{/* <hr class="collapsible" /> */}
+			<hr />
+			<section class="p-$p flex-row gap-16">
+				<div class="h-80 aspect-16/9 rounded-12 background-color:$text-200-color"></div>
+				<div class="flex-grow:1 flex-col gap-6">
+					<Line w="70%" color="var(--text-200-color)" />
+					<Line w="90%" color="var(--text-200-color)" />
+					<Line w="80%" color="var(--text-200-color)" />
+					<Line w="60%" color="var(--text-200-color)" />
+				</div>
+			</section>
+			<hr />
+			<section class="p-$p flex-col gap-6">
+				<Line w="calc(70% / 1.25)" color="var(--text-200-color)" />
+				<Line w="calc(90% / 1.25)" color="var(--text-200-color)" />
+				<Line w="calc(80% / 1.25)" color="var(--text-200-color)" />
+				<Line w="calc(60% / 1.25)" color="var(--text-200-color)" />
+			</section>
+		</div>
+	</>
+}
+
+////////////////////////////////////////
+
+function Col1Contents() {
 	return <>
 		<style jsx>{`
 			:global(:root) {
-				--height-navbar: 64px;
+				--search-results-grid-height: 96px;
+				--search-results-grid-border-radius: 25%;
 			}
-			.navbar-wrapper {
-				height: var(--height-navbar);
+
+			/********************************/
+
+			.grid {
+				--height: var(--search-results-grid-height);
+				--border-radius: var(--search-results-grid-border-radius);
+
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(var(--height), 1fr));
+				grid-auto-rows: var(--height);
+			}
+		`}</style>
+		<StickySearchBar />
+		<div class="grid p-$p pb-($py*2)">
+			<For each={range(400)}>
+				{() => <>
+					<GridIcon />
+				</>}
+			</For>
+		</div>
+	</>
+}
+
+function StickySearchBar() {
+	return <>
+		<style jsx>{`
+			.sticky-search-bar {
+				position: sticky;
+				z-index: 10;
+				top: 0;
+				padding: 0 var(--px);
+				height: var(--search-bar-height);
+				background-color: var(--base-color);
+				box-shadow: var(--box-shadow);
+			}
+		`}</style>
+		<div class="sticky-search-bar flex-row flex-align-center">
+			<NavIcon icon={Smiley} />
+			{/* TODO */}
+			<div class="flex-grow:1">
+				<div class="px-$px h-$search-bar-height flex-row flex-align-center">
+					<Line w="15%" />
+				</div>
+			</div>
+			<NavIcon icon={Smiley} />
+		</div>
+	</>
+}
+
+function GridIcon() {
+	return <>
+		<style jsx>{`
+			/* Preamble */
+			.grid-icon-wrapper { position: relative; }
+			.grid-icon-wrapper::before { content: ""; }
+
+			/********************************/
+
+			.grid-icon-wrapper { position: relative; }
+			.grid-icon-wrapper {
+				height: 100%;
+				aspect-ratio: 1;
+				border-radius: var(--border-radius);
+			}
+			.grid-icon-wrapper::before { content: ""; }
+			.grid-icon-wrapper::before {
+				position: absolute;
+				z-index: -10;
+				inset: 0;
+				border-radius: inherit;
+				background-color: transparent;
+				transform: scale(0);
+
+				/* TRANSITION */
+				transition: 150ms cubic-bezier(0, 1, 0.25, 1.15);
+				transition-property: transform;
+			}
+			.group:hover .grid-icon-wrapper::before {
+				background-color: var(--faded-base-color);
+				transform: scale(1);
+			}
+			.group:hover:active .grid-icon-wrapper::before {
+				background-color: var(--theme-color);
+				transform: scale(1);
+			}
+
+			/********************************/
+
+			.grid-icon-wrapper {
+				display: grid;
+				grid-template:
+					/* TODO */
+					"." calc((var(--border-radius) / 2 * 3) / 2) /* E.g. "b" / 2  */
+					"a" 1fr
+					"b" calc(var(--border-radius) / 2 * 3);
+				place-items: center;
+			}
+
+			.grid-icon-wrapper > :global(:nth-child(1)) { grid-area: a; }
+			.grid-icon-wrapper > :global(:nth-child(2)) { grid-area: b; }
+
+			/********************************/
+
+			svg.grid-icon {
+				height: 32px;
+				aspect-ratio: 1;
+				color: var(--text-100-color);
+			}
+			.group:hover:active .grid-icon {
+				color: white;
+			}
+
+			/********************************/
+
+			.grid-text {
+				height: 6px;
+				width: 50%;
+				border-radius: var(--full);
+				background-color: var(--text-200-color);
+			}
+			.group:hover:active .grid-text {
 				background-color: white;
-				box-shadow: 0 0 0 1px hsl(0deg 0% 0% / 15%);
-			}
-			.navbar {
-				width: 100%;
-				max-width: 1536px;
 			}
 		`}</style>
-		<div class="fixed inset-t navbar-wrapper flex-row flex-center-x">
-			<div class="navbar flex-row flex-center-y gap-8">
-				<Icon h="32px" color="red" />
-				<Icon h="32px" color="red" />
-				<Grow />
-				<Icon h="32px" color="red" />
-				<Icon h="32px" color="red" />
-			</div>
-			<div class="absolute inset grid grid-center prop-pointer-events">
-				<SearchBar />
+		<div class="group grid grid-center">
+			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-24" tabindex="0">
+				<Smiley class="grid-icon" use:solid-styled />
+				<div class="grid-text"></div>
 			</div>
 		</div>
 	</>
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// App
-
-function Globals() {
-	return <>
-		<style jsx global>{`
-			:root {
-				--full: 1000px;
-			}
-
-			/* Position */
-			.fixed    { position: fixed;    z-index: 10; }
-			.relative { position: relative; z-index: 10; }
-			.absolute { position: absolute; z-index: 10; }
-
-			.inset   { inset: 0; }
-			.inset-t { inset: 0 0 auto 0; }
-			.inset-r { inset: 0 0 0 auto; }
-			.inset-b { inset: auto 0 0 0; }
-			.inset-l { inset: 0 auto 0 0; }
-
-			/* Pointer events */
-			.prop-pointer-events     { pointer-events: none; }
-			.prop-pointer-events > * { pointer-events: auto; }
-
-			/* CSS Grid */
-			.grid                   { display: grid; }
-			.grid.grid-center       { place-items: center; }
-
-			/* Flexbox */
-			.flex-row               { display: flex; flex-direction: row; }
-			.flex-row.flex-center   { justify-content: center; align-items: center; }
-			.flex-row.flex-center-x { justify-content: center; }
-			.flex-row.flex-center-y { align-items: center; }
-
-			.flex-col               { display: flex; flex-direction: column; }
-			.flex-col.flex-center   { justify-content: center; align-items: center; }
-			.flex-col.flex-center-x { align-items: center; }
-			.flex-col.flex-center-y { justify-content: center; }
-
-			.flex-wrap-nowrap { flex-wrap: nowrap; }
-			.flex-wrap        { flex-grow: 1; }
-
-			.flex-shrink-0 { flex-shrink: 0; }
-			.flex-shrink   { flex-shrink: 1; }
-
-			.flex-grow-0 { flex-grow: 0; }
-			.flex-grow   { flex-grow: 1; }
-
-			/* Gap */
-			.gap-6  { gap:  6px; }
-			.gap-8  { gap:  8px; }
-			.gap-16 { gap: 16px; }
-			.gap-24 { gap: 24px; }
-			.gap-32 { gap: 32px; }
-			.gap-40 { gap: 40px; }
-			.gap-48 { gap: 48px; }
-			.gap-56 { gap: 56px; }
-			.gap-64 { gap: 64px; }
-		`}</style>
-	</>
-}
-
-function Video(props: VoidProps<{
-	h?:       string
-	rounded?: string
-
-	color: string
-}>) {
-	return <>
-		<style jsx>{`
-			:global(:root) {
-				--aspect-ratio-video: 16 / 9;
-			}
-			.video {
-				height: ${props.h ?? "revert"};
-				aspect-ratio: var(--aspect-ratio-video);
-				border-radius: ${props.rounded ?? "revert"};
-				background-color: ${props.color};
-			}
-		`}</style>
-		<div class="video"></div>
-	</>
-}
-
-function Thumbnail() {
-	return <>
-		<style jsx>{`
-			:global(:root) {
-				--height-thumbnail: 96px;
-				--border-radius-thumbnail: 8px;
-			}
-		`}</style>
-		<div class="flex-row gap-16">
-			<Video h="var(--height-thumbnail)" rounded="var(--border-radius-thumbnail)" color="red" />
-			<div class="flex-grow flex-col gap-6">
-				<Line w="70%" color="red" />
-				<Line w="90%" color="red" />
-				<Line w="80%" color="red" />
-				<Line w="60%" color="red" />
-			</div>
-		</div>
-	</>
-}
+////////////////////////////////////////
 
 export function App() {
+	const [ref, setRef] = createSignal<HTMLElement>()
+	const [sidebar, setSidebar] = createSignal<"open" | "collapsed" | "expanded">("open")
+
+	// Cycles sidebar states forwards
+	function cycleForwards() {
+		if (sidebar() === "open") {
+			setSidebar("expanded")
+		} else if (sidebar() === "expanded") {
+			//// setSidebar("collapsed")
+			setSidebar("open") // DEBUG
+		} else if (sidebar() === "collapsed") {
+			setSidebar("open")
+		}
+	}
+
+	// Cycles sidebar states backwards
+	function cycleBackwards() {
+		if (sidebar() === "open") {
+			setSidebar("collapsed")
+		} else if (sidebar() === "collapsed") {
+			setSidebar("expanded")
+		} else if (sidebar() === "expanded") {
+			setSidebar("open")
+		}
+	}
+
+	document.addEventListener("keydown", e => {
+		if (e.key === "d") {
+			cycleForwards()
+		} else if (e.key === "D") {
+			cycleBackwards()
+		}
+	}, false)
+
+	//////////////////////////////////////
+
+	const [theme, setTheme] = createSignal<"light" | "dark">(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+
+	document.addEventListener("keydown", e => {
+		if (e.key === "`") {
+			setTheme(curr => curr === "light" ? "dark" : "light")
+		}
+	}, false)
+
+	createEffect(() => {
+		const root = document.documentElement
+		root.setAttribute("data-theme", theme())
+	})
+
+	//////////////////////////////////////
+
+	let timeoutId = 0
+	createEffect(() => {
+		clearTimeout(timeoutId)
+		onCleanup(() => clearTimeout(timeoutId))
+		if (sidebar() === "expanded") {
+			timeoutId = setTimeout(() => {
+				ref()!.style.transitionDuration = "revert"
+			}, 400)
+		} else {
+			ref()!.style.transitionDuration = ""
+			if (!ref()!.style.length) {
+				ref()!.removeAttribute("style")
+			}
+		}
+	})
+
 	return <>
-		<Globals />
 		<style jsx>{`
-			.navbar-placeholder {
-				height: var(--height-navbar);
-			}
-			.container {
-				padding: 32px 0;
-				width: 100%;
-				max-width: 1536px;
+			/* TODO: This only works / has been tested on desktop */
+			:global(body:has([data-state-sidebar=expanded])) {
+				overflow: hidden;
 			}
 
-			main  { flex-grow: 1; }
-			aside { width: 448px; }
+			/********************************/
 
-			aside hr {
-				margin: 16px calc(var(--border-radius-thumbnail) / 2);
-				height: 4px;
-				border-radius: var(--full);
-				background-color: hsl(0deg 100% 50% / 50%);
+			.col-1 {
+				margin-right: var(--sidebar-width);
+				min-height: 100vh;
+
+				/* TRANSITION */
+				transition: 300ms ease;
+				transition-property: margin-right;
+			}
+			[data-state-sidebar=collapsed] .col-1 {
+				margin-right: 0;
+			}
+			[data-state-sidebar=expanded] .col-1 {
+				-webkit-user-select: none; /* Disable selection */
+				user-select: none;
+			}
+
+			/********************************/
+
+			.col-2 {
+				position: fixed;
+				z-index: 10;
+				inset: 0 0 0 auto; /* E.g. inset-r */
+				width: var(--sidebar-width);
+				background-color: var(--base-color);
+				box-shadow: var(--box-shadow);
+
+				/* TRANSITION */
+				transition: 300ms ease;
+				transition-property: width, transform;
+			}
+			[data-state-sidebar=collapsed] .col-2 {
+				transform: translateX(var(--sidebar-width));
+			}
+			[data-state-sidebar=expanded] .col-2 {
+				width: clamp(0px, var(--expanded-sidebar-width), 100vw);
+			}
+			/* Light mode: disable box-shadow */
+			:global(:root[data-theme=light]) [data-state-sidebar=expanded] .col-2 {
+				box-shadow: revert;
+			}
+
+			/********************************/
+
+			.col-2-backdrop {
+				position: fixed;
+				z-index: 10;
+				inset: 0;
+				background-color: transparent;
+				pointer-events: none; /* Passthrough */
+
+				/* TRANSITION */
+				transition: 300ms ease;
+				transition-property: background-color, backdrop-filter;
+			}
+			[data-state-sidebar=expanded] .col-2-backdrop {
+				background-color: var(--backdrop-color);
+				backdrop-filter: blur(2px);
+				pointer-events: revert; /* Enable */
 			}
 		`}</style>
-		<Navbar />
-		<div class="navbar-placeholder"></div>
-		<div class="flex-row flex-center-x">
-			<div class="container flex-row flex-center-x gap-32">
-				<main class="flex-col gap-16">
-					<Video rounded="8px" color="red" />
-				</main>
-				<aside class="flex-col gap-16">
-					<Thumbnail />
-					<hr />
-					<For each={[0, 1, 2, 3, 4, 5, 6, 7]}>
-						{Thumbnail}
-					</For>
-				</aside>
+		<div class="contents" data-state-sidebar={sidebar()}>
+			<div class="col-1">
+				<Col1Contents />
+			</div>
+			<div class="col-2-backdrop" onClick={cycleForwards}></div>
+			<div ref={setRef} class="col-2 flex-col">
+				<Col2Contents />
 			</div>
 		</div>
 	</>

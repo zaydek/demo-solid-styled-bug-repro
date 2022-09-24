@@ -1,0 +1,114 @@
+@use "sass:math";
+
+:root {
+	--focus-ring-border-radius: 0px; // Use 0px because of calc(...)
+	--focus-ring-offset:        4px;
+	--focus-ring-thickness:     4px;
+
+	--focus-ring-color:       hsl(195deg 100% 60%);
+	--focus-ring-alpha-color: hsl(195deg 100% 60% / 15%);
+}
+
+.focus-ring { position: relative; }
+.focus-ring::after { content: ""; }
+
+.focus-ring-scroller { position: relative; }
+.focus-ring-scroller::after { content: ""; }
+
+@each $value, $value-px in (
+	 2:  2px,
+	 4:  4px,
+	 6:  6px,
+	 8:  8px,
+	10: 10px,
+	12: 12px,
+	14: 14px,
+	16: 16px,
+	18: 18px,
+	20: 20px,
+	22: 22px,
+	24: 24px,
+	26: 26px,
+	28: 28px,
+	30: 30px,
+	32: 32px,
+
+	full: 1000px,
+) {
+	.focus-ring-#{$value} {
+		--focus-ring-border-radius: #{$value-px};
+	}
+}
+
+////////////////////////////////////////
+// .focus-ring
+
+.group:focus-visible > .focus-ring,
+.focus-ring:focus-visible {
+	background-color: var(--focus-ring-alpha-color);
+}
+
+.group > .focus-ring::after,
+.focus-ring::after {
+	position: absolute;
+	inset: calc(-1 * var(--focus-ring-offset));
+	border-radius: calc(var(--focus-ring-border-radius) + var(--focus-ring-offset));
+	box-shadow: 0 0 0 var(--focus-ring-thickness) transparent;
+	transform: scale(0);
+	pointer-events: none;
+}
+.group:focus-visible > .focus-ring::after,
+.focus-ring:focus-visible::after {
+	box-shadow: 0 0 0 var(--focus-ring-thickness) var(--focus-ring-color);
+	transform: scale(1);
+	pointer-events: none;
+}
+
+////////////////////////////////////////
+// .focus-ring-scroller
+
+//// .focus-ring-scroller:has(> :focus-visible) {
+//// 	background-color: var(--focus-ring-alpha-color);
+//// }
+
+.focus-ring-scroller { position: relative; }
+
+//// .focus-ring-scroller::before { content: ""; }
+//// .focus-ring-scroller::before {
+//// 	position: absolute;
+//// 	z-index: 100;
+//// 	inset: 16px;
+//// 	background-color: transparent;
+//// 	border-radius: calc(var(--focus-ring-border-radius) + var(--focus-ring-offset));
+//// 	box-shadow: inset 0 0 0 var(--focus-ring-thickness) transparent;
+//// 	pointer-events: none;
+//// }
+//// .focus-ring-scroller:has(> :focus-visible)::before {
+//// 	background-color: var(--focus-ring-alpha-color);
+//// }
+
+.focus-ring-scroller::after { content: ""; }
+.focus-ring-scroller::after {
+	position: absolute;
+	z-index: 100;
+	inset: calc(var(--focus-ring-offset) + var(--focus-ring-thickness))
+		calc(var(--focus-ring-offset) + var(--focus-ring-thickness) * 2); // TODO
+	border-radius: calc(var(--focus-ring-border-radius) + var(--focus-ring-offset) * 2);
+	box-shadow: inset 0 0 0 var(--focus-ring-thickness) transparent;
+	pointer-events: none;
+}
+.focus-ring-scroller:has(> :focus-visible)::after {
+	box-shadow: inset 0 0 0 var(--focus-ring-thickness) var(--focus-ring-color);
+}
+
+//// .focus-ring-scroller::after {
+//// 	position: absolute;
+//// 	inset: calc(var(--focus-ring-offset) + var(--focus-ring-thickness));
+//// 	border-radius: calc(var(--focus-ring-border-radius) + var(--focus-ring-offset));
+//// 	box-shadow: 0 0 0 var(--focus-ring-thickness) transparent;
+//// 	transform: scale(math.div(448px - 48px, 448px));
+//// }
+//// .focus-ring-scroller:has(> :focus-visible)::after {
+//// 	box-shadow: 0 0 0 var(--focus-ring-thickness) var(--focus-ring-color);
+//// 	transform: scale(1);
+//// }

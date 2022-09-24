@@ -1,0 +1,26 @@
+@use "sass:map";
+@use "sass:meta";
+
+@use "idea-src";
+
+// Desugar Sass variables to CSS variables
+:root {
+	@each $property, $value in meta.module-variables(idea-src) {
+		@if meta.type-of($value) == map {
+			$l: map.get($value, light);
+			--#{$property}: #{$l};
+		} @else {
+			--#{$property}: #{$value};
+		}
+	}
+}
+
+// Desugar Sass variables to CSS variables (dark theme)
+:root[data-theme=dark] {
+	@each $property, $value in meta.module-variables(idea-src) {
+		@if meta.type-of($value) == map {
+			$d: map.get($value, dark);
+			--#{$property}: #{$d};
+		}
+	}
+}
