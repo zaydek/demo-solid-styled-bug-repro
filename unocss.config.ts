@@ -184,10 +184,6 @@ const rules: Rule[] = [
 	// Shorthand for justify-content:center align-items:center
 	["flex-center", { "justify-content": "center", "align-items": "center" }],
 
-	[/^flex-shrink(?:-(.+))?$/, ([_, value]) => ({ "flex-shrink": untyped(value) ?? 1      })],
-	[/^flex-basis-(.+)$/,       ([_, value]) => ({ "flex-basis":  typed(value)   ?? "auto" })],
-	[/^flex-wrap(?:-(.+))?$/,   ([_, value]) => ({ "flex-wrap":   untyped(value) ?? 1      })],
-
 	/*
 	 * CSS Grid
 	 */

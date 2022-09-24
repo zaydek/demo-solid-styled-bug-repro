@@ -65,7 +65,7 @@ function SectionToggle() {
 		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-full" tabindex="0">
 			<Icon icon={Smiley} h="16px" />
 			<Line w="25%" />
-			<div class="flex-grow:1"></div>
+			<div class="flex-grow"></div>
 			<Line w="10%" color="var(--text-200-color)" />
 		</div>
 	</>
@@ -73,10 +73,12 @@ function SectionToggle() {
 
 function Radiobar() {
 	return <>
-		<div class="flex-row gap-$gap [&>*:nth-child(1)]:flex-grow:1 focus-ring focus-ring-full" tabindex="0">
-			<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-base-color flex-row flex-align-center gap-$gap">
-				<Icon icon={Smiley} h="16px" />
-				<Line w="40%" />
+		<div class="flex-row gap-$gap focus-ring focus-ring-full" tabindex="0">
+			<div class="flex-grow">
+				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-base-color flex-row flex-align-center gap-$gap">
+					<Icon icon={Smiley} h="16px" />
+					<Line w="40%" />
+				</div>
 			</div>
 			<div class="h-$reduced-form-height aspect-1 rounded-$full background-color:$form-color box-shadow:$inset-box-shadow grid grid-center">
 				<Iconless h="8px" />
@@ -153,14 +155,14 @@ function Col2Contents() {
 		<div ref={setRef1} class="flex-shrink:0">
 			<section class="px-$px h-$search-bar-height flex-row flex-align-center">
 				<NavIcon icon={Smiley} />
-				<div class="flex-grow:1"></div>
+				<div class="flex-grow"></div>
 				<NavIcon icon={Smiley} />
 				<NavIcon icon={Smiley} />
 			</section>
 			<hr />
 		</div>
-		<div class="flex-grow:1 flex-col focus-ring-scroller focus-ring-14" style={{ "height": height() }}>
-			<div class="flex-grow:1 overflow-y:auto">
+		<div class="flex-grow flex-col focus-ring-scroller focus-ring-14" style={{ "height": height() }}>
+			<div class="flex-grow overflow-y:auto">
 				<section class="p-$p flex-col gap-$gap">
 					<SectionToggle />
 					<For each={range(2)}>
@@ -219,7 +221,7 @@ function Col2Contents() {
 			<hr />
 			<section class="p-$p flex-row gap-16">
 				<div class="h-80 aspect-16/9 rounded-12 background-color:$text-200-color"></div>
-				<div class="flex-grow:1 flex-col gap-6">
+				<div class="flex-grow flex-col gap-6">
 					<Line w="70%" color="var(--text-200-color)" />
 					<Line w="90%" color="var(--text-200-color)" />
 					<Line w="80%" color="var(--text-200-color)" />
@@ -285,7 +287,7 @@ function StickySearchBar() {
 		<div class="sticky-search-bar flex-row flex-align-center">
 			<NavIcon icon={Smiley} />
 			{/* TODO */}
-			<div class="flex-grow:1">
+			<div class="flex-grow">
 				<div class="px-$px h-$search-bar-height flex-row flex-align-center">
 					<Line w="15%" />
 				</div>
