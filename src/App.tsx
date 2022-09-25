@@ -52,7 +52,7 @@ function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				color: white;
 			}
 		`}</style>
-		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-full" tabindex="0">
+		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-$full" tabindex="0">
 			<Dynamic component={props.icon} class="nav-icon" use:solid-styled />
 		</div>
 	</>
@@ -62,7 +62,7 @@ function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 
 function SectionToggle() {
 	return <>
-		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-full" tabindex="0">
+		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full" tabindex="0">
 			<Icon icon={Smiley} h="16px" />
 			<Line w="25%" />
 			<div class="flex-grow"></div>
@@ -73,7 +73,7 @@ function SectionToggle() {
 
 function Radiobar() {
 	return <>
-		<div class="flex-row gap-$gap focus-ring focus-ring-full" tabindex="0">
+		<div class="flex-row gap-$gap focus-ring focus-ring-$full" tabindex="0">
 			<div class="flex-grow">
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-base-color flex-row flex-align-center gap-$gap">
 					<Icon icon={Smiley} h="16px" />
@@ -100,7 +100,7 @@ function Textarea() {
 				box-shadow: var(--inset-box-shadow);
 			}
 		`}</style>
-		<div class="textarea flex-col gap-6 focus-ring focus-ring-16" tabindex="0">
+		<div class="textarea flex-col gap-($gap/2) focus-ring focus-ring-16px" tabindex="0">
 			<Line w="70%" color="var(--text-200-color)" />
 			<Line w="90%" color="var(--text-200-color)" />
 			<Line w="80%" color="var(--text-200-color)" />
@@ -122,7 +122,7 @@ function CheckboxButton() {
 				box-shadow: var(--inset-box-shadow);
 			}
 		`}</style>
-		<div class="checkbox-button flex-row flex-center gap-$gap focus-ring focus-ring-full" tabindex="0">
+		<div class="checkbox-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" tabindex="0">
 			<Icon icon={Smiley} h="16px" />
 			<Line w="35%" />
 			<Icon icon={Smiley} h="16px" />
@@ -133,10 +133,9 @@ function CheckboxButton() {
 function Slider() {
 	return <>
 		{/* Use px-($reduced-form-height/2) because of <SectionToggle> */}
-		<div class="px-($reduced-form-height/2) h-$form-height flex-col flex-justify-center focus-ring focus-ring-full" tabindex="0">
-			<div class="h-6 rounded-$full background-color:$theme-color flex-row flex-center">
-				{/* TODO: Change box-shadow */}
-				<div class="h-$form-height aspect-1 rounded-$full background-color:$form-color box-shadow:inset_0_0_0_1px_$hairline-color" />
+		<div class="px-($reduced-form-height/2) h-$form-height flex-col flex-justify-center focus-ring focus-ring-$full" tabindex="0">
+			<div class="h-6px rounded-$full background-color:$theme-color flex-row flex-center">
+				<div class="h-$form-height aspect-1 rounded-$full background-color:$form-color box-shadow:$inset-box-shadow" />
 			</div>
 		</div>
 	</>
@@ -161,7 +160,7 @@ function Col2Contents() {
 			</section>
 			<hr />
 		</div>
-		<div class="flex-grow flex-col focus-ring-scroller focus-ring-14" style={{ "height": height() }}>
+		<div class="flex-grow flex-col focus-ring-scroller focus-ring-14px" style={{ "height": height() }}>
 			<div class="flex-grow overflow-y:auto">
 				<section class="p-$p flex-col gap-$gap">
 					<SectionToggle />
@@ -221,7 +220,7 @@ function Col2Contents() {
 			<hr class="collapsible" />
 			<section class="p-$p flex-row gap-16">
 				<div class="h-80 aspect-16/9 rounded-12 background-color:$text-200-color"></div>
-				<div class="flex-grow flex-col gap-6">
+				<div class="flex-grow flex-col gap-($gap/2)">
 					<Line w="70%" color="var(--text-200-color)" />
 					<Line w="90%" color="var(--text-200-color)" />
 					<Line w="80%" color="var(--text-200-color)" />
@@ -229,11 +228,11 @@ function Col2Contents() {
 				</div>
 			</section>
 			<hr />
-			<section class="p-$p flex-col gap-6">
-				<Line w="calc(70% / 1.25)" color="var(--text-200-color)" />
-				<Line w="calc(90% / 1.25)" color="var(--text-200-color)" />
-				<Line w="calc(80% / 1.25)" color="var(--text-200-color)" />
-				<Line w="calc(60% / 1.25)" color="var(--text-200-color)" />
+			<section class="p-$p flex-col gap-($gap/2)">
+				<Line w="calc(70%/1.25)" color="var(--text-200-color)" />
+				<Line w="calc(90%/1.25)" color="var(--text-200-color)" />
+				<Line w="calc(80%/1.25)" color="var(--text-200-color)" />
+				<Line w="calc(60%/1.25)" color="var(--text-200-color)" />
 			</section>
 		</div>
 	</>
@@ -365,7 +364,7 @@ function GridIcon() {
 			}
 		`}</style>
 		<div class="group grid grid-center">
-			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-32" tabindex="0">
+			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-32px" tabindex="0">
 				<Smiley class="grid-icon" use:solid-styled />
 				<div class="grid-text"></div>
 			</div>

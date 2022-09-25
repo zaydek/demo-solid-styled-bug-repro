@@ -3,32 +3,12 @@ import { Rule } from "unocss"
 import { defineConfig } from "unocss/vite"
 import { cssSpec } from "./unocss.css.spec"
 
-//// ////////////////////////////////////////////////////////////////////////////////
-//// // Extractors
-////
-//// // https://github.com/unocss/unocss/blob/464cdd19cfef2c7a7f195a1a187191c6f4bb5f48/packages/core/src/utils/helpers.ts#L12
-//// function isValidSelector(selector: string) {
-//// 	return /[!-~]+/.test(selector)
-//// }
-////
-//// // https://github.com/unocss/unocss/blob/fa0bf070d0bdc0c2591d05b6437482feccd62d03/packages/core/src/extractors/split.ts#L4
-//// function splitCode(code: string) {
-//// 	return code.split(/\\?[\s"`;{}]+/g).filter(isValidSelector) // Remove '
-//// }
-////
-//// const extractors: Extractor[] = [{
-//// 	name: "custom-extractor",
-//// 	order: -1,
-//// 	extract({ code }) {
-//// 		return new Set(splitCode(code))
-//// 	},
-//// }]
+function desugar(raw: undefined | string, { sign }: { sign?: string } = {}): undefined | 0 | string {
+	if (raw === "0") { return 0 }
+	if (!raw) { return }
 
-////////////////////////////////////////////////////////////////////////////////
-// Rules
-
-function desugar(str: string, { sign }: { sign?: string } = {}) {
-	let desugared = ""
+	let desugared = "" // Return variable
+	const str = "" + raw
 	if (sign) {
 		if (str.startsWith("(") && str.endsWith(")")) {
 			desugared = `calc(-1*(${str.slice(1, -1)}))`
@@ -49,48 +29,30 @@ function desugar(str: string, { sign }: { sign?: string } = {}) {
 	return desugared
 }
 
-// TODO: DEPRECATE
-function untyped(raw: unknown, { sign }: { sign?: string } = {}) {
-	if (raw === "0") { return 0 }
-	if (!raw) { return }
-	const value = "" + raw
-	return desugar(value, { sign })
-}
-
-// TODO: DEPRECATE
-function typed(raw: unknown, { sign }: { sign?: string } = {}) {
-	if (raw === "0") { return 0 }
-	if (!raw) { return }
-	const value = "" + raw
-	const px = /^\d+(?:\.\d+)?$/.test(value)
-	return desugar(value + (px ? "px" : ""), { sign })
-}
-
-function interpolate(shorthand: string, properties: string[], unit = typed): Rule {
+function interpolate(shorthand: string, properties: string[]): Rule {
 	return [
 		new RegExp(`^(-?)${shorthand}-(.+)$`),
 		([_, sign, value]) => {
 			return properties.reduce((acc, property) => ({
 				...acc,
-				[property]: unit(value, { sign: sign as undefined | "-" }),
+				[property]: desugar(value, { sign: sign as undefined | "-" }),
 			}), {})
 		},
 	]
 }
 
 const rules: Rule[] = [
-	[/^((?:--|-)?[a-z]+(?:-[a-z]+)*):(.+)$/, ([_, key, value]) => {
+	[/^((?:--|\$|-)?[a-z]+(?:-[a-z]+)*):(.+)$/, ([_, key, value]) => {
 		if (
-			key.startsWith("--") || (
-				key.startsWith("-webkit-") ||
-				key.startsWith("-moz-")    ||
-				key.startsWith("-ms-")     ||
-				key.startsWith("-o-")
-			)
+			key.startsWith("--")       || // CSS variables
+			key.startsWith("$")        || // CSS variables (syntax sugar)
+			key.startsWith("-webkit-") || // Safari and Chrome
+			key.startsWith("-moz-")    || // Firefox
+			key.startsWith("-ms-")     || // Microsoft Edge
+			key.startsWith("-o-")      || // Opera
+			key in cssSpec
 		) {
-			return { [key]: untyped(value) }
-		} else if (key in cssSpec) {
-			return { [key]: untyped(value) }
+			return { [key]: desugar(value) }
 		}
 		return {}
 	}],
@@ -100,31 +62,31 @@ const rules: Rule[] = [
 	["contents", { "display": "contents" }],
 
 	/*
-	 * Positioning and isolation
+	 * Positioning
 	 */
 	["absolute", { "position": "absolute", "z-index": "10" }],
 	["fixed",    { "position": "fixed",    "z-index": "10" }],
 	["relative", { "position": "relative", "z-index": "10" }],
 	["sticky",   { "position": "sticky",   "z-index": "10" }],
 
-	interpolate("z", ["z-index"], untyped),
+	interpolate("z", ["z-index"]),
 
-	[/^(-?)inset(?:-(.+))?$/,    ([_, sign, value]) => ({ "inset":  typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-x(?:-(.+))?$/,  ([_, sign, value]) => ({ "right":  typed(value, { sign }) ?? 0, "left":   typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-y(?:-(.+))?$/,  ([_, sign, value]) => ({ "top":    typed(value, { sign }) ?? 0, "bottom": typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-t(?:-(.+))?$/,  ([_, sign, value]) => ({ "top":    typed(value, { sign }) ?? 0, "right":  typed(value, { sign }) ?? 0, "left":   typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-r(?:-(.+))?$/,  ([_, sign, value]) => ({ "top":    typed(value, { sign }) ?? 0, "right":  typed(value, { sign }) ?? 0, "bottom": typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-b(?:-(.+))?$/,  ([_, sign, value]) => ({ "right":  typed(value, { sign }) ?? 0, "bottom": typed(value, { sign }) ?? 0, "left":   typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-l(?:-(.+))?$/,  ([_, sign, value]) => ({ "top":    typed(value, { sign }) ?? 0, "bottom": typed(value, { sign }) ?? 0, "left":   typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-tr(?:-(.+))?$/, ([_, sign, value]) => ({ "top":    typed(value, { sign }) ?? 0, "right":  typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-br(?:-(.+))?$/, ([_, sign, value]) => ({ "right":  typed(value, { sign }) ?? 0, "bottom": typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-bl(?:-(.+))?$/, ([_, sign, value]) => ({ "bottom": typed(value, { sign }) ?? 0, "left":   typed(value, { sign }) ?? 0 })],
-	[/^(-?)inset-tl(?:-(.+))?$/, ([_, sign, value]) => ({ "top":    typed(value, { sign }) ?? 0, "left":   typed(value, { sign }) ?? 0 })],
+	[/^(-?)inset(?:-(.+))?$/,    ([_, sign, value]) => ({ "inset":  desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-x(?:-(.+))?$/,  ([_, sign, value]) => ({ "right":  desugar(value, { sign }) ?? 0, "left":   desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-y(?:-(.+))?$/,  ([_, sign, value]) => ({ "top":    desugar(value, { sign }) ?? 0, "bottom": desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-t(?:-(.+))?$/,  ([_, sign, value]) => ({ "top":    desugar(value, { sign }) ?? 0, "right":  desugar(value, { sign }) ?? 0, "left":   desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-r(?:-(.+))?$/,  ([_, sign, value]) => ({ "top":    desugar(value, { sign }) ?? 0, "right":  desugar(value, { sign }) ?? 0, "bottom": desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-b(?:-(.+))?$/,  ([_, sign, value]) => ({ "right":  desugar(value, { sign }) ?? 0, "bottom": desugar(value, { sign }) ?? 0, "left":   desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-l(?:-(.+))?$/,  ([_, sign, value]) => ({ "top":    desugar(value, { sign }) ?? 0, "bottom": desugar(value, { sign }) ?? 0, "left":   desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-tr(?:-(.+))?$/, ([_, sign, value]) => ({ "top":    desugar(value, { sign }) ?? 0, "right":  desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-br(?:-(.+))?$/, ([_, sign, value]) => ({ "right":  desugar(value, { sign }) ?? 0, "bottom": desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-bl(?:-(.+))?$/, ([_, sign, value]) => ({ "bottom": desugar(value, { sign }) ?? 0, "left":   desugar(value, { sign }) ?? 0 })],
+	[/^(-?)inset-tl(?:-(.+))?$/, ([_, sign, value]) => ({ "top":    desugar(value, { sign }) ?? 0, "left":   desugar(value, { sign }) ?? 0 })],
 
-	[/^(-?)t-(.+)$/, ([_, sign, value]) => ({ "top":    typed(value, { sign }) ?? 0 })],
-	[/^(-?)r-(.+)$/, ([_, sign, value]) => ({ "right":  typed(value, { sign }) ?? 0 })],
-	[/^(-?)b-(.+)$/, ([_, sign, value]) => ({ "bottom": typed(value, { sign }) ?? 0 })],
-	[/^(-?)l-(.+)$/, ([_, sign, value]) => ({ "left":   typed(value, { sign }) ?? 0 })],
+	[/^(-?)t-(.+)$/, ([_, sign, value]) => ({ "top":    desugar(value, { sign }) ?? 0 })],
+	[/^(-?)r-(.+)$/, ([_, sign, value]) => ({ "right":  desugar(value, { sign }) ?? 0 })],
+	[/^(-?)b-(.+)$/, ([_, sign, value]) => ({ "bottom": desugar(value, { sign }) ?? 0 })],
+	[/^(-?)l-(.+)$/, ([_, sign, value]) => ({ "left":   desugar(value, { sign }) ?? 0 })],
 
 	/*
 	 * Spacing
@@ -148,16 +110,13 @@ const rules: Rule[] = [
 	/*
 	 * Sizing
 	 */
-	[/^h-(.+)$/,      ([_, value]) => ({ "height":       typed(value)   })],
-	[/^min-h-(.+)$/,  ([_, value]) => ({ "min-height":   typed(value)   })],
-	[/^max-h-(.+)$/,  ([_, value]) => ({ "max-height":   typed(value)   })],
-	[/^w-(.+)$/,      ([_, value]) => ({ "width":        typed(value)   })],
-	[/^min-w-(.+)$/,  ([_, value]) => ({ "min-width":    typed(value)   })],
-	[/^max-w-(.+)$/,  ([_, value]) => ({ "max-width":    typed(value)   })],
-
-	[/^aspect-(.+)$/, ([_, value]) => ({
-		"aspect-ratio": untyped(value),
-	})],
+	[/^h-(.+)$/,      ([_, value]) => ({ "height":       desugar(value) })],
+	[/^min-h-(.+)$/,  ([_, value]) => ({ "min-height":   desugar(value) })],
+	[/^max-h-(.+)$/,  ([_, value]) => ({ "max-height":   desugar(value) })],
+	[/^w-(.+)$/,      ([_, value]) => ({ "width":        desugar(value) })],
+	[/^min-w-(.+)$/,  ([_, value]) => ({ "min-width":    desugar(value) })],
+	[/^max-w-(.+)$/,  ([_, value]) => ({ "max-width":    desugar(value) })],
+	[/^aspect-(.+)$/, ([_, value]) => ({ "aspect-ratio": desugar(value) })],
 
 	/*
 	 * Border-radius
@@ -175,7 +134,7 @@ const rules: Rule[] = [
 	/*
 	 * Flexbox
 	 */
-	[/^flex-grow(?:-(.+))?$/, ([_, value]) => ({ "flex-grow": untyped(value) ?? 1 })],
+	[/^flex-grow(?:-(.+))?$/, ([_, value]) => ({ "flex-grow": desugar(value) ?? 1 })],
 
 	// TODO
 	//// [/^flex-shrink(?:-(.+))?$/, ([_, value]) => ({ "flex-shrink": untyped(value) ?? 1      })],
@@ -186,9 +145,9 @@ const rules: Rule[] = [
 	["flex-col", { "display": "flex", "flex-direction": "column" }],
 
 	[/^flex-justify-(.+)$/, ([_, value]) => ({ "justify-content": value })],
-	[/^flex-align-(.+)$/,   ([_, value]) => ({ "align-items": value })],
+	[/^flex-align-(.+)$/,   ([_, value]) => ({ "align-items":     value })],
 
-	// Shorthand for justify-content:center align-items:center
+	// Shorthand for flex-justify-center flex-align-center
 	["flex-center", { "justify-content": "center", "align-items": "center" }],
 
 	/*
@@ -215,7 +174,6 @@ const rules: Rule[] = [
 export default defineConfig({
 	presets: [], // No-op UnoCSS
 
-	//// extractors, // Needed for [data-state-checked=true]
 	rules,
 	variants: [
 		variantImportant, // !key=typed(value) syntax

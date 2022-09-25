@@ -16,24 +16,24 @@
 .focus-ring-scroller::after { content: ""; }
 
 @each $value, $value-px in (
-	 2:  2px,
-	 4:  4px,
-	 6:  6px,
-	 8:  8px,
-	10: 10px,
-	12: 12px,
-	14: 14px,
-	16: 16px,
-	18: 18px,
-	20: 20px,
-	22: 22px,
-	24: 24px,
-	26: 26px,
-	28: 28px,
-	30: 30px,
-	32: 32px,
+	 2px:  2px,
+	 4px:  4px,
+	 6px:  6px,
+	 8px:  8px,
+	10px: 10px,
+	12px: 12px,
+	14px: 14px,
+	16px: 16px,
+	18px: 18px,
+	20px: 20px,
+	22px: 22px,
+	24px: 24px,
+	26px: 26px,
+	28px: 28px,
+	30px: 30px,
+	32px: 32px,
 
-	full: 1000px,
+	\$full: 1000px,
 ) {
 	.focus-ring-#{$value} {
 		--focus-ring-border-radius: #{$value-px};
