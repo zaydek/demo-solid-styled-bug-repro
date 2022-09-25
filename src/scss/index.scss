@@ -1,20 +1,22 @@
 @use "sass:meta";
 
 // Modules
-@use "vars_accessibility";
-@use "vars_layout";
-@use "vars_theme";
+@use "vars-layout";
+@use "vars-decoration";
+@use "vars-transition";
 
 @use "utils/interpolate-vars" as *;
 
 :root {
 	@include interpolate-vars(
-		meta.module-variables(vars_accessibility),
-		meta.module-variables(vars_layout),
-		meta.module-variables(vars_theme),
+		meta.module-variables(vars-layout),
+		meta.module-variables(vars-decoration),
+		meta.module-variables(vars-transition),
 	);
 }
 
-@include vars_accessibility.body;
-@include vars_layout.body;
-@include vars_theme.body;
+@include vars-layout.body;
+@include vars-decoration.body;
+@include vars-transition.body;
+
+@include meta.load-css("focus-ring");

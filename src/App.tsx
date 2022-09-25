@@ -5,7 +5,7 @@ import { range } from "./utils/range"
 // TODO: Extract <CollapsibleSection>?
 function SectionToggle() {
 	return <>
-		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full" tabindex="0">
+		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full" tabindex="1">
 			<Icon icon={Smiley} h="16px" />
 			<Line w="25%" />
 			<div class="flex-grow"></div>
@@ -90,7 +90,7 @@ function Sidebar() {
 			</div>
 		</div>
 		<div ref={setRef2} class="flex-shrink:0">
-			<hr />
+			<hr class="collapsible" />
 			<section class="p-$p flex-row gap-$gap">
 				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-200-color"></div>
 				<div class="flex-grow flex-col gap-($gap/2)">
@@ -169,34 +169,47 @@ export function App() {
 	const [ref, setRef] = createSignal<HTMLElement>()
 	const [sidebar, setSidebar] = createSignal<"open" | "collapsed" | "expanded">("open")
 
-	// Cycles sidebar states forwards
-	function cycleForwards() {
+	function toggle() {
 		if (sidebar() === "open") {
-			setSidebar("expanded")
-		} else if (sidebar() === "expanded") {
-			//// setSidebar("collapsed")
-			setSidebar("open") // DEBUG
-		} else if (sidebar() === "collapsed") {
-			setSidebar("open")
-		}
-	}
-
-	// Cycles sidebar states backwards
-	function cycleBackwards() {
-		if (sidebar() === "open") {
-			setSidebar("collapsed")
-		} else if (sidebar() === "collapsed") {
 			setSidebar("expanded")
 		} else if (sidebar() === "expanded") {
 			setSidebar("open")
 		}
 	}
+
+	//// // Cycles sidebar states forwards
+	//// function cycleForwards() {
+	//// 	if (sidebar() === "open") {
+	//// 		setSidebar("expanded")
+	//// 	} else if (sidebar() === "expanded") {
+	//// 		setSidebar("collapsed")
+	//// 	} else if (sidebar() === "collapsed") {
+	//// 		setSidebar("open")
+	//// 	}
+	//// }
+	////
+	//// // Cycles sidebar states backwards
+	//// function cycleBackwards() {
+	//// 	if (sidebar() === "open") {
+	//// 		setSidebar("collapsed")
+	//// 	} else if (sidebar() === "collapsed") {
+	//// 		setSidebar("expanded")
+	//// 	} else if (sidebar() === "expanded") {
+	//// 		setSidebar("open")
+	//// 	}
+	//// }
+	////
+	//// document.addEventListener("keydown", e => {
+	//// 	if (e.key === "d") {
+	//// 		cycleForwards()
+	//// 	} else if (e.key === "D") {
+	//// 		cycleBackwards()
+	//// 	}
+	//// }, false)
 
 	document.addEventListener("keydown", e => {
 		if (e.key === "d") {
-			cycleForwards()
-		} else if (e.key === "D") {
-			cycleBackwards()
+			toggle()
 		}
 	}, false)
 
@@ -271,7 +284,7 @@ export function App() {
 
 				/* TRANSITION */
 				transition: var(--duration-300) ease;
-				transition-property: width, box-shadow, transform;
+				transition-property: width, transform;
 			}
 			[data-state-sidebar=collapsed] .column-2 {
 				transform: translateX(var(--sidebar-width));
@@ -291,6 +304,9 @@ export function App() {
 				pointer-events: none; /* Passthrough */
 
 				/* TRANSITION */
+				/* NOTE: The reason "transition-property: background-color,
+				backdrop-filter;" is OK is because the values don’t change
+				(meaningfully) between light and dark mode. */
 				transition: var(--duration-300) ease;
 				transition-property: background-color, backdrop-filter;
 			}
@@ -304,7 +320,7 @@ export function App() {
 			<div class="column-1">
 				<Main />
 			</div>
-			<div class="column-2-backdrop" onClick={cycleForwards}></div>
+			<div class="column-2-backdrop" onClick={toggle}></div>
 			<div ref={setRef} class="column-2 flex-col">
 				<Sidebar />
 			</div>

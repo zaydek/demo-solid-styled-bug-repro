@@ -1,6 +1,5 @@
 export * from "./Checkbox"
 export * from "./GridIcon"
-export * from "./index"
 export * from "./NavIcon"
 export * from "./Primitives"
 export * from "./Radio"

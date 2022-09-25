@@ -2,32 +2,33 @@
 
 @use "utils/link" as *;
 
-$base-hue: 220deg;
+$base-hue:        220deg;
 $base-saturation: 25%;
-$base-lightness: 100%;
+$base-lightness:  100%;
 
-$theme-hue: 200deg;
+//// $theme-hue:        265deg;
+$theme-hue:        200deg;
 $theme-saturation: 100%;
-$theme-lightness: 50%;
+$theme-lightness:  50%;
 
 // Accessibility
-$focus-ring-hue: 200deg;
-$focus-ring-saturation: 100%;
-$focus-ring-lightness: 50%;
+$focus-ring-hue:        $theme-hue - 10deg; // Copy by value
+$focus-ring-saturation: $theme-saturation;  // Copy by value
+$focus-ring-lightness:  $theme-lightness;   // Copy by value
 
 ////////////////////////////////////////
 
-$theme-color:          link(theme 50%);
-$hover-color:          link(theme 50%, $alpha: 15%);
-$hover-active-color:   link(theme 50%);
+$theme-color:        link(theme $theme-lightness);                   // Copy by value (because of link)
+$hover-color:        link(theme $theme-lightness, $alpha: 15%);      // Copy by value (because of link)
+$hover-active-color: link(theme $theme-lightness);                   // Copy by value (because of link)
 
-$base-color:           themed-link(base 100%);
-$faded-base-color:     themed-link(base 90%);
-$form-color:           themed-link(base 100%, $delta: 20%);
-$hairline-color:       themed-link(base 80%);
-//// $alpha-hairline-color: themed-link(base 80%,  $alpha: 50%);
-$fill-100-color:       themed-link(base 35%);
-$fill-200-color:       themed-link(base 65%);
+$base-color:         themed-link(base $base-lightness);              // Copy by value (because of link)
+$form-color:         themed-link(base $base-lightness, $delta: 20%); // Copy by value (because of link)
+
+$faded-base-color:   themed-link(base 90%);
+$hairline-color:     themed-link(base 80%);
+$fill-100-color:     themed-link(base 35%);
+$fill-200-color:     themed-link(base 65%);
 
 $backdrop-color: (
 	light: link(base 0%, $alpha: 15%),
@@ -88,5 +89,6 @@ $box-shadow: (
 	hr {
 		height: $-hairline-thickness;
 		background-color: var(--hairline-color);
+		&.collapsible { position: relative; z-index: 10; margin-top: -$-hairline-thickness; }
 	}
 }

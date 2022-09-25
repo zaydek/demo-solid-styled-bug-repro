@@ -28,7 +28,7 @@ export function IconPlaceholder(props: VoidProps<{
 }>) {
 	return <>
 		<style jsx>{`
-			.icon { /* E.g. <div> */
+			.icon-placeholder {
 				height: ${props.h};
 				aspect-ratio: 1;
 				border-radius: var(--full);
@@ -36,7 +36,7 @@ export function IconPlaceholder(props: VoidProps<{
 					"var(--fill-100-color)"};
 			}
 		`}</style>
-		<div class="icon"></div>
+		<div class="icon-placeholder"></div>
 	</>
 }
 

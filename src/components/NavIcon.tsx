@@ -1,12 +1,7 @@
-import { createSignal, VoidComponent, VoidProps } from "solid-js"
+import { VoidComponent, VoidProps } from "solid-js"
 import { CSSProps } from "../solid-utils/extra-types"
+import { active } from "./DEBUG_active"
 import { Icon } from "./Primitives"
-
-const [active, setActive] = createSignal<boolean>()
-
-setInterval(() => {
-	setActive(curr => curr === undefined ? true : undefined)
-}, 1_000)
 
 export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 	return <>
@@ -45,14 +40,14 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 
 			/********************************/
 
-			.nav-icon-wrapper :global(.icon) {
+			.nav-icon-wrapper > :global(.icon) {
 				color: var(--theme-color);
 			}
-			.nav-icon-wrapper:is(:hover:active, [data-state-active]) :global(.icon) {
+			.nav-icon-wrapper:is(:hover:active, [data-state-active]) > :global(.icon) {
 				color: white;
 			}
 		`}</style>
-		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-$full" tabindex="0" data-state-active={active()}>
+		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-$full" tabindex="1" data-state-active={active()}>
 			<Icon icon={props.icon} h="32px" />
 		</div>
 	</>

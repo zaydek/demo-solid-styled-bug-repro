@@ -1,12 +1,5 @@
-import { createSignal } from "solid-js";
 import { Icon, Line } from "./Primitives";
 import { Smiley } from "./Smiley";
-
-//// const [active, setActive] = createSignal<boolean>()
-////
-//// setInterval(() => {
-//// 	setActive(curr => curr === undefined ? true : undefined)
-//// }, 1_000)
 
 export function GridIcon() {
 	return <>

@@ -1,12 +1,6 @@
-import { createSignal } from "solid-js"
+import { active } from "./DEBUG_active"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
-
-const [active, setActive] = createSignal<boolean>()
-
-setInterval(() => {
-	setActive(curr => curr === undefined ? true : undefined)
-}, 1_000)
 
 export function Checkbox() {
 	return <>
@@ -59,7 +53,7 @@ export function Checkbox() {
 				transform: rotate(0) scale(1);
 			}
 		`}</style>
-		<div class="checkbox flex-row flex-center gap-$gap focus-ring focus-ring-$full" tabindex="0" data-state-active={active()}>
+		<div class="checkbox flex-row flex-center gap-$gap focus-ring focus-ring-$full" tabindex="1" data-state-active={active()}>
 			<Icon icon={Smiley} h="16px" />
 			<Line w="35%" />
 			<Icon icon={Smiley} h="16px" />
