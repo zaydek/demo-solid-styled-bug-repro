@@ -1,7 +1,7 @@
 @use "sass:list";
 @use "sass:string";
 
-// Shorthand for describing a CSS variable-based color
+// Shorthand for linking a CSS variable value
 //
 //   link(base 100%)
 //   -> hsl(var(--base-hue) var(--base-saturation) 100%)
@@ -16,7 +16,7 @@
 	}
 }
 
-// Shorthand for describing a CSS variable-based themed color
+// Shorthand for linking a themed CSS variable value
 //
 //   themed-link(base 100%)
 //   -> (

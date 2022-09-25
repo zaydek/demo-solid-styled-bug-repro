@@ -1,0 +1,19 @@
+// padding
+$px: 20px;
+$py: 16px;
+$p:  var(--py) var(--px);
+
+// gap
+$gap: 12px;
+
+// border-radius
+$full: 1000px;
+
+$sidebar-width: 500px; // Chrome desktop min-width
+$expanded-sidebar-width: 640px;
+$search-bar-height: 72px;
+$search-results-grid-height: 96px;
+$search-results-grid-border-radius: 32px;
+
+$form-height: 32px;
+$reduced-form-height: $form-height - 4px;

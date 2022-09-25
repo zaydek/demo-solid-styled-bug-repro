@@ -1,0 +1,29 @@
+@use "sass:map";
+@use "sass:meta";
+
+// Desugars Sass variables to CSS variables
+@mixin interpolate-vars($loaded-modules...) {
+	& {
+		@each $loaded-module in $loaded-modules {
+			@each $property, $value in $loaded-module {
+				@if meta.type-of($value) == map {
+					$light-value: map.get($value, light);
+					--#{$property}: #{$light-value};
+				} @else {
+					--#{$property}: #{$value};
+				}
+			}
+		}
+		background-color: var(--base-color);
+	}
+	&[data-theme=dark] {
+		@each $loaded-module in $loaded-modules {
+			@each $property, $value in $loaded-module {
+				@if meta.type-of($value) == map {
+					$dark-value: map.get($value, dark);
+					--#{$property}: #{$dark-value};
+				}
+			}
+		}
+	}
+}

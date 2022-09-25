@@ -13,7 +13,7 @@ export default defineConfig({
           [solidStyled, {}]
         ],
       },
-      hot: false,
+      hot: false, // Disable HMR
     }),
   ],
 })

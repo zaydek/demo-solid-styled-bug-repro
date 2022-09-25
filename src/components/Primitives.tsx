@@ -1,19 +1,21 @@
 import { VoidComponent, VoidProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import { CSSProps } from "./solid-utils/extra-types"
+import { CSSProps } from "../solid-utils/extra-types"
 
 export function Icon(props: VoidProps<{
 	icon: VoidComponent<CSSProps>
 
-	// CSS
-	h: string
+	// Styled props
+	h:      string
+	color?: string
 }>) {
 	return <>
 		<style jsx>{`
 			svg.icon {
 				height: ${props.h};
 				aspect-ratio: 1;
-				color: var(--text-100-color);
+				color: ${props.color ??
+					"var(--text-100-color)"};
 			}
 		`}</style>
 		<Dynamic component={props.icon} class="icon" use:solid-styled />

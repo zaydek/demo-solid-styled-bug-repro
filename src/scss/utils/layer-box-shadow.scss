@@ -1,0 +1,16 @@
+@use "sass:list";
+
+@function layer-box-shadow($box-shadow, $count) {
+	$layers: ();
+	@if $count >=  1 { $layers: list.append($layers, list.nth($box-shadow,  1), comma); }
+	@if $count >=  2 { $layers: list.append($layers, list.nth($box-shadow,  2), comma); }
+	@if $count >=  3 { $layers: list.append($layers, list.nth($box-shadow,  3), comma); }
+	@if $count >=  4 { $layers: list.append($layers, list.nth($box-shadow,  4), comma); }
+	@if $count >=  5 { $layers: list.append($layers, list.nth($box-shadow,  5), comma); }
+	@if $count >=  6 { $layers: list.append($layers, list.nth($box-shadow,  6), comma); }
+	@if $count >=  7 { $layers: list.append($layers, list.nth($box-shadow,  7), comma); }
+	@if $count >=  8 { $layers: list.append($layers, list.nth($box-shadow,  8), comma); }
+	@if $count >=  9 { $layers: list.append($layers, list.nth($box-shadow,  9), comma); }
+	@if $count >= 10 { $layers: list.append($layers, list.nth($box-shadow, 10), comma); }
+	@return $layers;
+}

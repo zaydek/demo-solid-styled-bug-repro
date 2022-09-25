@@ -1,5 +1,4 @@
-node_modules
 .DS_Store
-dist
-dist-ssr
-*.local
+.vscode/
+dist/
+node_modules/

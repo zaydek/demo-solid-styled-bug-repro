@@ -1,0 +1,16 @@
+@use "sass:meta";
+
+// Modules
+@use "layout-vars";
+@use "theme-vars";
+
+@use "utils/interpolate-vars" as *;
+
+:root {
+	@include interpolate-vars(
+		meta.module-variables(layout-vars),
+		meta.module-variables(theme-vars),
+	);
+}
+
+@include meta.load-css("focus-ring");

@@ -1,65 +1,8 @@
-import { createEffect, createSignal, For, onCleanup, ParentProps, VoidComponent, VoidProps } from "solid-js"
-import { Dynamic } from "solid-js/web"
-import { Smiley } from "./components/Smiley"
-import { Icon, Iconless, Line } from "./primitives"
-import { CSSProps } from "./solid-utils/extra-types"
-import { cx } from "./utils/cx"
+import { createEffect, createSignal, For, onCleanup } from "solid-js"
+import { Checkbox, GridIcon, Icon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { range } from "./utils/range"
 
-function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
-	return <>
-		<style jsx>{`
-			/* Preamble */
-			.nav-icon-wrapper { position: relative; }
-			.nav-icon-wrapper::before { content: ""; }
-
-			/********************************/
-
-			.nav-icon-wrapper {
-				height: 48px;
-				aspect-ratio: 1;
-				border-radius: var(--full);
-			}
-			.nav-icon-wrapper::before {
-				position: absolute;
-				z-index: -10;
-				inset: 0;
-				border-radius: inherit;
-				background-color: transparent;
-				transform: scale(0);
-
-				/* TRANSITION */
-				transition: 150ms cubic-bezier(0, 1, 0.25, 1.15);
-				transition-property: transform;
-			}
-			.nav-icon-wrapper:hover::before {
-				background-color: var(--faded-base-color);
-				transform: scale(1);
-			}
-			.nav-icon-wrapper:hover:active::before {
-				background-color: var(--theme-color);
-				transform: scale(1);
-			}
-
-			/********************************/
-
-			svg.nav-icon {
-				height: 32px;
-				aspect-ratio: 1;
-				color: var(--text-100-color);
-			}
-			.nav-icon-wrapper:hover:active .nav-icon {
-				color: white;
-			}
-		`}</style>
-		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-$full" tabindex="0">
-			<Dynamic component={props.icon} class="nav-icon" use:solid-styled />
-		</div>
-	</>
-}
-
-////////////////////////////////////////
-
+// TODO: Extract <CollapsibleSection>?
 function SectionToggle() {
 	return <>
 		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full" tabindex="0">
@@ -67,76 +10,6 @@ function SectionToggle() {
 			<Line w="25%" />
 			<div class="flex-grow"></div>
 			<Line w="10%" color="var(--text-200-color)" />
-		</div>
-	</>
-}
-
-function Radiobar() {
-	return <>
-		<div class="flex-row gap-$gap focus-ring focus-ring-$full" tabindex="0">
-			<div class="flex-grow">
-				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-base-color flex-row flex-align-center gap-$gap">
-					<Icon icon={Smiley} h="16px" />
-					<Line w="40%" />
-				</div>
-			</div>
-			<div class="h-$reduced-form-height aspect-1 rounded-$full background-color:$form-color box-shadow:$inset-box-shadow grid grid-center">
-				<Iconless h="8px" />
-			</div>
-		</div>
-	</>
-}
-
-function Textarea() {
-	return <>
-		<style jsx>{`
-			.textarea {
-				--height: var(--form-height);
-
-				padding: calc(var(--height) / 2);
-				height: 144px;
-				border-radius: calc(var(--height) / 2);
-				background-color: var(--base-color);
-				box-shadow: var(--inset-box-shadow);
-			}
-		`}</style>
-		<div class="textarea flex-col gap-($gap/2) focus-ring focus-ring-16px" tabindex="0">
-			<Line w="70%" color="var(--text-200-color)" />
-			<Line w="90%" color="var(--text-200-color)" />
-			<Line w="80%" color="var(--text-200-color)" />
-			<Line w="60%" color="var(--text-200-color)" />
-		</div>
-	</>
-}
-
-function CheckboxButton() {
-	return <>
-		<style jsx>{`
-			.checkbox-button {
-				--height: var(--form-height);
-
-				padding: 0 calc(var(--height) / 2);
-				height: var(--height);
-				border-radius: var(--full);
-				background-color: var(--base-color);
-				box-shadow: var(--inset-box-shadow);
-			}
-		`}</style>
-		<div class="checkbox-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" tabindex="0">
-			<Icon icon={Smiley} h="16px" />
-			<Line w="35%" />
-			<Icon icon={Smiley} h="16px" />
-		</div>
-	</>
-}
-
-function Slider() {
-	return <>
-		{/* Use px-($reduced-form-height/2) because of <SectionToggle> */}
-		<div class="px-($reduced-form-height/2) h-$form-height flex-col flex-justify-center focus-ring focus-ring-$full" tabindex="0">
-			<div class="h-6px rounded-$full background-color:$theme-color flex-row flex-center">
-				<div class="h-$form-height aspect-1 rounded-$full background-color:$form-color box-shadow:$inset-box-shadow" />
-			</div>
 		</div>
 	</>
 }
@@ -166,7 +39,7 @@ function Col2Contents() {
 					<SectionToggle />
 					<For each={range(2)}>
 						{() => <>
-							<Radiobar />
+							<Radio />
 						</>}
 					</For>
 				</section>
@@ -175,7 +48,7 @@ function Col2Contents() {
 					<SectionToggle />
 					<For each={range(2)}>
 						{() => <>
-							<Radiobar />
+							<Radio />
 						</>}
 					</For>
 					<div class="relative">
@@ -184,16 +57,16 @@ function Col2Contents() {
 							<div></div>
 							<For each={range(2)}>
 								{() => <>
-									<CheckboxButton />
+									<Checkbox />
 								</>}
 							</For>
 						</div>
 					</div>
-					<CheckboxButton />
+					<Checkbox />
 					<div class="grid grid-cols-3 gap-$gap">
 						<For each={range(3)}>
 							{() => <>
-								<CheckboxButton />
+								<Checkbox />
 							</>}
 						</For>
 					</div>
@@ -289,89 +162,6 @@ function StickySearchBar() {
 	</>
 }
 
-function GridIcon() {
-	return <>
-		<style jsx>{`
-			/* Preamble */
-			.grid-icon-wrapper { position: relative; }
-			.grid-icon-wrapper::before { content: ""; }
-
-			/********************************/
-
-			.grid-icon-wrapper { position: relative; }
-			.grid-icon-wrapper {
-				height: 100%;
-				aspect-ratio: 1;
-				border-radius: var(--border-radius);
-			}
-			.grid-icon-wrapper::before { content: ""; }
-			.grid-icon-wrapper::before {
-				position: absolute;
-				z-index: -10;
-				inset: 0;
-				border-radius: inherit;
-				background-color: transparent;
-				transform: scale(0);
-
-				/* TRANSITION */
-				transition: 150ms cubic-bezier(0, 1, 0.25, 1.15);
-				transition-property: transform;
-			}
-			.group:hover .grid-icon-wrapper::before {
-				background-color: var(--faded-base-color);
-				transform: scale(1);
-			}
-			.group:hover:active .grid-icon-wrapper::before {
-				background-color: var(--theme-color);
-				transform: scale(1);
-			}
-
-			/********************************/
-
-			.grid-icon-wrapper {
-				display: grid;
-				grid-template:
-					"." calc(32px / 2)
-					"a" 1fr
-					"b" 32px;
-				place-items: center;
-			}
-
-			.grid-icon-wrapper > :global(:nth-child(1)) { grid-area: a; }
-			.grid-icon-wrapper > :global(:nth-child(2)) { grid-area: b; }
-
-			/********************************/
-
-			svg.grid-icon {
-				height: 32px;
-				aspect-ratio: 1;
-				color: var(--text-100-color);
-			}
-			.group:hover:active .grid-icon {
-				color: white;
-			}
-
-			/********************************/
-
-			.grid-text {
-				height: 6px;
-				width: 50%;
-				border-radius: var(--full);
-				background-color: var(--text-200-color);
-			}
-			.group:hover:active .grid-text {
-				background-color: white;
-			}
-		`}</style>
-		<div class="group grid grid-center">
-			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-32px" tabindex="0">
-				<Smiley class="grid-icon" use:solid-styled />
-				<div class="grid-text"></div>
-			</div>
-		</div>
-	</>
-}
-
 ////////////////////////////////////////
 
 export function App() {
@@ -452,7 +242,7 @@ export function App() {
 
 			/********************************/
 
-			.col-1 {
+			.column-1 {
 				margin-right: var(--sidebar-width);
 				min-height: 100vh;
 
@@ -460,17 +250,17 @@ export function App() {
 				transition: 300ms ease;
 				transition-property: margin-right;
 			}
-			[data-state-sidebar=collapsed] .col-1 {
+			[data-state-sidebar=collapsed] .column-1 {
 				margin-right: 0;
 			}
-			[data-state-sidebar=expanded] .col-1 {
+			[data-state-sidebar=expanded] .column-1 {
 				-webkit-user-select: none; /* Disable selection */
 				user-select: none;
 			}
 
 			/********************************/
 
-			.col-2 {
+			.column-2 {
 				position: fixed;
 				z-index: 10;
 				inset: 0 0 0 auto; /* E.g. inset-r */
@@ -482,20 +272,20 @@ export function App() {
 				transition: 300ms ease;
 				transition-property: width, transform;
 			}
-			[data-state-sidebar=collapsed] .col-2 {
+			[data-state-sidebar=collapsed] .column-2 {
 				transform: translateX(var(--sidebar-width));
 			}
-			[data-state-sidebar=expanded] .col-2 {
+			[data-state-sidebar=expanded] .column-2 {
 				width: clamp(0px, var(--expanded-sidebar-width), 100vw);
 			}
 			/* Light mode: disable box-shadow */
-			/* :global(:root[data-theme=light]) [data-state-sidebar=expanded] .col-2 { */
-			/* 	box-shadow: revert; */
-			/* } */
+			:global(:root[data-theme=light]) [data-state-sidebar=expanded] .column-2 {
+				box-shadow: revert;
+			}
 
 			/********************************/
 
-			.col-2-backdrop {
+			.column-2-backdrop {
 				position: fixed;
 				z-index: 10;
 				inset: 0;
@@ -506,18 +296,18 @@ export function App() {
 				transition: 300ms ease;
 				transition-property: background-color, backdrop-filter;
 			}
-			[data-state-sidebar=expanded] .col-2-backdrop {
+			[data-state-sidebar=expanded] .column-2-backdrop {
 				background-color: var(--backdrop-color);
 				backdrop-filter: blur(2px);
 				pointer-events: revert; /* Enable */
 			}
 		`}</style>
 		<div class="contents" data-state-sidebar={sidebar()}>
-			<div class="col-1">
+			<div class="column-1">
 				<Col1Contents />
 			</div>
-			<div class="col-2-backdrop" onClick={cycleForwards}></div>
-			<div ref={setRef} class="col-2 flex-col">
+			<div class="column-2-backdrop" onClick={cycleForwards}></div>
+			<div ref={setRef} class="column-2 flex-col">
 				<Col2Contents />
 			</div>
 		</div>
