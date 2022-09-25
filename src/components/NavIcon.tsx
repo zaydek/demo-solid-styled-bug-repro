@@ -1,6 +1,12 @@
-import { VoidComponent, VoidProps } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { createSignal, VoidComponent, VoidProps } from "solid-js"
 import { CSSProps } from "../solid-utils/extra-types"
+import { Icon } from "./Primitives"
+
+const [active, setActive] = createSignal<boolean>()
+
+setInterval(() => {
+	setActive(curr => curr === undefined ? true : undefined)
+}, 1_000)
 
 export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 	return <>
@@ -25,31 +31,29 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				transform: scale(0);
 
 				/* TRANSITION */
-				transition: 150ms cubic-bezier(0, 1, 0.25, 1.15);
+				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.nav-icon-wrapper:hover::before {
-				background-color: var(--faded-base-color);
+				background-color: var(--hover-color);
 				transform: scale(1);
 			}
-			.nav-icon-wrapper:hover:active::before {
-				background-color: var(--theme-color);
+			.nav-icon-wrapper:is(:hover:active, [data-state-active])::before {
+				background-color: var(--hover-active-color);
 				transform: scale(1);
 			}
 
 			/********************************/
 
-			svg.nav-icon {
-				height: 32px;
-				aspect-ratio: 1;
-				color: var(--text-100-color);
+			.nav-icon-wrapper :global(.icon) {
+				color: var(--theme-color);
 			}
-			.nav-icon-wrapper:hover:active .nav-icon {
+			.nav-icon-wrapper:is(:hover:active, [data-state-active]) :global(.icon) {
 				color: white;
 			}
 		`}</style>
-		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-$full" tabindex="0">
-			<Dynamic component={props.icon} class="nav-icon" use:solid-styled />
+		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-$full" tabindex="0" data-state-active={active()}>
+			<Icon icon={props.icon} h="32px" />
 		</div>
 	</>
 }

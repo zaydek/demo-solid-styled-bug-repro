@@ -11,29 +11,29 @@ export function Icon(props: VoidProps<{
 }>) {
 	return <>
 		<style jsx>{`
-			svg.icon {
+			.icon {
 				height: ${props.h};
 				aspect-ratio: 1;
 				color: ${props.color ??
-					"var(--text-100-color)"};
+					"var(--fill-100-color)"};
 			}
 		`}</style>
 		<Dynamic component={props.icon} class="icon" use:solid-styled />
 	</>
 }
 
-export function Iconless(props: VoidProps<{
+export function IconPlaceholder(props: VoidProps<{
 	h:      string
 	color?: string
 }>) {
 	return <>
 		<style jsx>{`
-			.icon {
+			.icon { /* E.g. <div> */
 				height: ${props.h};
 				aspect-ratio: 1;
 				border-radius: var(--full);
 				background-color: ${props.color ??
-					"var(--text-100-color)"};
+					"var(--fill-100-color)"};
 			}
 		`}</style>
 		<div class="icon"></div>
@@ -52,7 +52,7 @@ export function Line(props: VoidProps<{
 				width: ${props.w};
 				border-radius: var(--full);
 				background-color: ${props.color ??
-					"var(--text-100-color)"};
+					"var(--fill-100-color)"};
 			}
 		`}</style>
 		<div class="line"></div>

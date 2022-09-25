@@ -9,12 +9,12 @@ function SectionToggle() {
 			<Icon icon={Smiley} h="16px" />
 			<Line w="25%" />
 			<div class="flex-grow"></div>
-			<Line w="10%" color="var(--text-200-color)" />
+			<Line w="10%" color="var(--fill-200-color)" />
 		</div>
 	</>
 }
 
-function Col2Contents() {
+function Sidebar() {
 	const [ref1, setRef1] = createSignal<HTMLElement>()
 	const [ref2, setRef2] = createSignal<HTMLElement>()
 
@@ -53,7 +53,7 @@ function Col2Contents() {
 					</For>
 					<div class="relative">
 						<Textarea />
-						<div class="absolute inset-b-($form-height/2) grid grid-cols-3 gap-$gap">
+						<div class="absolute inset-b-$gap grid grid-cols-3 gap-$gap">
 							<div></div>
 							<For each={range(2)}>
 								{() => <>
@@ -90,22 +90,22 @@ function Col2Contents() {
 			</div>
 		</div>
 		<div ref={setRef2} class="flex-shrink:0">
-			<hr class="collapsible" />
-			<section class="p-$p flex-row gap-16">
-				<div class="h-80 aspect-16/9 rounded-12 background-color:$text-200-color"></div>
+			<hr />
+			<section class="p-$p flex-row gap-$gap">
+				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-200-color"></div>
 				<div class="flex-grow flex-col gap-($gap/2)">
-					<Line w="70%" color="var(--text-200-color)" />
-					<Line w="90%" color="var(--text-200-color)" />
-					<Line w="80%" color="var(--text-200-color)" />
-					<Line w="60%" color="var(--text-200-color)" />
+					<Line w="70%" color="var(--fill-200-color)" />
+					<Line w="90%" color="var(--fill-200-color)" />
+					<Line w="80%" color="var(--fill-200-color)" />
+					<Line w="60%" color="var(--fill-200-color)" />
 				</div>
 			</section>
 			<hr />
 			<section class="p-$p flex-col gap-($gap/2)">
-				<Line w="calc(70%/1.25)" color="var(--text-200-color)" />
-				<Line w="calc(90%/1.25)" color="var(--text-200-color)" />
-				<Line w="calc(80%/1.25)" color="var(--text-200-color)" />
-				<Line w="calc(60%/1.25)" color="var(--text-200-color)" />
+				<Line w="calc(70%/1.25)" color="var(--fill-200-color)" />
+				<Line w="calc(90%/1.25)" color="var(--fill-200-color)" />
+				<Line w="calc(80%/1.25)" color="var(--fill-200-color)" />
+				<Line w="calc(60%/1.25)" color="var(--fill-200-color)" />
 			</section>
 		</div>
 	</>
@@ -113,10 +113,11 @@ function Col2Contents() {
 
 ////////////////////////////////////////
 
-function Col1Contents() {
+function Main() {
 	return <>
 		<style jsx>{`
 			.grid {
+				/* Query CSS variables */
 				--height: var(--search-results-grid-height);
 				--border-radius: var(--search-results-grid-border-radius);
 
@@ -146,7 +147,7 @@ function StickySearchBar() {
 				padding: 0 var(--px);
 				height: var(--search-bar-height);
 				background-color: var(--base-color);
-				box-shadow: var(--box-shadow);
+				box-shadow: var(--hairline-box-shadow);
 			}
 		`}</style>
 		<div class="sticky-search-bar flex-row flex-align-center">
@@ -247,7 +248,7 @@ export function App() {
 				min-height: 100vh;
 
 				/* TRANSITION */
-				transition: 300ms ease;
+				transition: var(--duration-300) ease;
 				transition-property: margin-right;
 			}
 			[data-state-sidebar=collapsed] .column-1 {
@@ -266,21 +267,18 @@ export function App() {
 				inset: 0 0 0 auto; /* E.g. inset-r */
 				width: var(--sidebar-width);
 				background-color: var(--base-color);
-				box-shadow: var(--box-shadow);
+				box-shadow: var(--hairline-box-shadow);
 
 				/* TRANSITION */
-				transition: 300ms ease;
-				transition-property: width, transform;
+				transition: var(--duration-300) ease;
+				transition-property: width, box-shadow, transform;
 			}
 			[data-state-sidebar=collapsed] .column-2 {
 				transform: translateX(var(--sidebar-width));
 			}
 			[data-state-sidebar=expanded] .column-2 {
 				width: clamp(0px, var(--expanded-sidebar-width), 100vw);
-			}
-			/* Light mode: disable box-shadow */
-			:global(:root[data-theme=light]) [data-state-sidebar=expanded] .column-2 {
-				box-shadow: revert;
+				box-shadow: var(--box-shadow);
 			}
 
 			/********************************/
@@ -293,7 +291,7 @@ export function App() {
 				pointer-events: none; /* Passthrough */
 
 				/* TRANSITION */
-				transition: 300ms ease;
+				transition: var(--duration-300) ease;
 				transition-property: background-color, backdrop-filter;
 			}
 			[data-state-sidebar=expanded] .column-2-backdrop {
@@ -304,11 +302,11 @@ export function App() {
 		`}</style>
 		<div class="contents" data-state-sidebar={sidebar()}>
 			<div class="column-1">
-				<Col1Contents />
+				<Main />
 			</div>
 			<div class="column-2-backdrop" onClick={cycleForwards}></div>
 			<div ref={setRef} class="column-2 flex-col">
-				<Col2Contents />
+				<Sidebar />
 			</div>
 		</div>
 	</>

@@ -1,0 +1,21 @@
+$a11y-duration-mul: 1;
+
+$duration-50:  calc(50ms  * var(--a11y-duration-mul));
+$duration-100: calc(100ms * var(--a11y-duration-mul));
+$duration-150: calc(150ms * var(--a11y-duration-mul));
+$duration-200: calc(200ms * var(--a11y-duration-mul));
+$duration-250: calc(250ms * var(--a11y-duration-mul));
+$duration-300: calc(300ms * var(--a11y-duration-mul));
+$duration-350: calc(350ms * var(--a11y-duration-mul));
+$duration-400: calc(400ms * var(--a11y-duration-mul));
+$duration-450: calc(450ms * var(--a11y-duration-mul));
+$duration-500: calc(500ms * var(--a11y-duration-mul));
+
+@mixin body {
+	// https://web.dev/prefers-reduced-motion/#remove-motion-on-the-web
+	@media (prefers-reduced-motion: reduce) {
+		:root {
+			--a11y-duration-mul: 0;
+		}
+	}
+}

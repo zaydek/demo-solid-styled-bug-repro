@@ -1,0 +1,20 @@
+@use "sass:meta";
+
+// Modules
+@use "vars_accessibility";
+@use "vars_layout";
+@use "vars_theme";
+
+@use "utils/interpolate-vars" as *;
+
+:root {
+	@include interpolate-vars(
+		meta.module-variables(vars_accessibility),
+		meta.module-variables(vars_layout),
+		meta.module-variables(vars_theme),
+	);
+}
+
+@include vars_accessibility.body;
+@include vars_layout.body;
+@include vars_theme.body;

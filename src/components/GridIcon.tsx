@@ -1,4 +1,12 @@
+import { createSignal } from "solid-js";
+import { Icon, Line } from "./Primitives";
 import { Smiley } from "./Smiley";
+
+//// const [active, setActive] = createSignal<boolean>()
+////
+//// setInterval(() => {
+//// 	setActive(curr => curr === undefined ? true : undefined)
+//// }, 1_000)
 
 export function GridIcon() {
 	return <>
@@ -25,15 +33,15 @@ export function GridIcon() {
 				transform: scale(0);
 
 				/* TRANSITION */
-				transition: 150ms cubic-bezier(0, 1, 0.25, 1.15);
+				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.group:hover .grid-icon-wrapper::before {
-				background-color: var(--faded-base-color);
+				background-color: var(--hover-color);
 				transform: scale(1);
 			}
-			.group:hover:active .grid-icon-wrapper::before {
-				background-color: var(--theme-color);
+			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper::before {
+				background-color: var(--hover-active-color);
 				transform: scale(1);
 			}
 
@@ -53,31 +61,27 @@ export function GridIcon() {
 
 			/********************************/
 
-			svg.grid-icon {
-				height: 32px;
-				aspect-ratio: 1;
-				color: var(--text-100-color);
+			.grid-icon-wrapper > :global(.icon) {
+				color: var(--fill-100-color);
 			}
-			.group:hover:active .grid-icon {
+			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper > :global(.icon) {
 				color: white;
 			}
 
 			/********************************/
 
-			.grid-text {
-				height: 6px;
-				width: 50%;
-				border-radius: var(--full);
-				background-color: var(--text-200-color);
+			/* TODO: Remove this when converting <Line> to <Text> */
+			.grid-icon-wrapper > :global(.line) {
+				background-color: var(--fill-200-color);
 			}
-			.group:hover:active .grid-text {
+			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper > :global(.line) {
 				background-color: white;
 			}
 		`}</style>
-		<div class="group grid grid-center">
+		<div class="group grid grid-center" /* data-state-active={active()} */>
 			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-32px" tabindex="0">
-				<Smiley class="grid-icon" use:solid-styled />
-				<div class="grid-text"></div>
+				<Icon icon={Smiley} h="32px" />
+				<Line w="50%" />
 			</div>
 		</div>
 	</>
