@@ -1,39 +1,7 @@
-@use "sass:list";
-@use "sass:meta";
-@use "sass:string";
-
-// Shorthand for describing a CSS variable-based color
-//
-//   color(base 100%)
-//   -> hsl(var(--base-hue) var(--base-saturation) 100%)
-//
-@function color($args, $alpha: 100%) {
-	$a1: list.nth($args, 1);
-	$a2: list.nth($args, 2);
-	@if $alpha == 100% {
-		@return string.unquote("hsl(var(--#{$a1}-hue) var(--#{$a1}-saturation) #{$a2})");
-	} @else {
-		@return string.unquote("hsl(var(--#{$a1}-hue) var(--#{$a1}-saturation) #{$a2} / #{$alpha})");
-	}
-}
-
-// Shorthand for describing a CSS variable-based themed color
-//
-//   themed-color(base 100%)
-//   -> (
-//   ->   light: hsl(var(--base-hue) var(--base-saturation) 100%),
-//   ->   dark:  hsl(var(--base-hue) var(--base-saturation) 10%),
-//   -> )
-//
-@function themed-color($args, $alpha: 100%, $delta: 10%) {
-	$dark-args: (list.nth($args, 1) 100% - list.nth($args, 2) + $delta);
-	@return (
-		light: color($args, $alpha),
-		dark:  color($dark-args, $alpha),
-	);
-}
+@use "css-utils" as *;
 
 ////////////////////////////////////////
+// TODO: Extract?
 
 $px:  20px;
 $py:  16px;
@@ -42,37 +10,50 @@ $gap: 12px;
 
 $full: 1000px;
 
-$sidebar-width: 500px; // Chrome window min-width
+$sidebar-width: 500px; // Chrome
 $expanded-sidebar-width: 640px;
 $search-bar-height: 72px;
+$search-results-grid-height: 96px;
+$search-results-grid-border-radius: 32px;
 
 $form-height: 32px;
-
-// Use -4px because of focus-ring-
 $reduced-form-height: $form-height - 4px;
 
 ////////////////////////////////////////
+// TODO: Extract?
 
 $base-hue:         220deg;
-$base-saturation:  30%;
+$base-saturation:  25%;
 $base-lightness:   100%;
 
 $theme-hue:        265deg;
 $theme-saturation: 100%;
 $theme-lightness:  50%;
 
-$theme-color:      color(theme 50%);
+//// $focus-hue: $theme-hue + 10deg;
+//// $focus-hue: (
+//// 	light: 210deg,
+//// 	dark:  200deg,
+//// );
 
-$base-color:       themed-color(base 100%);
-$faded-base-color: themed-color(base 90%);
-$form-color:       themed-color(base 100%, $delta: 20%);
-$hairline-color:   themed-color(base 85%);
-$text-100-color:   themed-color(base 35%);
-$text-200-color:   themed-color(base 65%);
+//// $focus-hue: $theme-hue + 10deg;
+
+$focus-hue:        200deg;
+$focus-saturation: 100%;
+$focus-lightness:  50%;
+
+$theme-color:      link(theme var(--theme-lightness));
+
+$base-color:       themed-link(base 100%);
+$faded-base-color: themed-link(base 90%);
+$form-color:       themed-link(base 100%, $delta: 20%);
+$hairline-color:   themed-link(base 80%);
+$text-100-color:   themed-link(base 35%);
+$text-200-color:   themed-link(base 65%);
 
 $backdrop-color: (
-	light: color(base 0%, $alpha: 15%),
-	dark:  color(base 0%, $alpha: 25%),
+	light: link(base 0%, $alpha: 15%),
+	dark:  link(base 0%, $alpha: 25%),
 );
 
 ////////////////////////////////////////
@@ -86,10 +67,8 @@ hr {
 	height: $-thickness;
 	background-color: var(--hairline-color);
 }
-
-// Collapsible <hr>
 hr.collapsible {
 	position: relative;
 	z-index: 10;
-	margin-top: -1 * $-thickness;
+	margin-top: -$-thickness;
 }

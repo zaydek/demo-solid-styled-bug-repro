@@ -5,11 +5,8 @@
 	--focus-ring-offset:        4px;
 	--focus-ring-thickness:     4px;
 
-	--focus-ring-color:       hsl(195deg 100% 50%);
-	--focus-ring-alpha-color: hsl(195deg 100% 50% / 15%);
-
-	//// --focus-ring-color:       hsl(var(--theme-hue) var(--theme-saturation) var(--theme-lightness));
-	//// --focus-ring-alpha-color: hsl(var(--theme-hue) var(--theme-saturation) var(--theme-lightness) / 15%);
+	--focus-ring-color:       hsl(var(--focus-hue) var(--focus-saturation) var(--focus-lightness));
+	--focus-ring-alpha-color: hsl(var(--focus-hue) var(--focus-saturation) var(--focus-lightness) / 15%);
 }
 
 .focus-ring { position: relative; }

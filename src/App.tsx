@@ -244,13 +244,6 @@ function Col2Contents() {
 function Col1Contents() {
 	return <>
 		<style jsx>{`
-			:global(:root) {
-				--search-results-grid-height: 96px;
-				--search-results-grid-border-radius: 25%;
-			}
-
-			/********************************/
-
 			.grid {
 				--height: var(--search-results-grid-height);
 				--border-radius: var(--search-results-grid-border-radius);
@@ -339,10 +332,9 @@ function GridIcon() {
 			.grid-icon-wrapper {
 				display: grid;
 				grid-template:
-					/* TODO */
-					"." calc((var(--border-radius) / 2 * 3) / 2) /* E.g. "b" / 2  */
+					"." calc(32px / 2)
 					"a" 1fr
-					"b" calc(var(--border-radius) / 2 * 3);
+					"b" 32px;
 				place-items: center;
 			}
 
@@ -373,7 +365,7 @@ function GridIcon() {
 			}
 		`}</style>
 		<div class="group grid grid-center">
-			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-24" tabindex="0">
+			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-32" tabindex="0">
 				<Smiley class="grid-icon" use:solid-styled />
 				<div class="grid-text"></div>
 			</div>
@@ -452,6 +444,7 @@ export function App() {
 	})
 
 	return <>
+		{/* TODO: Add inert somewhere */}
 		<style jsx>{`
 			/* TODO: This only works / has been tested on desktop */
 			:global(body:has([data-state-sidebar=expanded])) {
