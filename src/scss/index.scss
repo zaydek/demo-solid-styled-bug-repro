@@ -16,6 +16,12 @@
 	);
 }
 
+[tabindex] {
+	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
 @include vars-layout.body;
 @include vars-colors.body;
 @include vars-box-shadow.body;

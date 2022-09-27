@@ -1,16 +1,16 @@
 import { defineConfig } from "vite"
 
-import solidStyled from "babel-plugin-solid-styled"
-import unocss from "unocss/vite"
-import solid from "vite-plugin-solid"
+import solidStyledPlugin from "babel-plugin-solid-styled"
+import unocssPlugin from "unocss/vite"
+import solidPlugin from "vite-plugin-solid"
 
 export default defineConfig({
 	plugins: [
-		unocss(), // COMPAT/Solid: Takes precedence because of "&" -> "&amp;"
-		solid({
+		unocssPlugin(), // COMPAT/Solid: Takes precedence because of "&" -> "&amp;"
+		solidPlugin({
 			babel: {
 				plugins: [
-					[solidStyled, {}]
+					[solidStyledPlugin, { verbose: true }]
 				],
 			},
 			hot: false, // Disable HMR

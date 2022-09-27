@@ -29,7 +29,7 @@ export function Checkbox(props: VoidProps<{ active?: boolean }>) {
 				transform: translateX(calc(16px / 2));
 
 				/* transition */
-				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
+				transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.checkbox:is(:hover:active, [data-state-active]) > :global(:not(:nth-child(3))) {
@@ -48,7 +48,7 @@ export function Checkbox(props: VoidProps<{ active?: boolean }>) {
 				transform: rotate(180deg) scale(0);
 
 				/* transition */
-				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
+				transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.checkbox:is(:hover:active, [data-state-active]) > :global(:nth-child(3)) {

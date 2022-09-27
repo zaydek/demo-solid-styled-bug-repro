@@ -1,5 +1,5 @@
-import { Icon, Line } from "./Primitives";
-import { Smiley } from "./Smiley";
+import { Icon, Line } from "./Primitives"
+import { Smiley } from "./Smiley"
 
 export function GridIcon() {
 	return <>
@@ -26,7 +26,7 @@ export function GridIcon() {
 				transform: scale(0);
 
 				/* transition */
-				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
+				transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.group:hover .grid-icon-wrapper::before {

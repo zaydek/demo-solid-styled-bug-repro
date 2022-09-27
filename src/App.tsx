@@ -250,7 +250,7 @@ export function App() {
 				min-height: 100vh;
 
 				/* transition */
-				transition: var(--duration-250) ease;
+				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: margin-right;
 			}
 			[data-state-sidebar=collapsed] .column-1 {
@@ -272,7 +272,7 @@ export function App() {
 				box-shadow: var(--hairline-box-shadow);
 
 				/* transition */
-				transition: var(--duration-250) ease;
+				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: width, transform;
 			}
 			[data-state-sidebar=collapsed] .column-2 {
@@ -295,7 +295,7 @@ export function App() {
 				/* transition */
 				/* NOTE: background-color, backdrop-filter values don’t change
 				meaningfully between light and dark modes */
-				transition: var(--duration-250) ease;
+				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: background-color, backdrop-filter;
 			}
 			[data-state-sidebar=expanded] .column-2-backdrop {

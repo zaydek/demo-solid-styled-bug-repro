@@ -2,112 +2,77 @@ import "the-new-css-reset"
 import "virtual:uno.css"
 import "./scss/index.scss"
 
+import { createSignal, onMount } from "solid-js"
 import { render } from "solid-js/web"
 import { StyleRegistry } from "solid-styled"
-import { App } from "./App"
+import { AriaCheckbox } from "./aria/AriaCheckbox"
+import { createRef } from "./solid-utils"
+import { AriaRadio, AriaRadiogroup } from "./aria/AriaRadio"
+//// import { App } from "./App"
 
-//// function Panel(props: ParentProps<{
-//// 	title:    string
-//// 	subtitle: string
+//// function App() {
+//// 	const [checked, setChecked] = createSignal(false)
 ////
-//// 	open?: true
-//// }>) {
-//// 	const [ref, setRef] = createSignal<HTMLElement>()
-//// 	const [headRef, setHeadRef] = createSignal<HTMLElement>()
-////
-//// 	const [open, setOpen] = createSignal(props.open)
-////
-//// 	const [collapseHeight, setCollapseHeight] = createSignal<"auto" | `${string}px`>("auto")
-//// 	const [expandedHeight, setExpandedHeight] = createSignal<"auto" | `${string}px`>("auto")
-//// 	const [spring, setSpring] = createSignal<number>(1.15)
+//// 	const [ref, setRef] = createRef()
 ////
 //// 	onMount(() => {
-//// 		const min = headRef()!.scrollHeight
-//// 		const max = ref()!.scrollHeight
-//// 		setCollapseHeight(`${min}px`)
-//// 		setExpandedHeight(`${max}px`)
-//// 		setSpring(1 + min / max * 0.15)
+//// 		console.log(ref())
 //// 	})
 ////
 //// 	return <>
 //// 		<style jsx>{`
-//// 			.panel,
-//// 			.panel * {
-//// 				outline: 1px solid red;
+//// 			/* https://twitter.com/LeaVerou/status/1045768279753666562 */
+//// 			.checkbox {
+//// 				height: 32px;
+//// 				aspect-ratio: 4;
+//// 				border-radius: var(--full);
+//// 				background-color: red;
 //// 			}
-////
-//// 			/********************************/
-////
-//// 			.panel {
-//// 				height: ${expandedHeight()};
-//// 				box-shadow: 0 0 0 1px hsl(0deg 0% 50%);
-//// 				overflow-y: hidden;
-////
-//// 				/* transition */
-//// 				transition: 500ms cubic-bezier(0, 1, 0.25, ${spring()});
-//// 				transition-property: height;
+//// 			.checkbox[aria-checked=true] {
+//// 				background-color: pink;
 //// 			}
-//// 			.panel:not([data-state-open]) {
-//// 				height: ${collapseHeight()};
-//// 			}
-////
-//// 			/********************************/
-////
-//// 			.panel-head {
-//// 				padding: 16px;
-//// 				gap: var(--gap);
-//// 			}
-////
-//// 			/********************************/
-////
-//// 			.panel-body {
-//// 				padding: 16px;
-//// 				padding-top: 0; /* Override padding */
-//// 				opacity: 1;
-////
-//// 				/* transition */
-//// 				transition: 500ms cubic-bezier(0, 1, 0.25, ${spring()});
-//// 				transition-property: opacity;
-//// 			}
-//// 			.panel:not([data-state-open]) .panel-body {
-//// 				opacity: 0;
+//// 			.checkbox:focus-visible {
+//// 				box-shadow: 0 0 0 4px blue;
 //// 			}
 //// 		`}</style>
-//// 		<div ref={setRef} class="panel" data-state-open={open()} onClick={e => setOpen(curr => curr === true ? undefined : true)}>
-//// 			<div ref={setHeadRef} class="panel-head flex-row flex-align-center cursor:pointer user-select:none">
-//// 				{/* <div>{props.title}</div>
-//// 				<div class="flex-grow"></div>
-//// 				<div>{props.subtitle}</div> */}
-//// 				<Icon icon={Smiley} h="16px" />
-//// 				<Line w="25%" />
-//// 				<div class="flex-grow"></div>
-//// 				<Line w="10%" color="var(--fill-200-color)" />
-//// 			</div>
-//// 			<div class="panel-body">
-//// 				{props.children}
-//// 			</div>
+//// 		<div class="grid grid-center min-h-100vh">
+//// 			<AriaCheckbox ref={setRef} class="checkbox" checked={checked()} onClick={e => setChecked(curr => !curr)} use:solid-styled>
+//// 				<div>Hello, world!</div>
+//// 			</AriaCheckbox>
 //// 		</div>
+//// 		<div class="h-100vh"></div>
+//// 		<div class="h-100vh"></div>
+//// 		<div class="h-100vh"></div>
 //// 	</>
 //// }
-////
-//// function App() {
-//// 	return <>
-//// 		<div class="p-128px grid grid-center">
-//// 			<div class="w-100% max-w-384px">
-//// 				<Panel title="foo" subtitle="bar" open>
-//// 					<div>Hello, world!</div>
-//// 					<div>Hello, world!</div>
-//// 					<div>Hello, world!</div>
-//// 					<div>Hello, world!</div>
-//// 					<div>Hello, world!</div>
-//// 					<div>Hello, world!</div>
-//// 					<div>Hello, world!</div>
-//// 					<div>Hello, world!</div>
-//// 				</Panel>
-//// 			</div>
-//// 		</div>
-//// 	</>
-//// }
+
+function App() {
+	const [value, setValue] = createSignal("foo")
+
+	return <>
+		<style jsx>{`
+			.radio {
+				height: 24px;
+				aspect-ratio: 1;
+				border-radius: var(--full);
+				background-color: red;
+			}
+			.radio[aria-checked=true] {
+				background-color: darkred;
+			}
+			.radio:focus-visible {
+				box-shadow: 0 0 0 2px blue;
+			}
+		`}</style>
+		<div class="grid grid-center min-h-100vh">
+			<AriaRadiogroup class="radiogroup flex-row gap-16px" value={value()} setValue={setValue} use:solid-styled>
+				<AriaRadio class="radio" value="foo" use:solid-styled></AriaRadio>
+				<AriaRadio class="radio" value="bar" use:solid-styled></AriaRadio>
+				<AriaRadio class="radio" value="baz" use:solid-styled></AriaRadio>
+			</AriaRadiogroup>
+		</div>
+	</>
+}
 
 render(() =>
 	<StyleRegistry>

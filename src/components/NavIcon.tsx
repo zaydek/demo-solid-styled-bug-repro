@@ -27,7 +27,7 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				transform: scale(0);
 
 				/* transition */
-				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
+				transition: calc(150ms * var(--motion-SAFE)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.nav-icon-wrapper:hover::before {

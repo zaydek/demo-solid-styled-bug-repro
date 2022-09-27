@@ -33,7 +33,7 @@ export function Collapsible(props: ParentProps<{
 				overflow-y: hidden;
 
 				/* transition */
-				transition: var(--duration-500) cubic-bezier(0, 1, 0.25, ${spring()});
+				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, ${spring()});
 				transition-property: height;
 			}
 			.panel:not([data-state-open]) {
@@ -52,13 +52,13 @@ export function Collapsible(props: ParentProps<{
 			.panel-body {
 				padding: var(--padding-y) 0;
 				padding-top: 0; /* Override */
-				opacity: 1;
 
 				/* transition */
-				transition: var(--duration-500) cubic-bezier(0, 1, 0.25, ${spring()});
-				transition-property: opacity;
+				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, ${spring()});
+				transition-property: transform, opacity;
 			}
 			.panel:not([data-state-open]) .panel-body {
+				transform: scale(0.9);
 				opacity: 0;
 			}
 		`}</style>

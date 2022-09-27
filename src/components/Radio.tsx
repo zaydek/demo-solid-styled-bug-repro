@@ -40,7 +40,7 @@ export function Radio(props: VoidProps<{ active?: boolean }>) {
 				transform: scale(0);
 
 				/* transition */
-				transition: var(--duration-100) cubic-bezier(0, 1, 0.25, 1.15);
+				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.group:is(:hover:active, [data-state-active]) .radio::after {
@@ -55,7 +55,7 @@ export function Radio(props: VoidProps<{ active?: boolean }>) {
 				transform: scale(0);
 
 				/* transition */
-				transition: var(--duration-100) cubic-bezier(0, 1, 0.25, 1.15);
+				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.group:is(:hover:active, [data-state-active]) .radio > :global(.icon-placeholder) {

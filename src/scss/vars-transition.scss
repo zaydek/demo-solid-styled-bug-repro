@@ -1,24 +1,9 @@
-$duration-multiplier: 1;
-
-$duration-75:   calc(  75ms * var(--duration-multiplier));
-$duration-100:  calc( 100ms * var(--duration-multiplier));
-$duration-150:  calc( 150ms * var(--duration-multiplier));
-$duration-200:  calc( 200ms * var(--duration-multiplier));
-$duration-250:  calc( 250ms * var(--duration-multiplier));
-$duration-300:  calc( 300ms * var(--duration-multiplier));
-$duration-350:  calc( 350ms * var(--duration-multiplier));
-$duration-400:  calc( 400ms * var(--duration-multiplier));
-$duration-450:  calc( 450ms * var(--duration-multiplier));
-$duration-500:  calc( 500ms * var(--duration-multiplier));
-$duration-1000: calc(1000ms * var(--duration-multiplier));
-$duration-2000: calc(2000ms * var(--duration-multiplier));
-$duration-5000: calc(5000ms * var(--duration-multiplier));
+$motion-safe: 1;
 
 @mixin body {
-	// https://web.dev/prefers-reduced-motion/#remove-motion-on-the-web
 	@media (prefers-reduced-motion: reduce) {
 		:root {
-			--duration-multiplier: 0;
+			--motion-safe: 0;
 		}
 	}
 }
