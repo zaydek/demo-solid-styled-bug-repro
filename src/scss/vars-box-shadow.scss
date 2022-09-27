@@ -1,0 +1,41 @@
+$-hairline-thickness: 1px;
+
+$realistic-box-shadow: (
+	0  1px  2px  -1px hsl(var(--card-hue) var(--card-saturation) 10% / 25%),
+	0  2px  4px  -2px hsl(var(--card-hue) var(--card-saturation) 10% / 25%),
+	0  4px  8px  -4px hsl(var(--card-hue) var(--card-saturation) 10% / 25%),
+	0  8px 16px  -8px hsl(var(--card-hue) var(--card-saturation) 10% / 25%),
+	0 16px 32px -16px hsl(var(--card-hue) var(--card-saturation) 10% / 25%),
+	0 32px 64px -32px hsl(var(--card-hue) var(--card-saturation) 10% / 25%),
+);
+
+$realistic-color-box-shadow: (
+	0  1px  2px  -1px hsl(var(--card-hue) var(--card-saturation) 50% / 25%),
+	0  2px  4px  -2px hsl(var(--card-hue) var(--card-saturation) 50% / 25%),
+	0  4px  8px  -4px hsl(var(--card-hue) var(--card-saturation) 50% / 25%),
+	0  8px 16px  -8px hsl(var(--card-hue) var(--card-saturation) 50% / 25%),
+	0 16px 32px -16px hsl(var(--card-hue) var(--card-saturation) 50% / 25%),
+	0 32px 64px -32px hsl(var(--card-hue) var(--card-saturation) 50% / 25%),
+);
+
+$inset-hairline-box-shadow: inset 0 0 0 $-hairline-thickness var(--hairline-color);
+$hairline-box-shadow: 0 0 0 $-hairline-thickness var(--hairline-color);
+
+$inset-card-box-shadow: (
+	light: (var(--inset-hairline-box-shadow), var(--realistic-color-box-shadow)),
+	dark:  (var(--inset-hairline-box-shadow), var(--realistic-box-shadow)),
+);
+$card-box-shadow: (
+	light: (var(--hairline-box-shadow), var(--realistic-color-box-shadow)),
+	dark:  (var(--hairline-box-shadow), var(--realistic-box-shadow)),
+);
+
+$form-box-shadow: var(--inset-card-box-shadow);
+
+@mixin body {
+	hr {
+		height: $-hairline-thickness;
+		background-color: var(--hairline-color);
+		&.collapsible { position: relative; z-index: 10; margin-top: -$-hairline-thickness; }
+	}
+}

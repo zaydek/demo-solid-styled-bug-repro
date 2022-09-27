@@ -1,0 +1,35 @@
+@use "utils/link" as *;
+
+// Raw channels
+$card-hue:              220deg;
+$card-saturation:       25%;
+$card-lightness:        100%;
+
+// Raw channels
+$theme-hue:             265deg;
+$theme-saturation:      100%;
+$theme-lightness:       50%;
+
+// Raw channels
+$focus-ring-hue:        190deg;            // Copy by value
+$focus-ring-saturation: $theme-saturation; // Copy by value
+$focus-ring-lightness:  $theme-lightness;  // Copy by value
+
+$theme-color:           link(theme $theme-lightness);                   // Copy by value (because of link)
+$hover-color:           link(theme $theme-lightness, $alpha: 15%);      // Copy by value (because of link)
+$hover-active-color:    link(theme $theme-lightness);                   // Copy by value (because of link)
+
+$card-color:            themed-link(card $card-lightness);              // Copy by value (because of link)
+$form-color:            themed-link(card $card-lightness, $delta: 20%); // Copy by value (because of link)
+
+$faded-card-color:      themed-link(card 90%);
+$hairline-color:        themed-link(card 80%);
+$fill-100-color:        themed-link(card 35%);
+$fill-200-color:        themed-link(card 65%);
+
+$backdrop-color: (
+	light: link(card 0%, $alpha: 15%),
+	dark:  link(card 0%, $alpha: 25%),
+);
+
+@mixin body {}

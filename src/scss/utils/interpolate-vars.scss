@@ -14,7 +14,7 @@
 				}
 			}
 		}
-		background-color: var(--base-color);
+		background-color: var(--card-color);
 	}
 	&[data-theme=dark] {
 		@each $loaded-module in $loaded-modules {

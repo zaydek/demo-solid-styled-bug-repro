@@ -5,15 +5,21 @@ import unocss from "unocss/vite"
 import solid from "vite-plugin-solid"
 
 export default defineConfig({
-  plugins: [
+	plugins: [
 		unocss(), // COMPAT/Solid: Takes precedence because of "&" -> "&amp;"
-    solid({
-      babel: {
-        plugins: [
-          [solidStyled, {}]
-        ],
-      },
-      hot: false, // Disable HMR
-    }),
-  ],
+		solid({
+			babel: {
+				plugins: [
+					[solidStyled, {}]
+				],
+			},
+			hot: false, // Disable HMR
+		}),
+	],
+	server: {
+		port: 3000,
+	},
+	build: {
+		target: "esnext",
+	},
 })

@@ -1,5 +1,5 @@
 import "the-new-css-reset"
-import "uno.css"
+import "virtual:uno.css"
 import "./scss/index.scss"
 
 import { render } from "solid-js/web"

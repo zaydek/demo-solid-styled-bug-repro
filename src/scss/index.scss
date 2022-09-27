@@ -1,8 +1,8 @@
 @use "sass:meta";
 
-// Modules
 @use "vars-layout";
-@use "vars-decoration";
+@use "vars-colors";
+@use "vars-box-shadow";
 @use "vars-transition";
 
 @use "utils/interpolate-vars" as *;
@@ -10,13 +10,15 @@
 :root {
 	@include interpolate-vars(
 		meta.module-variables(vars-layout),
-		meta.module-variables(vars-decoration),
+		meta.module-variables(vars-colors),
+		meta.module-variables(vars-box-shadow),
 		meta.module-variables(vars-transition),
 	);
 }
 
 @include vars-layout.body;
-@include vars-decoration.body;
+@include vars-colors.body;
+@include vars-box-shadow.body;
 @include vars-transition.body;
 
 @include meta.load-css("focus-ring");

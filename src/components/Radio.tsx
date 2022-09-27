@@ -26,7 +26,7 @@ export function Radio() {
 				inset: 0;
 				border-radius: inherit;
 				background-color: var(--form-color);
-				box-shadow: var(--inset-box-shadow);
+				box-shadow: var(--form-box-shadow);
 			}
 			.radio::after {
 				position: absolute;
@@ -60,9 +60,9 @@ export function Radio() {
 				transform: scale(1);
 			}
 		`}</style>
-		<div class="group flex-row gap-$gap focus-ring focus-ring-$full" tabindex="1" data-state-active={active()}>
+		<div class="group flex-row gap-($gap*2/3) focus-ring focus-ring-$full" tabindex="1" data-state-active={active()}>
 			<div class="flex-grow">
-				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-base-color flex-row flex-align-center gap-$gap">
+				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-card-color flex-row flex-align-center gap-$gap">
 					<Icon icon={Smiley} h="16px" />
 					<Line w="35%" />
 				</div>

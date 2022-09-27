@@ -1,8 +1,11 @@
-import { active } from "./DEBUG_active"
+import { VoidProps } from "solid-js"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
-export function Checkbox() {
+// TODO: Change VoidProps to ParentProps and add { icon: VoidComponent<CSSProps> }
+export function Checkbox(props: VoidProps<{ active?: boolean }>) {
+	const active = () => props.active
+
 	return <>
 		<style jsx>{`
 			.checkbox {
@@ -12,7 +15,7 @@ export function Checkbox() {
 				padding: 0 calc(var(--height) / 2);
 				height: var(--height);
 				border-radius: var(--full);
-				background-color: var(--base-color);
+				background-color: var(--card-color);
 				box-shadow: var(--inset-hairline-box-shadow);
 			}
 			.checkbox:is(:hover:active, [data-state-active]) {

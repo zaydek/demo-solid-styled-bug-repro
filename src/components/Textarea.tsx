@@ -10,7 +10,7 @@ export function Textarea() {
 				padding: calc(var(--height) / 2);
 				height: 144px;
 				border-radius: calc(var(--height) / 2);
-				background-color: var(--base-color);
+				background-color: var(--card-color);
 				box-shadow: var(--inset-hairline-box-shadow);
 			}
 		`}</style>

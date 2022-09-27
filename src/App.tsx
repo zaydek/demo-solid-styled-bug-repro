@@ -51,6 +51,7 @@ function Sidebar() {
 							<Radio />
 						</>}
 					</For>
+					<div></div>
 					<div class="relative">
 						<Textarea />
 						<div class="absolute inset-b-$gap grid grid-cols-3 gap-$gap">
@@ -62,13 +63,14 @@ function Sidebar() {
 							</For>
 						</div>
 					</div>
-					<Checkbox />
+					<div></div>
+					<div class="grid grid-cols-1 gap-$gap">
+						<Checkbox active />
+					</div>
 					<div class="grid grid-cols-3 gap-$gap">
-						<For each={range(3)}>
-							{() => <>
-								<Checkbox />
-							</>}
-						</For>
+						<Checkbox active />
+						<Checkbox active />
+						<Checkbox />
 					</div>
 				</section>
 				<hr />
@@ -146,13 +148,12 @@ function StickySearchBar() {
 				top: 0;
 				padding: 0 var(--px);
 				height: var(--search-bar-height);
-				background-color: var(--base-color);
+				background-color: var(--card-color);
 				box-shadow: var(--hairline-box-shadow);
 			}
 		`}</style>
 		<div class="sticky-search-bar flex-row flex-align-center">
 			<NavIcon icon={Smiley} />
-			{/* TODO */}
 			<div class="flex-grow">
 				<div class="px-$px h-$search-bar-height flex-row flex-align-center">
 					<Line w="15%" />
@@ -279,7 +280,7 @@ export function App() {
 				z-index: 10;
 				inset: 0 0 0 auto; /* E.g. inset-r */
 				width: var(--sidebar-width);
-				background-color: var(--base-color);
+				background-color: var(--card-color);
 				box-shadow: var(--hairline-box-shadow);
 
 				/* TRANSITION */
@@ -291,7 +292,7 @@ export function App() {
 			}
 			[data-state-sidebar=expanded] .column-2 {
 				width: clamp(0px, var(--expanded-sidebar-width), 100vw);
-				box-shadow: var(--box-shadow);
+				box-shadow: var(--card-box-shadow);
 			}
 
 			/********************************/
@@ -304,9 +305,8 @@ export function App() {
 				pointer-events: none; /* Passthrough */
 
 				/* TRANSITION */
-				/* NOTE: The reason "transition-property: background-color,
-				backdrop-filter;" is OK is because the values don’t change
-				(meaningfully) between light and dark mode. */
+				/* NOTE: background-color, backdrop-filter values don’t change
+				meaningfully between light and dark modes */
 				transition: var(--duration-300) ease;
 				transition-property: background-color, backdrop-filter;
 			}
