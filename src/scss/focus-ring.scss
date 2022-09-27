@@ -1,8 +1,8 @@
 :root {
 	// Query CSS variables
 	--focus-ring-border-radius: 0px; // Use 0px because of calc(...)
-	--focus-ring-offset:        2px;
-	--focus-ring-thickness:     3px;
+	--focus-ring-offset:        4px;
+	--focus-ring-thickness:     4px;
 
 	--focus-ring-color:       hsl(var(--focus-ring-hue) var(--focus-ring-saturation) var(--focus-ring-lightness));
 	--focus-ring-alpha-color: hsl(var(--focus-ring-hue) var(--focus-ring-saturation) var(--focus-ring-lightness) / 15%);

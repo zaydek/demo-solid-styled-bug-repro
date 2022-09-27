@@ -1,5 +1,6 @@
 import { createEffect, createSignal, For, onCleanup } from "solid-js"
 import { Checkbox, GridIcon, Icon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
+import { Collapsible } from "./components/Collapsible"
 import { range } from "./utils/range"
 
 // TODO: Extract <CollapsibleSection>?
@@ -25,7 +26,7 @@ function Sidebar() {
 
 	return <>
 		<div ref={setRef1} class="flex-shrink:0">
-			<section class="px-$px h-$search-bar-height flex-row flex-align-center">
+			<section class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
 				<NavIcon icon={Smiley} />
 				<div class="flex-grow"></div>
 				<NavIcon icon={Smiley} />
@@ -33,34 +34,24 @@ function Sidebar() {
 			</section>
 			<hr />
 		</div>
+		{/* TODO: Deprecate scroller? Use <style jsx> here? */}
 		<div class="flex-grow flex-col focus-ring-scroller focus-ring-14px" style={{ "height": height() }}>
 			<div class="flex-grow overflow-y:auto">
-				<section class="p-$p flex-col gap-$gap">
-					<SectionToggle />
-					<For each={range(2)}>
-						{() => <>
-							<Radio />
-						</>}
-					</For>
-				</section>
+				<Collapsible title="foo" subtitle="bar" open>
+					<Radio active />
+					<Radio />
+				</Collapsible>
 				<hr />
-				<section class="p-$p flex-col gap-$gap">
-					<SectionToggle />
-					<For each={range(2)}>
-						{() => <>
-							<Radio />
-						</>}
-					</For>
+				<Collapsible title="foo" subtitle="bar" open>
+					<Radio active />
+					<Radio />
 					<div></div>
 					<div class="relative">
 						<Textarea />
 						<div class="absolute inset-b-$gap grid grid-cols-3 gap-$gap">
 							<div></div>
-							<For each={range(2)}>
-								{() => <>
-									<Checkbox />
-								</>}
-							</For>
+							<Checkbox />
+							<Checkbox />
 						</div>
 					</div>
 					<div></div>
@@ -72,28 +63,25 @@ function Sidebar() {
 						<Checkbox active />
 						<Checkbox />
 					</div>
-				</section>
+				</Collapsible>
 				<hr />
-				<section class="p-$p flex-col gap-$gap">
-					<SectionToggle />
+				<Collapsible title="foo" subtitle="bar" open>
 					<Slider />
-				</section>
+				</Collapsible>
 				<hr />
-				<section class="p-$p flex-col gap-$gap">
-					<SectionToggle />
+				<Collapsible title="foo" subtitle="bar" open>
 					<Slider />
-				</section>
+				</Collapsible>
 				<hr />
-				<section class="p-$p flex-col gap-$gap">
-					<SectionToggle />
+				<Collapsible title="foo" subtitle="bar" open>
 					<Slider />
-				</section>
+				</Collapsible>
 				<hr />
 			</div>
 		</div>
 		<div ref={setRef2} class="flex-shrink:0">
 			<hr class="collapsible" />
-			<section class="p-$p flex-row gap-$gap">
+			<section class="p-$padding flex-row gap-$gap">
 				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-200-color"></div>
 				<div class="flex-grow flex-col gap-($gap/2)">
 					<Line w="70%" color="var(--fill-200-color)" />
@@ -103,7 +91,7 @@ function Sidebar() {
 				</div>
 			</section>
 			<hr />
-			<section class="p-$p flex-col gap-($gap/2)">
+			<section class="p-$padding flex-col gap-($gap/2)">
 				<Line w="calc(70%/1.25)" color="var(--fill-200-color)" />
 				<Line w="calc(90%/1.25)" color="var(--fill-200-color)" />
 				<Line w="calc(80%/1.25)" color="var(--fill-200-color)" />
@@ -129,7 +117,7 @@ function Main() {
 			}
 		`}</style>
 		<StickySearchBar />
-		<div class="grid p-$p pb-($py*2)">
+		<div class="grid p-$padding pb-($padding-y*2)">
 			<For each={range(400)}>
 				{() => <>
 					<GridIcon />
@@ -146,7 +134,7 @@ function StickySearchBar() {
 				position: sticky;
 				z-index: 10;
 				top: 0;
-				padding: 0 var(--px);
+				padding: 0 var(--padding-x);
 				height: var(--search-bar-height);
 				background-color: var(--card-color);
 				box-shadow: var(--hairline-box-shadow);
@@ -155,7 +143,7 @@ function StickySearchBar() {
 		<div class="sticky-search-bar flex-row flex-align-center">
 			<NavIcon icon={Smiley} />
 			<div class="flex-grow">
-				<div class="px-$px h-$search-bar-height flex-row flex-align-center">
+				<div class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
 					<Line w="15%" />
 				</div>
 			</div>
@@ -261,8 +249,8 @@ export function App() {
 				margin-right: var(--sidebar-width);
 				min-height: 100vh;
 
-				/* TRANSITION */
-				transition: var(--duration-300) ease;
+				/* transition */
+				transition: var(--duration-250) ease;
 				transition-property: margin-right;
 			}
 			[data-state-sidebar=collapsed] .column-1 {
@@ -283,8 +271,8 @@ export function App() {
 				background-color: var(--card-color);
 				box-shadow: var(--hairline-box-shadow);
 
-				/* TRANSITION */
-				transition: var(--duration-300) ease;
+				/* transition */
+				transition: var(--duration-250) ease;
 				transition-property: width, transform;
 			}
 			[data-state-sidebar=collapsed] .column-2 {
@@ -304,10 +292,10 @@ export function App() {
 				background-color: transparent;
 				pointer-events: none; /* Passthrough */
 
-				/* TRANSITION */
+				/* transition */
 				/* NOTE: background-color, backdrop-filter values don’t change
 				meaningfully between light and dark modes */
-				transition: var(--duration-300) ease;
+				transition: var(--duration-250) ease;
 				transition-property: background-color, backdrop-filter;
 			}
 			[data-state-sidebar=expanded] .column-2-backdrop {

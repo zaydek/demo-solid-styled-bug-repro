@@ -1,9 +1,10 @@
-import { VoidComponent, VoidProps } from "solid-js"
+import { createSignal, VoidComponent, VoidProps } from "solid-js"
 import { CSSProps } from "../solid-utils/extra-types"
-import { active } from "./DEBUG_active"
 import { Icon } from "./Primitives"
 
 export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
+	const [checked, setChecked] = createSignal(false)
+
 	return <>
 		<style jsx>{`
 			/* Preamble */
@@ -25,7 +26,7 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				background-color: transparent;
 				transform: scale(0);
 
-				/* TRANSITION */
+				/* transition */
 				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
@@ -47,7 +48,7 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				color: white;
 			}
 		`}</style>
-		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-$full" tabindex="1" data-state-active={active()}>
+		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-$full" onClick={e => setChecked(curr => !curr)} tabindex="1" data-state-active={checked() || undefined}>
 			<Icon icon={props.icon} h="32px" />
 		</div>
 	</>

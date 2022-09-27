@@ -25,7 +25,7 @@ export function GridIcon() {
 				background-color: transparent;
 				transform: scale(0);
 
-				/* TRANSITION */
+				/* transition */
 				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}

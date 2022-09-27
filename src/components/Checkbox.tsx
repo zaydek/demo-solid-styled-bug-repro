@@ -1,10 +1,10 @@
-import { VoidProps } from "solid-js"
+import { createSignal, VoidProps } from "solid-js"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
 // TODO: Change VoidProps to ParentProps and add { icon: VoidComponent<CSSProps> }
 export function Checkbox(props: VoidProps<{ active?: boolean }>) {
-	const active = () => props.active
+	const [checked, setChecked] = createSignal(props.active)
 
 	return <>
 		<style jsx>{`
@@ -28,7 +28,7 @@ export function Checkbox(props: VoidProps<{ active?: boolean }>) {
 			.checkbox > :global(:not(:nth-child(3))) {
 				transform: translateX(calc(16px / 2));
 
-				/* TRANSITION */
+				/* transition */
 				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
@@ -47,7 +47,7 @@ export function Checkbox(props: VoidProps<{ active?: boolean }>) {
 				color: transparent;
 				transform: rotate(180deg) scale(0);
 
-				/* TRANSITION */
+				/* transition */
 				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
@@ -56,7 +56,7 @@ export function Checkbox(props: VoidProps<{ active?: boolean }>) {
 				transform: rotate(0) scale(1);
 			}
 		`}</style>
-		<div class="checkbox flex-row flex-center gap-$gap focus-ring focus-ring-$full" tabindex="1" data-state-active={active()}>
+		<div class="checkbox flex-row flex-center gap-$gap focus-ring focus-ring-$full" onClick={e => setChecked(curr => !curr)} tabindex="1" data-state-active={checked() || undefined}>
 			<Icon icon={Smiley} h="16px" />
 			<Line w="35%" />
 			<Icon icon={Smiley} h="16px" />

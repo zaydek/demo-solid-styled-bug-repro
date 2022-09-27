@@ -1,17 +1,21 @@
 @use "utils/link" as *;
 
-// Raw channels
+// HSL channels
 $card-hue:              220deg;
 $card-saturation:       25%;
 $card-lightness:        100%;
 
-// Raw channels
-$theme-hue:             265deg;
+// HSL channels
+//// $theme-hue:             270deg;
+$theme-hue:             200deg;
 $theme-saturation:      100%;
 $theme-lightness:       50%;
 
-// Raw channels
-$focus-ring-hue:        190deg;            // Copy by value
+// HSL channels
+$focus-ring-hue: (
+	light: 200deg,
+	dark:  200deg,
+);
 $focus-ring-saturation: $theme-saturation; // Copy by value
 $focus-ring-lightness:  $theme-lightness;  // Copy by value
 

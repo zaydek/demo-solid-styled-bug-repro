@@ -1,8 +1,11 @@
-import { active } from "./DEBUG_active";
-import { Icon, IconPlaceholder, Line } from "./Primitives";
-import { Smiley } from "./Smiley";
+import { createSignal, VoidProps } from "solid-js"
+import { Icon, IconPlaceholder, Line } from "./Primitives"
+import { Smiley } from "./Smiley"
 
-export function Radio() {
+// TODO: Change VoidProps to ParentProps and add { icon: VoidComponent<CSSProps> }
+export function Radio(props: VoidProps<{ active?: boolean }>) {
+	const [checked, setChecked] = createSignal(props.active)
+
 	return <>
 		<style jsx>{`
 			/* Preamble */
@@ -36,8 +39,8 @@ export function Radio() {
 				background-color: transparent;
 				transform: scale(0);
 
-				/* TRANSITION */
-				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
+				/* transition */
+				transition: var(--duration-100) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.group:is(:hover:active, [data-state-active]) .radio::after {
@@ -51,8 +54,8 @@ export function Radio() {
 				background-color: transparent;
 				transform: scale(0);
 
-				/* TRANSITION */
-				transition: var(--duration-150) cubic-bezier(0, 1, 0.25, 1.15);
+				/* transition */
+				transition: var(--duration-100) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.group:is(:hover:active, [data-state-active]) .radio > :global(.icon-placeholder) {
@@ -60,7 +63,7 @@ export function Radio() {
 				transform: scale(1);
 			}
 		`}</style>
-		<div class="group flex-row gap-($gap*2/3) focus-ring focus-ring-$full" tabindex="1" data-state-active={active()}>
+		<div class="group flex-row gap-($gap*2/3) focus-ring focus-ring-$full" onClick={e => setChecked(curr => !curr)} tabindex="1" data-state-active={checked() || undefined}>
 			<div class="flex-grow">
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-card-color flex-row flex-align-center gap-$gap">
 					<Icon icon={Smiley} h="16px" />
