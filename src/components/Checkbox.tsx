@@ -56,7 +56,7 @@ export function Checkbox(props: VoidProps<{ active?: boolean }>) {
 				transform: rotate(0) scale(1);
 			}
 		`}</style>
-		<div class="checkbox flex-row flex-center gap-$gap focus-ring focus-ring-$full" onClick={e => setChecked(curr => !curr)} tabindex="1" data-state-active={checked() || undefined}>
+		<div class="checkbox flex-row flex-center gap-$gap focus-ring focus-ring-$full" onClick={e => setChecked(curr => !curr)} tabIndex="0" data-state-active={checked() || undefined}>
 			<Icon icon={Smiley} h="16px" />
 			<Line w="35%" />
 			<Icon icon={Smiley} h="16px" />

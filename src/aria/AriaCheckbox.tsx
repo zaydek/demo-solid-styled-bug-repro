@@ -8,16 +8,13 @@ import { CSSProps, RefProps } from "../solid-utils/extra-types"
 export function AriaCheckbox(props: ParentProps<RefProps & CSSProps & {
 	checked:    boolean
 	setChecked: Setter<boolean>
-
-	// TODO: DEPRECATE?
-	tabIndex?: number
 }>) {
 	const [ref, setRef] = createRef()
 
 	return (
 		<div
 			// Props
-			{...omitProps(props, ["checked", "setChecked", "tabIndex"])}
+			{...omitProps(props, ["checked", "setChecked"])}
 			// Ref
 			ref={el => {
 				batch(() => {
@@ -40,10 +37,10 @@ export function AriaCheckbox(props: ParentProps<RefProps & CSSProps & {
 					}
 				}
 			}}
-			// Attributes
+			// Accessibility
 			role="checkbox"
 			aria-checked={props.checked}
-			tabIndex={props.tabIndex ?? 0}
+			tabIndex="0"
 		>
 			{props.children}
 		</div>

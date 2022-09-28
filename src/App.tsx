@@ -1,4 +1,5 @@
 import { createEffect, createSignal, For, onCleanup } from "solid-js"
+import { AriaRadiogroup } from "./aria/AriaRadio"
 import { Checkbox, GridIcon, Icon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { Collapsible } from "./components/Collapsible"
 import { createRef } from "./solid-utils"
@@ -7,7 +8,7 @@ import { range } from "./utils/range"
 // TODO: Extract <CollapsibleSection>?
 function SectionToggle() {
 	return <>
-		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full" tabindex="1">
+		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full" tabIndex="0">
 			<Icon icon={Smiley} h="16px" />
 			<Line w="25%" />
 			<div class="flex-grow"></div>
@@ -17,16 +18,15 @@ function SectionToggle() {
 }
 
 function Sidebar() {
-	const [ref1, setRef1] = createRef()
-	const [ref2, setRef2] = createRef()
+	const [rdgValue1, setRdgValue1] = createSignal("foo")
+	const [rdgValue2, setRdgValue2] = createSignal("foo")
 
-	const height = (): undefined | `${string}px` => {
-		if (!(ref1() && ref2())) { return }
-		return `${ref1()!.offsetHeight + ref2()!.offsetHeight}px`
-	}
+	const [sliderValue1, setSliderValue1] = createSignal(25)
+	const [sliderValue2, setSliderValue2] = createSignal(25)
+	const [sliderValue3, setSliderValue3] = createSignal(25)
 
 	return <>
-		<div ref={setRef1} class="flex-shrink:0">
+		<div class="flex-shrink:0">
 			<section class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
 				<NavIcon icon={Smiley} />
 				<div class="flex-grow"></div>
@@ -35,52 +35,54 @@ function Sidebar() {
 			</section>
 			<hr />
 		</div>
-		{/* TODO: Deprecate scroller? Use <style jsx> here? */}
-		<div class="flex-grow flex-col focus-ring-scroller focus-ring-14px" style={{ "height": height() }}>
-			<div class="flex-grow overflow-y:auto">
-				<Collapsible title="foo" subtitle="bar" open>
-					<Radio active />
-					<Radio />
-				</Collapsible>
-				<hr />
-				<Collapsible title="foo" subtitle="bar" open>
-					<Radio active />
-					<Radio />
-					<div></div>
-					<div class="relative">
-						<Textarea />
-						<div class="absolute inset-b-$gap grid grid-cols-3 gap-$gap">
-							<div></div>
-							<Checkbox />
-							<Checkbox />
-						</div>
-					</div>
-					<div></div>
-					<div class="grid grid-cols-1 gap-$gap">
-						<Checkbox active />
-					</div>
-					<div class="grid grid-cols-3 gap-$gap">
-						<Checkbox active />
-						<Checkbox active />
+		{/* Disable scroller focus-ring */}
+		<div class="flex-grow overflow-y:auto" tabindex="-1">
+			<Collapsible title="foo" subtitle="bar" open>
+				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue1()} setValue={setRdgValue1}>
+					<Radio value="foo" />
+					<Radio value="bar" />
+				</AriaRadiogroup>
+			</Collapsible>
+			<hr />
+			<Collapsible title="foo" subtitle="bar" open>
+				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue2()} setValue={setRdgValue2}>
+					<Radio value="foo" />
+					<Radio value="bar" />
+				</AriaRadiogroup>
+				<div></div>
+				<div class="relative">
+					<Textarea />
+					<div class="absolute inset-b-$gap grid grid-cols-3 gap-$gap">
+						<div></div>
+						<Checkbox />
 						<Checkbox />
 					</div>
-				</Collapsible>
-				<hr />
-				<Collapsible title="foo" subtitle="bar" open>
-					<Slider />
-				</Collapsible>
-				<hr />
-				<Collapsible title="foo" subtitle="bar" open>
-					<Slider />
-				</Collapsible>
-				<hr />
-				<Collapsible title="foo" subtitle="bar" open>
-					<Slider />
-				</Collapsible>
-				<hr />
-			</div>
+				</div>
+				<div></div>
+				<div class="grid grid-cols-1 gap-$gap">
+					<Checkbox active />
+				</div>
+				<div class="grid grid-cols-3 gap-$gap">
+					<Checkbox active />
+					<Checkbox active />
+					<Checkbox />
+				</div>
+			</Collapsible>
+			<hr />
+			<Collapsible title="foo" subtitle="bar" open>
+				<Slider value={sliderValue1()} setValue={setSliderValue1} min={0} max={25} step={1} />
+			</Collapsible>
+			<hr />
+			<Collapsible title="foo" subtitle="bar" open>
+				<Slider value={sliderValue2()} setValue={setSliderValue2} min={0} max={25} step={1} />
+			</Collapsible>
+			<hr />
+			<Collapsible title="foo" subtitle="bar" open>
+				<Slider value={sliderValue3()} setValue={setSliderValue3} min={0} max={25} step={1} />
+			</Collapsible>
+			<hr />
 		</div>
-		<div ref={setRef2} class="flex-shrink:0">
+		<div class="flex-shrink:0">
 			<hr class="collapsible" />
 			<section class="p-$padding flex-row gap-$gap">
 				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-200-color"></div>

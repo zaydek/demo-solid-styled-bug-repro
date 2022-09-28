@@ -103,9 +103,6 @@ export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 	min:      number
 	max:      number
 	step:     number
-
-	// TODO: DEPRECATE?
-	tabIndex?: number
 }, ({ float, translateX }: { float: Accessor<number>, translateX: Accessor<undefined | number> }) => JSX.Element>) {
 	const [ref, setRef] = createRef()
 	const [trackRect, setTrackRect] = createSignal<DOMRect>()
@@ -133,18 +130,18 @@ export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 	const incrementAll = () => normalize(props.max)
 
 	const float = () => (props.value - props.min) / (props.max - props.min) // Get float from values
+
 	const translateX = () => {
 		if (!trackRect() || !thumbRect()) { return }
 		const trackW = trackRect()!.width
 		const thumbW = thumbRect()!.width
-		return float() * (trackW - thumbW)
+		return (float() * trackW) - (thumbW / 2)
 	}
 
 	let isPointerDown = false
 	onMount(() => {
 		function handlePointerDown(e: PointerEvent) {
 			if (e.button !== 0 || !e.composedPath().includes(ref()!)) { return }
-			//// e.preventDefault() // TODO: Do we want to call prevent default?
 			isPointerDown = true
 			normalizeClientX(e.clientX)
 		}
@@ -155,7 +152,6 @@ export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 	onMount(() => {
 		function handlePointerMove(e: PointerEvent) {
 			if (!isPointerDown) { return }
-			//// e.preventDefault() // TODO: Do we want to call prevent default?
 			normalizeClientX(e.clientX)
 		}
 		document.addEventListener("pointermove", handlePointerMove, false)
@@ -164,7 +160,6 @@ export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 
 	onMount(() => {
 		function handlePointerUp(e: PointerEvent) {
-			//// e.preventDefault() // TODO: Do we want to call prevent default?
 			isPointerDown = false
 		}
 		document.addEventListener("pointerup", handlePointerUp, false)
@@ -204,7 +199,7 @@ export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 						incrementAll()
 					}
 				}}
-				// Attributes
+				// Accessibility
 				role="slider"
 				aria-valuenow={props.value}
 				aria-valuemin={props.min}

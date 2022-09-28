@@ -27,7 +27,7 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				transform: scale(0);
 
 				/* transition */
-				transition: calc(150ms * var(--motion-SAFE)) cubic-bezier(0, 1, 0.25, 1.15);
+				transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
 			.nav-icon-wrapper:hover::before {
@@ -48,7 +48,7 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				color: white;
 			}
 		`}</style>
-		<div class="nav-icon-wrapper group grid grid-center focus-ring focus-ring-$full" onClick={e => setChecked(curr => !curr)} tabindex="1" data-state-active={checked() || undefined}>
+		<div class="nav-icon-wrapper grid grid-center focus-ring focus-ring-$full" onClick={e => setChecked(curr => !curr)} tabIndex="0" data-state-active={checked() || undefined}>
 			<Icon icon={props.icon} h="32px" />
 		</div>
 	</>

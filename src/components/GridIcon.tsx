@@ -14,7 +14,7 @@ export function GridIcon() {
 			.grid-icon-wrapper {
 				height: 100%;
 				aspect-ratio: 1;
-				border-radius: var(--border-radius);
+				border-radius: var(--border-radius); /* From search results */
 			}
 			.grid-icon-wrapper::before { content: ""; }
 			.grid-icon-wrapper::before {

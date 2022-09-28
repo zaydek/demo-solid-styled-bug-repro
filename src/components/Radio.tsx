@@ -1,11 +1,9 @@
-import { createSignal, VoidProps } from "solid-js"
+import { VoidProps } from "solid-js"
+import { AriaRadio } from "../aria/AriaRadio"
 import { Icon, IconPlaceholder, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
-// TODO: Change VoidProps to ParentProps and add { icon: VoidComponent<CSSProps> }
-export function Radio(props: VoidProps<{ active?: boolean }>) {
-	const [checked, setChecked] = createSignal(props.active)
-
+export function Radio(props: VoidProps<{ value: string }>) {
 	return <>
 		<style jsx>{`
 			/* Preamble */
@@ -43,7 +41,7 @@ export function Radio(props: VoidProps<{ active?: boolean }>) {
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
-			.group:is(:hover:active, [data-state-active]) .radio::after {
+			.group[aria-checked=true] .radio::after {
 				background-color: var(--hover-active-color);
 				transform: scale(1);
 			}
@@ -58,12 +56,12 @@ export function Radio(props: VoidProps<{ active?: boolean }>) {
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
-			.group:is(:hover:active, [data-state-active]) .radio > :global(.icon-placeholder) {
+			.group[aria-checked=true] .radio > :global(.icon-placeholder) {
 				background-color: white;
 				transform: scale(1);
 			}
 		`}</style>
-		<div class="group flex-row gap-($gap*2/3) focus-ring focus-ring-$full" onClick={e => setChecked(curr => !curr)} tabindex="1" data-state-active={checked() || undefined}>
+		<AriaRadio class="group flex-row gap-($gap*2/3) focus-ring focus-ring-$full" value={props.value} use:solid-styled>
 			<div class="flex-grow">
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-card-color flex-row flex-align-center gap-$gap">
 					<Icon icon={Smiley} h="16px" />
@@ -73,6 +71,6 @@ export function Radio(props: VoidProps<{ active?: boolean }>) {
 			<div class="radio grid grid-center">
 				<IconPlaceholder h="8px" />
 			</div>
-		</div>
+		</AriaRadio>
 	</>
 }

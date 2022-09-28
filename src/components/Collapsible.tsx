@@ -65,7 +65,7 @@ export function Collapsible(props: ParentProps<{
 		`}</style>
 		<div ref={setRef} class="panel" data-state-open={open()}>
 			<div ref={setHeadRef} class="panel-head" onClick={e => setOpen(curr => curr === true ? undefined : true)}>
-				<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full" tabindex="1">
+				<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full" tabIndex="0">
 					<Icon icon={Smiley} h="16px" />
 					<Line w="25%" />
 					<div class="flex-grow"></div>

@@ -27,12 +27,7 @@ export const RadiogroupContext = createContext<{
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export function AriaRadio(props: ParentProps<RefProps & CSSProps & {
-	value: string
-
-	// TODO: DEPRECATE?
-	tabIndex?: number
-}>) {
+export function AriaRadio(props: ParentProps<RefProps & CSSProps & { value: string }>) {
 	const radiogroup = useContext(RadiogroupContext)!
 
 	const [ref, setRef] = createRef()
@@ -77,10 +72,10 @@ export function AriaRadio(props: ParentProps<RefProps & CSSProps & {
 					radiogroup.actions.increment()
 				}
 			}}
-			// Attributes
+			// Accessibility
 			role="radio"
 			aria-checked={checked()}
-			tabIndex={checked() ? (props.tabIndex ?? 0) : -1}
+			tabIndex={checked() ? 0 : -1}
 		>
 			{props.children}
 		</div>
@@ -133,10 +128,7 @@ export function AriaRadiogroup(props: ParentProps<RefProps & CSSProps & {
 				actions: { register, deregister, select, decrement, increment },
 			}}
 		>
-			<div
-				{...omitProps(props, ["value", "setValue"])}
-				role="radiogroup"
-			>
+			<div {...omitProps(props, ["value", "setValue"])} role="radiogroup">
 				{props.children}
 			</div>
 		</RadiogroupContext.Provider>

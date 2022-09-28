@@ -1,5 +1,3 @@
-//// :focus { outline: revert; }
-
 :root {
 	// Query CSS variables
 	--focus-ring-border-radius: 0px; // Use 0px because of calc(...)
@@ -10,11 +8,9 @@
 	--focus-ring-alpha-color: hsl(var(--focus-ring-hue) var(--focus-ring-saturation) var(--focus-ring-lightness) / 15%);
 }
 
+/* Preamble */
 .focus-ring { position: relative; }
 .focus-ring::after { content: ""; }
-
-.focus-ring-scroller { position: relative; }
-.focus-ring-scroller::after { content: ""; }
 
 @each $value, $value-px in (
 	 2px:  2px,
@@ -41,15 +37,6 @@
 	}
 }
 
-////////////////////////////////////////
-// .focus-ring
-
-//// .group:focus-visible > .focus-ring,
-//// .focus-ring:focus-visible {
-//// 	background-color: var(--focus-ring-alpha-color);
-//// }
-
-.group > .focus-ring::after,
 .focus-ring::after {
 	position: absolute;
 	inset: calc(-1 * var(--focus-ring-offset));
@@ -58,43 +45,8 @@
 	transform: scale(0);
 	pointer-events: none;
 }
-.group:focus-visible > .focus-ring::after,
 .focus-ring:focus-visible::after {
 	box-shadow: 0 0 0 var(--focus-ring-thickness) var(--focus-ring-color);
 	transform: scale(1);
 	pointer-events: none;
-}
-
-////////////////////////////////////////
-// .focus-ring-scroller
-
-.focus-ring-scroller { position: relative; }
-
-//// .focus-ring-scroller::before { content: ""; }
-//// .focus-ring-scroller::before {
-//// 	position: absolute;
-//// 	z-index: 100;
-//// 	inset: calc(var(--focus-ring-offset) + var(--focus-ring-thickness) * 3)
-//// 		calc(var(--focus-ring-offset) + var(--focus-ring-thickness) * 4); // TODO
-//// 	background-color: transparent;
-//// 	border-radius: calc(var(--focus-ring-border-radius));
-//// 	box-shadow: inset 0 0 0 var(--focus-ring-thickness) transparent;
-//// 	pointer-events: none;
-//// }
-//// .focus-ring-scroller:has(> :focus-visible)::before {
-//// 	background-color: var(--focus-ring-alpha-color);
-//// }
-
-.focus-ring-scroller::after { content: ""; }
-.focus-ring-scroller::after {
-	position: absolute;
-	z-index: 100;
-	inset: calc(var(--focus-ring-offset) + var(--focus-ring-thickness))
-		calc(var(--focus-ring-offset) + var(--focus-ring-thickness) * 2); // TODO
-	border-radius: calc(var(--focus-ring-border-radius) + var(--focus-ring-offset) * 2);
-	box-shadow: inset 0 0 0 var(--focus-ring-thickness) transparent;
-	pointer-events: none;
-}
-.focus-ring-scroller:has(> :focus-visible)::after {
-	box-shadow: inset 0 0 0 var(--focus-ring-thickness) var(--focus-ring-color);
 }
