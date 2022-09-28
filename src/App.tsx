@@ -1,4 +1,4 @@
-import { createEffect, createSignal, For, onCleanup } from "solid-js"
+import { createEffect, createSignal, For, onCleanup, onMount } from "solid-js"
 import { AriaRadiogroup } from "./aria/AriaRadio"
 import { Checkbox, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { Collapsible } from "./components/Collapsible"
@@ -6,12 +6,26 @@ import { createRef } from "./solid-utils"
 import { range } from "./utils/range"
 
 function Sidebar() {
+	const [open1, setOpen1] = createSignal(false)
+	const [open2, setOpen2] = createSignal(false)
+	const [open3, setOpen3] = createSignal(false)
+	const [open4, setOpen4] = createSignal(false)
+	const [open5, setOpen5] = createSignal(false)
+
 	const [rdgValue1, setRdgValue1] = createSignal("foo")
 	const [rdgValue2, setRdgValue2] = createSignal("foo")
 
 	const [sliderValue1, setSliderValue1] = createSignal(25)
 	const [sliderValue2, setSliderValue2] = createSignal(25)
 	const [sliderValue3, setSliderValue3] = createSignal(25)
+
+	onMount(() => {
+		setTimeout(() => {
+			setOpen1(true)
+			setOpen2(true)
+			setOpen3(true)
+		}, 0)
+	})
 
 	return <>
 		<div class="flex-shrink:0">
@@ -25,14 +39,14 @@ function Sidebar() {
 		</div>
 		{/* Use tabindex="-1" to disable scroller focus-ring */}
 		<div class="flex-grow overflow-y:auto" tabindex="-1">
-			<Collapsible title="foo" subtitle="bar" open>
+			<Collapsible title="foo" subtitle="bar" open={open1()} setOpen={setOpen1}>
 				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue1()} setValue={setRdgValue1}>
 					<Radio value="foo" />
 					<Radio value="bar" />
 				</AriaRadiogroup>
 			</Collapsible>
 			<hr />
-			<Collapsible title="foo" subtitle="bar" open>
+			<Collapsible title="foo" subtitle="bar" open={open2()} setOpen={setOpen2}>
 				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue2()} setValue={setRdgValue2}>
 					<Radio value="foo" />
 					<Radio value="bar" />
@@ -57,15 +71,15 @@ function Sidebar() {
 				</div>
 			</Collapsible>
 			<hr />
-			<Collapsible title="foo" subtitle="bar" open>
+			<Collapsible title="foo" subtitle="bar" open={open3()} setOpen={setOpen3}>
 				<Slider value={sliderValue1()} setValue={setSliderValue1} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
-			<Collapsible title="foo" subtitle="bar" open>
+			<Collapsible title="foo" subtitle="bar" open={open4()} setOpen={setOpen4}>
 				<Slider value={sliderValue2()} setValue={setSliderValue2} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
-			<Collapsible title="foo" subtitle="bar" open>
+			<Collapsible title="foo" subtitle="bar" open={open5()} setOpen={setOpen5}>
 				<Slider value={sliderValue3()} setValue={setSliderValue3} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />

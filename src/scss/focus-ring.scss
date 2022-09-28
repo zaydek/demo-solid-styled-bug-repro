@@ -37,6 +37,7 @@
 	}
 }
 
+.focus-ring-group .focus-ring::after,
 .focus-ring::after {
 	position: absolute;
 	inset: calc(-1 * var(--focus-ring-offset));
@@ -45,6 +46,7 @@
 	transform: scale(0);
 	pointer-events: none;
 }
+.focus-ring-group:focus-visible .focus-ring::after,
 .focus-ring:focus-visible::after {
 	box-shadow: 0 0 0 var(--focus-ring-thickness) var(--focus-ring-color);
 	transform: scale(1);
