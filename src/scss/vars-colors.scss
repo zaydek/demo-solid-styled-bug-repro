@@ -1,17 +1,13 @@
 @use "utils/link" as *;
 
-// HSL channels
 $card-hue:              220deg;
 $card-saturation:       25%;
 $card-lightness:        100%;
 
-// HSL channels
 $theme-hue:             200deg;
-//// $theme-hue         270deg;
 $theme-saturation:      100%;
 $theme-lightness:       50%;
 
-// HSL channels
 $focus-ring-hue:        200deg;
 $focus-ring-saturation: $theme-saturation; // Copy by value
 $focus-ring-lightness:  $theme-lightness;  // Copy by value
@@ -27,6 +23,14 @@ $faded-card-color:      themed-link(card 90%);
 $hairline-color:        themed-link(card 80%);
 $fill-100-color:        themed-link(card 35%);
 $fill-200-color:        themed-link(card 65%);
+
+// https://simpleicons.org
+$github-color:  #181717;
+$html-color:    #E34F26;
+$react-color:   #61DAFB;
+$svg-color:     #FFB13B;
+$twitter-color: #1DA1F2;
+$vue-color:     #4FC08D;
 
 $backdrop-color: (
 	light: link(card 0%, $alpha: 15%),

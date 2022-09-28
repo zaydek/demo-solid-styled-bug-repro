@@ -1,5 +1,5 @@
 import { VoidProps } from "solid-js"
-import { AriaRadio } from "../aria/AriaRadio"
+import { AriaRadio } from "../aria"
 import { Icon, IconPlaceholder, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
@@ -61,7 +61,7 @@ export function Radio(props: VoidProps<{ value: string }>) {
 				transform: scale(1);
 			}
 		`}</style>
-		<AriaRadio class="group flex-row gap-($gap*2/3) focus-ring focus-ring-$full" value={props.value} use:solid-styled>
+		<AriaRadio class="group flex-row gap-$gap focus-ring focus-ring-$full" value={props.value} use:solid-styled>
 			<div class="flex-grow">
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-card-color flex-row flex-align-center gap-$gap">
 					<Icon icon={Smiley} h="16px" />

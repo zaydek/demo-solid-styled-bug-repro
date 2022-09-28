@@ -1,5 +1,5 @@
 import { Setter, VoidProps } from "solid-js"
-import { AriaHorizontalSlider, AriaSliderThumb, AriaSliderTrack } from "../aria/AriaSlider"
+import { AriaHorizontalSlider, AriaSliderThumb, AriaSliderTrack } from "../aria"
 
 export function Slider(props: VoidProps<{
 	value:    number

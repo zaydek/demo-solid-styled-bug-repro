@@ -1,6 +1,6 @@
 import { createEffect, createSignal, For, onCleanup, onMount } from "solid-js"
-import { AriaRadiogroup } from "./aria/AriaRadio"
-import { Checkbox, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
+import { AriaRadiogroup } from "./aria"
+import { ColorButton, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { Collapsible } from "./components/Collapsible"
 import { createRef } from "./solid-utils"
 import { range } from "./utils/range"
@@ -12,8 +12,19 @@ function Sidebar() {
 	const [open4, setOpen4] = createSignal(false)
 	const [open5, setOpen5] = createSignal(false)
 
+	//////////////////////////////////////
+
 	const [rdgValue1, setRdgValue1] = createSignal("foo")
 	const [rdgValue2, setRdgValue2] = createSignal("foo")
+
+	//////////////////////////////////////
+
+	const [checked1, setChecked1] = createSignal(true)
+	const [checked2, setChecked2] = createSignal(true)
+	const [checked3, setChecked3] = createSignal(true)
+	const [rdgValue3, setRdgValue3] = createSignal("foo")
+
+	//////////////////////////////////////
 
 	const [sliderValue1, setSliderValue1] = createSignal(25)
 	const [sliderValue2, setSliderValue2] = createSignal(25)
@@ -56,19 +67,19 @@ function Sidebar() {
 					<Textarea />
 					<div class="absolute inset-b-$gap grid grid-cols-3 gap-$gap">
 						<div></div>
-						<Checkbox />
-						<Checkbox />
+						<ColorButton checked={checked1()} setChecked={setChecked1} />
+						<ColorButton checked={checked2()} setChecked={setChecked2} />
 					</div>
 				</div>
 				<div></div>
 				<div class="grid grid-cols-1 gap-$gap">
-					<Checkbox active />
+					<ColorButton checked={checked3()} setChecked={setChecked3} />
 				</div>
-				<div class="grid grid-cols-3 gap-$gap">
-					<Checkbox active />
-					<Checkbox active />
-					<Checkbox />
-				</div>
+				<AriaRadiogroup class="grid grid-cols-3 gap-$gap" value={rdgValue3()} setValue={setRdgValue3}>
+					<ColorButton value="foo" style={{ "--color": "var(--svg-color)" }} />
+					<ColorButton value="bar" style={{ "--color": "var(--react-color)" }} />
+					<ColorButton value="baz" style={{ "--color": "var(--vue-color)" }} />
+				</AriaRadiogroup>
 			</Collapsible>
 			<hr />
 			<Collapsible title="foo" subtitle="bar" open={open3()} setOpen={setOpen3}>

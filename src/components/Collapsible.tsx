@@ -1,5 +1,5 @@
 import { createRoot, createSignal, onMount, ParentProps, Setter } from "solid-js"
-import { AriaButton } from "../aria/AriaButton"
+import { AriaButton } from "../aria"
 import { createRef } from "../solid-utils"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
@@ -67,9 +67,9 @@ export function Collapsible(props: ParentProps<{
 				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, ${spring()});
 				transition-property: transform, opacity;
 			}
-			.panel[data-state-collapsed][data-state-once] .panel-body {
-				opacity: 0;
-			}
+			/* .panel[data-state-collapsed][data-state-once] .panel-body { */
+			/* 	opacity: 0; */
+			/* } */
 			.panel[data-state-collapsed]:not([data-state-once]) .panel-body {
 				transform: scale(0.9);
 				opacity: 0;

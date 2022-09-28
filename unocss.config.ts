@@ -57,7 +57,7 @@ const rules: Rule[] = [
 		return {}
 	}],
 
-	// TODO: Intellisense doesn’t see group
+	// TODO: Intellisense doesn’t resolve group
 	["group", { /* No-op */ }],
 	["contents", { "display": "contents" }],
 
@@ -135,11 +135,6 @@ const rules: Rule[] = [
 	 * Flexbox
 	 */
 	[/^flex-grow(?:-(.+))?$/, ([_, value]) => ({ "flex-grow": desugar(value) ?? 1 })],
-
-	// TODO
-	//// [/^flex-shrink(?:-(.+))?$/, ([_, value]) => ({ "flex-shrink": untyped(value) ?? 1      })],
-	//// [/^flex-basis(?:-(.+))?$/,  ([_, value]) => ({ "flex-basis":  untyped(value) ?? "auto" })],
-	//// [/^flex-wrap(?:-(.+))?$/,   ([_, value]) => ({ "flex-wrap":   untyped(value) ?? "wrap" })],
 
 	["flex-row", { "display": "flex", "flex-direction": "row" }],
 	["flex-col", { "display": "flex", "flex-direction": "column" }],

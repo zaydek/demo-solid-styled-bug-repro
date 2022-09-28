@@ -1,4 +1,4 @@
-export * from "./Checkbox"
+export * from "./ColorButton"
 export * from "./GridIcon"
 export * from "./NavIcon"
 export * from "./Primitives"
