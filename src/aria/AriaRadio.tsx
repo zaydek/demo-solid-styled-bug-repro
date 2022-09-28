@@ -1,3 +1,5 @@
+// https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/radio_role
+
 import { batch, createContext, createEffect, createSignal, on, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
 import { omitProps } from "solid-use"
 import { createRef } from "../solid-utils"
@@ -9,7 +11,7 @@ type State = {
 
 type Actions = {
 	register:   (value: string) => void
-	unregister: (value: string) => void
+	deregister: (value: string) => void
 	select:     (value: string) => void
 	decrement:  () => void
 	increment:  () => void
@@ -19,6 +21,11 @@ export const RadiogroupContext = createContext<{
 	state:   State
 	actions: Actions
 }>()
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 export function AriaRadio(props: ParentProps<RefProps & CSSProps & {
 	value: string
@@ -35,7 +42,7 @@ export function AriaRadio(props: ParentProps<RefProps & CSSProps & {
 	onMount(() => {
 		radiogroup.actions.register(props.value)
 		onCleanup(() => {
-			radiogroup.actions.unregister(props.value)
+			radiogroup.actions.deregister(props.value)
 		})
 	})
 
@@ -48,7 +55,7 @@ export function AriaRadio(props: ParentProps<RefProps & CSSProps & {
 	return (
 		<div
 			// Props
-			{...omitProps(props, ["value", "children"])}
+			{...omitProps(props, ["value"])}
 			// Ref
 			ref={el => {
 				batch(() => {
@@ -73,12 +80,17 @@ export function AriaRadio(props: ParentProps<RefProps & CSSProps & {
 			// Attributes
 			role="radio"
 			aria-checked={checked()}
-			tabIndex={checked() ?props.tabIndex ?? 0 : -1}
+			tabIndex={checked() ? (props.tabIndex ?? 0) : -1}
 		>
 			{props.children}
 		</div>
 	)
 }
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 export function AriaRadiogroup(props: ParentProps<RefProps & CSSProps & {
 	value:    string
@@ -90,7 +102,7 @@ export function AriaRadiogroup(props: ParentProps<RefProps & CSSProps & {
 		setRegisteredValues(curr => [...curr, value])
 	}
 
-	function unregister(value: string) {
+	function deregister(value: string) {
 		const index = registeredValues().findIndex(v => value === v)
 		if (index === -1) { return }
 		setRegisteredValues(curr => [...curr.slice(0, index), ...curr.slice(index + 1)])
@@ -118,11 +130,11 @@ export function AriaRadiogroup(props: ParentProps<RefProps & CSSProps & {
 		<RadiogroupContext.Provider
 			value={{
 				state: { value: () => props.value },
-				actions: { register, unregister, select, decrement, increment },
+				actions: { register, deregister, select, decrement, increment },
 			}}
 		>
 			<div
-				{...omitProps(props, ["value", "setValue", "children"])}
+				{...omitProps(props, ["value", "setValue"])}
 				role="radiogroup"
 			>
 				{props.children}

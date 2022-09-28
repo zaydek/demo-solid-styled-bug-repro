@@ -1,10 +1,10 @@
-import { removeComments } from "./format"
+import { decomment } from "./format"
 
 export function cx(...args: any[]) {
 	const str = args
 		.flat()
 		.filter(Boolean)
-		.map(str => removeComments(str))
+		.map(str => decomment(str))
 		.join(" ")
 		.trim()
 		.replaceAll(/\s+/g, " ")

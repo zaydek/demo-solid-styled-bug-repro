@@ -1,4 +1,5 @@
 import { createSignal, onMount, ParentProps } from "solid-js"
+import { createRef } from "../solid-utils"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
@@ -8,8 +9,8 @@ export function Collapsible(props: ParentProps<{
 
 	open?: true
 }>) {
-	const [ref, setRef] = createSignal<HTMLElement>()
-	const [headRef, setHeadRef] = createSignal<HTMLElement>()
+	const [ref, setRef] = createRef()
+	const [headRef, setHeadRef] = createRef()
 
 	const [open, setOpen] = createSignal(props.open)
 

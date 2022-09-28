@@ -1,175 +1,171 @@
-import { Accessor, createContext, createSignal, onCleanup, onMount, ParentProps, Setter, splitProps, useContext } from "solid-js"
-import { CSSProps } from "../solid-utils/extra-types"
+import { Accessor, batch, createContext, createSignal, FlowProps, JSX, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
+import { omitProps } from "solid-use"
+import { createRef } from "../solid-utils"
+import { CSSProps, RefProps } from "../solid-utils/extra-types"
 import { bound, round } from "../utils/precision"
 
-export const SliderContext = createContext<{
-	state: {
-		value:    () => number
-		min:      () => number
-		max:      () => number
-		step:     () => number
-		disabled: () => boolean
+type Actions = {
+	setTrackRect: Setter<DOMRect>
+	setThumbRect: Setter<DOMRect>
+}
 
-		trackClientRect: Accessor<undefined | DOMRect>
-		thumbClientRect: Accessor<undefined | DOMRect>
-	}
-	actions: {
-		setTrackClientRect: Setter<DOMRect>
-		setThumbClientRect: Setter<DOMRect>
-	}
+export const SliderContext = createContext<{
+	state:   {} // No-op
+	actions: Actions
 }>()
 
-//// export function useSliderContext() {
-//// 	return useContext(SliderContext)!
-//// }
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-export function AriaSliderThumb(props: ParentProps<CSSProps>) {
+export function AriaSliderThumb(props: ParentProps<RefProps & CSSProps>) {
 	const slider = useContext(SliderContext)!
 
-	const [ref, setRef] = createSignal<HTMLElement>()
+	const [ref, setRef] = createRef()
 
 	onMount(() => {
 		function handleResize() {
-			const el = ref()!
-			slider.actions.setThumbClientRect(el.getBoundingClientRect())
+			slider.actions.setThumbRect(ref()!.getBoundingClientRect())
 		}
-		handleResize()
 		window.addEventListener("resize", handleResize, false)
-		onCleanup(() => {
-			window.addEventListener("resize", handleResize, false)
-		})
+		onCleanup(() => window.addEventListener("resize", handleResize, false))
+
 		// Add an observer as a fallback
-		const observer = new ResizeObserver(() => {
-			handleResize()
-		})
+		const observer = new ResizeObserver(handleResize)
 		observer.observe(ref()!)
-		onCleanup(() => {
-			observer.disconnect()
-		})
+		onCleanup(observer.disconnect)
 	})
 
 	return <>
-		<div {...props} ref={setRef}>
+		<div
+			{...props}
+			// Ref
+			ref={el => {
+				batch(() => {
+					props.ref?.(el)
+					setRef(el)
+				})
+			}}
+		>
 			{props.children}
 		</div>
 	</>
 }
 
-export function AriaSliderTrack(props: ParentProps<CSSProps>) {
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+export function AriaSliderTrack(props: ParentProps<RefProps & CSSProps>) {
 	const slider = useContext(SliderContext)!
 
-	const [ref, setRef] = createSignal<HTMLElement>()
+	const [ref, setRef] = createRef()
 
 	onMount(() => {
 		function handleResize() {
-			const el = ref()!
-			slider.actions.setTrackClientRect(el.getBoundingClientRect())
+			slider.actions.setTrackRect(ref()!.getBoundingClientRect())
 		}
-		handleResize()
 		window.addEventListener("resize", handleResize, false)
-		onCleanup(() => {
-			window.addEventListener("resize", handleResize, false)
-		})
+		onCleanup(() => window.addEventListener("resize", handleResize, false))
+
 		// Add an observer as a fallback
-		const observer = new ResizeObserver(() => {
-			handleResize()
-		})
+		const observer = new ResizeObserver(handleResize)
 		observer.observe(ref()!)
-		onCleanup(() => {
-			observer.disconnect()
-		})
+		onCleanup(observer.disconnect)
 	})
 
 	return <>
-		<div {...props} ref={setRef}>
+		<div
+			{...props}
+			// Ref
+			ref={el => {
+				batch(() => {
+					props.ref?.(el)
+					setRef(el)
+				})
+			}}
+		>
 			{props.children}
 		</div>
 	</>
 }
 
-export function AriaSlider(props: ParentProps<CSSProps & {
-	value: number
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
+	value:    number
 	setValue: Setter<number>
+	min:      number
+	max:      number
+	step:     number
 
-	min:  number
-	max:  number
-	step: number
+	// TODO: DEPRECATE?
+	tabIndex?: number
+}, ({ float, translateX }: { float: Accessor<number>, translateX: Accessor<undefined | number> }) => JSX.Element>) {
+	const [ref, setRef] = createRef()
+	const [trackRect, setTrackRect] = createSignal<DOMRect>()
+	const [thumbRect, setThumbRect] = createSignal<DOMRect>()
 
-	// TODO: What about inert?
-	disabled?: boolean
-}>) {
-	const [curr, next] = splitProps(props, ["value", "setValue", "min", "max", "step"])
-
-	const [ref, setRef] = createSignal<HTMLElement>()
-	const [trackClientRect, setTrackClientRect] = createSignal<DOMRect>()
-	const [thumbClientRect, setThumbClientRect] = createSignal<DOMRect>()
-
-	const normalize = (value: number) => {
+	function normalize(value: number) {
 		const rounded = round(value)
 		const bounded = bound(rounded, { min: props.min, max: props.max })
-		curr.setValue(bounded)
+		props.setValue(bounded)
 	}
+	normalize(props.value) // Synchronously normalize
 
-	// Normalize immediately
-	normalize(props.value)
-
-	const normalizeClientX = (clientX: number) => {
-		const thumbWidth = thumbClientRect()!.width
-		const trackStart = trackClientRect()!.x
-		const trackWidth = trackClientRect()!.width
-
-		const float = ((clientX - thumbWidth / 2) - trackStart) / (trackWidth - thumbWidth)
+	function normalizeClientX(clientX: number) {
+		const trackX = trackRect()!.x
+		const trackW = trackRect()!.width
+		const thumbW = thumbRect()!.width
+		const float = ((clientX - thumbW / 2) - trackX) / (trackW - thumbW) // Get float from measurements
 		const value = float * (props.max - props.min) + props.min
 		normalize(value - value % props.step)
 	}
 
-	const decrement = () => {
-		normalize(curr.value - props.step)
+	const decrement    = () => normalize(props.value - props.step)
+	const decrementAll = () => normalize(props.min)
+	const increment    = () => normalize(props.value + props.step)
+	const incrementAll = () => normalize(props.max)
+
+	const float = () => (props.value - props.min) / (props.max - props.min) // Get float from values
+	const translateX = () => {
+		if (!trackRect() || !thumbRect()) { return }
+		const trackW = trackRect()!.width
+		const thumbW = thumbRect()!.width
+		return float() * (trackW - thumbW)
 	}
 
-	const decrementAll = () => {
-		normalize(props.min)
-	}
-
-	const increment = () => {
-		normalize(curr.value + props.step)
-	}
-
-	const incrementAll = () => {
-		normalize(props.max)
-	}
-
+	let isPointerDown = false
 	onMount(() => {
-		let pointerDown = false
 		function handlePointerDown(e: PointerEvent) {
-			if (props.disabled) { return }
-			if (e.button !== 0 || !e.composedPath().includes(ref()!)) {
-				// No-op
-				return
-			}
-			//// e.preventDefault()
-			pointerDown = true
+			if (e.button !== 0 || !e.composedPath().includes(ref()!)) { return }
+			//// e.preventDefault() // TODO: Do we want to call prevent default?
+			isPointerDown = true
 			normalizeClientX(e.clientX)
 		}
 		document.addEventListener("pointerdown", handlePointerDown, false)
 		onCleanup(() => document.addEventListener("pointerdown", handlePointerDown, false))
+	})
 
+	onMount(() => {
 		function handlePointerMove(e: PointerEvent) {
-			if (props.disabled) { return }
-			if (!pointerDown) {
-				// No-op
-				return
-			}
-			e.preventDefault()
+			if (!isPointerDown) { return }
+			//// e.preventDefault() // TODO: Do we want to call prevent default?
 			normalizeClientX(e.clientX)
 		}
 		document.addEventListener("pointermove", handlePointerMove, false)
 		onCleanup(() => document.addEventListener("pointermove", handlePointerMove, false))
+	})
 
+	onMount(() => {
 		function handlePointerUp(e: PointerEvent) {
-			if (props.disabled) { return }
-			e.preventDefault()
-			pointerDown = false
+			//// e.preventDefault() // TODO: Do we want to call prevent default?
+			isPointerDown = false
 		}
 		document.addEventListener("pointerup", handlePointerUp, false)
 		onCleanup(() => document.addEventListener("pointerup", handlePointerUp, false))
@@ -178,38 +174,22 @@ export function AriaSlider(props: ParentProps<CSSProps & {
 	return <>
 		<SliderContext.Provider
 			value={{
-				state: {
-					value:    () => props.value,
-					min:      () => props.min,
-					max:      () => props.max,
-					step:     () => props.step,
-					disabled: () => props.disabled ?? false,
-
-					trackClientRect,
-					thumbClientRect,
-				},
-				actions: {
-					setTrackClientRect,
-					setThumbClientRect,
-				},
+				state: {}, // No-op
+				actions: { setTrackRect, setThumbRect },
 			}}
 		>
 			<div
-				ref={setRef}
-
-				// Destructure props for use:solid-styled, etc.
-				{...next}
-
-				// Accessibility
-				role="slider"
-				aria-valuenow={props.value}
-				aria-valuemin={props.min}
-				aria-valuemax={props.max}
-				aria-disabled={props.disabled}
-
+				// Props
+				{...omitProps(props, ["value", "setValue", "min", "max", "step"])}
+				// Ref
+				ref={el => {
+					batch(() => {
+						props.ref?.(el)
+						setRef(el)
+					})
+				}}
 				// Handlers
 				onKeyDown={e => {
-					//// if (props.disabled) { return }
 					if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown") {
 						e.preventDefault()
 						decrement()
@@ -224,10 +204,14 @@ export function AriaSlider(props: ParentProps<CSSProps & {
 						incrementAll()
 					}
 				}}
-				//// tabIndex={!props.disabled ? 0 : -1}
-				tabindex="0"
+				// Attributes
+				role="slider"
+				aria-valuenow={props.value}
+				aria-valuemin={props.min}
+				aria-valuemax={props.max}
+				tabIndex="0"
 			>
-				{next.children}
+				{props.children({ float, translateX })}
 			</div>
 		</SliderContext.Provider>
 	</>

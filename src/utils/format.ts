@@ -32,7 +32,7 @@ export function detab(str: string) {
 	return lines.map(line => line.slice(minTabCount)).join("\n")
 }
 
-export function removeComments(str: string) {
+export function decomment(str: string) {
 	return str
 		.replace(/\n?\t*\/\/.*/g, "")                // E.g. // ...
 		.replace(/\n?\t*\/\*(?:\n?.*?)*?\*\//gm, "") // E.g. /* ... */
@@ -144,9 +144,9 @@ Hello, world!
 	})
 
 	test("decomment", () => {
-		expect(removeComments(`console.log("Hello, world!)`)).toBe(`console.log("Hello, world!)`)
-		expect(removeComments(`console.log("Hello, world!) // FIXME`)).toBe(`console.log("Hello, world!) `)
-		expect(removeComments(`console.log("Hello, world!) /* FIXME */`)).toBe(`console.log("Hello, world!) `)
-		expect(removeComments(`/* FIXME */ console.log("Hello, world!)`)).toBe(` console.log("Hello, world!)`)
+		expect(decomment(`console.log("Hello, world!)`)).toBe(`console.log("Hello, world!)`)
+		expect(decomment(`console.log("Hello, world!) // FIXME`)).toBe(`console.log("Hello, world!) `)
+		expect(decomment(`console.log("Hello, world!) /* FIXME */`)).toBe(`console.log("Hello, world!) `)
+		expect(decomment(`/* FIXME */ console.log("Hello, world!)`)).toBe(` console.log("Hello, world!)`)
 	})
 }

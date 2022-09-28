@@ -1,13 +1,13 @@
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/checkbox_role
 
-import { batch, ParentProps } from "solid-js"
+import { batch, ParentProps, Setter } from "solid-js"
 import { omitProps } from "solid-use"
 import { createRef } from "../solid-utils"
 import { CSSProps, RefProps } from "../solid-utils/extra-types"
 
 export function AriaCheckbox(props: ParentProps<RefProps & CSSProps & {
-	checked: boolean
-	onClick: (e: MouseEvent) => void
+	checked:    boolean
+	setChecked: Setter<boolean>
 
 	// TODO: DEPRECATE?
 	tabIndex?: number
@@ -17,7 +17,7 @@ export function AriaCheckbox(props: ParentProps<RefProps & CSSProps & {
 	return (
 		<div
 			// Props
-			{...omitProps(props, ["checked", "onClick", "tabIndex"])}
+			{...omitProps(props, ["checked", "setChecked", "tabIndex"])}
 			// Ref
 			ref={el => {
 				batch(() => {
@@ -27,14 +27,14 @@ export function AriaCheckbox(props: ParentProps<RefProps & CSSProps & {
 			}}
 			// Handlers
 			onClick={e => {
-				if (typeof props.onClick === "function") {
+				if (typeof props.setChecked === "function") {
 					e.preventDefault()
-					props.onClick(e)
+					props.setChecked(curr => !curr)
 				}
 			}}
 			onKeyDown={e => {
 				if (e.code === "Space") {
-					if (typeof props.onClick === "function") {
+					if (typeof props.setChecked === "function") {
 						e.preventDefault()
 						ref()!.click()
 					}

@@ -1,6 +1,7 @@
 import { createEffect, createSignal, For, onCleanup } from "solid-js"
 import { Checkbox, GridIcon, Icon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { Collapsible } from "./components/Collapsible"
+import { createRef } from "./solid-utils"
 import { range } from "./utils/range"
 
 // TODO: Extract <CollapsibleSection>?
@@ -16,8 +17,8 @@ function SectionToggle() {
 }
 
 function Sidebar() {
-	const [ref1, setRef1] = createSignal<HTMLElement>()
-	const [ref2, setRef2] = createSignal<HTMLElement>()
+	const [ref1, setRef1] = createRef()
+	const [ref2, setRef2] = createRef()
 
 	const height = (): undefined | `${string}px` => {
 		if (!(ref1() && ref2())) { return }
@@ -155,7 +156,7 @@ function StickySearchBar() {
 ////////////////////////////////////////
 
 export function App() {
-	const [ref, setRef] = createSignal<HTMLElement>()
+	const [ref, setRef] = createRef()
 	const [sidebar, setSidebar] = createSignal<"open" | "collapsed" | "expanded">("open")
 
 	function toggle() {
@@ -222,9 +223,9 @@ export function App() {
 	let timeoutId = 0
 	createEffect(() => {
 		clearTimeout(timeoutId)
-		onCleanup(() => clearTimeout(timeoutId))
+		onCleanup(() => window.clearTimeout(timeoutId))
 		if (sidebar() === "expanded") {
-			timeoutId = setTimeout(() => {
+			timeoutId = window.setTimeout(() => {
 				ref()!.style.transitionDuration = "revert"
 			}, 400)
 		} else {
