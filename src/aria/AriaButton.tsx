@@ -1,32 +1,34 @@
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/button_role
 
 import { batch, ParentProps } from "solid-js"
+import { Dynamic } from "solid-js/web"
 import { omitProps } from "solid-use"
 import { createRef } from "../solid-utils"
-import { CSSProps, RefProps } from "../solid-utils/extra-types"
+import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
 
-export function AriaButton(props: ParentProps<RefProps & CSSProps & { onClick: (e: MouseEvent) => void }>) {
+export function AriaButton(props: ParentProps<DynamicProps & CSSProps & { onClick: (e: MouseEvent) => void }>) {
 	const [ref, setRef] = createRef()
 
 	return (
-		<div
-			// Props
-			{...omitProps(props, ["onClick"])}
-			// Ref
-			ref={el => {
+		<Dynamic
+			// Component
+			component={props.as ?? "div"}
+			ref={(el: HTMLElement) => {
 				batch(() => {
 					props.ref?.(el)
 					setRef(el)
 				})
 			}}
+			// Props
+			{...omitProps(props, ["as", "onClick"])}
 			// Handlers
-			onClick={e => {
+			onClick={(e: MouseEvent) => {
 				if (typeof props.onClick === "function") {
 					e.preventDefault()
 					props.onClick(e)
 				}
 			}}
-			onKeyDown={e => {
+			onKeyDown={(e: KeyboardEvent) => {
 				if (e.code === "Space") {
 					if (typeof props.onClick === "function") {
 						e.preventDefault()
@@ -36,9 +38,9 @@ export function AriaButton(props: ParentProps<RefProps & CSSProps & { onClick: (
 			}}
 			// Accessibility
 			role="button"
-			tabIndex="0"
+			tabindex="0"
 		>
 			{props.children}
-		</div>
+		</Dynamic>
 	)
 }

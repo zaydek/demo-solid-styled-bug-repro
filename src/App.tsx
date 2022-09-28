@@ -48,7 +48,7 @@ function Sidebar() {
 			</section>
 			<hr />
 		</div>
-		{/* Use tabindex="-1" to disable scroller focus-ring */}
+		{/* Use tabindex="-1" to disable :focus for overflow-y */}
 		<div class="flex-grow overflow-y:auto" tabindex="-1">
 			<Collapsible title="foo" subtitle="bar" open={open1()} setOpen={setOpen1}>
 				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue1()} setValue={setRdgValue1}>

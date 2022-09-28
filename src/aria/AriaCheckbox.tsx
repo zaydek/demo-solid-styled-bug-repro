@@ -1,35 +1,37 @@
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/checkbox_role
 
 import { batch, ParentProps, Setter } from "solid-js"
+import { Dynamic } from "solid-js/web"
 import { omitProps } from "solid-use"
 import { createRef } from "../solid-utils"
-import { CSSProps, RefProps } from "../solid-utils/extra-types"
+import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
 
-export function AriaCheckbox(props: ParentProps<RefProps & CSSProps & {
+export function AriaCheckbox(props: ParentProps<DynamicProps & CSSProps & {
 	checked:    boolean
 	setChecked: Setter<boolean>
 }>) {
 	const [ref, setRef] = createRef()
 
 	return (
-		<div
-			// Props
-			{...omitProps(props, ["checked", "setChecked"])}
-			// Ref
-			ref={el => {
+		<Dynamic
+			// Component
+			component={props.as ?? "div"}
+			ref={(el: HTMLElement) => {
 				batch(() => {
 					props.ref?.(el)
 					setRef(el)
 				})
 			}}
+			// Props
+			{...omitProps(props, ["as", "checked", "setChecked"])}
 			// Handlers
-			onClick={e => {
+			onClick={(e: MouseEvent) => {
 				if (typeof props.setChecked === "function") {
 					e.preventDefault()
 					props.setChecked(curr => !curr)
 				}
 			}}
-			onKeyDown={e => {
+			onKeyDown={(e: KeyboardEvent) => {
 				if (e.code === "Space") {
 					if (typeof props.setChecked === "function") {
 						e.preventDefault()
@@ -40,9 +42,9 @@ export function AriaCheckbox(props: ParentProps<RefProps & CSSProps & {
 			// Accessibility
 			role="checkbox"
 			aria-checked={props.checked}
-			tabIndex="0"
+			tabindex="0"
 		>
 			{props.children}
-		</div>
+		</Dynamic>
 	)
 }

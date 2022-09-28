@@ -1,7 +1,8 @@
 import { Accessor, batch, createContext, createSignal, FlowProps, JSX, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
+import { Dynamic } from "solid-js/web"
 import { omitProps } from "solid-use"
 import { createRef } from "../solid-utils"
-import { CSSProps, RefProps } from "../solid-utils/extra-types"
+import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
 import { bound, round } from "../utils/precision"
 
 type Actions = {
@@ -19,7 +20,7 @@ export const SliderContext = createContext<{
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export function AriaSliderThumb(props: ParentProps<RefProps & CSSProps>) {
+export function AriaSliderThumb(props: ParentProps<DynamicProps & CSSProps>) {
 	const slider = useContext(SliderContext)!
 
 	const [ref, setRef] = createRef()
@@ -38,18 +39,20 @@ export function AriaSliderThumb(props: ParentProps<RefProps & CSSProps>) {
 	})
 
 	return <>
-		<div
-			{...props}
-			// Ref
-			ref={el => {
+		<Dynamic
+			// Component
+			component={props.as ?? "div"}
+			ref={(el: HTMLElement) => {
 				batch(() => {
 					props.ref?.(el)
 					setRef(el)
 				})
 			}}
+			// Props
+			{...omitProps(props, ["as"])}
 		>
 			{props.children}
-		</div>
+		</Dynamic>
 	</>
 }
 
@@ -58,7 +61,7 @@ export function AriaSliderThumb(props: ParentProps<RefProps & CSSProps>) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export function AriaSliderTrack(props: ParentProps<RefProps & CSSProps>) {
+export function AriaSliderTrack(props: ParentProps<DynamicProps & CSSProps>) {
 	const slider = useContext(SliderContext)!
 
 	const [ref, setRef] = createRef()
@@ -77,18 +80,20 @@ export function AriaSliderTrack(props: ParentProps<RefProps & CSSProps>) {
 	})
 
 	return <>
-		<div
-			{...props}
-			// Ref
-			ref={el => {
+		<Dynamic
+			// Component
+			component={props.as ?? "div"}
+			ref={(el: HTMLElement) => {
 				batch(() => {
 					props.ref?.(el)
 					setRef(el)
 				})
 			}}
+			// Props
+			{...omitProps(props, ["as"])}
 		>
 			{props.children}
-		</div>
+		</Dynamic>
 	</>
 }
 
@@ -97,7 +102,7 @@ export function AriaSliderTrack(props: ParentProps<RefProps & CSSProps>) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
+export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & {
 	value:    number
 	setValue: Setter<number>
 	min:      number
@@ -172,18 +177,19 @@ export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 				actions: { setTrackRect, setThumbRect },
 			}}
 		>
-			<div
-				// Props
-				{...omitProps(props, ["value", "setValue", "min", "max", "step"])}
-				// Ref
-				ref={el => {
+			<Dynamic
+				// Component
+				component={props.as ?? "div"}
+				ref={(el: HTMLElement) => {
 					batch(() => {
 						props.ref?.(el)
 						setRef(el)
 					})
 				}}
+				// Props
+				{...omitProps(props, ["as", "value", "setValue", "min", "max", "step"])}
 				// Handlers
-				onKeyDown={e => {
+				onKeyDown={(e: KeyboardEvent) => {
 					if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown") {
 						e.preventDefault()
 						decrement()
@@ -203,10 +209,10 @@ export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 				aria-valuenow={props.value}
 				aria-valuemin={props.min}
 				aria-valuemax={props.max}
-				tabIndex="0"
+				tabindex="0"
 			>
 				{props.children({ float, translateX })}
-			</div>
+			</Dynamic>
 		</SliderContext.Provider>
 	</>
 }

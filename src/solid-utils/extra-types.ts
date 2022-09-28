@@ -1,6 +1,7 @@
-import { JSX } from "solid-js"
+import { Component, JSX } from "solid-js"
 
-export type RefProps = {
+export type DynamicProps = {
+	as?:  keyof JSX.IntrinsicElements | Component
 	ref?: (element: HTMLElement) => void
 }
 

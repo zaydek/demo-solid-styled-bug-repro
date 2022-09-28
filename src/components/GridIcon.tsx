@@ -1,3 +1,4 @@
+import { AriaButton } from "../aria"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
@@ -71,11 +72,11 @@ export function GridIcon() {
 				background-color: white;
 			}
 		`}</style>
-		<div class="group grid grid-center" /* data-state-active={active()} */>
-			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-32px" tabindex="0">
+		<AriaButton as="article" class="group grid grid-center focus-ring-group" onClick={e => {/* TODO */}} use:solid-styled>
+			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-32px">
 				<Icon icon={Smiley} h="32px" />
 				<Line w="50%" />
 			</div>
-		</div>
+		</AriaButton>
 	</>
 }

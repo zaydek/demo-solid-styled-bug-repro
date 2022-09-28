@@ -75,7 +75,7 @@ export function Collapsible(props: ParentProps<{
 				opacity: 0;
 			}
 		`}</style>
-		<div ref={setRef} class="panel" data-state-collapsed={!props.open || undefined} data-state-once={once() || undefined}>
+		<section ref={setRef} class="panel" data-state-collapsed={!props.open || undefined} data-state-once={once() || undefined}>
 			<AriaButton ref={setHeadRef} class="panel-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)} use:solid-styled>
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full">
 					<Icon icon={Smiley} h="16px" />
@@ -88,6 +88,6 @@ export function Collapsible(props: ParentProps<{
 			<div class="panel-body flex-col gap-$gap" inert={!props.open || undefined}>
 				{props.children}
 			</div>
-		</div>
+		</section>
 	</>
 }

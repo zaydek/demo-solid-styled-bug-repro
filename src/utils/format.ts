@@ -27,7 +27,7 @@ export function detab(str: string) {
 			return index
 		}
 	})
-	const minTabCount = Math.min(...tabCounts.filter(tabIndex => tabIndex > 0))
+	const minTabCount = Math.min(...tabCounts.filter(tabindex => tabindex > 0))
 	if (minTabCount === Infinity) { return str }
 	return lines.map(line => line.slice(minTabCount)).join("\n")
 }

@@ -1,9 +1,10 @@
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/radio_role
 
 import { batch, createContext, createEffect, createSignal, on, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
+import { Dynamic } from "solid-js/web"
 import { omitProps } from "solid-use"
 import { createRef } from "../solid-utils"
-import { CSSProps, RefProps } from "../solid-utils/extra-types"
+import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
 
 type State = {
 	value: () => string
@@ -27,7 +28,7 @@ export const RadiogroupContext = createContext<{
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export function AriaRadio(props: ParentProps<RefProps & CSSProps & { value: string }>) {
+export function AriaRadio(props: ParentProps<DynamicProps & CSSProps & { value: string }>) {
 	const radiogroup = useContext(RadiogroupContext)!
 
 	const [ref, setRef] = createRef()
@@ -48,22 +49,23 @@ export function AriaRadio(props: ParentProps<RefProps & CSSProps & { value: stri
 	}, { defer: true }))
 
 	return (
-		<div
-			// Props
-			{...omitProps(props, ["value"])}
-			// Ref
-			ref={el => {
+		<Dynamic
+			// Component
+			component={props.as ?? "div"}
+			ref={(el: HTMLElement) => {
 				batch(() => {
 					props.ref?.(el)
 					setRef(el)
 				})
 			}}
+			// Props
+			{...omitProps(props, ["as", "value"])}
 			// Handlers
-			onClick={e => {
+			onClick={(e: MouseEvent) => {
 				e.preventDefault()
 				radiogroup.actions.select(props.value)
 			}}
-			onKeyDown={e => {
+			onKeyDown={(e: KeyboardEvent) => {
 				if (e.code === "ArrowLeft" || e.code === "ArrowUp") {
 					e.preventDefault()
 					radiogroup.actions.decrement()
@@ -75,10 +77,10 @@ export function AriaRadio(props: ParentProps<RefProps & CSSProps & { value: stri
 			// Accessibility
 			role="radio"
 			aria-checked={checked()}
-			tabIndex={checked() ? 0 : -1}
+			tabindex={checked() ? 0 : -1}
 		>
 			{props.children}
-		</div>
+		</Dynamic>
 	)
 }
 
@@ -87,7 +89,7 @@ export function AriaRadio(props: ParentProps<RefProps & CSSProps & { value: stri
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export function AriaRadiogroup(props: ParentProps<RefProps & CSSProps & {
+export function AriaRadiogroup(props: ParentProps<DynamicProps & CSSProps & {
 	value:    string
 	setValue: Setter<string>
 }>) {
@@ -128,9 +130,16 @@ export function AriaRadiogroup(props: ParentProps<RefProps & CSSProps & {
 				actions: { register, deregister, select, decrement, increment },
 			}}
 		>
-			<div {...omitProps(props, ["value", "setValue"])} role="radiogroup">
+			<Dynamic
+				// Component
+				component={props.as ?? "div"}
+				// Props
+				{...omitProps(props, ["as", "value", "setValue"])}
+				// Accessibility
+				role="radiogroup"
+			>
 				{props.children}
-			</div>
+			</Dynamic>
 		</RadiogroupContext.Provider>
 	)
 }
