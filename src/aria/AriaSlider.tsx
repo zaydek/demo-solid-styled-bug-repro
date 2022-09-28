@@ -116,10 +116,9 @@ export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 	normalize(props.value) // Synchronously normalize
 
 	function normalizeClientX(clientX: number) {
-		const trackX = trackRect()!.x
-		const trackW = trackRect()!.width
-		const thumbW = thumbRect()!.width
-		const float = ((clientX - thumbW / 2) - trackX) / (trackW - thumbW) // Get float from measurements
+		const track_x = trackRect()!.x
+		const track_w = trackRect()!.width
+		const float = (clientX - track_x) / track_w // Get float from measurements
 		const value = float * (props.max - props.min) + props.min
 		normalize(value - value % props.step)
 	}
@@ -133,9 +132,9 @@ export function AriaHorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 
 	const translateX = () => {
 		if (!trackRect() || !thumbRect()) { return }
-		const trackW = trackRect()!.width
-		const thumbW = thumbRect()!.width
-		return (float() * trackW) - (thumbW / 2)
+		const track_w = trackRect()!.width
+		const thumb_w = thumbRect()!.width
+		return (float() * track_w) - (thumb_w / 2)
 	}
 
 	let isPointerDown = false

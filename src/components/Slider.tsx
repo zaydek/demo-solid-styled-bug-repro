@@ -18,11 +18,17 @@ export function Slider(props: VoidProps<{
 				height: var(--height);
 				touch-action: pan-x; /* iOS */
 			}
+
+			/********************************/
+
 			.slider-track {
 				height: 6px;
 				border-radius: var(--full);
 				background-color: var(--theme-color);
 			}
+
+			/********************************/
+
 			.slider-thumb {
 				height: var(--height);
 				aspect-ratio: 1;

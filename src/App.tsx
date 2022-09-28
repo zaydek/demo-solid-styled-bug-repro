@@ -1,21 +1,9 @@
 import { createEffect, createSignal, For, onCleanup } from "solid-js"
 import { AriaRadiogroup } from "./aria/AriaRadio"
-import { Checkbox, GridIcon, Icon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
+import { Checkbox, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { Collapsible } from "./components/Collapsible"
 import { createRef } from "./solid-utils"
 import { range } from "./utils/range"
-
-// TODO: Extract <CollapsibleSection>?
-function SectionToggle() {
-	return <>
-		<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full" tabIndex="0">
-			<Icon icon={Smiley} h="16px" />
-			<Line w="25%" />
-			<div class="flex-grow"></div>
-			<Line w="10%" color="var(--fill-200-color)" />
-		</div>
-	</>
-}
 
 function Sidebar() {
 	const [rdgValue1, setRdgValue1] = createSignal("foo")
@@ -35,7 +23,7 @@ function Sidebar() {
 			</section>
 			<hr />
 		</div>
-		{/* Disable scroller focus-ring */}
+		{/* Use tabindex="-1" to disable scroller focus-ring */}
 		<div class="flex-grow overflow-y:auto" tabindex="-1">
 			<Collapsible title="foo" subtitle="bar" open>
 				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue1()} setValue={setRdgValue1}>
@@ -70,15 +58,15 @@ function Sidebar() {
 			</Collapsible>
 			<hr />
 			<Collapsible title="foo" subtitle="bar" open>
-				<Slider value={sliderValue1()} setValue={setSliderValue1} min={0} max={25} step={1} />
+				<Slider value={sliderValue1()} setValue={setSliderValue1} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
 			<Collapsible title="foo" subtitle="bar" open>
-				<Slider value={sliderValue2()} setValue={setSliderValue2} min={0} max={25} step={1} />
+				<Slider value={sliderValue2()} setValue={setSliderValue2} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
 			<Collapsible title="foo" subtitle="bar" open>
-				<Slider value={sliderValue3()} setValue={setSliderValue3} min={0} max={25} step={1} />
+				<Slider value={sliderValue3()} setValue={setSliderValue3} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
 		</div>
