@@ -40,12 +40,12 @@ function Sidebar() {
 
 	return <>
 		<div class="flex-shrink:0">
-			<section class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
+			<nav class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
 				<NavIcon icon={Smiley} />
 				<div class="flex-grow"></div>
 				<NavIcon icon={Smiley} />
 				<NavIcon icon={Smiley} />
-			</section>
+			</nav>
 			<hr />
 		</div>
 		{/* Use tabindex="-1" to disable :focus for overflow-y */}
@@ -97,7 +97,7 @@ function Sidebar() {
 		</div>
 		<div class="flex-shrink:0">
 			<hr class="collapsible" />
-			<section class="p-$padding flex-row gap-$gap">
+			<section class="p-$padding flex-row gap-($gap*2)">
 				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-200-color"></div>
 				<div class="flex-grow flex-col gap-($gap/2)">
 					<Line w="70%" color="var(--fill-200-color)" />
@@ -132,7 +132,7 @@ function Main() {
 				grid-auto-rows: var(--height);
 			}
 		`}</style>
-		<StickySearchBar />
+		<StickySearchBarNav />
 		<div class="grid p-$padding pb-($padding-y*2)">
 			<For each={range(400)}>
 				{() => <>
@@ -143,7 +143,7 @@ function Main() {
 	</>
 }
 
-function StickySearchBar() {
+function StickySearchBarNav() {
 	return <>
 		<style jsx>{`
 			.sticky-search-bar {
@@ -156,7 +156,7 @@ function StickySearchBar() {
 				box-shadow: var(--hairline-box-shadow);
 			}
 		`}</style>
-		<div class="sticky-search-bar flex-row flex-align-center">
+		<nav class="sticky-search-bar flex-row flex-align-center">
 			<NavIcon icon={Smiley} />
 			<div class="flex-grow">
 				<div class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
@@ -164,7 +164,7 @@ function StickySearchBar() {
 				</div>
 			</div>
 			<NavIcon icon={Smiley} />
-		</div>
+		</nav>
 	</>
 }
 
