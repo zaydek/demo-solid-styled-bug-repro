@@ -5,7 +5,7 @@ import { CSSProps } from "../solid-utils/extra-types"
 export function Icon(props: VoidProps<{
 	icon: VoidComponent<CSSProps>
 
-	// Styled props
+	// CSS
 	h:      string
 	color?: string
 }>) {
@@ -41,7 +41,7 @@ export function IconPlaceholder(props: VoidProps<{
 }
 
 export function Line(props: VoidProps<{
-	h?:     string,
+	h?:     string
 	w:      string
 	color?: string
 }>) {

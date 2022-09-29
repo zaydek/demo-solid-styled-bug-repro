@@ -27,6 +27,7 @@ export function Radio(props: VoidProps<{ value: string }>) {
 				inset: 0;
 				border-radius: inherit;
 				background-color: var(--form-color);
+				/* box-shadow: var(--inset-hairline-box-shadow); */
 				box-shadow: var(--form-box-shadow);
 			}
 			.radio::after {

@@ -33,9 +33,11 @@ $svg-color:     #FFB13B;
 $twitter-color: #1DA1F2;
 $vue-color:     #4FC08D;
 
-$backdrop-color: (
-	light: link(card 0%, $alpha: 15%),
-	dark:  link(card 0%, $alpha: 25%),
-);
+//// $backdrop-color: (
+//// 	light: link(card 0%, $alpha: 15%),
+//// 	dark:  link(card 0%, $alpha: 25%),
+//// );
+
+$backdrop-color: hsl(0deg 0% 0% / 15%);
 
 @mixin body {}
