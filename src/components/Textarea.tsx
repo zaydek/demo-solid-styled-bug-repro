@@ -4,7 +4,7 @@ import { Line } from "./Primitives"
 export function Textarea() {
 	return <>
 		{css`
-			.textarea {
+			.component-textarea {
 				padding: calc(var(--form-height) / 2);
 				height: 144px;
 				border-radius: calc(var(--form-height) / 2);
@@ -12,7 +12,7 @@ export function Textarea() {
 				box-shadow: var(--inset-hairline-box-shadow);
 			}
 		`}
-		<div class="textarea flex-col gap-($gap/2) focus-ring focus-ring-16px" tabindex="0">
+		<div class="component-textarea flex-col gap-($gap/2) focus-ring focus-ring-16px" tabindex="0">
 			<Line w="70%" color="var(--fill-200-color)" />
 			<Line w="90%" color="var(--fill-200-color)" />
 			<Line w="80%" color="var(--fill-200-color)" />

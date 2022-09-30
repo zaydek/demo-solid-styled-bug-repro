@@ -12,13 +12,13 @@ export function Icon(props: VoidProps<{
 }>) {
 	return <>
 		{css`
-			.icon {
+			.component-icon {
 				height: var(--height);
 				aspect-ratio: 1;
 				color: var(--color, var(--fill-100-color));
 			}
 		`}
-		<Dynamic component={props.icon} class="icon" style={sx({ "--height": props.h, "--color": props.color })} />
+		<Dynamic component={props.icon} class="component-icon" style={sx({ "--height": props.h, "--color": props.color })} />
 	</>
 }
 
@@ -29,14 +29,14 @@ export function IconPlaceholder(props: VoidProps<{
 }>) {
 	return <>
 		{css`
-			.icon-placeholder {
+			.component-icon-placeholder {
 				height: var(--height);
 				aspect-ratio: 1;
 				border-radius: var(--full);
 				background-color: var(--color, var(--fill-100-color));
 			}
 		`}
-		<div class="icon-placeholder" style={sx({ "--height": props.h, "--color": props.color })}></div>
+		<div class="component-icon-placeholder" style={sx({ "--height": props.h, "--color": props.color })}></div>
 	</>
 }
 
@@ -48,13 +48,13 @@ export function Line(props: VoidProps<{
 }>) {
 	return <>
 		{css`
-			.line {
+			.component-line {
 				height: var(--height, 6px);
 				width: var(--width);
 				border-radius: var(--full);
 				background-color: var(--color, var(--fill-100-color));
 			}
 		`}
-		<div class="line" style={sx({ "--height": props.h, "--width": props.w, "--color": props.color })}></div>
+		<div class="component-line" style={sx({ "--height": props.h, "--width": props.w, "--color": props.color })}></div>
 	</>
 }

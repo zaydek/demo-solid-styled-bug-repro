@@ -28,7 +28,7 @@ export function Collapsible(props: ParentProps<{
 
 	return <>
 		{css`
-			.panel {
+			.component-panel {
 				height: var(--max-height);
 				overflow-y: hidden;
 
@@ -36,19 +36,19 @@ export function Collapsible(props: ParentProps<{
 				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, var(--spring));
 				transition-property: height;
 			}
-			.panel[data-state-collapsed] {
+			.component-panel[data-state-collapsed] {
 				height: var(--min-height);
 			}
 
 			/********************************/
 
-			.panel-head {
+			.component-panel-head {
 				padding: var(--gap) var(--padding-x);
 			}
 
 			/********************************/
 
-			.panel-body {
+			.component-panel-body {
 				padding: var(--padding);
 				padding-top: 0; /* Override */
 
@@ -56,13 +56,13 @@ export function Collapsible(props: ParentProps<{
 				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, var(--spring));
 				transition-property: transform, opacity;
 			}
-			body[data-state-mounted] .panel[data-state-collapsed] .panel-body {
+			body[data-state-mounted] .component-panel[data-state-collapsed] .component-panel-body {
 				transform: scale(0.9);
 				opacity: 0;
 			}
 		`}
-		<section ref={setRef} class="panel" style={sx({ "--min-height": minHeight(), "--max-height": maxHeight(), "--spring": spring() })} data-state-collapsed={!props.open || undefined}>
-			<AriaButton ref={setHeadRef} class="panel-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)}>
+		<section ref={setRef} class="component-panel" style={sx({ "--min-height": minHeight(), "--max-height": maxHeight(), "--spring": spring() })} data-state-collapsed={!props.open || undefined}>
+			<AriaButton ref={setHeadRef} class="component-panel-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)}>
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full">
 					<Icon icon={Smiley} h="16px" />
 					<Line w="25%" />
@@ -71,7 +71,7 @@ export function Collapsible(props: ParentProps<{
 				</div>
 			</AriaButton>
 			{/* @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322) */}
-			<div class="panel-body flex-col gap-$gap" inert={!props.open || undefined}>
+			<div class="component-panel-body flex-col gap-$gap" inert={!props.open || undefined}>
 				{props.children}
 			</div>
 		</section>

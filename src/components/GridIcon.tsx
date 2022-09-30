@@ -7,19 +7,19 @@ export function GridIcon() {
 	return <>
 		{css`
 			/* Preamble */
-			.grid-icon-wrapper { position: relative; }
-			.grid-icon-wrapper::before { content: ""; }
+			.component-grid-icon { position: relative; }
+			.component-grid-icon::before { content: ""; }
 
 			/********************************/
 
-			.grid-icon-wrapper { position: relative; }
-			.grid-icon-wrapper {
+			.component-grid-icon { position: relative; }
+			.component-grid-icon {
 				height: 100%;
 				aspect-ratio: 1;
 				border-radius: var(--search-results-grid-border-radius);
 			}
-			.grid-icon-wrapper::before { content: ""; }
-			.grid-icon-wrapper::before {
+			.component-grid-icon::before { content: ""; }
+			.component-grid-icon::before {
 				position: absolute;
 				z-index: -10;
 				inset: 0;
@@ -31,18 +31,18 @@ export function GridIcon() {
 				transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
-			.group:hover .grid-icon-wrapper::before {
+			.group:hover .component-grid-icon::before {
 				background-color: var(--hover-color);
 				transform: scale(1);
 			}
-			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper::before {
+			.group:is(:hover:active, [data-state-active]) .component-grid-icon::before {
 				background-color: var(--hover-active-color);
 				transform: scale(1);
 			}
 
 			/********************************/
 
-			.grid-icon-wrapper {
+			.component-grid-icon {
 				display: grid;
 				grid-template:
 					"." calc(32px / 2)
@@ -51,30 +51,30 @@ export function GridIcon() {
 				place-items: center;
 			}
 
-			.grid-icon-wrapper > :nth-child(1) { grid-area: a; }
-			.grid-icon-wrapper > :nth-child(2) { grid-area: b; }
+			.component-grid-icon > :nth-child(1) { grid-area: a; }
+			.component-grid-icon > :nth-child(2) { grid-area: b; }
 
 			/********************************/
 
-			.grid-icon-wrapper > .icon {
+			.component-grid-icon > .component-icon {
 				color: var(--fill-100-color);
 			}
-			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper > .icon {
+			.group:is(:hover:active, [data-state-active]) .component-grid-icon > .component-icon {
 				color: white;
 			}
 
 			/********************************/
 
 			/* TODO: Remove this when converting <Line> to <Text> */
-			.grid-icon-wrapper > .line {
+			.component-grid-icon > .component-line {
 				background-color: var(--fill-200-color);
 			}
-			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper > .line {
+			.group:is(:hover:active, [data-state-active]) .component-grid-icon > .component-line {
 				background-color: white;
 			}
 		`}
 		<AriaButton as="article" class="group grid grid-center focus-ring-group" onClick={e => {/* TODO */}}>
-			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-32px">
+			<div class="component-grid-icon grid grid-center focus-ring focus-ring-32px">
 				<Icon icon={Smiley} h="32px" />
 				<Line w="50%" />
 			</div>

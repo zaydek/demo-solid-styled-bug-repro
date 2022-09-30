@@ -11,7 +11,7 @@ export function Slider(props: VoidProps<{
 }>) {
 	return <>
 		{css`
-			.slider {
+			.component-slider {
 				padding: 0 calc(var(--form-height) / 2);
 				height: var(--form-height);
 				touch-action: pan-x; /* iOS */
@@ -19,7 +19,7 @@ export function Slider(props: VoidProps<{
 
 			/********************************/
 
-			.slider-track {
+			.component-slider-track {
 				height: 6px;
 				border-radius: var(--full);
 				background-color: var(--theme-color);
@@ -27,7 +27,7 @@ export function Slider(props: VoidProps<{
 
 			/********************************/
 
-			.slider-thumb {
+			.component-slider-thumb {
 				height: var(--form-height);
 				aspect-ratio: 1;
 				border-radius: var(--full);
@@ -35,10 +35,10 @@ export function Slider(props: VoidProps<{
 				box-shadow: var(--form-box-shadow);
 			}
 		`}
-		<AriaHorizontalSlider {...props} class="slider flex-col flex-justify-center focus-ring focus-ring-$full">
+		<AriaHorizontalSlider {...props} class="component-slider flex-col flex-justify-center focus-ring focus-ring-$full">
 			{({ translateX }) => <>
-				<AriaSliderTrack class="slider-track flex-row flex-align-center">
-					<AriaSliderThumb class="slider-thumb focus-ring focus-ring-$full" style={{ "transform": translateX() ? `translateX(${translateX()}px)` : undefined }} />
+				<AriaSliderTrack class="component-slider-track flex-row flex-align-center">
+					<AriaSliderThumb class="component-slider-thumb focus-ring focus-ring-$full" style={{ "transform": translateX() ? `translateX(${translateX()}px)` : undefined }} />
 				</AriaSliderTrack>
 			</>}
 		</AriaHorizontalSlider>

@@ -122,14 +122,14 @@ function Sidebar() {
 function Main() {
 	return <>
 		{css`
-			.search-results-grid {
+			.component-search-results {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--search-results-grid-height), 1fr));
 				grid-auto-rows: var(--search-results-grid-height);
 			}
 		`}
 		<StickySearchBar />
-		<div class="search-results-grid p-$padding pb-($padding-y*2)">
+		<div class="component-search-results p-$padding pb-($padding-y*2)">
 			<For each={range(400)}>
 				{() => <>
 					<GridIcon />
@@ -142,7 +142,7 @@ function Main() {
 function StickySearchBar() {
 	return <>
 		{css`
-			.sticky-search-bar {
+			.component-search-bar {
 				position: sticky;
 				z-index: 10;
 				top: 0;
@@ -152,7 +152,7 @@ function StickySearchBar() {
 				box-shadow: var(--hairline-box-shadow);
 			}
 		`}
-		<nav class="sticky-search-bar flex-row flex-align-center">
+		<nav class="component-search-bar flex-row flex-align-center">
 			<NavIcon icon={Smiley} />
 			<div class="flex-grow">
 				<div class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
@@ -257,7 +257,7 @@ export function App() {
 
 			/********************************/
 
-			.column-1 {
+			.component-column-1 {
 				margin-right: var(--sidebar-width);
 				min-height: 100vh;
 
@@ -265,17 +265,17 @@ export function App() {
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: margin-right;
 			}
-			[data-state-sidebar=collapsed] .column-1 {
+			[data-state-sidebar=collapsed] .component-column-1 {
 				margin-right: 0;
 			}
-			[data-state-sidebar=expanded] .column-1 {
+			[data-state-sidebar=expanded] .component-column-1 {
 				-webkit-user-select: none; /* Disable selection */
 				user-select: none;
 			}
 
 			/********************************/
 
-			.column-2 {
+			.component-column-2 {
 				position: fixed;
 				z-index: 10;
 				inset: 0 0 0 auto; /* E.g. inset-r */
@@ -287,17 +287,17 @@ export function App() {
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: width, transform;
 			}
-			[data-state-sidebar=collapsed] .column-2 {
+			[data-state-sidebar=collapsed] .component-column-2 {
 				transform: translateX(var(--sidebar-width));
 			}
-			[data-state-sidebar=expanded] .column-2 {
+			[data-state-sidebar=expanded] .component-column-2 {
 				width: clamp(0px, var(--expanded-sidebar-width), 100vw);
 				box-shadow: var(--card-box-shadow);
 			}
 
 			/********************************/
 
-			.column-2-backdrop {
+			.component-column-2-backdrop {
 				position: fixed;
 				z-index: 10;
 				inset: 0;
@@ -310,18 +310,18 @@ export function App() {
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: background-color, backdrop-filter;
 			}
-			[data-state-sidebar=expanded] .column-2-backdrop {
+			[data-state-sidebar=expanded] .component-column-2-backdrop {
 				background-color: var(--backdrop-color);
 				backdrop-filter: blur(2px);
 				pointer-events: revert; /* Enable */
 			}
 		`}
 		<div class="contents" data-state-sidebar={sidebar()}>
-			<div class="column-1">
+			<div class="component-column-1">
 				<Main />
 			</div>
-			<div class="column-2-backdrop" onClick={toggle}></div>
-			<div ref={setRef} class="column-2 flex-col">
+			<div class="component-column-2-backdrop" onClick={toggle}></div>
+			<div ref={setRef} class="component-column-2 flex-col">
 				<Sidebar />
 			</div>
 		</div>

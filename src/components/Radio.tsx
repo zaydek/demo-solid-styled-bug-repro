@@ -8,18 +8,18 @@ export function Radio(props: VoidProps<{ value: string }>) {
 	return <>
 		{css`
 			/* Preamble */
-			.radio { position: relative; }
-			.radio::before { content: ""; }
-			.radio::after { content: ""; } /* NOTE: Uses &::before and &::after */
+			.component-radio { position: relative; }
+			.component-radio::before { content: ""; }
+			.component-radio::after { content: ""; } /* NOTE: Uses &::before and &::after */
 
 			/********************************/
 
-			.radio {
+			.component-radio {
 				height: var(--reduced-form-height);
 				aspect-ratio: 1;
 				border-radius: var(--full);
 			}
-			.radio::before {
+			.component-radio::before {
 				position: absolute;
 				z-index: -10;
 				inset: 0;
@@ -28,7 +28,7 @@ export function Radio(props: VoidProps<{ value: string }>) {
 				/* box-shadow: var(--inset-hairline-box-shadow); */
 				box-shadow: var(--form-box-shadow);
 			}
-			.radio::after {
+			.component-radio::after {
 				position: absolute;
 				z-index: -10;
 				inset: 0;
@@ -40,14 +40,14 @@ export function Radio(props: VoidProps<{ value: string }>) {
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
-			.group[aria-checked=true] .radio::after {
+			.group[aria-checked=true] .component-radio::after {
 				background-color: var(--hover-active-color);
 				transform: scale(1);
 			}
 
 			/********************************/
 
-			.radio > .icon-placeholder {
+			.component-radio > .component-icon-placeholder {
 				background-color: transparent;
 				transform: scale(0);
 
@@ -55,7 +55,7 @@ export function Radio(props: VoidProps<{ value: string }>) {
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
-			.group[aria-checked=true] .radio > .icon-placeholder {
+			.group[aria-checked=true] .component-radio > .component-icon-placeholder {
 				background-color: white;
 				transform: scale(1);
 			}
@@ -67,7 +67,7 @@ export function Radio(props: VoidProps<{ value: string }>) {
 					<Line w="35%" />
 				</div>
 			</div>
-			<div class="radio grid grid-center">
+			<div class="component-radio grid grid-center">
 				<IconPlaceholder h="8px" />
 			</div>
 		</AriaRadio>

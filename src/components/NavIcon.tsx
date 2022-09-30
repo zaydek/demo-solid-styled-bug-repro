@@ -8,17 +8,17 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 	return <>
 		{css`
 			/* Preamble */
-			.nav-icon-wrapper { position: relative; }
-			.nav-icon-wrapper::before { content: ""; }
+			.component-nav-icon { position: relative; }
+			.component-nav-icon::before { content: ""; }
 
 			/********************************/
 
-			.nav-icon-wrapper {
+			.component-nav-icon {
 				height: 48px;
 				aspect-ratio: 1;
 				border-radius: var(--full);
 			}
-			.nav-icon-wrapper::before {
+			.component-nav-icon::before {
 				position: absolute;
 				z-index: -10;
 				inset: 0;
@@ -30,26 +30,26 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
-			.nav-icon-wrapper:hover::before {
+			.component-nav-icon:hover::before {
 				background-color: var(--hover-color);
 				transform: scale(1);
 			}
-			.nav-icon-wrapper:is(:hover:active, [data-state-active])::before {
+			.component-nav-icon:is(:hover:active, [data-state-active])::before {
 				background-color: var(--hover-active-color);
 				transform: scale(1);
 			}
 
 			/********************************/
 
-			.nav-icon-wrapper > .icon {
+			.component-nav-icon > .component-icon {
 				color: var(--theme-color);
 			}
-			.nav-icon-wrapper:is(:hover:active, [data-state-active]) > .icon {
+			.component-nav-icon:is(:hover:active, [data-state-active]) > .component-icon {
 				color: white;
 			}
 		`}
 		{/* TODO: Use <Show> trick here */}
-		<AriaButton class="nav-icon-wrapper grid grid-center focus-ring focus-ring-$full" onClick={e => {/* TODO */}}>
+		<AriaButton class="component-nav-icon grid grid-center focus-ring focus-ring-$full" onClick={e => {/* TODO */}}>
 			<Icon icon={props.icon} h="32px" />
 		</AriaButton>
 	</>
