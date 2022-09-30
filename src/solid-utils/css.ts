@@ -1,6 +1,7 @@
-import { JSX, onCleanup } from "solid-js"
+import { createMemo, JSX, onCleanup } from "solid-js"
+import { decomment } from "../utils"
 
-export function cx(...args: any[]) {
+export function cx(...args: any[]): undefined | string {
 	const str = args
 		.flat()
 		.filter(Boolean)
@@ -11,7 +12,8 @@ export function cx(...args: any[]) {
 	return str
 }
 
-export function sx(ref: JSX.CSSProperties) {
+// TODO: Is there a better way to type the for-loop?
+export function sx(ref: JSX.CSSProperties): JSX.CSSProperties {
 	const ref2: JSX.CSSProperties = {}
 	for (const key in ref) {
 		// @ts-expect-error
@@ -28,20 +30,19 @@ export function sx(ref: JSX.CSSProperties) {
 
 const _cssCache: Record<string, true> = {}
 
-export function css([_css]: TemplateStringsArray) {
-	if (_css in _cssCache) {
-		return null
-	} else {
-		_cssCache[_css] = true
-		const style = document.createElement("style")
-		style.setAttribute("type", "text/css")
-		style.setAttribute("data-css", "")
-		style.textContent = _css
-		document.head.appendChild(style)
-		onCleanup(() => {
-			document.head.removeChild(style)
-		})
-	}
+export function css([rawStr]: TemplateStringsArray): null {
+	const cssStr = createMemo(() => decomment(rawStr))
+
+	if (cssStr() in _cssCache) { return null }
+	_cssCache[cssStr()] = true
+	const style = document.createElement("style")
+	style.setAttribute("type", "text/css")
+	style.setAttribute("data-css", "")
+	style.textContent = cssStr()
+	document.head.appendChild(style)
+	onCleanup(() => {
+		document.head.removeChild(style)
+	})
 	return null
 }
 

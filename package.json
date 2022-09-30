@@ -6,10 +6,12 @@
 		"start": "vite",
 		"dev": "vite",
 		"build": "vite build",
-		"serve": "vite preview"
+		"serve": "vite preview",
+		"dataset": "npx esbuild --bundle --format=cjs --platform=node scripts/dataset.ts | node"
 	},
 	"license": "MIT",
 	"devDependencies": {
+		"playwright": "^1.26.1",
 		"sass": "^1.55.0",
 		"typescript": "^4.8.2",
 		"unocss": "^0.45.22",
