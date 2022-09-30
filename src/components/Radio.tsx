@@ -15,10 +15,7 @@ export function Radio(props: VoidProps<{ value: string }>) {
 			/********************************/
 
 			.radio {
-				/* Query CSS variables */
-				--height: var(--reduced-form-height);
-
-				height: var(--height);
+				height: var(--reduced-form-height);
 				aspect-ratio: 1;
 				border-radius: var(--full);
 			}
