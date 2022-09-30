@@ -1,60 +1,60 @@
 import { VoidComponent, VoidProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
+import { css, sx } from "../solid-utils"
 import { CSSProps } from "../solid-utils/extra-types"
 
 export function Icon(props: VoidProps<{
 	icon: VoidComponent<CSSProps>
 
-	// CSS
+	// CSS variables
 	h:      string
 	color?: string
 }>) {
 	return <>
-		<style jsx>{`
+		{css`
 			.icon {
-				height: ${props.h};
+				height: var(--height);
 				aspect-ratio: 1;
-				color: ${props.color ??
-					"var(--fill-100-color)"};
+				color: var(--color, var(--fill-100-color));
 			}
-		`}</style>
-		<Dynamic component={props.icon} class="icon" use:solid-styled />
+		`}
+		<Dynamic component={props.icon} class="icon" style={sx({ "--height": props.h, "--color": props.color })} />
 	</>
 }
 
 export function IconPlaceholder(props: VoidProps<{
+	// CSS variables
 	h:      string
 	color?: string
 }>) {
 	return <>
-		<style jsx>{`
+		{css`
 			.icon-placeholder {
-				height: ${props.h};
+				height: var(--height);
 				aspect-ratio: 1;
 				border-radius: var(--full);
-				background-color: ${props.color ??
-					"var(--fill-100-color)"};
+				background-color: var(--color, var(--fill-100-color));
 			}
-		`}</style>
-		<div class="icon-placeholder"></div>
+		`}
+		<div class="icon-placeholder" style={sx({ "--height": props.h, "--color": props.color })}></div>
 	</>
 }
 
 export function Line(props: VoidProps<{
+	// CSS variables
 	h?:     string
 	w:      string
 	color?: string
 }>) {
 	return <>
-		<style jsx>{`
+		{css`
 			.line {
-				height: ${props.h ?? "6px"};
-				width: ${props.w};
+				height: var(--height, 6px);
+				width: var(--width);
 				border-radius: var(--full);
-				background-color: ${props.color ??
-					"var(--fill-100-color)"};
+				background-color: var(--color, var(--fill-100-color));
 			}
-		`}</style>
-		<div class="line"></div>
+		`}
+		<div class="line" style={sx({ "--height": props.h, "--width": props.w, "--color": props.color })}></div>
 	</>
 }

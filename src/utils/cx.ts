@@ -1,6 +1,5 @@
-import { JSX } from "solid-js"
+// TODO: DEPRECATE
 
-// For classes
 export function cx(...args: any[]) {
 	const str = args
 		.flat()
@@ -10,22 +9,6 @@ export function cx(...args: any[]) {
 		.replaceAll(/\s+/g, " ")
 	if (!str) {return undefined }
 	return str
-}
-
-// For styles (uses "initial" as a fallback value for CSS variables)
-export function sx(ref: JSX.CSSProperties) {
-	const ref2: JSX.CSSProperties = {}
-	for (const key in ref) {
-		// @ts-expect-error
-		if (ref[key] === undefined) {
-			// @ts-expect-error
-			ref2[key] = "initial"
-		} else {
-			// @ts-expect-error
-			ref2[key] = ref[key]
-		}
-	}
-	return ref2
 }
 
 if (import.meta.vitest) {

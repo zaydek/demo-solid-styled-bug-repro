@@ -1,16 +1,16 @@
 import { createRoot, createSignal, onMount, ParentProps, Setter } from "solid-js"
 import { AriaButton } from "../aria"
-import { createRef } from "../solid-utils"
+import { createRef, css, sx } from "../solid-utils"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
-const [once, setOnce] = createSignal(true)
+const [mounted, setMounted] = createSignal<boolean>()
 
 createRoot(() => {
 	onMount(() => {
 		setTimeout(() => {
-			setOnce(false)
-		}, 500)
+			setMounted(true)
+		}, 500) // Use an arbitrary timeout
 	})
 })
 
@@ -24,31 +24,30 @@ export function Collapsible(props: ParentProps<{
 	const [ref, setRef] = createRef()
 	const [headRef, setHeadRef] = createRef()
 
-	const [collapseHeight, setCollapseHeight] = createSignal<"auto" | `${string}px`>("auto")
-	const [expandedHeight, setExpandedHeight] = createSignal<"auto" | `${string}px`>("auto")
+	const [minHeight, setMinHeight] = createSignal<"auto" | `${string}px`>("auto")
+	const [maxHeight, setMaxHeight] = createSignal<"auto" | `${string}px`>("auto")
 	const [spring, setSpring] = createSignal<number>(1.15)
 
 	onMount(() => {
 		const min = headRef()!.scrollHeight
 		const max = ref()!.scrollHeight
-		setCollapseHeight(`${min}px`)
-		setExpandedHeight(`${max}px`)
+		setMinHeight(`${min}px`)
+		setMaxHeight(`${max}px`)
 		setSpring(1 + min / max * 0.15)
 	})
 
 	return <>
-		<style jsx>{`
+		{css`
 			.panel {
-				/* Defer padding */
-				height: ${expandedHeight()};
+				height: var(--max-height);
 				overflow-y: hidden;
 
 				/* transition */
-				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, ${spring()});
+				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, var(--spring));
 				transition-property: height;
 			}
 			.panel[data-state-collapsed] {
-				height: ${collapseHeight()};
+				height: var(--min-height);
 			}
 
 			/********************************/
@@ -64,19 +63,19 @@ export function Collapsible(props: ParentProps<{
 				padding-top: 0; /* Override */
 
 				/* transition */
-				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, ${spring()});
+				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, var(--spring));
 				transition-property: transform, opacity;
 			}
 			/* .panel[data-state-collapsed][data-state-once] .panel-body { */
 			/* 	opacity: 0; */
 			/* } */
-			.panel[data-state-collapsed]:not([data-state-once]) .panel-body {
+			.panel[data-state-collapsed][data-state-mounted] .panel-body {
 				transform: scale(0.9);
 				opacity: 0;
 			}
-		`}</style>
-		<section ref={setRef} class="panel" data-state-collapsed={!props.open || undefined} data-state-once={once() || undefined}>
-			<AriaButton ref={setHeadRef} class="panel-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)} use:solid-styled>
+		`}
+		<section ref={setRef} class="panel" style={sx({ "--min-height": minHeight(), "--max-height": maxHeight(), "--spring": spring() })} data-state-collapsed={!props.open || undefined} data-state-mounted={mounted()}>
+			<AriaButton ref={setHeadRef} class="panel-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)}>
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full">
 					<Icon icon={Smiley} h="16px" />
 					<Line w="25%" />

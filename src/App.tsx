@@ -2,7 +2,7 @@ import { createEffect, createSignal, For, onCleanup, onMount } from "solid-js"
 import { AriaRadiogroup } from "./aria"
 import { ColorButton, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { Collapsible } from "./components/Collapsible"
-import { createRef } from "./solid-utils"
+import { createRef, css } from "./solid-utils"
 import { range } from "./utils/range"
 
 function Sidebar() {
@@ -121,19 +121,15 @@ function Sidebar() {
 
 function Main() {
 	return <>
-		<style jsx>{`
-			.grid {
-				/* Query CSS variables */
-				--height: var(--search-results-grid-height);
-				--border-radius: var(--search-results-grid-border-radius);
-
+		{css`
+			.search-results-grid {
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(var(--height), 1fr));
-				grid-auto-rows: var(--height);
+				grid-template-columns: repeat(auto-fill, minmax(var(--search-results-grid-height), 1fr));
+				grid-auto-rows: var(--search-results-grid-height);
 			}
-		`}</style>
-		<StickySearchBarNav />
-		<div class="grid p-$padding pb-($padding-y*2)">
+		`}
+		<StickySearchBar />
+		<div class="search-results-grid p-$padding pb-($padding-y*2)">
 			<For each={range(400)}>
 				{() => <>
 					<GridIcon />
@@ -143,9 +139,9 @@ function Main() {
 	</>
 }
 
-function StickySearchBarNav() {
+function StickySearchBar() {
 	return <>
-		<style jsx>{`
+		{css`
 			.sticky-search-bar {
 				position: sticky;
 				z-index: 10;
@@ -155,7 +151,7 @@ function StickySearchBarNav() {
 				background-color: var(--card-color);
 				box-shadow: var(--hairline-box-shadow);
 			}
-		`}</style>
+		`}
 		<nav class="sticky-search-bar flex-row flex-align-center">
 			<NavIcon icon={Smiley} />
 			<div class="flex-grow">
@@ -253,9 +249,9 @@ export function App() {
 
 	return <>
 		{/* TODO: Add inert somewhere */}
-		<style jsx>{`
+		{css`
 			/* TODO: This only works / has been tested on desktop */
-			:global(body:has([data-state-sidebar=expanded])) {
+			body:has([data-state-sidebar=expanded]) {
 				overflow: hidden;
 			}
 
@@ -319,7 +315,7 @@ export function App() {
 				backdrop-filter: blur(2px);
 				pointer-events: revert; /* Enable */
 			}
-		`}</style>
+		`}
 		<div class="contents" data-state-sidebar={sidebar()}>
 			<div class="column-1">
 				<Main />

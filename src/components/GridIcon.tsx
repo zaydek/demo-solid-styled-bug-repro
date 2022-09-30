@@ -1,10 +1,11 @@
 import { AriaButton } from "../aria"
+import { css } from "../solid-utils"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
 export function GridIcon() {
 	return <>
-		<style jsx>{`
+		{css`
 			/* Preamble */
 			.grid-icon-wrapper { position: relative; }
 			.grid-icon-wrapper::before { content: ""; }
@@ -15,7 +16,7 @@ export function GridIcon() {
 			.grid-icon-wrapper {
 				height: 100%;
 				aspect-ratio: 1;
-				border-radius: var(--border-radius); /* From search results */
+				border-radius: var(--search-results-grid-border-radius);
 			}
 			.grid-icon-wrapper::before { content: ""; }
 			.grid-icon-wrapper::before {
@@ -50,29 +51,29 @@ export function GridIcon() {
 				place-items: center;
 			}
 
-			.grid-icon-wrapper > :global(:nth-child(1)) { grid-area: a; }
-			.grid-icon-wrapper > :global(:nth-child(2)) { grid-area: b; }
+			.grid-icon-wrapper > :nth-child(1) { grid-area: a; }
+			.grid-icon-wrapper > :nth-child(2) { grid-area: b; }
 
 			/********************************/
 
-			.grid-icon-wrapper > :global(.icon) {
+			.grid-icon-wrapper > .icon {
 				color: var(--fill-100-color);
 			}
-			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper > :global(.icon) {
+			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper > .icon {
 				color: white;
 			}
 
 			/********************************/
 
 			/* TODO: Remove this when converting <Line> to <Text> */
-			.grid-icon-wrapper > :global(.line) {
+			.grid-icon-wrapper > .line {
 				background-color: var(--fill-200-color);
 			}
-			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper > :global(.line) {
+			.group:is(:hover:active, [data-state-active]) .grid-icon-wrapper > .line {
 				background-color: white;
 			}
-		`}</style>
-		<AriaButton as="article" class="group grid grid-center focus-ring-group" onClick={e => {/* TODO */}} use:solid-styled>
+		`}
+		<AriaButton as="article" class="group grid grid-center focus-ring-group" onClick={e => {/* TODO */}}>
 			<div class="grid-icon-wrapper grid grid-center focus-ring focus-ring-32px">
 				<Icon icon={Smiley} h="32px" />
 				<Line w="50%" />

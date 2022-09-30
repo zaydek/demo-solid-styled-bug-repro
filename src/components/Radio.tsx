@@ -1,11 +1,12 @@
 import { VoidProps } from "solid-js"
 import { AriaRadio } from "../aria"
+import { css } from "../solid-utils"
 import { Icon, IconPlaceholder, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
 export function Radio(props: VoidProps<{ value: string }>) {
 	return <>
-		<style jsx>{`
+		{css`
 			/* Preamble */
 			.radio { position: relative; }
 			.radio::before { content: ""; }
@@ -49,7 +50,7 @@ export function Radio(props: VoidProps<{ value: string }>) {
 
 			/********************************/
 
-			.radio > :global(.icon-placeholder) {
+			.radio > .icon-placeholder {
 				background-color: transparent;
 				transform: scale(0);
 
@@ -57,12 +58,12 @@ export function Radio(props: VoidProps<{ value: string }>) {
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
-			.group[aria-checked=true] .radio > :global(.icon-placeholder) {
+			.group[aria-checked=true] .radio > .icon-placeholder {
 				background-color: white;
 				transform: scale(1);
 			}
-		`}</style>
-		<AriaRadio class="group flex-row gap-$gap focus-ring focus-ring-$full" value={props.value} use:solid-styled>
+		`}
+		<AriaRadio class="group flex-row gap-$gap focus-ring focus-ring-$full" value={props.value}>
 			<div class="flex-grow">
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-card-color flex-row flex-align-center gap-$gap">
 					<Icon icon={Smiley} h="16px" />

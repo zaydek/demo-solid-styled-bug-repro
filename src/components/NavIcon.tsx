@@ -1,11 +1,12 @@
 import { VoidComponent, VoidProps } from "solid-js"
 import { AriaButton } from "../aria"
+import { css } from "../solid-utils"
 import { CSSProps } from "../solid-utils/extra-types"
 import { Icon } from "./Primitives"
 
 export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 	return <>
-		<style jsx>{`
+		{css`
 			/* Preamble */
 			.nav-icon-wrapper { position: relative; }
 			.nav-icon-wrapper::before { content: ""; }
@@ -40,15 +41,15 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 
 			/********************************/
 
-			.nav-icon-wrapper > :global(.icon) {
+			.nav-icon-wrapper > .icon {
 				color: var(--theme-color);
 			}
-			.nav-icon-wrapper:is(:hover:active, [data-state-active]) > :global(.icon) {
+			.nav-icon-wrapper:is(:hover:active, [data-state-active]) > .icon {
 				color: white;
 			}
-		`}</style>
+		`}
 		{/* TODO: Use <Show> trick here */}
-		<AriaButton class="nav-icon-wrapper grid grid-center focus-ring focus-ring-$full" onClick={e => {/* TODO */}} use:solid-styled>
+		<AriaButton class="nav-icon-wrapper grid grid-center focus-ring focus-ring-$full" onClick={e => {/* TODO */}}>
 			<Icon icon={props.icon} h="32px" />
 		</AriaButton>
 	</>
