@@ -1,18 +1,8 @@
-import { createRoot, createSignal, onMount, ParentProps, Setter } from "solid-js"
+import { createSignal, onMount, ParentProps, Setter } from "solid-js"
 import { AriaButton } from "../aria"
 import { createRef, css, sx } from "../solid-utils"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
-
-const [mounted, setMounted] = createSignal<boolean>()
-
-createRoot(() => {
-	onMount(() => {
-		setTimeout(() => {
-			setMounted(true)
-		}, 500) // Use an arbitrary timeout
-	})
-})
 
 export function Collapsible(props: ParentProps<{
 	title:    string
@@ -66,15 +56,12 @@ export function Collapsible(props: ParentProps<{
 				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, var(--spring));
 				transition-property: transform, opacity;
 			}
-			/* .panel[data-state-collapsed][data-state-once] .panel-body { */
-			/* 	opacity: 0; */
-			/* } */
-			.panel[data-state-collapsed][data-state-mounted] .panel-body {
+			body[data-state-mounted] .panel[data-state-collapsed] .panel-body {
 				transform: scale(0.9);
 				opacity: 0;
 			}
 		`}
-		<section ref={setRef} class="panel" style={sx({ "--min-height": minHeight(), "--max-height": maxHeight(), "--spring": spring() })} data-state-collapsed={!props.open || undefined} data-state-mounted={mounted()}>
+		<section ref={setRef} class="panel" style={sx({ "--min-height": minHeight(), "--max-height": maxHeight(), "--spring": spring() })} data-state-collapsed={!props.open || undefined}>
 			<AriaButton ref={setHeadRef} class="panel-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)}>
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full">
 					<Icon icon={Smiley} h="16px" />
