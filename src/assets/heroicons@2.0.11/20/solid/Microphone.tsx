@@ -1,8 +1,10 @@
+import { JSX, VoidProps } from "solid-js"
+
 // https://unpkg.com/heroicons@2.0.11/20/solid/microphone.svg
-export function Microphone(props: {
+export function Microphone(props: VoidProps<{
 	class?: string
-	style?: string
-}) {
+	style?: string | JSX.CSSProperties
+}>) {
 	return <>
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" {...props}>
 			<path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4z"></path>

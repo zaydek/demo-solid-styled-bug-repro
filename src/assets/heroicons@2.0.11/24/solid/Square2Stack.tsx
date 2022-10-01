@@ -1,8 +1,10 @@
+import { JSX, VoidProps } from "solid-js"
+
 // https://unpkg.com/heroicons@2.0.11/24/solid/square-2-stack.svg
-export function Square2Stack(props: {
+export function Square2Stack(props: VoidProps<{
 	class?: string
-	style?: string
-}) {
+	style?: string | JSX.CSSProperties
+}>) {
 	return <>
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
 			<path d="M16.5 6a3 3 0 00-3-3H6a3 3 0 00-3 3v7.5a3 3 0 003 3v-6A4.5 4.5 0 0110.5 6h6z"></path>

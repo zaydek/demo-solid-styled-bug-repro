@@ -1,8 +1,10 @@
+import { JSX, VoidProps } from "solid-js"
+
 // https://unpkg.com/heroicons@2.0.11/24/solid/home-modern.svg
-export function HomeModern(props: {
+export function HomeModern(props: VoidProps<{
 	class?: string
-	style?: string
-}) {
+	style?: string | JSX.CSSProperties
+}>) {
 	return <>
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
 			<path d="M19.006 3.705a.75.75 0 00-.512-1.41L6 6.838V3a.75.75 0 00-.75-.75h-1.5A.75.75 0 003 3v4.93l-1.006.365a.75.75 0 00.512 1.41l16.5-6z"></path>

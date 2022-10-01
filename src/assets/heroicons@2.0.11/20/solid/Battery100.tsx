@@ -1,8 +1,10 @@
+import { JSX, VoidProps } from "solid-js"
+
 // https://unpkg.com/heroicons@2.0.11/20/solid/battery-100.svg
-export function Battery100(props: {
+export function Battery100(props: VoidProps<{
 	class?: string
-	style?: string
-}) {
+	style?: string | JSX.CSSProperties
+}>) {
 	return <>
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" {...props}>
 			<path d="M4.75 8a.75.75 0 00-.75.75v2.5c0 .414.336.75.75.75h9.5a.75.75 0 00.75-.75v-2.5a.75.75 0 00-.75-.75h-9.5z"></path>

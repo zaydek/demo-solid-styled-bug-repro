@@ -28,19 +28,20 @@ export function sx(ref: JSX.CSSProperties): JSX.CSSProperties {
 	return ref2
 }
 
-const _cssCache: Record<string, true> = {}
+const _cssCache = new Map<string, true>()
 
 export function css([rawStr]: TemplateStringsArray): null {
 	const cssStr = createMemo(() => decomment(rawStr))
-
 	if (cssStr() in _cssCache) { return null }
-	_cssCache[cssStr()] = true
+
+	_cssCache.set(cssStr(), true) // Cache code
 	const style = document.createElement("style")
 	style.setAttribute("type", "text/css")
 	style.setAttribute("data-css", "")
 	style.textContent = cssStr()
 	document.head.appendChild(style)
 	onCleanup(() => {
+		_cssCache.delete(cssStr()) // Cache code
 		document.head.removeChild(style)
 	})
 	return null

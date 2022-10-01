@@ -9,10 +9,12 @@ export function formatSVG(svg: string) {
 
 export function formatJSX(href: string, name: string, svg: string) {
 	return detab(`
+		import { JSX, VoidProps } from "solid-js"
+
 		// ${href}
 		export function ${name}(props: {
 			class?: string
-			style?: string
+			style?: string | JSX.CSSProperties
 		}) {
 			return <>
 				${tab(

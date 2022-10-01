@@ -3,6 +3,32 @@ import { Rule } from "unocss"
 import { defineConfig } from "unocss/vite"
 import { cssSpec } from "./unocss.css.spec"
 
+//// function desugar(raw: undefined | string, { sign }: { sign?: string } = {}): undefined | 0 | string {
+//// 	if (raw === "0") { return 0 }
+//// 	if (!raw) { return }
+////
+//// 	let desugared = "" // Return variable
+//// 	const str = "" + raw
+//// 	if (sign) {
+//// 		if (str.startsWith("(") && str.endsWith(")")) {
+//// 			desugared = `calc(-1*(${str.slice(1, -1)}))`
+//// 		} else {
+//// 			desugared = `calc(-1*(${str}))`
+//// 		}
+//// 	} else {
+//// 		if (str.startsWith("(") && str.endsWith(")")) {
+//// 			desugared = `calc(${str.slice(1, -1)})`
+//// 		} else {
+//// 			desugared = `${str}`
+//// 		}
+//// 	}
+//// 	// Desugar var(...)
+//// 	desugared = desugared.replaceAll(/\$([a-zA-Z][a-zA-Z-0-9]*)/g, "var(--$1)")
+//// 	// Convert underscores to WS
+//// 	desugared = desugared.replaceAll("_", " ")
+//// 	return desugared
+//// }
+
 function desugar(raw: undefined | string, { sign }: { sign?: string } = {}): undefined | 0 | string {
 	if (raw === "0") { return 0 }
 	if (!raw) { return }

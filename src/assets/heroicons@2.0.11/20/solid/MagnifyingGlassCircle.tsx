@@ -1,8 +1,10 @@
+import { JSX, VoidProps } from "solid-js"
+
 // https://unpkg.com/heroicons@2.0.11/20/solid/magnifying-glass-circle.svg
-export function MagnifyingGlassCircle(props: {
+export function MagnifyingGlassCircle(props: VoidProps<{
 	class?: string
-	style?: string
-}) {
+	style?: string | JSX.CSSProperties
+}>) {
 	return <>
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" {...props}>
 			<path d="M6.5 9a2.5 2.5 0 115 0 2.5 2.5 0 01-5 0z"></path>
