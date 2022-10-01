@@ -2,33 +2,76 @@ import "the-new-css-reset"
 import "virtual:uno.css"
 import "./scss/index.scss"
 
-import { createResource, createRoot, createSignal, For, Show, startTransition, Suspense } from "solid-js"
+import { createResource, createRoot, createSignal, For, Show, Suspense } from "solid-js"
 import { Dynamic, Portal, render } from "solid-js/web"
 import { css } from "./solid-utils"
 import { range } from "./utils"
 
 ////////////////////////////////////////
 
-const [manifest] = createResource(async () => {
-	await new Promise(r => setTimeout(r, 1_000))
-	return import("./data/manifest@2.0.11")
-})
+const _internalCache = new Map<string, unknown>()
+async function cache<Value>(key: string, value: Value): Promise<Value> {
+	if (_internalCache.has(key)) {
+		return _internalCache.get(key) as Value
+	} else {
+		await new Promise(resolve => setTimeout(resolve, 500))
+		_internalCache.set(key, value)
+		return value
+	}
+}
 
-const [selected, setSelected] = createSignal("20/solid")
-const [iconset] = createRoot(() => createResource(selected, async selected => {
-	if (selected === "20/solid") {
-		return import("./assets/heroicons@2.0.11/20/solid")
-	} else if (selected === "24/solid") {
-		return import("./assets/heroicons@2.0.11/24/solid")
-	} else if (selected === "24/outline") {
-		return import("./assets/heroicons@2.0.11/24/outline")
+////////////////////////////////////////
+
+type Version = "v1" | "v2"
+type Variant = "outline" | "solid" | "20/solid" | "24/outline" | "24/solid"
+
+const [version, setVersion] = createSignal<Version>("v2")
+const [variant, setVariant] = createSignal<Variant>("20/solid")
+
+const [manifest] = createRoot(() => createResource(version, async version => {
+	if (version === "v1") {
+		return cache("v1", import("./data/manifest@1.0.6"))
+	} else if (version === "v2") {
+		return cache("v2", import("./data/manifest@2.0.11"))
 	}
 }))
 
-const loaded = () => {
-	return manifest.state === "ready" &&
-		iconset.state === "ready"
-}
+let cachedV1Variant: Variant = "solid"
+let cachedV2Variant: Variant = "24/solid"
+
+const [icons] = createRoot(() => createResource(() => [version(), variant()] as [Version, Variant], async ([version, variant]) => {
+	// Cache the previous variants (by version) for toggling between versions
+	if (variant === "solid" || variant === "outline") {
+		cachedV1Variant = variant
+	} else {
+		cachedV2Variant = variant
+	}
+	// V1
+	if (version === "v1") {
+		if (variant === "solid") {
+			return cache(variant, import("./assets/heroicons@1.0.6/solid"))
+		} else if (variant === "outline") {
+			return cache(variant, import("./assets/heroicons@1.0.6/outline"))
+		}
+		// Fallback
+		setVariant(cachedV1Variant)
+		return cache(variant, import("./assets/heroicons@1.0.6/solid"))
+	}
+	if (version === "v2") {
+		if (variant === "20/solid") {
+			return cache(variant, import("./assets/heroicons@2.0.11/20/solid"))
+		} else if (variant === "24/solid") {
+			return cache(variant, import("./assets/heroicons@2.0.11/24/solid"))
+		} else if (variant === "24/outline") {
+			return cache(variant, import("./assets/heroicons@2.0.11/24/outline"))
+		}
+		// Fallback
+		setVariant(cachedV2Variant)
+		return cache(variant, import("./assets/heroicons@2.0.11/20/solid"))
+	}
+}))
+
+const ready = () => manifest.state === "ready" && icons.state === "ready"
 
 ////////////////////////////////////////
 
@@ -56,12 +99,12 @@ function SearchBar() {
 				color: var(--placeholder-text-color);
 			}
 		`}
-		<Show when={!loaded()}>
+		<Show when={ready()} fallback={<>
+			{/* Fallback */}
 			<div class="component-search-bar flex-row flex-align-center">
 				<div class="h-8px aspect-16 rounded-$full effect-shimmer"></div>
 			</div>
-		</Show>
-		<Show when={loaded()}>
+		</>}>
 			<input class="component-search-bar is-loaded" placeholder="I am looking for…" value={value()} onInput={e => setValue(e.currentTarget.value)} />
 		</Show>
 	</>
@@ -108,25 +151,23 @@ function Grid() {
 			}
 		`}
 		<Suspense fallback={<>
-			{/* Not ready */}
 			<div class="component-grid">
-				<For each={range(32)}>
+				<For each={range(64)}>
 					{() => <>
 						<div class="component-grid-cell">
 							<div class="h-32px aspect-1 rounded-$full effect-shimmer"></div>
-							<div class="h-6px aspect-8 rounded-$full effect-shimmer"></div>
+							<div class="h-6px  aspect-8 rounded-$full effect-shimmer"></div>
 						</div>
 					</>}
 				</For>
 			</div>
 		</>}>
-			{/* Ready */}
 			<div class="component-grid">
 				<For each={manifest()?.manifest.payload}>
 					{info => <>
 						<div class="component-grid-cell">
 							{/* @ts-expect-error */}
-							<Dynamic component={iconset()[info.title]} class="h-32px aspect-1 color:$text-color" />
+							<Dynamic component={icons()?.[info.title]} class="h-32px aspect-1 color:$text-color" />
 							<div class="component-grid-label">{info.kebab}</div>
 						</div>
 					</>}
@@ -150,6 +191,9 @@ function Modal() {
 		<div class="fixed inset-br-16px">
 			<div class="component-modal flex-col gap-8px">
 				{css`
+					.hr {
+						margin: 8px 0;
+					}
 					.button {
 						padding: 8px;
 						border-radius: 8px;
@@ -163,34 +207,53 @@ function Modal() {
 				`}
 				<button
 					class="button"
-					onClick={e => {
-						startTransition(() => {
-							setSelected("20/solid")
-						})
-					}}
+					onClick={e => setVersion("v1")}
 				>
-					small/solid
+					v1
 				</button>
 				<button
 					class="button"
-					onClick={e => {
-						startTransition(() => {
-							setSelected("24/solid")
-						})
-					}}
+					onClick={e => setVersion("v2")}
 				>
-					large/solid
+					v2
 				</button>
-				<button
-					class="button"
-					onClick={e => {
-						startTransition(() => {
-							setSelected("24/outline")
-						})
-					}}
-				>
-					large/outline
-				</button>
+				<hr class="hr" />
+				{/* V1 */}
+				<Show when={version() === "v1"}>
+					<button
+						class="button"
+						onClick={e => setVariant("solid")}
+					>
+						solid
+					</button>
+					<button
+						class="button"
+						onClick={e => setVariant("outline")}
+					>
+						outline
+					</button>
+				</Show>
+				{/* V2 */}
+				<Show when={version() === "v2"}>
+					<button
+						class="button"
+						onClick={e => setVariant("20/solid")}
+					>
+						small/solid
+					</button>
+					<button
+						class="button"
+						onClick={e => setVariant("24/solid")}
+					>
+						large/solid
+					</button>
+					<button
+						class="button"
+						onClick={e => setVariant("24/outline")}
+					>
+						large/outline
+					</button>
+				</Show>
 			</div>
 		</div>
 	</>
