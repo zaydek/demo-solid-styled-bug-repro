@@ -4,6 +4,7 @@ import "./scss/index.scss"
 
 import { createResource, createRoot, createSignal, For, Show, Suspense } from "solid-js"
 import { Dynamic, Portal, render } from "solid-js/web"
+import { serialize } from "./serialize"
 import { css } from "./solid-utils"
 import { range } from "./utils"
 
@@ -14,7 +15,7 @@ async function cache<Value>(key: string, value: Value): Promise<Value> {
 	if (_internalCache.has(key)) {
 		return _internalCache.get(key) as Value
 	} else {
-		await new Promise(resolve => setTimeout(resolve, 500))
+		//// await new Promise(resolve => setTimeout(resolve, 500))
 		_internalCache.set(key, value)
 		return value
 	}
@@ -71,6 +72,8 @@ const [icons] = createRoot(() => createResource(() => [version(), variant()] as 
 	}
 }))
 
+const [textarea, setTextarea] = createSignal("")
+
 const ready = () => manifest.state === "ready" && icons.state === "ready"
 
 ////////////////////////////////////////
@@ -82,7 +85,7 @@ function SearchBar() {
 		{css`
 			.component-search-bar {
 				padding: 0 calc((var(--grid-cell-height) * 2 / 3) / 2);
-				height: calc(var(--grid-cell-height) * 2 / 3);
+				height: 64px;
 				border-radius: calc((var(--grid-cell-height) * 2 / 3) / 2);
 				// Decoration
 				box-shadow: 0 0 0 4px var(--hairline-gray-color);
@@ -120,8 +123,8 @@ function Grid() {
 				border-radius: calc((var(--grid-cell-height) * 2 / 3) / 2);
 				// Decoration
 				box-shadow: 0 0 0 4px var(--hairline-gray-color);
-				// Behavior
-				overflow: hidden;
+				//// // Behavior
+				//// overflow: hidden;
 			}
 
 			//////////////////////////////////
@@ -133,7 +136,7 @@ function Grid() {
 				place-items: center;         // E.g. grid grid-center
 				gap: 6px;
 				aspect-ratio: 1;
-				outline: 1px solid var(--hairline-gray-color);
+				//// outline: 1px solid var(--hairline-gray-color);
 			}
 
 			//////////////////////////////////
@@ -165,11 +168,15 @@ function Grid() {
 			<div class="component-grid">
 				<For each={manifest()?.manifest.payload}>
 					{info => <>
-						<div class="component-grid-cell">
+						<button class="component-grid-cell" onClick={e => {
+							const serialized = serialize(e.currentTarget.querySelector("svg")!)
+							navigator.clipboard.writeText(serialized)
+							setTextarea(serialized)
+						}}>
 							{/* @ts-expect-error */}
 							<Dynamic component={icons()?.[info.title]} class="h-32px aspect-1 color:$text-color" />
 							<div class="component-grid-label">{info.kebab}</div>
-						</div>
+						</button>
 					</>}
 				</For>
 			</div>
@@ -183,7 +190,7 @@ function Modal() {
 			.component-modal {
 				padding: 16px;
 				width: 384px;
-				border-radius: 16px;
+				border-radius: 24px;
 				background-color: var(--card-color);
 				box-shadow: 0 0 0 4px var(--hairline-gray-color);
 			}
@@ -197,63 +204,59 @@ function Modal() {
 					.button {
 						padding: 8px;
 						border-radius: 8px;
+						// Typography
+						font: 400 16px / normal var(--sans);
 						// Decoration
-						font-family: var(--sans);
 						color: var(--text-color);
 						background-color: hsl(0deg 0% 95%);
 						// Behavior
 						cursor: pointer;
 					}
+					.textarea {
+						padding: 8px;
+						border-radius: 8px;
+						// Typography
+						-webkit-font-smoothing: auto;  // CSS reset
+						-moz-osx-font-smoothing: auto; // CSS reset
+						font: 400 14px / normal var(--code);
+						tab-size: 2;
+						white-space: pre;
+						// Decoration
+						color: var(--text-color);
+						background-color: hsl(0deg 0% 95%);
+					}
+					.textarea::placeholder {
+						color: var(--placeholder-text-color);
+					}
 				`}
-				<button
-					class="button"
-					onClick={e => setVersion("v1")}
-				>
-					v1
-				</button>
-				<button
-					class="button"
-					onClick={e => setVersion("v2")}
-				>
-					v2
-				</button>
+				<For each={["v1", "v2"] as Version[]}>
+					{version => <>
+						<button class="button" onClick={e => setVersion(version)}>
+							{version}
+						</button>
+					</>}
+				</For>
 				<hr class="hr" />
-				{/* V1 */}
 				<Show when={version() === "v1"}>
-					<button
-						class="button"
-						onClick={e => setVariant("solid")}
-					>
-						solid
-					</button>
-					<button
-						class="button"
-						onClick={e => setVariant("outline")}
-					>
-						outline
-					</button>
+					<For each={["solid", "outline"] as Variant[]}>
+						{variant => <>
+							<button class="button" onClick={e => setVariant(variant)}>
+								{variant}
+							</button>
+						</>}
+					</For>
 				</Show>
-				{/* V2 */}
 				<Show when={version() === "v2"}>
-					<button
-						class="button"
-						onClick={e => setVariant("20/solid")}
-					>
-						small/solid
-					</button>
-					<button
-						class="button"
-						onClick={e => setVariant("24/solid")}
-					>
-						large/solid
-					</button>
-					<button
-						class="button"
-						onClick={e => setVariant("24/outline")}
-					>
-						large/outline
-					</button>
+					<For each={["20/solid", "24/solid", "24/outline"] as Variant[]}>
+						{variant => <>
+							<button class="button" onClick={e => setVariant(variant)}>
+								{variant}
+							</button>
+						</>}
+					</For>
 				</Show>
+				<hr class="hr" />
+				<textarea class="textarea" rows={textarea().split("\n").length} value={textarea()} placeholder="Click an element to inspect the HTML" />
 			</div>
 		</div>
 	</>
@@ -262,6 +265,8 @@ function Modal() {
 function App() {
 	return <>
 		{css`
+			:focus { outline: revert; } // CSS reset
+
 			:root {
 				-webkit-font-smoothing: antialiased;
 				-moz-osx-font-smoothing: grayscale;
@@ -292,6 +297,9 @@ function App() {
 					Menlo,
 					monospace;
 
+				color: red; // DEBUG
+			}
+			::placeholder {
 				color: red; // DEBUG
 			}
 
