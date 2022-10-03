@@ -1,3 +1,8 @@
+$full: 1000px;  // E.g. rounded-$full
+$screen: 100vh; // E.g. min-h-$screen
+
+////////////////////////////////////////
+
 $padding-x: 20px;
 $padding-y: 16px;
 $padding: (
@@ -15,7 +20,3 @@ $search-results-grid-border-radius: 32px;
 
 $form-height: 32px;
 $reduced-form-height: $form-height - 4px; // Copy by value
-
-$full: 1000px;
-
-@mixin body {}

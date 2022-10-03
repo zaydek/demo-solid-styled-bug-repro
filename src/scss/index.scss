@@ -1,30 +1,26 @@
+@use "sass:list";
 @use "sass:meta";
 
-@use "vars-layout";
-@use "vars-colors";
-@use "vars-box-shadow";
-@use "vars-transition";
+@use "box-shadow";
+@use "color";
+@use "layout";
+@use "transition";
+@use "typography";
 
 @use "utils/interpolate-vars" as *;
 
 :root {
-	@include interpolate-vars(
-		meta.module-variables(vars-layout),
-		meta.module-variables(vars-colors),
-		meta.module-variables(vars-box-shadow),
-		meta.module-variables(vars-transition),
-	);
+	$vars: ();
+	@each $thing in (layout, typography, color, box-shadow, transition) {
+		$vars: list.join($vars, meta.module-variables($thing));
+	}
+	@include interpolate-vars($vars);
 }
 
-//// [tabindex] {
-//// 	cursor: pointer;
-//// 	user-select: none;
-//// 	-webkit-user-select: none;
-//// }
-
-@include vars-layout.body;
-@include vars-colors.body;
-@include vars-box-shadow.body;
-@include vars-transition.body;
-
 @include meta.load-css("focus-ring");
+
+@if meta.mixin-exists(body, layout)     { @include layout.body;     }
+@if meta.mixin-exists(body, typography) { @include typography.body; }
+@if meta.mixin-exists(body, color)      { @include color.body;      }
+@if meta.mixin-exists(body, box-shadow) { @include box-shadow.body; }
+@if meta.mixin-exists(body, transition) { @include transition.body; }

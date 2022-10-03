@@ -1,0 +1,21 @@
+$sans: system-ui,
+	-apple-system,
+	"Segoe UI",
+	Roboto,
+	Helvetica,
+	Arial,
+	sans-serif,
+	"Apple Color Emoji",
+	"Segoe UI Emoji";
+
+$code: ui-monospace,
+	SFMono-Regular,
+	Consolas,
+	"Liberation Mono",
+	Menlo,
+	monospace;
+
+@mixin body {
+	:root         { color: red; } // DEBUG
+	::placeholder { color: red; } // DEBUG
+}

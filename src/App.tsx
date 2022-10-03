@@ -119,26 +119,33 @@ function Sidebar() {
 
 ////////////////////////////////////////
 
-function StickySearchBar() {
+function SearchBar() {
 	return <>
 		{css`
 			.component-search-bar {
-				position: sticky;
-				z-index: 10;
-				top: 0;
 				padding: 0 var(--padding-x);
 				height: var(--search-bar-height);
 				background-color: var(--card-color);
 				box-shadow: var(--hairline-box-shadow);
 			}
+
+			//////////////////////////////////
+
+			.component-search-bar-field {
+				// Typography
+				font: 400 17px / normal var(--sans);
+				letter-spacing: calc(1em / 64);
+				color: var(--text-color);
+			}
 		`}
 		<nav class="component-search-bar flex-row flex-align-center">
 			<NavIcon icon={Smiley} />
-			<div class="flex-grow">
+			{/* <div class="flex-grow">
 				<div class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
 					<Line w="15%" />
 				</div>
-			</div>
+			</div> */}
+			<input class="component-search-bar-field" type="text" value="hello, world!" />
 			<NavIcon icon={Smiley} />
 		</nav>
 	</>
@@ -146,15 +153,19 @@ function StickySearchBar() {
 
 function Main() {
 	return <>
+		<div class="sticky inset-t">
+			<SearchBar />
+		</div>
 		{css`
 			.component-search-results {
+				padding: var(--padding);
+				padding-bottom: calc(var(--padding-y) * 2); // Override padding
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--search-results-grid-height), 1fr));
 				grid-auto-rows: var(--search-results-grid-height);
 			}
 		`}
-		<StickySearchBar />
-		<div class="component-search-results p-$padding pb-($padding-y*2)">
+		<div class="component-search-results">
 			<For each={range(400)}>
 				{() => <>
 					<GridIcon />
