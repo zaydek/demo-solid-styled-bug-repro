@@ -119,26 +119,6 @@ function Sidebar() {
 
 ////////////////////////////////////////
 
-function Main() {
-	return <>
-		{css`
-			.component-search-results {
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(var(--search-results-grid-height), 1fr));
-				grid-auto-rows: var(--search-results-grid-height);
-			}
-		`}
-		<StickySearchBar />
-		<div class="component-search-results p-$padding pb-($padding-y*2)">
-			<For each={range(400)}>
-				{() => <>
-					<GridIcon />
-				</>}
-			</For>
-		</div>
-	</>
-}
-
 function StickySearchBar() {
 	return <>
 		{css`
@@ -161,6 +141,26 @@ function StickySearchBar() {
 			</div>
 			<NavIcon icon={Smiley} />
 		</nav>
+	</>
+}
+
+function Main() {
+	return <>
+		{css`
+			.component-search-results {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(var(--search-results-grid-height), 1fr));
+				grid-auto-rows: var(--search-results-grid-height);
+			}
+		`}
+		<StickySearchBar />
+		<div class="component-search-results p-$padding pb-($padding-y*2)">
+			<For each={range(400)}>
+				{() => <>
+					<GridIcon />
+				</>}
+			</For>
+		</div>
 	</>
 }
 
