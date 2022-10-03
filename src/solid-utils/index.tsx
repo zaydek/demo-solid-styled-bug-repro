@@ -1,4 +1,5 @@
 export * from "./create-ref"
 export * from "./css"
 export * from "./extra-types"
+export * from "./search-params"
 export * from "./styled"

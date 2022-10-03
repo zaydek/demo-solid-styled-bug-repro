@@ -34,6 +34,6 @@ function _recurse(el: Element, tabCount: number): string[] {
 	return lines
 }
 
-export function serialize(el: Element) {
+export function stringify(el: Element) {
 	return _recurse(el, 0).join("\n")
 }

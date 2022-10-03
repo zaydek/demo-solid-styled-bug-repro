@@ -2,12 +2,140 @@ import "the-new-css-reset"
 import "virtual:uno.css"
 import "./scss/index.scss"
 
-import { createRoot, For, Show, Suspense } from "solid-js"
+import { createMemo, createResource, createRoot, createSignal, For, Show, Suspense } from "solid-js"
 import { Dynamic, Portal, render } from "solid-js/web"
+import { stringifySVG } from "./serialize"
 import { css } from "./solid-utils"
-import { ready, search, settings, VariantV1, VariantV2, Version } from "./state"
-import { stringify } from "./stringify-svg"
 import { range } from "./utils"
+
+////////////////////////////////////////
+
+const _internalCache = new Map<string, unknown>()
+async function cache<Value>(key: string, value: Value): Promise<Value> {
+	if (_internalCache.has(key)) {
+		return _internalCache.get(key) as Value
+	} else {
+		await new Promise(resolve => setTimeout(resolve, 1_000))
+		_internalCache.set(key, value)
+		return value
+	}
+}
+
+////////////////////////////////////////
+
+type Version = "v1" | "v2"
+type Variant = "outline" | "solid" | "20/solid" | "24/outline" | "24/solid"
+
+const [version, setVersion] = createSignal<Version>("v2")
+const [variant, setVariant] = createSignal<Variant>("20/solid")
+
+const [manifest] = createRoot(() => createResource(version, async version => {
+	if (version === "v1") {
+		return cache("v1", import("./data/manifest@1.0.6"))
+	} else if (version === "v2") {
+		return cache("v2", import("./data/manifest@2.0.11"))
+	}
+}))
+
+let cachedV1Variant: Variant = "solid"
+let cachedV2Variant: Variant = "24/solid"
+
+const [icons] = createRoot(() => createResource(() => [version(), variant()] as [Version, Variant], async ([version, variant]) => {
+	// Cache the previous variants (by version) for toggling between versions
+	if (variant === "solid" || variant === "outline") {
+		cachedV1Variant = variant
+	} else {
+		cachedV2Variant = variant
+	}
+	// V1
+	if (version === "v1") {
+		if (variant === "solid") {
+			return cache(variant, import("./assets/heroicons@1.0.6/solid"))
+		} else if (variant === "outline") {
+			return cache(variant, import("./assets/heroicons@1.0.6/outline"))
+		}
+		// Fallback
+		setVariant(cachedV1Variant)
+		return cache(variant, import("./assets/heroicons@1.0.6/solid"))
+	}
+	if (version === "v2") {
+		if (variant === "20/solid") {
+			return cache(variant, import("./assets/heroicons@2.0.11/20/solid"))
+		} else if (variant === "24/solid") {
+			return cache(variant, import("./assets/heroicons@2.0.11/24/solid"))
+		} else if (variant === "24/outline") {
+			return cache(variant, import("./assets/heroicons@2.0.11/24/outline"))
+		}
+		// Fallback
+		setVariant(cachedV2Variant)
+		return cache(variant, import("./assets/heroicons@2.0.11/20/solid"))
+	}
+}))
+
+const [textarea, setTextarea] = createSignal("")
+
+const ready = () => manifest.state === "ready" && icons.state === "ready"
+
+////////////////////////////////////////
+
+const [searchValue, setSearchValue] = createSignal("")
+
+// Memo because of <Highlight>
+const canonicalSearchValue = createMemo(() => {
+	return searchValue()
+		.trim()
+		.replace(/\s+/g, "-")           // Whitespace -> hyphen (takes precedence)
+		.replace(/-+/g, "-")            // Hyphens    -> hyphen
+		.replace(/[^a-zA-Z0-9-]+/g, "") // Remove non-alphanums
+})
+
+const payload = () => manifest()?.manifest.payload
+const payloadValues = () => {
+	if (!payload()) { return }
+	return Object.values(payload()!)
+}
+
+
+type IndexedResult = {
+	kebab: string
+	camel: string
+	title: string
+} & { index?: number }
+
+const searchResults = createRoot(() => {
+	return (): undefined | IndexedResult[] => {
+		if (!manifest()) { return } // Undefined
+
+		const value = canonicalSearchValue()
+		if (!value) {
+			return payload()
+		}
+		const matches: IndexedResult[] = []
+		for (const info of payloadValues()!) {
+			const key = info.kebab
+			const index = key.indexOf(value)
+			if (index !== -1) {
+				matches.push({
+					...info,
+					index,
+				})
+			}
+		}
+		if (matches.length) {
+			matches.sort((a, b) => a.index! - b.index!)
+			return matches
+		} else {
+			return // Undefined
+		}
+	}
+})
+
+//// createRoot(() => {
+//// 	createEffect(() => {
+//// 		if (!searchResults()) { return }
+//// 		console.log(searchResults())
+//// 	})
+//// })
 
 ////////////////////////////////////////
 
@@ -35,7 +163,7 @@ function SearchBar() {
 				<div class="h-8px aspect-16 rounded-$full effect-shimmer"></div>
 			</div>
 		</>}>
-			<input class="component-search-bar" placeholder="I’m searching for…" value={search.value()} onInput={e => search.setValue(e.currentTarget.value)} autofocus />
+			<input class="component-search-bar" placeholder="I’m searching for…" value={searchValue()} onInput={e => setSearchValue(e.currentTarget.value)} autofocus />
 		</Show>
 	</>
 }
@@ -98,6 +226,10 @@ function Grid() {
 
 			//////////////////////////////////
 
+			//// .component-grid-label-highlight {
+			//// 	display: inline-block; // CSS reset
+			//// }
+
 			.component-grid-label-highlight { position: relative; }
 			.component-grid-label-highlight::before { content: ""; }
 			.component-grid-label-highlight::before {
@@ -120,11 +252,11 @@ function Grid() {
 				</For>
 			</div>
 		</>}>
-			<Show when={search.results()} fallback={<>
+			<Show when={searchResults()} fallback={<>
 				<div class="component-grid is-empty flex-col flex-center gap-8px">
 					<div class="font-family:$sans color:$text-color">No results</div>
 					<div class="px-24px h-48px rounded-$full background-color:hsl(0deg_0%_0%/15%) grid grid-center cursor:pointer" onClick={e => {
-						search.setValue("")
+						setSearchValue("")
 						const componentSearchBar = document.getElementsByClassName("component-search-bar")[0]! as HTMLElement
 						componentSearchBar.focus()
 					}} tabindex="0">
@@ -133,20 +265,21 @@ function Grid() {
 				</div>
 			</>}>
 				<div class="component-grid is-not-empty">
-					<For each={search.results()}>
+					<For each={searchResults()}>
 						{info => <>
 							<div class="component-grid-cell" onClick={e => {
-								const serialized = stringify(e.currentTarget.querySelector("svg")!)
+								const serialized = stringifySVG(e.currentTarget.querySelector("svg")!)
 								navigator.clipboard.writeText(serialized)
-								settings.setTextarea(serialized)
+								setTextarea(serialized)
 							}}>
 								{/* @ts-expect-error */}
-								<Dynamic component={settings.icons()?.[info.title]} class="h-32px aspect-1 color:$text-color" />
+								<Dynamic component={icons()?.[info.title]} class="h-32px aspect-1 color:$text-color" />
 								<div class="component-grid-label">
+									{/* Guard undefined because info.index=0 is OK */}
 									<Show when={info.index !== undefined} fallback={info.kebab}>
 										<span data-a>{info.kebab.slice(0, info.index!)}</span>
-										<span data-b class="component-grid-label-highlight">{search.canonicalValue()}</span>
-										<span data-c>{info.kebab.slice(info.index! + search.canonicalValue().length)}</span>
+										<span data-b class="component-grid-label-highlight">{canonicalSearchValue()}</span>
+										<span data-c>{info.kebab.slice(info.index! + canonicalSearchValue().length)}</span>
 									</Show>
 								</div>
 							</div>
@@ -169,7 +302,7 @@ function Modal() {
 				box-shadow: 0 0 0 4px var(--hairline-gray-color);
 			}
 		`}
-		<div class="fixed inset-tr-16px">
+		<div class="fixed inset-br-16px">
 			<div class="component-modal flex-col gap-8px">
 				{css`
 					.hr {
@@ -209,32 +342,32 @@ function Modal() {
 				`}
 				<For each={["v1", "v2"] as Version[]}>
 					{version => <>
-						<div class="button" onClick={e => settings.setVersion(version)} tabindex="0">
+						<div class="button" onClick={e => setVersion(version)} tabindex="0">
 							{version}
 						</div>
 					</>}
 				</For>
 				<hr class="hr" />
-				<Show when={settings.version() === "v1"}>
-					<For each={["solid", "outline"] as VariantV1[]}>
+				<Show when={version() === "v1"}>
+					<For each={["solid", "outline"] as Variant[]}>
 						{variant => <>
-							<div class="button" onClick={e => settings.setVariantV1(variant)} tabindex="0">
+							<div class="button" onClick={e => setVariant(variant)} tabindex="0">
 								{variant}
 							</div>
 						</>}
 					</For>
 				</Show>
-				<Show when={settings.version() === "v2"}>
-					<For each={["20/solid", "24/solid", "24/outline"] as VariantV2[]}>
+				<Show when={version() === "v2"}>
+					<For each={["20/solid", "24/solid", "24/outline"] as Variant[]}>
 						{variant => <>
-							<div class="button" onClick={e => settings.setVariantV2(variant)} tabindex="0">
+							<div class="button" onClick={e => setVariant(variant)} tabindex="0">
 								{variant}
 							</div>
 						</>}
 					</For>
 				</Show>
 				<hr class="hr" />
-				<textarea class="textarea" rows={settings.textarea().split("\n").length} value={settings.textarea()} placeholder="Click an element to inspect the HTML" onClick={e => {
+				<textarea class="textarea" rows={textarea().split("\n").length} value={textarea()} placeholder="Click an element to inspect the HTML" onClick={e => {
 					// https://stackoverflow.com/a/7313795
 					e.currentTarget.focus()
 					e.currentTarget.select()
@@ -324,54 +457,5 @@ function App() {
 		</div>
 	</>
 }
-
-createRoot(() => css`
-	:focus { outline: revert; }
-
-	:root {
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-
-		--full:   1000px; // E.g. rounded-$full
-		--screen: 100vh;  // E.g. h-$screen
-
-		// Typography
-		--sans: system-ui,
-			-apple-system,
-			"Segoe UI",
-			Roboto,
-			Helvetica,
-			Arial,
-			sans-serif,
-			"Apple Color Emoji",
-			"Segoe UI Emoji";
-
-		--code: ui-monospace,
-			SFMono-Regular,
-			Consolas,
-			"Liberation Mono",
-			Menlo,
-			monospace;
-
-		// Colors
-		--card-color:             hsl(0deg 0% 100%);
-		--hairline-gray-color:    hsl(0deg 0% 85%);
-		--text-color:             hsl(0deg 0% 25%);
-		--placeholder-text-color: hsl(0deg 0% 50%);
-
-		font-family: var(--sans);
-
-		// DEBUG
-		color: red;
-	}
-	code {
-		-webkit-font-smoothing: auto;
-		-moz-osx-font-smoothing: auto;
-
-		font-family: var(--code);
-	}
-`)
-
-////////////////////////////////////////
 
 render(() => <App />, document.getElementById("root")!)

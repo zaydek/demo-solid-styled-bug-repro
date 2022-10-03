@@ -32,7 +32,7 @@ const _cssCache = new Map<string, true>()
 
 export function css([rawStr]: TemplateStringsArray): null {
 	const cssStr = createMemo(() => decomment(rawStr))
-	if (cssStr() in _cssCache) { return null }
+	if (_cssCache.has(cssStr())) { return null }
 
 	_cssCache.set(cssStr(), true) // Cache code
 	const style = document.createElement("style")
