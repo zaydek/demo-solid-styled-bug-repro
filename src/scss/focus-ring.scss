@@ -7,7 +7,7 @@
 	--focus-ring-alpha-color: hsl(var(--focus-ring-hue) var(--focus-ring-saturation) var(--focus-ring-lightness) / 15%);
 }
 
-/* Preamble */
+// Preamble
 .focus-ring { position: relative; }
 .focus-ring::after { content: ""; }
 

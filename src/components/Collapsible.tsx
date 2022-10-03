@@ -31,8 +31,7 @@ export function Collapsible(props: ParentProps<{
 			.component-panel {
 				height: var(--max-height);
 				overflow-y: hidden;
-
-				/* transition */
+				// TRANSITION
 				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, var(--spring));
 				transition-property: height;
 			}
@@ -50,9 +49,8 @@ export function Collapsible(props: ParentProps<{
 
 			.component-panel-body {
 				padding: var(--padding);
-				padding-top: 0; /* Override */
-
-				/* transition */
+				padding-top: 0; // Override padding
+				// TRANSITION
 				transition: calc(500ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, var(--spring));
 				transition-property: transform, opacity;
 			}

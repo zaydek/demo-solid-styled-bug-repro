@@ -30,18 +30,17 @@ export function ColorButton(props: VoidProps<{
 				box-shadow: revert;
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-color-button > :nth-child(1) {
 				color: var(--color, var(--theme-color));
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-color-button > :not(:nth-child(3)) {
 				transform: translateX(calc(16px / 2));
-
-				/* transition */
+				// TRANSITION
 				transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
@@ -49,18 +48,17 @@ export function ColorButton(props: VoidProps<{
 				color: white;
 				transform: translateX(0);
 			}
-			/* TODO: Remove this when converting <Line> to <Text> */
+			// TODO: Remove when converting from <Line> to <Text>
 			.component-color-button:is(:hover:active, [aria-checked=true]) > .component-line {
 				background-color: white;
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-color-button > :nth-child(3) {
 				color: transparent;
 				transform: rotate(180deg) scale(0);
-
-				/* transition */
+				// TRANSITION
 				transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}

@@ -6,11 +6,11 @@ import { Smiley } from "./Smiley"
 export function GridIcon() {
 	return <>
 		{css`
-			/* Preamble */
+			// Preamble
 			.component-grid-icon { position: relative; }
 			.component-grid-icon::before { content: ""; }
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-grid-icon { position: relative; }
 			.component-grid-icon {
@@ -26,8 +26,7 @@ export function GridIcon() {
 				border-radius: inherit;
 				background-color: transparent;
 				transform: scale(0);
-
-				/* transition */
+				// TRANSITION
 				transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
@@ -40,7 +39,7 @@ export function GridIcon() {
 				transform: scale(1);
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-grid-icon {
 				display: grid;
@@ -54,7 +53,7 @@ export function GridIcon() {
 			.component-grid-icon > :nth-child(1) { grid-area: a; }
 			.component-grid-icon > :nth-child(2) { grid-area: b; }
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-grid-icon > .component-icon {
 				color: var(--fill-100-color);
@@ -63,9 +62,9 @@ export function GridIcon() {
 				color: white;
 			}
 
-			/********************************/
+			//////////////////////////////////
 
-			/* TODO: Remove this when converting <Line> to <Text> */
+			// TODO: Remove when converting from <Line> to <Text>
 			.component-grid-icon > .component-line {
 				background-color: var(--fill-200-color);
 			}

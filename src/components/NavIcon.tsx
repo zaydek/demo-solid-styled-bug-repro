@@ -7,11 +7,11 @@ import { Icon } from "./Primitives"
 export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 	return <>
 		{css`
-			/* Preamble */
+			// Preamble
 			.component-nav-icon { position: relative; }
 			.component-nav-icon::before { content: ""; }
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-nav-icon {
 				height: 48px;
@@ -25,8 +25,7 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				border-radius: inherit;
 				background-color: transparent;
 				transform: scale(0);
-
-				/* transition */
+				// TRANSITION
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
@@ -39,7 +38,7 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 				transform: scale(1);
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-nav-icon > .component-icon {
 				color: var(--theme-color);

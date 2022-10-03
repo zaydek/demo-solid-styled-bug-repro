@@ -7,12 +7,12 @@ import { Smiley } from "./Smiley"
 export function Radio(props: VoidProps<{ value: string }>) {
 	return <>
 		{css`
-			/* Preamble */
+			// Preamble
 			.component-radio { position: relative; }
 			.component-radio::before { content: ""; }
-			.component-radio::after { content: ""; } /* NOTE: Uses &::before and &::after */
+			.component-radio::after { content: ""; }
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-radio {
 				height: var(--reduced-form-height);
@@ -25,7 +25,6 @@ export function Radio(props: VoidProps<{ value: string }>) {
 				inset: 0;
 				border-radius: inherit;
 				background-color: var(--form-color);
-				/* box-shadow: var(--inset-hairline-box-shadow); */
 				box-shadow: var(--form-box-shadow);
 			}
 			.component-radio::after {
@@ -35,8 +34,7 @@ export function Radio(props: VoidProps<{ value: string }>) {
 				border-radius: inherit;
 				background-color: transparent;
 				transform: scale(0);
-
-				/* transition */
+				// TRANSITION
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
@@ -45,13 +43,12 @@ export function Radio(props: VoidProps<{ value: string }>) {
 				transform: scale(1);
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-radio > .component-icon-placeholder {
 				background-color: transparent;
 				transform: scale(0);
-
-				/* transition */
+				// TRANSITION
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}

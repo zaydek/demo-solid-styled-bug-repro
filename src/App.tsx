@@ -250,7 +250,7 @@ export function App() {
 	return <>
 		{/* TODO: Add inert somewhere */}
 		{css`
-			/* TODO: This only works / has been tested on desktop */
+			// TODO: Only tested for desktop
 			body:has([data-state-sidebar=expanded]) {
 				overflow: hidden;
 			}
@@ -260,8 +260,7 @@ export function App() {
 			.component-column-1 {
 				margin-right: var(--sidebar-width);
 				min-height: 100vh;
-
-				/* transition */
+				// TRANSITION
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: margin-right;
 			}
@@ -269,8 +268,8 @@ export function App() {
 				margin-right: 0;
 			}
 			[data-state-sidebar=expanded] .component-column-1 {
-				-webkit-user-select: none; /* Disable selection */
-				user-select: none;
+				-webkit-user-select: none; // COMPAT/Safari
+				user-select: none;         // Disable
 			}
 
 			/********************************/
@@ -278,12 +277,11 @@ export function App() {
 			.component-column-2 {
 				position: fixed;
 				z-index: 10;
-				inset: 0 0 0 auto; /* E.g. inset-r */
+				inset: 0 0 0 auto; // E.g. inset-r
 				width: var(--sidebar-width);
 				background-color: var(--card-color);
 				box-shadow: var(--hairline-box-shadow);
-
-				/* transition */
+				// TRANSITION
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: width, transform;
 			}
@@ -302,18 +300,17 @@ export function App() {
 				z-index: 10;
 				inset: 0;
 				background-color: transparent;
-				pointer-events: none; /* Passthrough */
-
-				/* transition */
-				/* NOTE: background-color, backdrop-filter values don’t change
-				meaningfully between light and dark modes */
+				pointer-events: none; // Disable
+				// TRANSITION
+				// NOTE: background-color, backdrop-filter values don’t change
+				// meaningfully between light and dark modes
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: background-color, backdrop-filter;
 			}
 			[data-state-sidebar=expanded] .component-column-2-backdrop {
 				background-color: var(--backdrop-color);
 				backdrop-filter: blur(2px);
-				pointer-events: revert; /* Enable */
+				pointer-events: revert; // Enable
 			}
 		`}
 		<div class="contents" data-state-sidebar={sidebar()}>

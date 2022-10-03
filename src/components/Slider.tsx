@@ -14,7 +14,7 @@ export function Slider(props: VoidProps<{
 			.component-slider {
 				padding: 0 calc(var(--form-height) / 2);
 				height: var(--form-height);
-				touch-action: pan-x; /* iOS */
+				touch-action: pan-x; // COMPAT/iOS
 			}
 
 			/********************************/
