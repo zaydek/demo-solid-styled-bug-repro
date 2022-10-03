@@ -4,7 +4,7 @@ import "./scss/index.scss"
 
 import { createRoot, For, Show, Suspense } from "solid-js"
 import { Dynamic, Portal, render } from "solid-js/web"
-import { css } from "./solid-utils"
+import { css, cx } from "./solid-utils"
 import { ready, search, settings, VariantV1, VariantV2, Version } from "./state"
 import { stringify } from "./stringify-svg"
 import { range } from "./utils"
@@ -47,20 +47,13 @@ function Grid() {
 				border-radius: calc((var(--grid-cell-height) * 2 / 3) / 3);
 				box-shadow: 0 0 0 4px var(--hairline-gray-color);
 			}
-			.component-grid.is-empty {
+			.component-grid.has-no-results {
 				min-height: 75vh;
-				//// display: grid;
-				//// place-items: center;
 			}
-			.component-grid.is-not-empty {
+			.component-grid.has-results {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--grid-cell-height), 1fr));
 				gap: 1px;
-				//// border-radius: calc((var(--grid-cell-height) * 2 / 3) / 3);
-				//// // Decoration
-				//// box-shadow: 0 0 0 4px var(--hairline-gray-color);
-				//// //// // Behavior
-				//// //// overflow: hidden;
 			}
 
 			//////////////////////////////////
@@ -109,7 +102,8 @@ function Grid() {
 			}
 		`}
 		<Suspense fallback={<>
-			<div class="component-grid is-not-empty">
+			{/* Loading */}
+			<div class="component-grid has-results">
 				<For each={range(64)}>
 					{() => <>
 						<div class="component-grid-cell">
@@ -120,8 +114,9 @@ function Grid() {
 				</For>
 			</div>
 		</>}>
+			{/* Loaded -> empty */}
 			<Show when={search.results()} fallback={<>
-				<div class="component-grid is-empty flex-col flex-center gap-8px">
+				<div class="component-grid has-no-results flex-col flex-center gap-8px">
 					<div class="font-family:$sans color:$text-color">No results</div>
 					<div class="px-24px h-48px rounded-$full background-color:hsl(0deg_0%_0%/15%) grid grid-center cursor:pointer" onClick={e => {
 						search.setValue("")
@@ -132,7 +127,8 @@ function Grid() {
 					</div>
 				</div>
 			</>}>
-				<div class="component-grid is-not-empty">
+			{/* Loaded -> not empty */}
+				<div class="component-grid has-results">
 					<For each={search.results()}>
 						{info => <>
 							<div class="component-grid-cell" onClick={e => {

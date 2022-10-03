@@ -1,4 +1,4 @@
-import { createMemo, createResource, createRoot, createSignal, DEV } from "solid-js"
+import { createMemo, createResource, createRoot, createSignal } from "solid-js"
 import { createSearchSignal } from "./solid-utils"
 import { canonicalize } from "./utils"
 
@@ -9,9 +9,9 @@ async function cache<T>(key: string, value: T): Promise<T> {
 	if (_cache.has(key)) {
 		return _cache.get(key) as T
 	} else {
-		if (DEV) {
-			await new Promise(resolve => setTimeout(resolve, 1_000))
-		}
+		//// if (DEV) {
+		//// 	await new Promise(resolve => setTimeout(resolve, 500))
+		//// }
 		_cache.set(key, value)
 		return value
 	}
