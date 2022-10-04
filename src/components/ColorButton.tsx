@@ -75,7 +75,7 @@ export function ColorButton(props: FlowProps<{
 				{/* @ts-expect-error */}
 				<AriaCheckbox class="css-color-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" style={props.style ?? {}} checked={props.checked} setChecked={props.setChecked}>
 					<Icon icon={Smiley} h="16px" />
-					<div class="type-caps">{props.children}</div>
+					<div class="typography-caps">{props.children}</div>
 					<Icon icon={Smiley} h="16px" />
 				</AriaCheckbox>
 			</Match>
@@ -83,7 +83,7 @@ export function ColorButton(props: FlowProps<{
 				{/* @ts-expect-error */}
 				<AriaRadio class="css-color-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" style={props.style ?? {}} value={props.value}>
 					<Icon icon={Smiley} h="16px" />
-					<div class="type-caps">{props.children}</div>
+					<div class="typography-caps">{props.children}</div>
 					<Icon icon={Smiley} h="16px" />
 				</AriaRadio>
 			</Match>

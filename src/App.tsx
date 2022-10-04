@@ -1,7 +1,9 @@
+import "./columns.scss"
+
 import { createEffect, createSignal, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
 import { AriaRadiogroup } from "./aria"
 import { Collapsible, ColorButton, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
-import { createRef, css } from "./solid-utils"
+import { createRef, css, cx } from "./solid-utils"
 import { search, settings, VariantV1, VariantV2, Version } from "./state"
 import { range } from "./utils"
 
@@ -134,7 +136,7 @@ function Sidebar() {
 			<hr />
 		</div>
 		<div class="flex-shrink:0">
-			<hr class="collapsible" />
+			<hr class="collapse" />
 			<section class="p-$padding flex-row gap-calc($gap*2)">
 				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-100-color"></div>
 				<div class="flex-grow flex-col gap-calc($gap/2)">
@@ -159,8 +161,18 @@ function Sidebar() {
 
 function StickySearchBar() {
 	return <>
+		<nav class="sticky-search-bar flex-row flex-align-center">
+			<NavIcon icon={Smiley} active={!!search.canonicalValue() || undefined} />
+			<input class="search-bar typography-search-bar" type="text" placeholder="I’m searching for…" value={search.value()} onInput={e => search.setValue(e.currentTarget.value)} autofocus />
+			<NavIcon icon={Smiley} />
+		</nav>
+	</>
+}
+
+function Main() {
+	return <>
 		{css`
-			.css-sticky-search-bar {
+			.sticky-search-bar {
 				position: sticky;
 				z-index: 10;
 				top: 0;
@@ -172,69 +184,38 @@ function StickySearchBar() {
 
 			//////////////////////////////////
 
-			input[type=text].css-search-bar { width: 100%; } // CSS reset
-			input[type=text].css-search-bar {
- 				padding: 0 12px;
+			input[type=text].search-bar { width: 100%; }
+			input[type=text].search-bar {
+				padding: 0 12px;
 				height: var(--search-bar-height);
 			}
-		`}
-		<nav class="css-sticky-search-bar flex-row flex-align-center">
-			<NavIcon icon={Smiley} active={!!search.canonicalValue() || undefined} />
-			<input class="css-search-bar type-search-bar" type="text" placeholder="I’m searching for…" value={search.value()} onInput={e => search.setValue(e.currentTarget.value)} autofocus />
-			<NavIcon icon={Smiley} />
-		</nav>
-	</>
-}
 
-function Main() {
-	return <>
-		{css`
-			.css-grid {
-				//// padding: calc(var(--padding-y) * 2) calc(var(--padding-x) * 2);
-				//// padding-bottom: calc(var(--padding-y) * 4); // Override padding
+			//////////////////////////////////
+
+			.main-grid {
 				padding: var(--padding);
 				padding-bottom: calc(var(--padding-y) * 2); // Override padding
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(var(--search-results-grid-height), 1fr));
-				grid-auto-rows: var(--search-results-grid-height);
+				grid-template-columns: repeat(auto-fill, minmax(var(--main-grid-height), 1fr));
+				grid-auto-rows: var(--main-grid-height);
 			}
 		`}
 		<StickySearchBar />
 		<Suspense fallback={<>
-			{/* Loading */}
-			<div class="css-grid">
-				{css`
-					// NOTE: Manually add css-grid-icon because <GridIcon> hasn’t loaded yet
-					.css-grid-icon {
-						padding: 0 8px;
-						display: grid;
-						grid-template:
-							"." calc(32px / 2)
-							"a" 1fr
-							"b" 32px;
-						place-items: center;
-					}
-					.css-grid-icon > :nth-child(1) { grid-area: a; }
-					.css-grid-icon > :nth-child(2) { grid-area: b; }
-				`}
-				<For each={range(64)}>
-					{() => <>
-						{/* TODO: Rename to css-grid-cell? */}
-						<div class="css-grid-icon grid grid-center">
-							<div class="h-28px aspect-1 rounded-$full background-color:$card-hairline-color"></div>
-							<div class="h-6px  aspect-8 rounded-$full background-color:$card-hairline-color"></div>
-						</div>
-					</>}
-				</For>
+			<div class="main-grid">
+				<For each={range(64)}>{() => <>
+					<div class="grid-icon grid grid-center">
+						<div class="h-28px aspect-1 rounded-$full background-color:$card-hairline-color"></div>
+						<div class="h-6px  aspect-8 rounded-$full background-color:$card-hairline-color"></div>
+					</div>
+				</>}</For>
 			</div>
 		</>}>
 			{/* Loaded */}
-			<div class="css-grid">
-				<For each={search.results()}>
-					{info => <>
-						<GridIcon info={info} />
-					</>}
-				</For>
+			<div class="main-grid">
+				<For each={search.results()}>{info => <>
+					<GridIcon info={info} />
+				</>}</For>
 			</div>
 		</Suspense>
 	</>
@@ -324,80 +305,14 @@ export function App() {
 		}
 	})
 
+	// TODO: Add inert somewhere
 	return <>
-		{/* TODO: Add inert somewhere */}
-		{css`
-			// TODO: Only tested for desktop
-			body:has([data-state-sidebar=expanded]) {
-				overflow: hidden;
-			}
-
-			//////////////////////////////////
-
-			.css-column-1 {
-				margin-right: var(--sidebar-width);
-				min-height: 100vh;
-				// TRANSITION
-				transition: calc(250ms * var(--motion-safe)) ease;
-				transition-property: margin-right;
-			}
-			[data-state-sidebar=collapsed] .css-column-1 {
-				margin-right: 0;
-			}
-			[data-state-sidebar=expanded] .css-column-1 {
-				-webkit-user-select: none; // COMPAT/Safari
-				user-select: none;         // Disable
-			}
-
-			//////////////////////////////////
-
-			.css-column-2 {
-				position: fixed;
-				z-index: 10;
-				inset: 0 0 0 auto; // E.g. inset-r
-				width: var(--sidebar-width);
-				background-color: var(--card-color);
-				box-shadow: var(--card-hairline-box-shadow);
-				// TRANSITION
-				transition: calc(250ms * var(--motion-safe)) ease;
-				transition-property: width, transform;
-			}
-			[data-state-sidebar=collapsed] .css-column-2 {
-				transform: translateX(var(--sidebar-width));
-			}
-			[data-state-sidebar=expanded] .css-column-2 {
-				width: clamp(0px, var(--expanded-sidebar-width), 100vw);
-				box-shadow: var(--card-box-shadow);
-			}
-
-			//////////////////////////////////
-
-			.css-column-2-backdrop {
-				position: fixed;
-				z-index: 10;
-				inset: 0;
-				background-color: transparent;
-				pointer-events: none; // Disable
-				// TRANSITION
-				// NOTE: background-color, backdrop-filter values don’t change
-				// meaningfully between light and dark modes
-				transition: calc(250ms * var(--motion-safe)) ease;
-				transition-property: background-color, backdrop-filter;
-			}
-			[data-state-sidebar=expanded] .css-column-2-backdrop {
-				background-color: var(--backdrop-color);
-				backdrop-filter: blur(2px);
-				pointer-events: revert; // Enable
-			}
-		`}
-		<div class="contents" data-state-sidebar={sidebar()}>
-			<div class="css-column-1">
-				<Main />
-			</div>
-			<div class="css-column-2-backdrop" onClick={toggle}></div>
-			<div ref={setRef} class="css-column-2 flex-col">
-				<Sidebar />
-			</div>
+		<div class={cx(`column-1 is-sidebar-${sidebar()}`)}>
+			<Main />
+		</div>
+		<div class={cx(`column-2-backdrop is-sidebar-${sidebar()}`)} onClick={toggle}></div>
+		<div ref={setRef} class={cx(`column-2 is-sidebar-${sidebar()} flex-col`)}>
+			<Sidebar />
 		</div>
 	</>
 }

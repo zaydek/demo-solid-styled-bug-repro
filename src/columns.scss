@@ -1,0 +1,62 @@
+// TODO: Only tested for desktop
+body:has([data-state-sidebar=expanded]) {
+	overflow: hidden;
+}
+
+////////////////////////////////////////
+
+.column-1 {
+	margin-right: var(--sidebar-width);
+	min-height: 100vh;
+	// TRANSITION
+	transition: calc(250ms * var(--motion-safe)) ease;
+	transition-property: margin-right;
+}
+.column-1.is-sidebar-collapsed {
+	margin-right: 0;
+}
+.column-1.is-sidebar-expanded {
+	-webkit-user-select: none; // COMPAT/Safari
+	user-select: none;         // Disable
+}
+
+////////////////////////////////////////
+
+.column-2 {
+	position: fixed;
+	z-index: 10;
+	inset: 0 0 0 auto; // E.g. inset-r
+	width: var(--sidebar-width);
+	background-color: var(--card-color);
+	box-shadow: var(--card-hairline-box-shadow);
+	// TRANSITION
+	transition: calc(250ms * var(--motion-safe)) ease;
+	transition-property: width, transform;
+}
+.column-2.is-sidebar-collapsed {
+	transform: translateX(var(--sidebar-width));
+}
+.column-2.is-sidebar-expanded {
+	width: clamp(0px, var(--expanded-sidebar-width), 100vw);
+	box-shadow: var(--card-box-shadow);
+}
+
+////////////////////////////////////////
+
+.column-2-backdrop {
+	position: fixed;
+	z-index: 10;
+	inset: 0;
+	background-color: transparent;
+	pointer-events: none; // Disable
+	// TRANSITION
+	// NOTE: background-color, backdrop-filter values don’t change
+	// meaningfully between light and dark modes
+	transition: calc(250ms * var(--motion-safe)) ease;
+	transition-property: background-color, backdrop-filter;
+}
+.column-2-backdrop.is-sidebar-expanded {
+	background-color: var(--backdrop-color);
+	backdrop-filter: blur(2px);
+	pointer-events: revert; // Enable
+}

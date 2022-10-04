@@ -1,0 +1,23 @@
+.slider {
+	padding: 0 calc(var(--form-height) / 2);
+	height: var(--form-height);
+	touch-action: pan-x; // COMPAT/iOS
+}
+
+////////////////////////////////////////
+
+.slider-track {
+	height: 6px;
+	border-radius: var(--full);
+	background-color: var(--trim-color);
+}
+
+////////////////////////////////////////
+
+.slider-thumb {
+	height: var(--form-height);
+	aspect-ratio: 1;
+	border-radius: var(--full);
+	background-color: var(--form-color);
+	box-shadow: var(--form-box-shadow);
+}

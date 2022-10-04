@@ -1,6 +1,7 @@
+import "./Slider.scss"
+
 import { Setter, VoidProps } from "solid-js"
 import { AriaHorizontalSlider, AriaSliderThumb, AriaSliderTrack } from "../aria"
-import { css } from "../solid-utils"
 
 export function Slider(props: VoidProps<{
 	value:    number
@@ -10,35 +11,10 @@ export function Slider(props: VoidProps<{
 	step:     number
 }>) {
 	return <>
-		{css`
-			.css-slider {
-				padding: 0 calc(var(--form-height) / 2);
-				height: var(--form-height);
-				touch-action: pan-x; // COMPAT/iOS
-			}
-
-			//////////////////////////////////
-
-			.css-slider-track {
-				height: 6px;
-				border-radius: var(--full);
-				background-color: var(--trim-color);
-			}
-
-			//////////////////////////////////
-
-			.css-slider-thumb {
-				height: var(--form-height);
-				aspect-ratio: 1;
-				border-radius: var(--full);
-				background-color: var(--form-color);
-				box-shadow: var(--form-box-shadow);
-			}
-		`}
-		<AriaHorizontalSlider {...props} class="css-slider flex-col flex-justify-center focus-ring focus-ring-$full">
+		<AriaHorizontalSlider {...props} class="slider flex-col flex-justify-center focus-ring focus-ring-$full">
 			{({ translateX }) => <>
-				<AriaSliderTrack class="css-slider-track flex-row flex-align-center">
-					<AriaSliderThumb class="css-slider-thumb focus-ring focus-ring-$full" style={{ "transform": translateX() ? `translateX(${translateX()}px)` : undefined }} />
+				<AriaSliderTrack class="slider-track flex-row flex-align-center">
+					<AriaSliderThumb class="slider-thumb focus-ring focus-ring-$full" style={{ "transform": translateX() ? `translateX(${translateX()}px)` : undefined }} />
 				</AriaSliderTrack>
 			</>}
 		</AriaHorizontalSlider>

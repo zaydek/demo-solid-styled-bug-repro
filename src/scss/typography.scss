@@ -1,4 +1,4 @@
-input[type=text].type-search-bar {
+input[type=text].typography-search-bar {
 	font: 400 16px /
 		normal var(--sans);
 	font-feature-settings: "tnum";
@@ -11,7 +11,7 @@ input[type=text].type-search-bar {
 	}
 }
 
-.type-sans {
+.typography-sans {
 	font: 400 13px /
 		normal var(--sans);
 	font-feature-settings: "tnum";
@@ -23,7 +23,7 @@ input[type=text].type-search-bar {
 	&.is-300 { color: var(--fill-300-color); }
 }
 
-.type-caps {
+.typography-caps {
 	font: 500 10px /
 		normal var(--sans);
 	font-feature-settings: "tnum";
@@ -35,7 +35,7 @@ input[type=text].type-search-bar {
 	&.is-300 { color: var(--fill-300-color); }
 }
 
-:is(.type-sans, .type-caps).has-ellipsis {
+:is(.typography-sans, .typography-caps).has-ellipsis {
 	overflow: hidden;
 	text-align: center;
 	text-overflow: ellipsis;

@@ -1,0 +1,46 @@
+// Preamble
+.nav-icon { position: relative; }  // For pseudo
+.nav-icon::before { content: ""; } // For pseudo
+
+////////////////////////////////////////
+
+.nav-icon {
+	height: 40px;
+	aspect-ratio: 1;
+	border-radius: var(--full);
+}
+.nav-icon::before {
+	position: absolute;     // For pseudo
+	z-index: -10;           // For pseudo
+	inset: 0;               // For pseudo
+	border-radius: inherit; // For pseudo
+	transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
+	transition-property: transform;
+}
+// INITIAL STATE
+.nav-icon::before {
+	background-color: transparent;
+	transform: scale(0);
+}
+.nav-icon:hover::before {
+	background-color: var(--trim-color-is-hover);
+	transform: scale(1);
+}
+.nav-icon:is(.is-active, :hover:active)::before {
+	background-color: var(--trim-color);
+	transform: scale(1);
+}
+
+////////////////////////////////////////
+
+.nav-icon > :nth-child(1) {
+	height: 28px;
+	aspect-ratio: 1;
+}
+// INITIAL STATE
+.nav-icon > :nth-child(1) {
+	color: var(--trim-color);
+}
+.nav-icon:is(.is-active, :hover:active) > :nth-child(1) {
+	color: white;
+}

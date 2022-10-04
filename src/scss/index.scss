@@ -11,6 +11,7 @@
 	--screen: 100vh;
 
 	// TODO: Consolidate and rename to spacing
+	// TODO: DEPRECATE
 	--padding-x: 16px;
 	--padding-y: 16px;
 	// TODO
@@ -18,12 +19,17 @@
 		var(--padding-x);
 	--gap: 8px;
 
-	--sidebar-width:              416px;
-	--expanded-sidebar-width:     calc(var(--sidebar-width) * 1.25);
-	--search-bar-height:          64px;
-	--search-results-grid-height: 96px;
-	--form-height:                28px; // TODO: Rename to color-button-height or make a calc expression (remove CSS variable)
-	--reduced-form-height:        24px; // TODO: Rename to form-height
+	--scale: 8px;
+
+	--sidebar-width:          416px;
+	--expanded-sidebar-width: calc(var(--sidebar-width) * 1.25);
+	--search-bar-height:      64px;
+	--main-grid-height:       96px;
+	--form-height:            28px; // TODO: Rename to color-button-height or make a calc expression (remove CSS variable)
+	--form2-height:           24px; // TODO: Rename to color-button-height or make a calc expression (remove CSS variable)
+
+	// TODO: DEPRECATE
+	--reduced-form-height:    24px; // TODO: Rename to form-height
 
 	--sans:
 		system-ui,
@@ -56,6 +62,8 @@
 			color: RED;
 		}
 	}
+
+	background-color: var(--card-color);
 }
 
 // TODO: DEPRECATE?
@@ -66,9 +74,9 @@
 }
 
 hr {
-	height: var(--card-hairline-thickness);
+	height: var(--hairline-thickness);
 	background-color: var(--card-hairline-color);
-	&.collapsible { position: relative; z-index: 10; margin-top: calc(-1 * var(--card-hairline-thickness)); }
+	&.collapse { position: relative; z-index: 10; margin-top: calc(-1 * var(--hairline-thickness)); }
 }
 
 @include meta.load-css("focus-ring");

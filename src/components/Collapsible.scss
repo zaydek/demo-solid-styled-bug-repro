@@ -1,0 +1,35 @@
+// Accepts:
+//
+// - var(--collapsible-min-height)
+// - var(--collapsible-max-height)
+//
+.collapsible {
+	&:not(.is-collapsed) {
+		height: var(--collapsible-max-height);
+	} &.is-collapsed {
+		height: var(--collapsible-min-height);
+	}
+	overflow-y: hidden;
+	transition: calc(300ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1);
+	transition-property: height;
+}
+
+////////////////////////////////////////
+
+.collapsible-head {
+	padding: var(--scale) calc(var(--scale) * 2);
+}
+
+////////////////////////////////////////
+
+.collapsible-body {
+	.collapsible:not(.is-collapsed) & {
+		opacity: 1;
+	} .collapsible.is-collapsed & {
+		opacity: 0;
+	}
+	padding: calc(var(--scale) * 2);
+	padding-top: 0; // Override padding
+	transition: calc(300ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1);
+	transition-property: opacity;
+}

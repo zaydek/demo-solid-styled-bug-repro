@@ -1,0 +1,31 @@
+.nav-icon
+	position: relative // For ::before
+	height: 40px
+	aspect-ratio: 1
+	border-radius: var(--full)
+
+.nav-icon::before
+	content: "" // For ::before
+	position: absolute
+	z-index: -10
+	border-radius: inherit
+
+	// Initial state
+	background-color: transparent
+	transform: scale(0)
+	& > nth-child
+		color: var(--trim-color)
+
+// :hover
+.nav-icon:hover
+	background-color: var(--card-color-is-hover)
+	transform: scale(1)
+	& > nth-child
+		color: var(--trim-color)
+
+// :hover:active
+.nav-icon:is(:hover:active, [data-state-active])
+	background-color: var(--trim-color)
+	transform: scale(1)
+	& > nth-child
+		color: white

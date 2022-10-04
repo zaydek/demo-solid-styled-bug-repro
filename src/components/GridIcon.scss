@@ -1,0 +1,63 @@
+// Preamble
+.grid-icon { position: relative; }  // For pseudo
+.grid-icon::before { content: ""; } // For pseudo
+
+////////////////////////////////////////
+
+.grid-icon {
+	height: 100%;
+	aspect-ratio: 1;
+	border-radius: 32px;
+}
+.grid-icon::before {
+	position: absolute;     // For pseudo
+	z-index: -10;           // For pseudo
+	inset: 0;               // For pseudo
+	border-radius: inherit; // For pseudo
+	transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
+	transition-property: transform;
+}
+// INITIAL STATE
+.grid-icon::before {
+	background-color: transparent;
+	transform: scale(0);
+}
+.group:hover .grid-icon::before {
+	background-color: var(--trim-color-is-hover);
+	transform: scale(1);
+}
+.group:is(.is-active, :hover:active) .grid-icon::before {
+	background-color: var(--trim-color);
+	transform: scale(1);
+}
+
+////////////////////////////////////////
+
+.grid-icon {
+	padding: 0 var(--scale);
+	display: grid;
+	grid-template:
+		"." calc(32px / 2)
+		"a" 1fr
+		"b" 32px;
+	place-items: center;
+	& > :nth-child(1) { grid-area: a; }
+	& > :nth-child(2) { grid-area: b; }
+}
+
+////////////////////////////////////////
+
+.grid-icon > :nth-child(1) {
+	height: 28px;
+	aspect-ratio: 1;
+}
+// INITIAL STATE
+.grid-icon > :nth-child(1) {
+	color: var(--fill-100-color);
+}
+.group:is(:hover:active, [data-state-active]) .grid-icon > :nth-child(1) {
+	color: white;
+}
+.group:is(:hover:active, [data-state-active]) .grid-icon > :nth-child(2) {
+	color: white;
+}
