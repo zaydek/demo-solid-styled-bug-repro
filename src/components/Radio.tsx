@@ -8,18 +8,18 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 	return <>
 		{css`
 			// Preamble
-			.component-radio { position: relative; }
-			.component-radio::before { content: ""; }
-			.component-radio::after { content: ""; }
+			.css-radio { position: relative; }
+			.css-radio::before { content: ""; }
+			.css-radio::after { content: ""; }
 
 			//////////////////////////////////
 
-			.component-radio {
+			.css-radio {
 				height: var(--reduced-form-height);
 				aspect-ratio: 1;
 				border-radius: var(--full);
 			}
-			.component-radio::before {
+			.css-radio::before {
 				position: absolute;
 				z-index: -10;
 				inset: 0;
@@ -27,7 +27,7 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 				background-color: var(--form-color);
 				box-shadow: var(--form-box-shadow);
 			}
-			.component-radio::after {
+			.css-radio::after {
 				position: absolute;
 				z-index: -10;
 				inset: 0;
@@ -38,21 +38,21 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
-			.group[aria-checked=true] .component-radio::after {
+			.group[aria-checked=true] .css-radio::after {
 				background-color: var(--card-color-is-active);
 				transform: scale(1);
 			}
 
 			//////////////////////////////////
 
-			.component-radio > .component-icon-placeholder {
+			.css-radio > .css-icon-placeholder {
 				background-color: transparent;
 				transform: scale(0);
 				// TRANSITION
 				transition: calc(100ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 				transition-property: transform;
 			}
-			.group[aria-checked=true] .component-radio > .component-icon-placeholder {
+			.group[aria-checked=true] .css-radio > .css-icon-placeholder {
 				background-color: white;
 				transform: scale(1);
 			}
@@ -66,7 +66,7 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 					</div>
 				</div>
 			</div>
-			<div class="component-radio grid grid-center">
+			<div class="css-radio grid grid-center">
 				<IconPlaceholder h="8px" />
 			</div>
 		</AriaRadio>

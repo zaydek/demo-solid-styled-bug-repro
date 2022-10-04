@@ -4,7 +4,7 @@
 @mixin define-theme($vars, $variant: null) {
 	@each $--property, $value in $vars {
 		@if meta.type-of($value) == map {
-			$variant-value: map.get($value, light);
+			$variant-value: map.get($value, base);
 			#{$--property}: #{$variant-value};
 		} @else {
 			#{$--property}: #{$value};

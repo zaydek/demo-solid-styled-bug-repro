@@ -160,7 +160,7 @@ function Sidebar() {
 function StickySearchBar() {
 	return <>
 		{css`
-			.component-sticky-search-bar-card {
+			.css-sticky-search-bar {
 				position: sticky;
 				z-index: 10;
 				top: 0;
@@ -172,15 +172,15 @@ function StickySearchBar() {
 
 			//////////////////////////////////
 
-			input[type=text].component-search-bar { width: 100%; } // CSS reset
-			input[type=text].component-search-bar {
+			input[type=text].css-search-bar { width: 100%; } // CSS reset
+			input[type=text].css-search-bar {
  				padding: 0 12px;
 				height: var(--search-bar-height);
 			}
 		`}
-		<nav class="component-sticky-search-bar-card flex-row flex-align-center">
+		<nav class="css-sticky-search-bar flex-row flex-align-center">
 			<NavIcon icon={Smiley} active={!!search.canonicalValue() || undefined} />
-			<input class="component-search-bar type-search-bar" type="text" placeholder="I’m searching for…" value={search.value()} onInput={e => search.setValue(e.currentTarget.value)} autofocus />
+			<input class="css-search-bar type-search-bar" type="text" placeholder="I’m searching for…" value={search.value()} onInput={e => search.setValue(e.currentTarget.value)} autofocus />
 			<NavIcon icon={Smiley} />
 		</nav>
 	</>
@@ -189,7 +189,7 @@ function StickySearchBar() {
 function Main() {
 	return <>
 		{css`
-			.component-grid {
+			.css-grid {
 				//// padding: calc(var(--padding-y) * 2) calc(var(--padding-x) * 2);
 				//// padding-bottom: calc(var(--padding-y) * 4); // Override padding
 				padding: var(--padding);
@@ -202,10 +202,10 @@ function Main() {
 		<StickySearchBar />
 		<Suspense fallback={<>
 			{/* Loading */}
-			<div class="component-grid">
+			<div class="css-grid">
 				{css`
-					// NOTE: Manually add component-grid-icon because <GridIcon> hasn’t loaded yet
-					.component-grid-icon {
+					// NOTE: Manually add css-grid-icon because <GridIcon> hasn’t loaded yet
+					.css-grid-icon {
 						padding: 0 8px;
 						display: grid;
 						grid-template:
@@ -214,13 +214,13 @@ function Main() {
 							"b" 32px;
 						place-items: center;
 					}
-					.component-grid-icon > :nth-child(1) { grid-area: a; }
-					.component-grid-icon > :nth-child(2) { grid-area: b; }
+					.css-grid-icon > :nth-child(1) { grid-area: a; }
+					.css-grid-icon > :nth-child(2) { grid-area: b; }
 				`}
 				<For each={range(64)}>
 					{() => <>
-						{/* TODO: Rename to component-grid-cell? */}
-						<div class="component-grid-icon grid grid-center">
+						{/* TODO: Rename to css-grid-cell? */}
+						<div class="css-grid-icon grid grid-center">
 							<div class="h-28px aspect-1 rounded-$full background-color:$card-hairline-color"></div>
 							<div class="h-6px  aspect-8 rounded-$full background-color:$card-hairline-color"></div>
 						</div>
@@ -229,7 +229,7 @@ function Main() {
 			</div>
 		</>}>
 			{/* Loaded */}
-			<div class="component-grid">
+			<div class="css-grid">
 				<For each={search.results()}>
 					{info => <>
 						<GridIcon info={info} />
@@ -292,6 +292,7 @@ export function App() {
 
 	//////////////////////////////////////
 
+	// TODO: Extract to state
 	const [theme, setTheme] = createSignal<"light" | "dark">(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
 
 	document.addEventListener("keydown", e => {
@@ -333,24 +334,24 @@ export function App() {
 
 			//////////////////////////////////
 
-			.component-column-1 {
+			.css-column-1 {
 				margin-right: var(--sidebar-width);
 				min-height: 100vh;
 				// TRANSITION
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: margin-right;
 			}
-			[data-state-sidebar=collapsed] .component-column-1 {
+			[data-state-sidebar=collapsed] .css-column-1 {
 				margin-right: 0;
 			}
-			[data-state-sidebar=expanded] .component-column-1 {
+			[data-state-sidebar=expanded] .css-column-1 {
 				-webkit-user-select: none; // COMPAT/Safari
 				user-select: none;         // Disable
 			}
 
 			//////////////////////////////////
 
-			.component-column-2 {
+			.css-column-2 {
 				position: fixed;
 				z-index: 10;
 				inset: 0 0 0 auto; // E.g. inset-r
@@ -361,17 +362,17 @@ export function App() {
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: width, transform;
 			}
-			[data-state-sidebar=collapsed] .component-column-2 {
+			[data-state-sidebar=collapsed] .css-column-2 {
 				transform: translateX(var(--sidebar-width));
 			}
-			[data-state-sidebar=expanded] .component-column-2 {
+			[data-state-sidebar=expanded] .css-column-2 {
 				width: clamp(0px, var(--expanded-sidebar-width), 100vw);
 				box-shadow: var(--card-box-shadow);
 			}
 
 			//////////////////////////////////
 
-			.component-column-2-backdrop {
+			.css-column-2-backdrop {
 				position: fixed;
 				z-index: 10;
 				inset: 0;
@@ -383,18 +384,18 @@ export function App() {
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: background-color, backdrop-filter;
 			}
-			[data-state-sidebar=expanded] .component-column-2-backdrop {
+			[data-state-sidebar=expanded] .css-column-2-backdrop {
 				background-color: var(--backdrop-color);
 				backdrop-filter: blur(2px);
 				pointer-events: revert; // Enable
 			}
 		`}
 		<div class="contents" data-state-sidebar={sidebar()}>
-			<div class="component-column-1">
+			<div class="css-column-1">
 				<Main />
 			</div>
-			<div class="component-column-2-backdrop" onClick={toggle}></div>
-			<div ref={setRef} class="component-column-2 flex-col">
+			<div class="css-column-2-backdrop" onClick={toggle}></div>
+			<div ref={setRef} class="css-column-2 flex-col">
 				<Sidebar />
 			</div>
 		</div>

@@ -49,10 +49,13 @@
 	--motion-safe: 1;
 	@media (prefers-reduced-motion: reduce) { :root { --motion-safe: 0; } }
 
-	color: RED; // DEBUG
-}
-::placeholder {
-	color: RED; // DEBUG
+	// DEBUG
+	color: RED;
+	@at-root {
+		::placeholder {
+			color: RED;
+		}
+	}
 }
 
 // TODO: DEPRECATE?

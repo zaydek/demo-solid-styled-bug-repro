@@ -36,7 +36,7 @@ export function Collapsible(props: ParentProps<{
 
 	return <>
 		{css`
-			.component-panel {
+			.css-panel {
 				height: var(--max-height);
 				overflow-y: hidden;
 				// TRANSITION
@@ -44,19 +44,19 @@ export function Collapsible(props: ParentProps<{
 				transition: calc(300ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1);
 				transition-property: height;
 			}
-			.component-panel[data-state-collapsed] {
+			.css-panel[data-state-collapsed] {
 				height: var(--min-height);
 			}
 
 			//////////////////////////////////
 
-			.component-panel-head {
+			.css-panel-head {
 				padding: var(--gap) var(--padding-x);
 			}
 
 			//////////////////////////////////
 
-			.component-panel-body {
+			.css-panel-body {
 				padding: var(--padding);
 				padding-top: 0; // Override padding
 				// TRANSITION
@@ -64,17 +64,17 @@ export function Collapsible(props: ParentProps<{
 				transition: calc(300ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1);
 				transition-property: transform, opacity;
 			}
-			//// body[data-state-mounted] .component-panel[data-state-collapsed] .component-panel-body {
+			//// body[data-state-mounted] .css-panel[data-state-collapsed] .css-panel-body {
 			//// 	transform: scale(0.9);
 			//// 	opacity: 0;
 			//// }
-			.component-panel[data-state-collapsed] .component-panel-body {
+			.css-panel[data-state-collapsed] .css-panel-body {
 				//// transform: scale(0.9);
 				opacity: 0;
 			}
 		`}
-		<section ref={setRef} class="component-panel" style={sx({ "--min-height": minHeight(), "--max-height": maxHeight() /* , "--spring": spring() */ })} data-state-collapsed={!props.open || undefined}>
-			<AriaButton ref={setHeadRef} class="component-panel-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)}>
+		<section ref={setRef} class="css-panel" style={sx({ "--min-height": minHeight(), "--max-height": maxHeight() /* , "--spring": spring() */ })} data-state-collapsed={!props.open || undefined}>
+			<AriaButton ref={setHeadRef} class="css-panel-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)}>
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full">
 					<Smiley class="h-16px aspect-1 color:$theme-color" />
 					<div class="type-caps">
@@ -87,7 +87,7 @@ export function Collapsible(props: ParentProps<{
 				</div>
 			</AriaButton>
 			{/* @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322) */}
-			<div class="component-panel-body flex-col gap-$gap" inert={!props.open || undefined}>
+			<div class="css-panel-body flex-col gap-$gap" inert={!props.open || undefined}>
 				{props.children}
 			</div>
 		</section>
