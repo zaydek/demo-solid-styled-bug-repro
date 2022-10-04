@@ -1,3 +1,4 @@
+export * from "./Collapsible"
 export * from "./ColorButton"
 export * from "./GridIcon"
 export * from "./NavIcon"

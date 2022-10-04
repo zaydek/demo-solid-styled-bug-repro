@@ -1,9 +1,0 @@
-$motion-safe: 1;
-
-@mixin body {
-	@media (prefers-reduced-motion: reduce) {
-		:root {
-			--motion-safe: 0;
-		}
-	}
-}

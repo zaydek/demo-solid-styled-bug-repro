@@ -1,7 +1,6 @@
 import { createEffect, createSignal, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
 import { AriaRadiogroup } from "./aria"
-import { ColorButton, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
-import { Collapsible } from "./components/Collapsible"
+import { Collapsible, ColorButton, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { createRef, css } from "./solid-utils"
 import { search, settings, VariantV1, VariantV2, Version } from "./state"
 import { range } from "./utils"
