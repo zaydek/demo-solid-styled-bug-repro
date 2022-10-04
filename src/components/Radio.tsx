@@ -59,7 +59,7 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 		`}
 		<AriaRadio class="group flex-row gap-$gap focus-ring focus-ring-$full" value={props.value}>
 			<div class="flex-grow">
-				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$card-lightgray-color flex-row flex-align-center gap-$gap">
+				<div class="px-calc($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$card-lightgray-color flex-row flex-align-center gap-$gap">
 					<Smiley class="h-16px aspect-1 color:$fill-100-color" />
 					<div class="type-caps">
 						{props.children}

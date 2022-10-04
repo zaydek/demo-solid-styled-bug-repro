@@ -135,9 +135,9 @@ function Sidebar() {
 		</div>
 		<div class="flex-shrink:0">
 			<hr class="collapsible" />
-			<section class="p-$padding flex-row gap-($gap*2)">
+			<section class="p-$padding flex-row gap-calc($gap*2)">
 				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-100-color"></div>
-				<div class="flex-grow flex-col gap-($gap/2)">
+				<div class="flex-grow flex-col gap-calc($gap/2)">
 					<Line w="70%" color="var(--fill-100-color)" />
 					<Line w="90%" color="var(--fill-100-color)" />
 					<Line w="80%" color="var(--fill-100-color)" />
@@ -145,7 +145,7 @@ function Sidebar() {
 				</div>
 			</section>
 			<hr />
-			<section class="p-$padding flex-col gap-($gap/2)">
+			<section class="p-$padding flex-col gap-calc($gap/2)">
 				<Line w="calc(70%/1.25)" color="var(--fill-100-color)" />
 				<Line w="calc(90%/1.25)" color="var(--fill-100-color)" />
 				<Line w="calc(80%/1.25)" color="var(--fill-100-color)" />
