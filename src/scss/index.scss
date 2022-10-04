@@ -22,8 +22,8 @@
 	--expanded-sidebar-width:     calc(var(--sidebar-width) * 1.25);
 	--search-bar-height:          64px;
 	--search-results-grid-height: 96px;
-	--form-height:                28px;
-	--reduced-form-height:        24px;
+	--form-height:                28px; // TODO: Rename to color-button-height or make a calc expression (remove CSS variable)
+	--reduced-form-height:        24px; // TODO: Rename to form-height
 
 	--sans:
 		system-ui,

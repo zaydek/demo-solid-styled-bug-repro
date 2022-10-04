@@ -14,11 +14,13 @@ function createSearchParams() {
 			const serialized: Record<string, string> = {}
 			for (const [$key, $value] of cached) {
 				if ($value === undefined) { continue }
-				serialized[$key] = canonicalize(
+				const canonicalized = canonicalize(
 					typeof $value === "string"
 						? $value
 						: `${$value}`,
 				)
+				if (canonicalized === "") { continue } // No-op empty strings
+				serialized[$key] = canonicalized
 			}
 			if (!Object.keys(serialized).length) {
 				window.history.replaceState({}, "", "/")
