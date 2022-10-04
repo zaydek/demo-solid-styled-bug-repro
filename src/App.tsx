@@ -1,9 +1,10 @@
-import { createEffect, createSignal, For, onCleanup, onMount } from "solid-js"
+import { createEffect, createSignal, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
 import { AriaRadiogroup } from "./aria"
 import { ColorButton, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { Collapsible } from "./components/Collapsible"
 import { createRef, css } from "./solid-utils"
-import { range } from "./utils/range"
+import { search, settings, VariantV1, VariantV2, Version } from "./state"
+import { range } from "./utils"
 
 function Sidebar() {
 	const [open1, setOpen1] = createSignal(false)
@@ -11,6 +12,7 @@ function Sidebar() {
 	const [open3, setOpen3] = createSignal(false)
 	const [open4, setOpen4] = createSignal(false)
 	const [open5, setOpen5] = createSignal(false)
+	const [open6, setOpen6] = createSignal(false)
 
 	//////////////////////////////////////
 
@@ -32,7 +34,7 @@ function Sidebar() {
 
 	onMount(() => {
 		setTimeout(() => {
-			setOpen1(true)
+			//// setOpen1(true)
 			setOpen2(true)
 			setOpen3(true)
 		}, 0)
@@ -50,14 +52,42 @@ function Sidebar() {
 		</div>
 		{/* Use tabindex="-1" to disable :focus for overflow-y */}
 		<div class="flex-grow overflow-y:auto" tabindex="-1">
-			<Collapsible title="foo" subtitle="bar" open={open1()} setOpen={setOpen1}>
-				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue1()} setValue={setRdgValue1}>
-					<Radio value="foo" />
-					<Radio value="bar" />
+			<Collapsible title="VERSION" subtitle={settings.version().toUpperCase()} open={open1()} setOpen={setOpen1}>
+				<AriaRadiogroup class="flex-col gap-$gap" value={settings.version()} setValue={settings.setVersion}>
+					{/* TODO: Add descriptions */}
+					<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
+						<Radio value={value}>
+							{value.toUpperCase()}
+						</Radio>
+					</>}</For>
 				</AriaRadiogroup>
 			</Collapsible>
 			<hr />
-			<Collapsible title="foo" subtitle="bar" open={open2()} setOpen={setOpen2}>
+			<Show when={settings.version() === "v2"} fallback={<>
+				<Collapsible title="ICON VARIANT" subtitle={settings.variant().toUpperCase()} open={open2()} setOpen={setOpen2}>
+					<AriaRadiogroup class="flex-col gap-$gap" value={settings.variant()} setValue={settings.setVariantV1}>
+						{/* TODO: Add descriptions */}
+						<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
+							<Radio value={value}>
+								{value.toUpperCase()}
+							</Radio>
+						</>}</For>
+					</AriaRadiogroup>
+				</Collapsible>
+			</>}>
+				<Collapsible title="ICON VARIANT" subtitle={settings.variant().split("/").join(" / ").toUpperCase()} open={open2()} setOpen={setOpen2}>
+					<AriaRadiogroup class="flex-col gap-$gap" value={settings.variant()} setValue={settings.setVariantV2}>
+						{/* TODO: Add descriptions */}
+						<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
+							<Radio value={value}>
+								{value.split("/").join(" / ").toUpperCase()}
+							</Radio>
+						</>}</For>
+					</AriaRadiogroup>
+				</Collapsible>
+			</Show>
+			<hr />
+			<Collapsible title="COPY TO CLIPBOARD AS" subtitle="BAR" open={open3()} setOpen={setOpen3}>
 				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue2()} setValue={setRdgValue2}>
 					<Radio value="foo" />
 					<Radio value="bar" />
@@ -67,30 +97,39 @@ function Sidebar() {
 					<Textarea />
 					<div class="absolute inset-b-$gap grid grid-cols-3 gap-$gap">
 						<div></div>
-						<ColorButton checked={checked1()} setChecked={setChecked1} />
-						<ColorButton checked={checked2()} setChecked={setChecked2} />
+						<ColorButton checked={checked1()} setChecked={setChecked1}>SAVE</ColorButton>
+						<ColorButton checked={checked2()} setChecked={setChecked2}>COPY</ColorButton>
 					</div>
 				</div>
 				<div></div>
 				<div class="grid grid-cols-1 gap-$gap">
-					<ColorButton checked={checked3()} setChecked={setChecked3} />
+					<ColorButton checked={checked3()} setChecked={setChecked3}>
+						INCLUDE MIT LICENSE
+					</ColorButton>
 				</div>
 				<AriaRadiogroup class="grid grid-cols-3 gap-$gap" value={rdgValue3()} setValue={setRdgValue3}>
-					<ColorButton value="foo" style={{ "--color": "var(--svg-color)" }} />
-					<ColorButton value="bar" style={{ "--color": "var(--react-color)" }} />
-					<ColorButton value="baz" style={{ "--color": "var(--vue-color)" }} />
+					<For each={[
+						// TODO: Add type to value
+						{ color: "var(--svg-color)",   value: "svg",   label: "SVG"   },
+						{ color: "var(--react-color)", value: "react", label: "REACT" },
+						{ color: "var(--vue-color)",   value: "vue",   label: "VUE"   },
+					]}>{({ color, value, label }) => <>
+							<ColorButton value={value} style={{ "--color": color }}>
+								{label}
+							</ColorButton>
+					</>}</For>
 				</AriaRadiogroup>
 			</Collapsible>
 			<hr />
-			<Collapsible title="foo" subtitle="bar" open={open3()} setOpen={setOpen3}>
+			<Collapsible title="GRID DENSITY" subtitle="BAR" open={open4()} setOpen={setOpen4}>
 				<Slider value={sliderValue1()} setValue={setSliderValue1} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
-			<Collapsible title="foo" subtitle="bar" open={open4()} setOpen={setOpen4}>
+			<Collapsible title="PREVIEW SIZE" subtitle="BAR" open={open5()} setOpen={setOpen5}>
 				<Slider value={sliderValue2()} setValue={setSliderValue2} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
-			<Collapsible title="foo" subtitle="bar" open={open5()} setOpen={setOpen5}>
+			<Collapsible title="PREVIEW STROKE WIDTH" subtitle="BAR" open={open6()} setOpen={setOpen6}>
 				<Slider value={sliderValue3()} setValue={setSliderValue3} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
@@ -98,20 +137,20 @@ function Sidebar() {
 		<div class="flex-shrink:0">
 			<hr class="collapsible" />
 			<section class="p-$padding flex-row gap-($gap*2)">
-				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-200-color"></div>
+				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-100-color"></div>
 				<div class="flex-grow flex-col gap-($gap/2)">
-					<Line w="70%" color="var(--fill-200-color)" />
-					<Line w="90%" color="var(--fill-200-color)" />
-					<Line w="80%" color="var(--fill-200-color)" />
-					<Line w="60%" color="var(--fill-200-color)" />
+					<Line w="70%" color="var(--fill-100-color)" />
+					<Line w="90%" color="var(--fill-100-color)" />
+					<Line w="80%" color="var(--fill-100-color)" />
+					<Line w="60%" color="var(--fill-100-color)" />
 				</div>
 			</section>
 			<hr />
 			<section class="p-$padding flex-col gap-($gap/2)">
-				<Line w="calc(70%/1.25)" color="var(--fill-200-color)" />
-				<Line w="calc(90%/1.25)" color="var(--fill-200-color)" />
-				<Line w="calc(80%/1.25)" color="var(--fill-200-color)" />
-				<Line w="calc(60%/1.25)" color="var(--fill-200-color)" />
+				<Line w="calc(70%/1.25)" color="var(--fill-100-color)" />
+				<Line w="calc(90%/1.25)" color="var(--fill-100-color)" />
+				<Line w="calc(80%/1.25)" color="var(--fill-100-color)" />
+				<Line w="calc(60%/1.25)" color="var(--fill-100-color)" />
 			</section>
 		</div>
 	</>
@@ -119,10 +158,13 @@ function Sidebar() {
 
 ////////////////////////////////////////
 
-function SearchBar() {
+function StickySearchBar() {
 	return <>
 		{css`
-			.component-search-bar {
+			.component-sticky-search-bar-card {
+				position: sticky;
+				z-index: 10;
+				top: 0;
 				padding: 0 var(--padding-x);
 				height: var(--search-bar-height);
 				background-color: var(--card-color);
@@ -131,21 +173,30 @@ function SearchBar() {
 
 			//////////////////////////////////
 
-			.component-search-bar-field {
-				// Typography
-				font: 400 17px / normal var(--sans);
+			// TODO: Extract component for typography?
+			input.component-search-bar { width: 100%; } // CSS reset
+			input.component-search-bar {
+				padding: 0 12px;
+				height: var(--search-bar-height);
+				// TODO: EXTRACT?
+				font: 400 16px / normal var(--sans);
+				font-feature-settings: "tnum";
 				letter-spacing: calc(1em / 64);
-				color: var(--text-color);
+				color: var(--fill-100-color);
+			}
+			input.component-search-bar::placeholder {
+				color: var(--fill-300-color);
 			}
 		`}
-		<nav class="component-search-bar flex-row flex-align-center">
-			<NavIcon icon={Smiley} />
+		<nav class="component-sticky-search-bar-card flex-row flex-align-center">
+			<NavIcon icon={Smiley} active={!!search.canonicalValue() || undefined} />
+			{/* TODO: Implement fallback (<Suspense>) state */}
 			{/* <div class="flex-grow">
 				<div class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
 					<Line w="15%" />
 				</div>
 			</div> */}
-			<input class="component-search-bar-field" type="text" value="hello, world!" />
+			<input class="component-search-bar" type="text" placeholder="I’m searching for…" value={search.value()} onInput={e => search.setValue(e.currentTarget.value)} autofocus />
 			<NavIcon icon={Smiley} />
 		</nav>
 	</>
@@ -153,11 +204,10 @@ function SearchBar() {
 
 function Main() {
 	return <>
-		<div class="sticky inset-t">
-			<SearchBar />
-		</div>
 		{css`
-			.component-search-results {
+			.component-grid {
+				//// padding: calc(var(--padding-y) * 2) calc(var(--padding-x) * 2);
+				//// padding-bottom: calc(var(--padding-y) * 4); // Override padding
 				padding: var(--padding);
 				padding-bottom: calc(var(--padding-y) * 2); // Override padding
 				display: grid;
@@ -165,13 +215,44 @@ function Main() {
 				grid-auto-rows: var(--search-results-grid-height);
 			}
 		`}
-		<div class="component-search-results">
-			<For each={range(400)}>
-				{() => <>
-					<GridIcon />
-				</>}
-			</For>
-		</div>
+		<StickySearchBar />
+		<Suspense fallback={<>
+			{/* Loading */}
+			<div class="component-grid">
+				{css`
+					// NOTE: Manually add component-grid-icon because <GridIcon> hasn’t loaded yet
+					.component-grid-icon {
+						padding: 0 8px;
+						display: grid;
+						grid-template:
+							"." calc(32px / 2)
+							"a" 1fr
+							"b" 32px;
+						place-items: center;
+					}
+					.component-grid-icon > :nth-child(1) { grid-area: a; }
+					.component-grid-icon > :nth-child(2) { grid-area: b; }
+				`}
+				<For each={range(64)}>
+					{() => <>
+						{/* TODO: Rename to component-grid-cell? */}
+						<div class="component-grid-icon grid grid-center">
+							<div class="h-28px aspect-1 rounded-$full background-color:$hairline-color"></div>
+							<div class="h-6px  aspect-8 rounded-$full background-color:$hairline-color"></div>
+						</div>
+					</>}
+				</For>
+			</div>
+		</>}>
+			{/* Loaded */}
+			<div class="component-grid">
+				<For each={search.results()}>
+					{info => <>
+						<GridIcon info={info} />
+					</>}
+				</For>
+			</div>
+		</Suspense>
 	</>
 }
 
@@ -219,11 +300,11 @@ export function App() {
 	//// 	}
 	//// }, false)
 
-	document.addEventListener("keydown", e => {
-		if (e.key === "d") {
-			toggle()
-		}
-	}, false)
+	//// document.addEventListener("keydown", e => {
+	//// 	if (e.key === "d") {
+	//// 		toggle()
+	//// 	}
+	//// }, false)
 
 	//////////////////////////////////////
 
@@ -266,7 +347,7 @@ export function App() {
 				overflow: hidden;
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-column-1 {
 				margin-right: var(--sidebar-width);
@@ -283,7 +364,7 @@ export function App() {
 				user-select: none;         // Disable
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-column-2 {
 				position: fixed;
@@ -304,7 +385,7 @@ export function App() {
 				box-shadow: var(--card-box-shadow);
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-column-2-backdrop {
 				position: fixed;

@@ -65,12 +65,7 @@ export const settings = createRoot(() => {
 		}
 	})
 
-	const _source = () => [
-		version(),
-		variant(),
-	] as [Version, VariantV1 | VariantV2]
-
-	const [icons] = createResource(_source, async ([version, variant]) => {
+	const [icons] = createResource(() => [version(), variant()] as const, async ([version, variant]) => {
 		if (version === "v1" && variant === "solid") {
 			return cache(variant, import("../assets/heroicons@1.0.6/solid"))
 		} else if (version === "v1" && variant === "outline") {

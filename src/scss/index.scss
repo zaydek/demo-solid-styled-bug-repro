@@ -10,6 +10,9 @@
 @use "utils/interpolate-vars" as *;
 
 :root {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
 	$vars: ();
 	@each $thing in (layout, typography, color, box-shadow, transition) {
 		$vars: list.join($vars, meta.module-variables($thing));
@@ -24,3 +27,46 @@
 @if meta.mixin-exists(body, color)      { @include color.body;      }
 @if meta.mixin-exists(body, box-shadow) { @include box-shadow.body; }
 @if meta.mixin-exists(body, transition) { @include transition.body; }
+
+//// // DEBUG
+//// * {
+//// 	outline: 2px solid hsl(0deg 100% 50% / 10%);
+//// 	outline-offset: -1px;
+//// }
+
+////////////////////////////////////////
+
+.typography-caps {
+	font: 500 10px / normal var(--sans);
+	font-feature-settings: "tnum";
+	letter-spacing: calc(1em / 8);
+}
+
+////////////////////////////////////////
+
+//// // https://codepen.io/havardob/pen/dyGGGzq
+//// .effect-shimmer {
+//// 	--shimmer-width:          32px;
+//// 	--shimmer-position-start: left  -40px top;
+//// 	--shimmer-position-end:   right -40px top;
+//// 	--shimmer-duration:       1000ms;
+//// 	background-color: var(--hairline-color);
+//// 	background-image:
+//// 		linear-gradient(
+//// 			90deg,
+//// 			hsl(0deg 0% 100% / 0%),
+//// 			hsl(0deg 0% 100% / 50%),
+//// 			hsl(0deg 0% 100% / 0%)
+//// 		);
+//// 	background-position: var(--shimmer-position-start); // Sorted alphabetically
+//// 	background-repeat: no-repeat; // CSS reset
+//// 	background-size: var(--shimmer-width) 100%;
+//// 	// Behavior
+//// 	animation: shine var(--shimmer-duration) ease infinite;
+//// }
+////
+//// @keyframes shine {
+//// 	to {
+//// 		background-position: var(--shimmer-position-end);
+//// 	}
+//// }

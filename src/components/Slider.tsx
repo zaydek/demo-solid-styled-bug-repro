@@ -17,7 +17,7 @@ export function Slider(props: VoidProps<{
 				touch-action: pan-x; // COMPAT/iOS
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-slider-track {
 				height: 6px;
@@ -25,7 +25,7 @@ export function Slider(props: VoidProps<{
 				background-color: var(--theme-color);
 			}
 
-			/********************************/
+			//////////////////////////////////
 
 			.component-slider-thumb {
 				height: var(--form-height);

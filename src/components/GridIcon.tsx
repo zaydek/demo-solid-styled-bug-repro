@@ -1,9 +1,10 @@
+import { Show, VoidProps } from "solid-js"
+import { Dynamic } from "solid-js/web"
 import { AriaButton } from "../aria"
 import { css } from "../solid-utils"
-import { Icon, Line } from "./Primitives"
-import { Smiley } from "./Smiley"
+import { IndexedResult, search, settings } from "../state"
 
-export function GridIcon() {
+export function GridIcon(props: VoidProps<{ info: IndexedResult }>) {
 	return <>
 		{css`
 			// Preamble
@@ -16,7 +17,7 @@ export function GridIcon() {
 			.component-grid-icon {
 				height: 100%;
 				aspect-ratio: 1;
-				border-radius: var(--search-results-grid-border-radius);
+				border-radius: 32px;
 			}
 			.component-grid-icon::before { content: ""; }
 			.component-grid-icon::before {
@@ -42,6 +43,7 @@ export function GridIcon() {
 			//////////////////////////////////
 
 			.component-grid-icon {
+				padding: 0 8px;
 				display: grid;
 				grid-template:
 					"." calc(32px / 2)
@@ -49,33 +51,74 @@ export function GridIcon() {
 					"b" 32px;
 				place-items: center;
 			}
-
 			.component-grid-icon > :nth-child(1) { grid-area: a; }
 			.component-grid-icon > :nth-child(2) { grid-area: b; }
 
 			//////////////////////////////////
 
-			.component-grid-icon > .component-icon {
+			svg.component-grid-icon-svg {
+				height: 28px;
 				color: var(--fill-100-color);
 			}
-			.group:is(:hover:active, [data-state-active]) .component-grid-icon > .component-icon {
+			.group:is(:hover:active, [data-state-active]) svg.component-grid-icon-svg {
 				color: white;
 			}
 
 			//////////////////////////////////
 
-			// TODO: Remove when converting from <Line> to <Text>
-			.component-grid-icon > .component-line {
-				background-color: var(--fill-200-color);
+			.component-grid-icon-label {
+				font: 400 13px / normal var(--sans);
+				font-feature-settings: "tnum";
+				letter-spacing: calc(1em / 128);
+				color: var(--fill-200-color);
+				overflow: hidden;        // Ellipsis
+				text-align: center;      // Ellipsis
+				text-overflow: ellipsis; // Ellipsis
+				white-space: nowrap;     // Ellipsis
+				width: 100%;
+				// BEHAVIOR
+				cursor: text;
+				user-select: all;
+				-webkit-user-select: all;
 			}
-			.group:is(:hover:active, [data-state-active]) .component-grid-icon > .component-line {
-				background-color: white;
+			.group:is(:hover:active, [data-state-active]) .component-grid-icon-label {
+				color: white;
 			}
+
+			//////////////////////////////////
+
+			//// .component-grid-icon-label-highlight {
+			//// 	color: var(--highlight-color);
+			//// }
+			//// .group:is(:hover:active, [data-state-active]) .component-grid-icon-label-highlight {
+			//// 	color: white;
+			//// }
+			////
+			//// .component-grid-icon-label-highlight { position: relative; }
+			//// .component-grid-icon-label-highlight::before { content: ""; }
+			//// .component-grid-icon-label-highlight::before {
+			//// 	position: absolute;
+			//// 	z-index: -10;
+			//// 	inset: 0;
+			//// 	border-radius: 2px;
+			//// 	background-color: var(--highlight-backdrop-color);
+			//// }
+			//// .group:is(:hover:active, [data-state-active]) .component-grid-icon-label-highlight::before {
+			//// 	background-color: transparent;
+			//// }
 		`}
 		<AriaButton as="article" class="group grid grid-center focus-ring-group" onClick={e => {/* TODO */}}>
 			<div class="component-grid-icon grid grid-center focus-ring focus-ring-32px">
-				<Icon icon={Smiley} h="32px" />
-				<Line w="50%" />
+				{/* @ts-expect-error */}
+				<Dynamic class="component-grid-icon-svg" component={settings.icons()?.[props.info.title]} />
+				<div class="component-grid-icon-label">
+					{/* <Show when={props.info.index !== undefined} fallback={props.info.kebab}>
+						<span>{props.info.kebab.slice(0, props.info.index!)}</span>
+						<span class="component-grid-icon-label-highlight">{search.canonicalValue()}</span>
+						<span>{props.info.kebab.slice(props.info.index! + search.canonicalValue().length)}</span>
+					</Show> */}
+					{props.info.kebab}
+				</div>
 			</div>
 		</AriaButton>
 	</>

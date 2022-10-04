@@ -1,5 +1,6 @@
 $-hairline-thickness: 1px;
 
+// TODO: DEPRECATE?
 $realistic-box-shadow: (
 	0  1px  2px  -1px hsl(var(--card-hue) var(--card-saturation) 10% / 25%),
 	0  2px  4px  -2px hsl(var(--card-hue) var(--card-saturation) 10% / 25%),
@@ -9,6 +10,7 @@ $realistic-box-shadow: (
 	0 32px 64px -32px hsl(var(--card-hue) var(--card-saturation) 10% / 25%),
 );
 
+// TODO: DEPRECATE?
 $realistic-color-box-shadow: (
 	0  1px  2px  -1px hsl(var(--card-hue) var(--card-saturation) 50% / 25%),
 	0  2px  4px  -2px hsl(var(--card-hue) var(--card-saturation) 50% / 25%),
@@ -30,6 +32,7 @@ $card-box-shadow: (
 	dark:  (var(--hairline-box-shadow), var(--realistic-box-shadow)),
 );
 
+//// $form-box-shadow: var(--inset-hairline-box-shadow);
 $form-box-shadow: var(--inset-card-box-shadow);
 
 @mixin body {

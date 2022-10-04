@@ -49,7 +49,7 @@ export function Line(props: VoidProps<{
 	return <>
 		{css`
 			.component-line {
-				height: var(--height, 6px);
+				height: var(--height, 4px);
 				width: var(--width);
 				border-radius: var(--full);
 				background-color: var(--color, var(--fill-100-color));

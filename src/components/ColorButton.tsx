@@ -1,10 +1,10 @@
-import { JSX, Match, Setter, Switch, VoidProps } from "solid-js"
+import { FlowProps, JSX, Match, Setter, Switch } from "solid-js"
 import { AriaCheckbox, AriaRadio } from "../aria"
 import { css } from "../solid-utils"
 import { Icon, Line } from "./Primitives"
 import { Smiley } from "./Smiley"
 
-export function ColorButton(props: VoidProps<{
+export function ColorButton(props: FlowProps<{
 	checked:    boolean
 	setChecked: Setter<boolean>
 
@@ -15,7 +15,7 @@ export function ColorButton(props: VoidProps<{
 
 	// For CSS variables
 	style?: string | JSX.CSSProperties
-}>) {
+}, string>) {
 	return <>
 		{css`
 			.component-color-button {
@@ -48,9 +48,15 @@ export function ColorButton(props: VoidProps<{
 				color: white;
 				transform: translateX(0);
 			}
-			// TODO: Remove when converting from <Line> to <Text>
-			.component-color-button:is(:hover:active, [aria-checked=true]) > .component-line {
-				background-color: white;
+
+			//////////////////////////////////
+
+			.component-color-button > .typography-caps {
+				color: var(--fill-100-color);
+			}
+			.component-color-button:is(:hover:active, [aria-checked=true]) > .typography-caps {
+				font-weight: 600; // +100
+				color: white;
 			}
 
 			//////////////////////////////////
@@ -72,7 +78,7 @@ export function ColorButton(props: VoidProps<{
 				{/* @ts-expect-error */}
 				<AriaCheckbox class="component-color-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" style={props.style ?? {}} checked={props.checked} setChecked={props.setChecked}>
 					<Icon icon={Smiley} h="16px" />
-					<Line w="35%" />
+					<div class="typography-caps">{props.children}</div>
 					<Icon icon={Smiley} h="16px" />
 				</AriaCheckbox>
 			</Match>
@@ -80,7 +86,7 @@ export function ColorButton(props: VoidProps<{
 				{/* @ts-expect-error */}
 				<AriaRadio class="component-color-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" style={props.style ?? {}} value={props.value}>
 					<Icon icon={Smiley} h="16px" />
-					<Line w="35%" />
+					<div class="typography-caps">{props.children}</div>
 					<Icon icon={Smiley} h="16px" />
 				</AriaRadio>
 			</Match>

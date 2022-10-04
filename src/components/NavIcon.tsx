@@ -4,7 +4,11 @@ import { css } from "../solid-utils"
 import { CSSProps } from "../solid-utils/extra-types"
 import { Icon } from "./Primitives"
 
-export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
+export function NavIcon(props: VoidProps<{
+	icon: VoidComponent<CSSProps>
+
+	active?: boolean
+}>) {
 	return <>
 		{css`
 			// Preamble
@@ -14,7 +18,7 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 			//////////////////////////////////
 
 			.component-nav-icon {
-				height: 48px;
+				height: 40px;
 				aspect-ratio: 1;
 				border-radius: var(--full);
 			}
@@ -48,8 +52,8 @@ export function NavIcon(props: VoidProps<{ icon: VoidComponent<CSSProps> }>) {
 			}
 		`}
 		{/* TODO: Use <Show> trick here */}
-		<AriaButton class="component-nav-icon grid grid-center focus-ring focus-ring-$full" onClick={e => {/* TODO */}}>
-			<Icon icon={props.icon} h="32px" />
+		<AriaButton class="component-nav-icon grid grid-center focus-ring focus-ring-$full" onClick={e => {/* TODO */}} data-state-active={props.active}>
+			<Icon icon={props.icon} h="28px" />
 		</AriaButton>
 	</>
 }
