@@ -66,21 +66,11 @@ export function GridIcon(props: VoidProps<{ info: IndexedResult }>) {
 
 			//////////////////////////////////
 
-			.component-grid-icon-label {
-				font: 400 13px / normal var(--sans);
-				font-feature-settings: "tnum";
-				letter-spacing: calc(1em / 128);
-				color: var(--fill-200-color);
-				overflow: hidden;        // Ellipsis
-				text-align: center;      // Ellipsis
-				text-overflow: ellipsis; // Ellipsis
-				white-space: nowrap;     // Ellipsis
-				width: 100%;
-				// BEHAVIOR
-				cursor: text;
-				user-select: all;
-				-webkit-user-select: all;
-			}
+			//// .component-grid-icon-label {
+			//// 	cursor: text;
+			//// 	user-select: all;
+			//// 	-webkit-user-select: all;
+			//// }
 			.group:is(:hover:active, [data-state-active]) .component-grid-icon-label {
 				color: white;
 			}
@@ -111,7 +101,7 @@ export function GridIcon(props: VoidProps<{ info: IndexedResult }>) {
 			<div class="component-grid-icon grid grid-center focus-ring focus-ring-32px">
 				{/* @ts-expect-error */}
 				<Dynamic class="component-grid-icon-svg" component={settings.icons()?.[props.info.title]} />
-				<div class="component-grid-icon-label">
+				<div class="component-grid-icon-label type-sans is-200 is-ellipsis">
 					{/* <Show when={props.info.index !== undefined} fallback={props.info.kebab}>
 						<span>{props.info.kebab.slice(0, props.info.index!)}</span>
 						<span class="component-grid-icon-label-highlight">{search.canonicalValue()}</span>

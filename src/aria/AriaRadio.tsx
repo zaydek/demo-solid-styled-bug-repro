@@ -2,8 +2,7 @@
 
 import { batch, createContext, createEffect, createSignal, on, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import { omitProps } from "solid-use"
-import { createRef } from "../solid-utils"
+import { createRef, omitProps } from "../solid-utils"
 import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
 
 type State = {
@@ -50,6 +49,8 @@ export function AriaRadio(props: ParentProps<DynamicProps & CSSProps & { value: 
 
 	return (
 		<Dynamic
+			// Destructure props
+			{...omitProps(props, ["as", "value"])}
 			// Component
 			component={props.as ?? "div"}
 			ref={(el: HTMLElement) => {
@@ -58,8 +59,6 @@ export function AriaRadio(props: ParentProps<DynamicProps & CSSProps & { value: 
 					setRef(el)
 				})
 			}}
-			// Props
-			{...omitProps(props, ["as", "value"])}
 			// Handlers
 			onClick={(e: MouseEvent) => {
 				e.preventDefault()
@@ -131,11 +130,8 @@ export function AriaRadiogroup(props: ParentProps<DynamicProps & CSSProps & {
 			}}
 		>
 			<Dynamic
-				// Component
-				component={props.as ?? "div"}
-				// Props
 				{...omitProps(props, ["as", "value", "setValue"])}
-				// Accessibility
+				component={props.as ?? "div"}
 				role="radiogroup"
 			>
 				{props.children}

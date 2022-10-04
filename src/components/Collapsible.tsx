@@ -77,11 +77,11 @@ export function Collapsible(props: ParentProps<{
 			<AriaButton ref={setHeadRef} class="component-panel-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)}>
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full">
 					<Smiley class="h-16px aspect-1 color:$theme-color" />
-					<div class="typography-caps color:$fill-100-color">
+					<div class="type-caps">
 						{props.title}
 					</div>
 					<div class="flex-grow"></div>
-					<div class="typography-caps color:$fill-300-color">
+					<div class="type-caps is-300">
 						{props.subtitle}
 					</div>
 				</div>

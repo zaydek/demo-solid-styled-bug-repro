@@ -173,30 +173,15 @@ function StickySearchBar() {
 
 			//////////////////////////////////
 
-			// TODO: Extract component for typography?
-			input.component-search-bar { width: 100%; } // CSS reset
-			input.component-search-bar {
-				padding: 0 12px;
+			input[type=text].component-search-bar { width: 100%; } // CSS reset
+			input[type=text].component-search-bar {
+ 				padding: 0 12px;
 				height: var(--search-bar-height);
-				// TODO: EXTRACT?
-				font: 400 16px / normal var(--sans);
-				font-feature-settings: "tnum";
-				letter-spacing: calc(1em / 64);
-				color: var(--fill-100-color);
-			}
-			input.component-search-bar::placeholder {
-				color: var(--fill-300-color);
 			}
 		`}
 		<nav class="component-sticky-search-bar-card flex-row flex-align-center">
 			<NavIcon icon={Smiley} active={!!search.canonicalValue() || undefined} />
-			{/* TODO: Implement fallback (<Suspense>) state */}
-			{/* <div class="flex-grow">
-				<div class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
-					<Line w="15%" />
-				</div>
-			</div> */}
-			<input class="component-search-bar" type="text" placeholder="I’m searching for…" value={search.value()} onInput={e => search.setValue(e.currentTarget.value)} autofocus />
+			<input class="component-search-bar type-search-bar" type="text" placeholder="I’m searching for…" value={search.value()} onInput={e => search.setValue(e.currentTarget.value)} autofocus />
 			<NavIcon icon={Smiley} />
 		</nav>
 	</>

@@ -1,7 +1,6 @@
 import { Accessor, batch, createContext, createSignal, FlowProps, JSX, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import { omitProps } from "solid-use"
-import { createRef } from "../solid-utils"
+import { createRef, omitProps } from "../solid-utils"
 import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
 import { bound, round } from "../utils/precision"
 
@@ -40,6 +39,8 @@ export function AriaSliderThumb(props: ParentProps<DynamicProps & CSSProps>) {
 
 	return <>
 		<Dynamic
+			// Destructure props
+			{...omitProps(props, ["as"])}
 			// Component
 			component={props.as ?? "div"}
 			ref={(el: HTMLElement) => {
@@ -48,8 +49,6 @@ export function AriaSliderThumb(props: ParentProps<DynamicProps & CSSProps>) {
 					setRef(el)
 				})
 			}}
-			// Props
-			{...omitProps(props, ["as"])}
 		>
 			{props.children}
 		</Dynamic>
@@ -81,6 +80,8 @@ export function AriaSliderTrack(props: ParentProps<DynamicProps & CSSProps>) {
 
 	return <>
 		<Dynamic
+			// Destructure props
+			{...omitProps(props, ["as"])}
 			// Component
 			component={props.as ?? "div"}
 			ref={(el: HTMLElement) => {
@@ -89,8 +90,6 @@ export function AriaSliderTrack(props: ParentProps<DynamicProps & CSSProps>) {
 					setRef(el)
 				})
 			}}
-			// Props
-			{...omitProps(props, ["as"])}
 		>
 			{props.children}
 		</Dynamic>
@@ -178,6 +177,8 @@ export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & 
 			}}
 		>
 			<Dynamic
+				// Destructure props
+				{...omitProps(props, ["as", "value", "setValue", "min", "max", "step"])}
 				// Component
 				component={props.as ?? "div"}
 				ref={(el: HTMLElement) => {
@@ -186,8 +187,6 @@ export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & 
 						setRef(el)
 					})
 				}}
-				// Props
-				{...omitProps(props, ["as", "value", "setValue", "min", "max", "step"])}
 				// Handlers
 				onKeyDown={(e: KeyboardEvent) => {
 					if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown") {

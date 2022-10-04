@@ -51,10 +51,7 @@ export function ColorButton(props: FlowProps<{
 
 			//////////////////////////////////
 
-			.component-color-button > .typography-caps {
-				color: var(--fill-100-color);
-			}
-			.component-color-button:is(:hover:active, [aria-checked=true]) > .typography-caps {
+			.component-color-button:is(:hover:active, [aria-checked=true]) > :nth-child(2) {
 				font-weight: 600; // +100
 				color: white;
 			}
@@ -78,7 +75,7 @@ export function ColorButton(props: FlowProps<{
 				{/* @ts-expect-error */}
 				<AriaCheckbox class="component-color-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" style={props.style ?? {}} checked={props.checked} setChecked={props.setChecked}>
 					<Icon icon={Smiley} h="16px" />
-					<div class="typography-caps">{props.children}</div>
+					<div class="type-caps">{props.children}</div>
 					<Icon icon={Smiley} h="16px" />
 				</AriaCheckbox>
 			</Match>
@@ -86,7 +83,7 @@ export function ColorButton(props: FlowProps<{
 				{/* @ts-expect-error */}
 				<AriaRadio class="component-color-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" style={props.style ?? {}} value={props.value}>
 					<Icon icon={Smiley} h="16px" />
-					<div class="typography-caps">{props.children}</div>
+					<div class="type-caps">{props.children}</div>
 					<Icon icon={Smiley} h="16px" />
 				</AriaRadio>
 			</Match>

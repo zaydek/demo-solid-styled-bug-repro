@@ -2,8 +2,7 @@
 
 import { batch, ParentProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import { omitProps } from "solid-use"
-import { createRef } from "../solid-utils"
+import { createRef, omitProps } from "../solid-utils"
 import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
 
 export function AriaButton(props: ParentProps<DynamicProps & CSSProps & { onClick: (e: MouseEvent) => void }>) {
@@ -11,6 +10,8 @@ export function AriaButton(props: ParentProps<DynamicProps & CSSProps & { onClic
 
 	return (
 		<Dynamic
+			// Destructure props
+			{...omitProps(props, ["as", "onClick"])}
 			// Component
 			component={props.as ?? "div"}
 			ref={(el: HTMLElement) => {
@@ -19,8 +20,6 @@ export function AriaButton(props: ParentProps<DynamicProps & CSSProps & { onClic
 					setRef(el)
 				})
 			}}
-			// Props
-			{...omitProps(props, ["as", "onClick"])}
 			// Handlers
 			onClick={(e: MouseEvent) => {
 				if (typeof props.onClick === "function") {

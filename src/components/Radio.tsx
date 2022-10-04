@@ -61,7 +61,7 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 			<div class="flex-grow">
 				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-card-color flex-row flex-align-center gap-$gap">
 					<Smiley class="h-16px aspect-1 color:$fill-100-color" />
-					<div class="typography-caps color:$fill-100-color">
+					<div class="type-caps">
 						{props.children}
 					</div>
 				</div>

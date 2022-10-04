@@ -2,8 +2,7 @@
 
 import { batch, ParentProps, Setter } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import { omitProps } from "solid-use"
-import { createRef } from "../solid-utils"
+import { createRef, omitProps } from "../solid-utils"
 import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
 
 export function AriaCheckbox(props: ParentProps<DynamicProps & CSSProps & {
@@ -14,6 +13,8 @@ export function AriaCheckbox(props: ParentProps<DynamicProps & CSSProps & {
 
 	return (
 		<Dynamic
+			// Destructure props
+			{...omitProps(props, ["as", "checked", "setChecked"])}
 			// Component
 			component={props.as ?? "div"}
 			ref={(el: HTMLElement) => {
@@ -22,8 +23,6 @@ export function AriaCheckbox(props: ParentProps<DynamicProps & CSSProps & {
 					setRef(el)
 				})
 			}}
-			// Props
-			{...omitProps(props, ["as", "checked", "setChecked"])}
 			// Handlers
 			onClick={(e: MouseEvent) => {
 				if (typeof props.setChecked === "function") {
