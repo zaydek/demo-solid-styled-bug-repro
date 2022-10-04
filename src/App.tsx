@@ -167,7 +167,7 @@ function StickySearchBar() {
 				padding: 0 var(--padding-x);
 				height: var(--search-bar-height);
 				background-color: var(--card-color);
-				box-shadow: var(--hairline-box-shadow);
+				box-shadow: var(--card-hairline-box-shadow);
 			}
 
 			//////////////////////////////////
@@ -221,8 +221,8 @@ function Main() {
 					{() => <>
 						{/* TODO: Rename to component-grid-cell? */}
 						<div class="component-grid-icon grid grid-center">
-							<div class="h-28px aspect-1 rounded-$full background-color:$hairline-color"></div>
-							<div class="h-6px  aspect-8 rounded-$full background-color:$hairline-color"></div>
+							<div class="h-28px aspect-1 rounded-$full background-color:$card-hairline-color"></div>
+							<div class="h-6px  aspect-8 rounded-$full background-color:$card-hairline-color"></div>
 						</div>
 					</>}
 				</For>
@@ -356,7 +356,7 @@ export function App() {
 				inset: 0 0 0 auto; // E.g. inset-r
 				width: var(--sidebar-width);
 				background-color: var(--card-color);
-				box-shadow: var(--hairline-box-shadow);
+				box-shadow: var(--card-hairline-box-shadow);
 				// TRANSITION
 				transition: calc(250ms * var(--motion-safe)) ease;
 				transition-property: width, transform;

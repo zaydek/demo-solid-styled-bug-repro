@@ -9,7 +9,7 @@ export function Textarea() {
 				height: 112px;
 				border-radius: calc(var(--form-height) / 2);
 				background-color: var(--card-color);
-				box-shadow: var(--inset-hairline-box-shadow);
+				box-shadow: var(--card-inset-hairline-box-shadow);
 			}
 		`}
 		<div class="component-textarea flex-col gap-($gap/2) focus-ring focus-ring-16px" tabindex="0">

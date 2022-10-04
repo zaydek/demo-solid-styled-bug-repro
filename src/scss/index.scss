@@ -1,29 +1,21 @@
 @use "sass:meta";
 
-@use "box-shadow"; // TODO: DEPRECATE
-
 @use "theme" as *;
 @use "utils/define-theme" as *;
 
-////////////////////////////////////////
-
 :root {
-	// Antialiasing
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
-	// Layout (tokens)
 	--full:   1000px;
 	--screen: 100vh;
 
-	// Layout
 	// TODO: Consolidate and rename to spacing
 	--padding-x: 16px;
 	--padding-y: 16px;
-	--padding: ( // TODO
-		var(--padding-y)
-		var(--padding-x)
-	);
+	// TODO
+	--padding: var(--padding-y)
+		var(--padding-x);
 	--gap: 8px;
 
 	--sidebar-width:              416px;
@@ -33,7 +25,6 @@
 	--form-height:                28px;
 	--reduced-form-height:        24px;
 
-	// Typography
 	--sans:
 		system-ui,
 		-apple-system,
@@ -52,87 +43,30 @@
 		Menlo,
 		monospace;
 
-	// Theming
 	@include define-theme($theme);
+	&.is-dark { @include define-theme($theme, dark); }
 
-	// Accessibility
 	--motion-safe: 1;
+	@media (prefers-reduced-motion: reduce) { :root { --motion-safe: 0; } }
 
-	//// // TODO: DEPRECATE
-	//// $vars: ();
-	//// @each $thing in (box-shadow) {
-	//// 	$vars: list.join($vars, meta.module-variables($thing));
-	//// }
-	//// @include interpolate-vars($vars);
-
-	color: RED;            // DEBUG
-	background-color: RED; // DEBUG
+	color: RED; // DEBUG
 }
 ::placeholder {
-	color: RED;            // DEBUG
+	color: RED; // DEBUG
 }
 
-:root.is-dark {
-	@include define-theme($theme, dark);
-}
-
+// TODO: DEPRECATE?
 [tabindex] {
 	cursor: pointer;
 	-webkit-user-select: none;
 	user-select: none;
 }
 
-// Accessibility
+hr {
+	height: var(--card-hairline-thickness);
+	background-color: var(--card-hairline-color);
+	&.collapsible { position: relative; z-index: 10; margin-top: calc(-1 * var(--card-hairline-thickness)); }
+}
+
 @include meta.load-css("focus-ring");
-
-@media (prefers-reduced-motion: reduce) {
-	:root { --motion-safe: 0; }
-}
-
-////////////////////////////////////////
-
-input[type=text].type-search-bar {
-	font: 400 16px /
-		normal var(--sans);
-	font-feature-settings: "tnum";
-	letter-spacing: calc(1em / 64);
-
-	// Colors
-	color: var(--fill-100-color);
-	&::placeholder {
-		color: var(--fill-300-color);
-	}
-}
-
-.type-sans {
-	font: 400 13px /
-		normal var(--sans);
-	font-feature-settings: "tnum";
-	letter-spacing: calc(1em / 128);
-
-	// Colors
-	color: var(--fill-100-color);
-	&.is-200 { color: var(--fill-200-color); }
-	&.is-300 { color: var(--fill-300-color); }
-}
-
-.type-caps {
-	font: 500 10px /
-		normal var(--sans);
-	font-feature-settings: "tnum";
-	letter-spacing: calc(1em / 8);
-
-	// Colors
-	color: var(--fill-100-color);
-	&.is-200 { color: var(--fill-200-color); }
-	&.is-300 { color: var(--fill-300-color); }
-}
-
-// TODO: Rename to has-ellipsis?
-.is-ellipsis {
-	overflow: hidden;
-	text-align: center;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	width: 100%;
-}
+@include meta.load-css("typography");

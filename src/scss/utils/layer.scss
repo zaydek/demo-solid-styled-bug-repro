@@ -1,6 +1,6 @@
 @use "sass:list";
 
-@function layer-box-shadow($box-shadow, $count) {
+@function layer($box-shadow, $count) {
 	$layers: ();
 	@if $count >=  1 { $layers: list.append($layers, list.nth($box-shadow,  1), comma); }
 	@if $count >=  2 { $layers: list.append($layers, list.nth($box-shadow,  2), comma); }

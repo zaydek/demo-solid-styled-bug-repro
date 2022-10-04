@@ -1,7 +1,7 @@
 import { FlowProps, JSX, Match, Setter, Switch } from "solid-js"
 import { AriaCheckbox, AriaRadio } from "../aria"
 import { css } from "../solid-utils"
-import { Icon, Line } from "./Primitives"
+import { Icon } from "./Primitives"
 import { Smiley } from "./Smiley"
 
 export function ColorButton(props: FlowProps<{
@@ -23,17 +23,17 @@ export function ColorButton(props: FlowProps<{
 				height: var(--form-height);
 				border-radius: var(--full);
 				background-color: var(--card-color);
-				box-shadow: var(--inset-hairline-box-shadow);
+				box-shadow: var(--card-inset-hairline-box-shadow);
 			}
 			.component-color-button:is(:hover:active, [aria-checked=true]) {
-				background-color: var(--color, var(--theme-color));
+				background-color: var(--color, var(--trim-color));
 				box-shadow: revert;
 			}
 
 			//////////////////////////////////
 
 			.component-color-button > :nth-child(1) {
-				color: var(--color, var(--theme-color));
+				color: var(--color, var(--trim-color));
 			}
 
 			//////////////////////////////////

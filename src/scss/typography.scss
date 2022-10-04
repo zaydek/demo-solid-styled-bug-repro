@@ -1,0 +1,44 @@
+input[type=text].type-search-bar {
+	font: 400 16px /
+		normal var(--sans);
+	font-feature-settings: "tnum";
+	letter-spacing: calc(1em / 64);
+
+	// Colors
+	color: var(--fill-100-color);
+	&::placeholder {
+		color: var(--fill-300-color);
+	}
+}
+
+.type-sans {
+	font: 400 13px /
+		normal var(--sans);
+	font-feature-settings: "tnum";
+	letter-spacing: calc(1em / 128);
+
+	// Colors
+	color: var(--fill-100-color);
+	&.is-200 { color: var(--fill-200-color); }
+	&.is-300 { color: var(--fill-300-color); }
+}
+
+.type-caps {
+	font: 500 10px /
+		normal var(--sans);
+	font-feature-settings: "tnum";
+	letter-spacing: calc(1em / 8);
+
+	// Colors
+	color: var(--fill-100-color);
+	&.is-200 { color: var(--fill-200-color); }
+	&.is-300 { color: var(--fill-300-color); }
+}
+
+:is(.type-sans, .type-caps).has-ellipsis {
+	overflow: hidden;
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+}

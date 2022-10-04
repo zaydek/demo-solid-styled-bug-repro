@@ -2,12 +2,12 @@
 @use "sass:meta";
 
 @mixin define-theme($vars, $variant: null) {
-	@each $property, $value in $vars {
+	@each $--property, $value in $vars {
 		@if meta.type-of($value) == map {
 			$variant-value: map.get($value, light);
-			--#{$property}: #{$variant-value};
+			#{$--property}: #{$variant-value};
 		} @else {
-			--#{$property}: #{$value};
+			#{$--property}: #{$value};
 		}
 	}
 }

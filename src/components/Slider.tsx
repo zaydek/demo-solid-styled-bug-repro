@@ -22,7 +22,7 @@ export function Slider(props: VoidProps<{
 			.component-slider-track {
 				height: 6px;
 				border-radius: var(--full);
-				background-color: var(--theme-color);
+				background-color: var(--trim-color);
 			}
 
 			//////////////////////////////////

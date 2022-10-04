@@ -32,11 +32,11 @@ export function GridIcon(props: VoidProps<{ info: IndexedResult }>) {
 				transition-property: transform;
 			}
 			.group:hover .component-grid-icon::before {
-				background-color: var(--hover-color);
+				background-color: var(--card-color-is-before-active);
 				transform: scale(1);
 			}
 			.group:is(:hover:active, [data-state-active]) .component-grid-icon::before {
-				background-color: var(--hover-active-color);
+				background-color: var(--card-color-is-active);
 				transform: scale(1);
 			}
 
@@ -101,7 +101,7 @@ export function GridIcon(props: VoidProps<{ info: IndexedResult }>) {
 			<div class="component-grid-icon grid grid-center focus-ring focus-ring-32px">
 				{/* @ts-expect-error */}
 				<Dynamic class="component-grid-icon-svg" component={settings.icons()?.[props.info.title]} />
-				<div class="component-grid-icon-label type-sans is-200 is-ellipsis">
+				<div class="component-grid-icon-label type-sans is-200 has-ellipsis">
 					{/* <Show when={props.info.index !== undefined} fallback={props.info.kebab}>
 						<span>{props.info.kebab.slice(0, props.info.index!)}</span>
 						<span class="component-grid-icon-label-highlight">{search.canonicalValue()}</span>

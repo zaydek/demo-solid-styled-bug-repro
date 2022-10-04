@@ -34,18 +34,18 @@ export function NavIcon(props: VoidProps<{
 				transition-property: transform;
 			}
 			.component-nav-icon:hover::before {
-				background-color: var(--hover-color);
+				background-color: var(--card-color-is-before-active);
 				transform: scale(1);
 			}
 			.component-nav-icon:is(:hover:active, [data-state-active])::before {
-				background-color: var(--hover-active-color);
+				background-color: var(--card-color-is-active);
 				transform: scale(1);
 			}
 
 			//////////////////////////////////
 
 			.component-nav-icon > .component-icon {
-				color: var(--theme-color);
+				color: var(--trim-color);
 			}
 			.component-nav-icon:is(:hover:active, [data-state-active]) > .component-icon {
 				color: white;

@@ -1,7 +1,7 @@
 import { FlowProps } from "solid-js"
 import { AriaRadio } from "../aria"
 import { css } from "../solid-utils"
-import { Icon, IconPlaceholder, Line } from "./Primitives"
+import { IconPlaceholder } from "./Primitives"
 import { Smiley } from "./Smiley"
 
 export function Radio(props: FlowProps<{ value: string }, string>) {
@@ -39,7 +39,7 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 				transition-property: transform;
 			}
 			.group[aria-checked=true] .component-radio::after {
-				background-color: var(--hover-active-color);
+				background-color: var(--card-color-is-active);
 				transform: scale(1);
 			}
 
@@ -59,7 +59,7 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 		`}
 		<AriaRadio class="group flex-row gap-$gap focus-ring focus-ring-$full" value={props.value}>
 			<div class="flex-grow">
-				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$faded-card-color flex-row flex-align-center gap-$gap">
+				<div class="px-($reduced-form-height/2) h-$reduced-form-height rounded-$full background-color:$card-lightgray-color flex-row flex-align-center gap-$gap">
 					<Smiley class="h-16px aspect-1 color:$fill-100-color" />
 					<div class="type-caps">
 						{props.children}
