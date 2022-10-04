@@ -1,0 +1,98 @@
+@use "sass:map";
+@use "sass:meta";
+
+@mixin interpolate-vars($vars) {
+	:root {
+		@each $property, $value in $vars {
+			@if meta.type-of($value) == map {
+				$theme-value: map.get($value, light);
+				--#{$property}: #{$theme-value};
+			} @else {
+				--#{$property}: #{$value};
+			}
+		}
+	}
+	:root.is-dark {
+		@each $property, $value in $vars {
+			@if meta.type-of($value) == map {
+				$theme-value: map.get($value, dark);
+				--#{$property}: #{$theme-value};
+			} @else {
+				--#{$property}: #{$value};
+			}
+		}
+	}
+}
+
+@include interpolate-vars((
+	// Focus ring
+	focus-ring-h: 200deg,
+	focus-ring-s: 100%,
+	focus-ring-l: 50%,
+
+	// Base
+	base-h: 200deg,
+	base-s: 50%,
+	trim-h: 200deg,
+	trim-s: 50%,
+	// Trim
+	trim-color: (
+		light: hsl(var(--trim-h) var(--trim-s) 50%),
+		dark:  hsl(var(--trim-h) var(--trim-s) 60%),
+	),
+	// Card
+	card-color: (
+		light: hsl(var(--base-h) var(--base-s) 100%),
+		dark:  hsl(var(--base-h) var(--base-s) 10%),
+	),
+	card-lightgray-color: (
+		light: hsl(var(--base-h) var(--base-s) 92.5%),
+		dark:  hsl(var(--base-h) var(--base-s) 17.5%),
+	),
+	card-color-state-before-active: (
+		light: hsl(var(--base-h) var(--base-s) 90%),
+		dark:  hsl(var(--base-h) var(--base-s) 20%),
+	),
+	card-color-state-active: (
+		light: hsl(var(--base-h) var(--base-s) 80%),
+		dark:  hsl(var(--base-h) var(--base-s) 30%),
+	),
+	card-box-shadow: (
+		light: 0 0 0 1px hsl(var(--base-h) var(--base-s) 0%   / 15%),
+		dark:  0 0 0 1px hsl(var(--base-h) var(--base-s) 100% / 15%),
+	),
+	card-backdrop-color: hsl(0deg 0% 0% / 15%),
+	card-hairline-color: (
+		light: hsl(var(--base-h) var(--base-s) 85%),
+		dark:  hsl(var(--base-h) var(--base-s) 25%),
+	),
+	// Form
+	form-color: (
+		light: var(-card-color),
+		dark:  hsl(var(--base-h) var(--base-s) 20%),
+	),
+	form-box-shadow: (
+		light: var(--card-box-shadow),
+		dark:  var(--card-box-shadow),
+	),
+	// Fill (typography & iconography)
+	fill-100-color: (
+		light: hsl(var(--base-h) var(--base-s) 15%),
+		dark:  hsl(var(--base-h) var(--base-s) 95%),
+	),
+	fill-200-color: (
+		light: hsl(var(--base-h) var(--base-s) 25%),
+		dark:  hsl(var(--base-h) var(--base-s) 85%),
+	),
+	fill-300-color: (
+		light: hsl(var(--base-h) var(--base-s) 35%),
+		dark:  hsl(var(--base-h) var(--base-s) 75%),
+	),
+	// Brand colors
+	github-color:  #181717,
+	html-color:    #e34f26,
+	react-color:   #61dafb,
+	svg-color:     #ffb13b,
+	twitter-color: #1da1f2,
+	vue-color:     #4fc08d,
+));
