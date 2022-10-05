@@ -1,9 +1,9 @@
 import "./columns.scss"
 
-import { createEffect, createSignal, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
+import { createSignal, For, JSX, onMount, Show, Suspense } from "solid-js"
 import { AriaRadiogroup } from "./aria"
 import { Collapsible, ColorButton, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
-import { createRef, css, cx } from "./solid-utils"
+import { css, cx } from "./solid-utils"
 import { search, settings, VariantV1, VariantV2, Version } from "./state"
 import { range } from "./utils"
 
@@ -224,94 +224,18 @@ function Main() {
 ////////////////////////////////////////
 
 export function App() {
-	const [ref, setRef] = createRef()
-	const [sidebar, setSidebar] = createSignal<"open" | "collapsed" | "expanded">("open")
+	const [sidebar, setSidebar] = createSignal<"open" | "collapsed">("open")
 
-	function toggle() {
-		if (sidebar() === "open") {
-			setSidebar("expanded")
-		} else if (sidebar() === "expanded") {
-			setSidebar("open")
-		}
-	}
-
-	//// // Cycles sidebar states forwards
-	//// function cycleForwards() {
-	//// 	if (sidebar() === "open") {
-	//// 		setSidebar("expanded")
-	//// 	} else if (sidebar() === "expanded") {
-	//// 		setSidebar("collapsed")
-	//// 	} else if (sidebar() === "collapsed") {
-	//// 		setSidebar("open")
-	//// 	}
+	//// function toggle() {
+	//// 	setSidebar(curr => curr === "open" ? "collapsed" : "open")
 	//// }
-	////
-	//// // Cycles sidebar states backwards
-	//// function cycleBackwards() {
-	//// 	if (sidebar() === "open") {
-	//// 		setSidebar("collapsed")
-	//// 	} else if (sidebar() === "collapsed") {
-	//// 		setSidebar("expanded")
-	//// 	} else if (sidebar() === "expanded") {
-	//// 		setSidebar("open")
-	//// 	}
-	//// }
-	////
-	//// document.addEventListener("keydown", e => {
-	//// 	if (e.key === "d") {
-	//// 		cycleForwards()
-	//// 	} else if (e.key === "D") {
-	//// 		cycleBackwards()
-	//// 	}
-	//// }, false)
 
-	//// document.addEventListener("keydown", e => {
-	//// 	if (e.key === "d") {
-	//// 		toggle()
-	//// 	}
-	//// }, false)
-
-	//////////////////////////////////////
-
-	// TODO: Extract to state
-	const [theme, setTheme] = createSignal<"light" | "dark">(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
-
-	document.addEventListener("keydown", e => {
-		if (e.key === "`") {
-			setTheme(curr => curr === "light" ? "dark" : "light")
-		}
-	}, false)
-
-	createEffect(() => {
-		const root = document.documentElement
-		root.setAttribute("data-theme", theme())
-	})
-
-	//////////////////////////////////////
-
-	let timeoutId = 0
-	createEffect(() => {
-		clearTimeout(timeoutId)
-		onCleanup(() => window.clearTimeout(timeoutId))
-		if (sidebar() === "expanded") {
-			timeoutId = window.setTimeout(() => {
-				ref()!.style.transitionDuration = "revert"
-			}, 400)
-		} else {
-			ref()!.style.transitionDuration = ""
-			if (!ref()!.style.length) {
-				ref()!.removeAttribute("style")
-			}
-		}
-	})
-
-	// TODO: Add inert somewhere
 	return <>
 		<div class={cx(`column-1 is-sidebar-${sidebar()}`)}>
 			<Main />
 		</div>
-		<div class={cx(`column-2-backdrop is-sidebar-${sidebar()}`)} onClick={toggle}></div>
-		<div ref={setRef} class={cx(`column-2 is-sidebar-${sidebar()} flex-col`)}>
+		{/* @ts-expect-error */}
+		<div class={cx(`column-2 is-sidebar-${sidebar()} flex-col`)} inert={sidebar() === "collapsed" || undefined}>
 			<Sidebar />
 		</div>
 	</>
