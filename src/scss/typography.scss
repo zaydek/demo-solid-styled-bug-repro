@@ -4,7 +4,7 @@ input[type=text].typography-search-bar {
 	font-feature-settings: "tnum";
 	letter-spacing: calc(1em / 64);
 
-	// Colors
+	// Theming
 	color: var(--fill-100-color);
 	&::placeholder {
 		color: var(--fill-300-color);
@@ -17,7 +17,7 @@ input[type=text].typography-search-bar {
 	font-feature-settings: "tnum";
 	letter-spacing: calc(1em / 128);
 
-	// Colors
+	// Theming
 	color: var(--fill-100-color);
 	&.is-200 { color: var(--fill-200-color); }
 	&.is-300 { color: var(--fill-300-color); }
@@ -29,13 +29,13 @@ input[type=text].typography-search-bar {
 	font-feature-settings: "tnum";
 	letter-spacing: calc(1em / 8);
 
-	// Colors
+	// Theming
 	color: var(--fill-100-color);
 	&.is-200 { color: var(--fill-200-color); }
 	&.is-300 { color: var(--fill-300-color); }
 }
 
-:is(.typography-sans, .typography-caps).has-ellipsis {
+[class^=typography].has-ellipsis {
 	overflow: hidden;
 	text-align: center;
 	text-overflow: ellipsis;

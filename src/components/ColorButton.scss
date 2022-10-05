@@ -1,5 +1,4 @@
 .color-button {
-	// TODO: Why does --focus-ring-color need a fallback?
 	--focus-ring-color: var(--color, hsl(var(--focus-ring-h) var(--focus-ring-s) var(--focus-ring-l)));
 
 	padding: 0 calc(var(--form-height) / 2);
@@ -10,7 +9,7 @@
 	background-color: var(--card-color);
 	box-shadow: var(--card-inset-hairline-box-shadow);
 }
-.color-button:is([aria-checked=true], :hover:active) {
+.color-button[aria-checked=true] {
 	background-color: var(--color, var(--trim-color));
 	box-shadow: none;
 }
@@ -29,9 +28,9 @@
 	}
 	transform: translateX(calc(16px / 2));
 }
-.color-button:is([aria-checked=true], :hover:active) > :not(:nth-child(3)) {
+.color-button[aria-checked=true] > :not(:nth-child(3)) {
 	@at-root {
-		.color-button:is([aria-checked=true], :hover:active) > :nth-child(2) {
+		.color-button[aria-checked=true] > :nth-child(2) {
 			font-weight: 600; // +100
 		}
 	}
@@ -50,7 +49,7 @@
 	color: transparent;
 	transform: rotate(180deg) scale(0);
 }
-.color-button:is([aria-checked=true], :hover:active) > :nth-child(3) {
+.color-button[aria-checked=true] > :nth-child(3) {
 	color: white;
 	transform: rotate(0) scale(1);
 }
