@@ -12,8 +12,8 @@ export function Slider(props: VoidProps<{
 }>) {
 	return <>
 		<AriaHorizontalSlider {...props} class="slider flex-col flex-justify-center focus-ring focus-ring-$full">
-			{({ translateX }) => <>
-				<AriaSliderTrack class="slider-track flex-row flex-align-center">
+			{({ float, translateX }) => <>
+				<AriaSliderTrack class="slider-track flex-row flex-align-center" style={{ "--progress": `${float() * 100}%` }}>
 					<AriaSliderThumb class="slider-thumb focus-ring focus-ring-$full" style={{ "transform": translateX() ? `translateX(${translateX()}px)` : undefined }} />
 				</AriaSliderTrack>
 			</>}
