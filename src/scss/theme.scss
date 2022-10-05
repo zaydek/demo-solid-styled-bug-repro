@@ -24,12 +24,12 @@ $theme: (
 
 	//////////////////////////////////////
 
-	base-h: 220deg,
+	base-h: 220,
 	base-s: 25%,
 
 	trim-h: (
-		light: 200deg,
-		dark:  220deg,
+		light: 200,
+		dark:  220,
 	),
 	trim-s: 100%,
 	trim-l: (
@@ -58,7 +58,7 @@ $theme: (
 		light: hsl(var(--base-h) var(--base-s) 100%),
 		dark:  hsl(var(--base-h) var(--base-s) 10%),
 	),
-	card-backdrop-color: hsl(0deg 0% 0% / 15%),
+	card-backdrop-color: hsl(0 0% 0% / 15%),
 	card-lightgray-color: (
 		light: hsl(var(--base-h) var(--base-s) 92.5%),
 		dark:  hsl(var(--base-h) var(--base-s) 17.5%),

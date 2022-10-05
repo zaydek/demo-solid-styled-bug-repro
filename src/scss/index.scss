@@ -4,7 +4,7 @@
 @use "utils/define-theme" as *;
 
 :root.is-debug-css {
-	outline: 1px solid hsl(0deg 100% 50% / 15%);
+	outline: 1px solid hsl(0 100% 50% / 15%);
 	outline-offset: -0.5px;
 }
 
@@ -18,7 +18,7 @@
 	--padding: 16px;
 	--gap:     8px;
 
-	--sidebar-width:     416px;
+	--sidebar-width:     448px;
 	--search-bar-height: 64px;
 	--main-grid-height:  96px;
 	--form-height:       28px;
