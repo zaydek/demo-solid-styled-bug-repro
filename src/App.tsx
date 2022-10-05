@@ -1,8 +1,9 @@
 import "./columns.scss"
 
-import { createSignal, For, JSX, onMount, Show, Suspense } from "solid-js"
+import { Accessor, createSignal, For, JSX, onMount, Setter, Show, Suspense } from "solid-js"
 import { AriaRadiogroup } from "./aria"
 import { Collapsible, ColorButton, GridIcon, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
+import { FigmaSVG, GitHubSVG, TwitterSVG } from "./components/Brands"
 import { css, cx } from "./solid-utils"
 import { search, settings, VariantV1, VariantV2, Version } from "./state"
 import { range } from "./utils"
@@ -44,16 +45,15 @@ function Sidebar() {
 	return <>
 		<div class="flex-shrink:0">
 			<nav class="px-$padding h-$search-bar-height flex-row flex-align-center">
-				<NavIcon icon={Smiley} />
+				<NavIcon icon={props => <TwitterSVG {...props} style={{ "color": "var(--twitter-color)" }} />} />
 				<div class="flex-grow"></div>
-				<NavIcon icon={Smiley} />
-				<NavIcon icon={Smiley} />
+				<NavIcon icon={FigmaSVG} />
+				<NavIcon icon={props => <GitHubSVG {...props} style={{ "color": "var(--fill-100-color)" }} />} />
 			</nav>
 			<hr />
 		</div>
-		{/* Use tabindex="-1" to disable :focus for overflow-y */}
 		<div class="flex-grow overflow-y:auto" tabindex="-1">
-			<Collapsible title="VERSION" subtitle={settings.version().toUpperCase()} open={open1()} setOpen={setOpen1}>
+			<Collapsible title="VERSION" subtitle={settings.version().toUpperCase()} open={settings.versionOpen() === "1"} setOpen={(() => settings.setVersionOpen(curr => curr === "1" ? "0" : "1")) as Setter<boolean>}>
 				<AriaRadiogroup class="flex-col gap-$gap" value={settings.version()} setValue={settings.setVersion}>
 					{/* TODO: Add descriptions */}
 					<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
@@ -65,7 +65,7 @@ function Sidebar() {
 			</Collapsible>
 			<hr />
 			<Show when={settings.version() === "v2"} fallback={<>
-				<Collapsible title="ICON VARIANT" subtitle={settings.variant().toUpperCase()} open={open2()} setOpen={setOpen2}>
+				<Collapsible title="ICON VARIANT" subtitle={settings.variant().toUpperCase()} open={settings.variantOpen() === "1"} setOpen={(() => settings.setVariantOpen(curr => curr === "1" ? "0" : "1")) as Setter<boolean>}>
 					<AriaRadiogroup class="flex-col gap-$gap" value={settings.variant()} setValue={settings.setVariantV1}>
 						{/* TODO: Add descriptions */}
 						<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
@@ -76,7 +76,7 @@ function Sidebar() {
 					</AriaRadiogroup>
 				</Collapsible>
 			</>}>
-				<Collapsible title="ICON VARIANT" subtitle={settings.variant().split("/").join(" / ").toUpperCase()} open={open2()} setOpen={setOpen2}>
+				<Collapsible title="ICON VARIANT" subtitle={settings.variant().split("/").join(" / ").toUpperCase()} open={settings.variantOpen() === "1"} setOpen={(() => settings.setVariantOpen(curr => curr === "1" ? "0" : "1")) as Setter<boolean>}>
 					<AriaRadiogroup class="flex-col gap-$gap" value={settings.variant()} setValue={settings.setVariantV2}>
 						{/* TODO: Add descriptions */}
 						<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
@@ -88,7 +88,7 @@ function Sidebar() {
 				</Collapsible>
 			</Show>
 			<hr />
-			<Collapsible title="COPY TO CLIPBOARD AS" subtitle="BAR" open={open3()} setOpen={setOpen3}>
+			<Collapsible title="COPY TO CLIPBOARD AS" subtitle="BAR" open={settings.clipboardOpen() === "1"} setOpen={(() => settings.setClipboardOpen(curr => curr === "1" ? "0" : "1")) as Setter<boolean>}>
 				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue2()} setValue={setRdgValue2}>
 					<Radio value="foo" />
 					<Radio value="bar" />

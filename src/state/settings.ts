@@ -24,39 +24,49 @@ export type VariantV1 = "outline" | "solid"
 export type VariantV2 = "20/solid" | "24/outline" | "24/solid"
 
 export const settings = createRoot(() => {
+	const [versionOpen, setVersionOpen] = createSearchSignal(get => {
+		const value = get("versionOpen")
+		if (!(value === "1" || value === "0")) { return }
+		return value
+	}, "0")
+
 	const [version, setVersion] = createSearchSignal<Version>(get => {
-		const v = get("version")
-		if (!v) { return }
-		if (!(v === "v1" || v === "v2")) { return }
-		return v
+		const value = get("version")
+		if (!(value === "v1" || value === "v2")) { return }
+		return value
 	}, "v2")
 
+	const [variantOpen, setVariantOpen] = createSearchSignal(get => {
+		const value = get("variantOpen")
+		if (!(value === "1" || value === "0")) { return }
+		return value
+	}, "1")
+
 	const [_variantV1, setVariantV1] = createSearchSignal<VariantV1>(get => {
-		const v = get("variant")
-		if (!v) { return }
-		if (!(v === "outline" || v === "solid")) { return }
-		return v
+		const value = get("variant")
+		if (!(value === "outline" || value === "solid")) { return }
+		return value
 	}, "solid")
 
 	const [_variantV2, setVariantV2] = createSearchSignal<VariantV2>(get => {
-		const v = get("variant")
-		if (!v) { return }
-		if (!(v === "20/solid" || v === "24/outline" || v === "24/solid")) { return }
-		return v
+		const value = get("variant")
+		if (!(value === "20/solid" || value === "24/outline" || value === "24/solid")) { return }
+		return value
 	}, "20/solid")
 
 	const variant = () => version() === "v1"
 		? _variantV1()
 		: _variantV2()
 
-	// TODO: Memoize?
-	const variantCompliment = () => {
-		if (!(variant() === "24/outline" || variant() === "24/solid")) { return }
-		return variant() === "24/outline"
-			? "24/solid"   as VariantV2
-			: "24/outline" as VariantV2
-	}
+	const [clipboardOpen, setClipboardOpen] = createSearchSignal(get => {
+		const value = get("clipboardOpen")
+		if (!(value === "1" || value === "0")) { return }
+		return value
+	}, "1")
 
+	const [textarea, setTextarea] = createSignal("")
+
+	// TODO: Extract to separate controller
 	const [manifest] = createResource(version, async version => {
 		if (version === "v1") {
 			return cache("v1", import("../data/manifest@1.0.6"))
@@ -65,6 +75,7 @@ export const settings = createRoot(() => {
 		}
 	})
 
+	// TODO: Extract to separate controller
 	const [icons] = createResource(() => [version(), variant()] as const, async ([version, variant]) => {
 		if (version === "v1" && variant === "solid") {
 			return cache(variant, import("../assets/heroicons@1.0.6/solid"))
@@ -79,21 +90,26 @@ export const settings = createRoot(() => {
 		}
 	})
 
-	const [textarea, setTextarea] = createSignal("")
-
 	return {
 		// State
+		versionOpen,
 		version,
+		variantOpen,
 		variant,
-		variantCompliment, // Derived
-		manifest,          // Derived
-		icons,             // Derived
-		textarea,          // Derived
+		clipboardOpen,
+		textarea,
+
+		// Resources
+		manifest,
+		icons,
 
 		// Actions
+		setVersionOpen,
 		setVersion,
+		setVariantOpen,
 		setVariantV1,
 		setVariantV2,
+		setClipboardOpen,
 		setTextarea,
 	}
 })
