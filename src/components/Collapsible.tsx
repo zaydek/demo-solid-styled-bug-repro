@@ -26,7 +26,7 @@ export function Collapsible(props: ParentProps<{
 	return <>
 		<section ref={setRef} class={cx(`collapsible ${!props.open && "is-collapsed"}`)} style={sx({ "--collapsible-min-height": minHeight(), "--collapsible-max-height": maxHeight() })}>
 			<AriaButton ref={setHeadRef} class="collapsible-head focus-ring-group" onClick={e => props.setOpen(curr => !curr)}>
-				<div class="px-calc($form2-height/2) h-$form2-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full">
+				<div class="px-calc($form-radio-height/2) h-$form-radio-height flex-row flex-align-center gap-$gap focus-ring focus-ring-$full">
 					<Smiley class="h-16px aspect-1 color:$theme-color" />
 					<div class="typography-caps">{props.title}</div>
 					<div class="flex-grow"></div>

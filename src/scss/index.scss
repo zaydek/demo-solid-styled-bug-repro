@@ -18,15 +18,11 @@
 	--padding: 16px;
 	--gap:     8px;
 
-	--sidebar-width:          416px;
-	--expanded-sidebar-width: calc(var(--sidebar-width) * 1.25);
-	--search-bar-height:      64px;
-	--main-grid-height:       96px;
-	--form-height:            28px; // TODO: Rename to color-button-height or make a calc expression (remove CSS variable)
-	--form2-height:           24px; // TODO: Rename to color-button-height or make a calc expression (remove CSS variable)
-
-	// TODO: DEPRECATE
-	--reduced-form-height:    24px; // TODO: Rename to form-height
+	--sidebar-width:     416px;
+	--search-bar-height: 64px;
+	--main-grid-height:  96px;
+	--form-height:       28px;
+	--form-radio-height: 24px;
 
 	--sans:
 		system-ui,
