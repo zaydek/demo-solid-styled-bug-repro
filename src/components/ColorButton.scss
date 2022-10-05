@@ -17,13 +17,6 @@
 
 ////////////////////////////////////////
 
-// :nth-child(1)
-.color-button > :nth-child(1) {
-	color: var(--color, var(--trim-color));
-}
-
-////////////////////////////////////////
-
 // :nth-child(1...2)
 .color-button > :not(:nth-child(3)) {
 	transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
@@ -31,7 +24,7 @@
 
 	// INITIAL STATE
 	@at-root {
-		.color-button > :nth-child(1) { color: var(--color); }
+		.color-button > :nth-child(1) { color: var(--color, var(--trim-color)); }
 		.color-button > :nth-child(2) { color: var(--fill-100-color); }
 	}
 	transform: translateX(calc(16px / 2));
