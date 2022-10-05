@@ -110,13 +110,12 @@ function Sidebar() {
 				</div>
 				<AriaRadiogroup class="grid grid-cols-3 gap-$gap" value={rdgValue3()} setValue={setRdgValue3}>
 					<For each={[
-						// TODO: Add type to value
-						{ color: "var(--svg-color)",   value: "svg",   label: "SVG"   },
-						{ color: "var(--react-color)", value: "react", label: "REACT" },
-						{ color: "var(--vue-color)",   value: "vue",   label: "VUE"   },
-					]}>{({ color, value, label }) => <>
+						{ color: "var(--svg-color)",   value: "svg",   children: "SVG"   },
+						{ color: "var(--react-color)", value: "react", children: "REACT" },
+						{ color: "var(--vue-color)",   value: "vue",   children: "VUE"   },
+					]}>{({ color, value, children }) => <>
 							<ColorButton value={value} style={{ "--color": color }}>
-								{label}
+								{children}
 							</ColorButton>
 					</>}</For>
 				</AriaRadiogroup>
