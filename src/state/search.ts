@@ -1,5 +1,4 @@
-import { createEffect, createMemo, createRoot } from "solid-js"
-import { createSearchSignal } from "../solid-utils"
+import { createEffect, createMemo, createRoot, createSignal } from "solid-js"
 import { canonicalize } from "../utils"
 import { settings } from "./settings"
 
@@ -12,7 +11,7 @@ export type IndexedResult = {
 } & { index?: number }
 
 export const search = createRoot(() => {
-	const [value, setValue] = createSearchSignal(get => get("search"), "")
+	const [value, setValue] = createSignal("")
 	const canonicalValue = createMemo(() => canonicalize(value()))
 
 	const _payload = () => settings.manifest()?.manifest.payload

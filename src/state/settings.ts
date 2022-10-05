@@ -1,5 +1,5 @@
 import { createResource, createRoot, createSignal, DEV } from "solid-js"
-import { createSearchSignal } from "../solid-utils"
+import { createSignalParam2 } from "../solid-utils"
 
 ////////////////////////////////////////
 
@@ -24,45 +24,55 @@ export type VariantV1 = "outline" | "solid"
 export type VariantV2 = "20/solid" | "24/outline" | "24/solid"
 
 export const settings = createRoot(() => {
-	const [versionOpen, setVersionOpen] = createSearchSignal(get => {
-		const value = get("versionOpen")
-		if (!(value === "1" || value === "0")) { return }
-		return value
-	}, "0")
+	// ?versionOpen=...
+	const [versionOpen, setVersionOpen] = createSignalParam2(false, {
+		key: "expandVersion",
+		validate: value => value === "true",
+	})
 
-	const [version, setVersion] = createSearchSignal<Version>(get => {
-		const value = get("version")
-		if (!(value === "v1" || value === "v2")) { return }
-		return value
-	}, "v2")
+	// ?version=...
+	const [version, setVersion] = createSignalParam2<Version>("v2", {
+		key: "version",
+		validate: value => {
+			if (!(value === "v1" || value === "v2")) { return }
+			return value
+		}
+	})
 
-	const [variantOpen, setVariantOpen] = createSearchSignal(get => {
-		const value = get("variantOpen")
-		if (!(value === "1" || value === "0")) { return }
-		return value
-	}, "1")
+	// ?variantOpen=...
+	const [variantOpen, setVariantOpen] = createSignalParam2(false, {
+		key: "expandVariant",
+		validate: value => value === "true",
+	})
 
-	const [_variantV1, setVariantV1] = createSearchSignal<VariantV1>(get => {
-		const value = get("variant")
-		if (!(value === "outline" || value === "solid")) { return }
-		return value
-	}, "solid")
-
-	const [_variantV2, setVariantV2] = createSearchSignal<VariantV2>(get => {
-		const value = get("variant")
-		if (!(value === "20/solid" || value === "24/outline" || value === "24/solid")) { return }
-		return value
-	}, "20/solid")
+	// ?variant=...
+	const [_variantV1, setVariantV1] = createSignalParam2<VariantV1>("solid", {
+		key: "variant",
+		validate: value => {
+			if (!(value === "outline" || value === "solid")) { return }
+			return value
+		}
+	})
+	// ?variant=... (can overwrite { key: "variant", ... })
+	const [_variantV2, setVariantV2] = createSignalParam2<VariantV2>("20/solid", {
+		key: "variant",
+		validate: value => {
+			if (!(value === "20/solid" || value === "24/outline" || value === "24/solid")) { return }
+			return value
+		}
+	})
 
 	const variant = () => version() === "v1"
 		? _variantV1()
 		: _variantV2()
 
-	const [clipboardOpen, setClipboardOpen] = createSearchSignal(get => {
-		const value = get("clipboardOpen")
-		if (!(value === "1" || value === "0")) { return }
-		return value
-	}, "1")
+	//// const [clipboardOpen, setClipboardOpen] = createSearchSignal(get => {
+	//// 	const value = get("clipboardOpen")
+	//// 	if (!(value === "1" || value === "0")) { return }
+	//// 	return value
+	//// }, "1")
+
+	const [clipboardOpen, setClipboardOpen] = createSignal(true)
 
 	const [textarea, setTextarea] = createSignal("")
 
