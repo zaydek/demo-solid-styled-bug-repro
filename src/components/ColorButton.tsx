@@ -1,7 +1,6 @@
 import { FlowProps, JSX, Match, Setter, Switch } from "solid-js"
 import { AriaCheckbox, AriaRadio } from "../aria"
 import { css } from "../solid-utils"
-import { Icon } from "./Primitives"
 import { Smiley } from "./Smiley"
 
 export function ColorButton(props: FlowProps<{
@@ -74,17 +73,17 @@ export function ColorButton(props: FlowProps<{
 			<Match when={"checked" in props && "setChecked" in props}>
 				{/* @ts-expect-error */}
 				<AriaCheckbox class="css-color-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" style={props.style ?? {}} checked={props.checked} setChecked={props.setChecked}>
-					<Icon icon={Smiley} h="16px" />
+					<Smiley class="h-16px aspect-1" />
 					<div class="typography-caps">{props.children}</div>
-					<Icon icon={Smiley} h="16px" />
+					<Smiley class="h-16px aspect-1" />
 				</AriaCheckbox>
 			</Match>
 			<Match when={"value" in props}>
 				{/* @ts-expect-error */}
 				<AriaRadio class="css-color-button flex-row flex-center gap-$gap focus-ring focus-ring-$full" style={props.style ?? {}} value={props.value}>
-					<Icon icon={Smiley} h="16px" />
+					<Smiley class="h-16px aspect-1" />
 					<div class="typography-caps">{props.children}</div>
-					<Icon icon={Smiley} h="16px" />
+					<Smiley class="h-16px aspect-1" />
 				</AriaRadio>
 			</Match>
 		</Switch>

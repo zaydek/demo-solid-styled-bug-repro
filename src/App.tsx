@@ -2,7 +2,7 @@ import "./columns.scss"
 
 import { createSignal, For, JSX, onMount, Show, Suspense } from "solid-js"
 import { AriaRadiogroup } from "./aria"
-import { Collapsible, ColorButton, GridIcon, Line, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
+import { Collapsible, ColorButton, GridIcon, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { css, cx } from "./solid-utils"
 import { search, settings, VariantV1, VariantV2, Version } from "./state"
 import { range } from "./utils"
@@ -140,18 +140,18 @@ function Sidebar() {
 			<section class="p-$padding flex-row gap-calc($gap*2)">
 				<div class="h-80px aspect-16/9 rounded-$gap background-color:$fill-100-color"></div>
 				<div class="flex-grow flex-col gap-calc($gap/2)">
-					<Line w="70%" color="var(--fill-100-color)" />
-					<Line w="90%" color="var(--fill-100-color)" />
-					<Line w="80%" color="var(--fill-100-color)" />
-					<Line w="60%" color="var(--fill-100-color)" />
+					<div class="h-6px w-70% rounded-$full background-color:$fill-100-color"></div>
+					<div class="h-6px w-90% rounded-$full background-color:$fill-100-color"></div>
+					<div class="h-6px w-80% rounded-$full background-color:$fill-100-color"></div>
+					<div class="h-6px w-60% rounded-$full background-color:$fill-100-color"></div>
 				</div>
 			</section>
 			<hr />
 			<section class="p-$padding flex-col gap-calc($gap/2)">
-				<Line w="calc(70%/1.25)" color="var(--fill-100-color)" />
-				<Line w="calc(90%/1.25)" color="var(--fill-100-color)" />
-				<Line w="calc(80%/1.25)" color="var(--fill-100-color)" />
-				<Line w="calc(60%/1.25)" color="var(--fill-100-color)" />
+				<div class="h-6px w-calc(70%/1.5) rounded-$full background-color:$fill-100-color"></div>
+				<div class="h-6px w-calc(90%/1.5) rounded-$full background-color:$fill-100-color"></div>
+				<div class="h-6px w-calc(80%/1.5) rounded-$full background-color:$fill-100-color"></div>
+				<div class="h-6px w-calc(60%/1.5) rounded-$full background-color:$fill-100-color"></div>
 			</section>
 		</div>
 	</>
