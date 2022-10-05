@@ -29,9 +29,8 @@
 	border-radius: inherit; // For pseudo
 	transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 	transition-property: transform;
-}
-// INITIAL STATE
-.radio::after {
+
+	// INITIAL STATE
 	background-color: transparent;
 	transform: scale(0);
 }
@@ -48,9 +47,8 @@
 	border-radius: var(--full);
 	transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 	transition-property: transform;
-}
-// INITIAL STATE
-.radio > :nth-child(1) {
+
+	// INITIAL STATE
 	background-color: transparent;
 	transform: scale(0);
 }

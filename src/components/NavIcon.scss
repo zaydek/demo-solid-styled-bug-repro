@@ -16,9 +16,8 @@
 	border-radius: inherit; // For pseudo
 	transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
 	transition-property: transform;
-}
-// INITIAL STATE
-.nav-icon::before {
+
+	// INITIAL STATE
 	background-color: transparent;
 	transform: scale(0);
 }
@@ -36,9 +35,8 @@
 .nav-icon > :nth-child(1) {
 	height: 28px;
 	aspect-ratio: 1;
-}
-// INITIAL STATE
-.nav-icon > :nth-child(1) {
+
+	// INITIAL STATE
 	color: var(--trim-color);
 }
 .nav-icon:is(.is-active, :hover:active) > :nth-child(1) {
