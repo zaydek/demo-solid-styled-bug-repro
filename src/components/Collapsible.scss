@@ -17,7 +17,7 @@
 ////////////////////////////////////////
 
 .collapsible-head {
-	padding: var(--scale) calc(var(--scale) * 2);
+	padding: var(--gap) var(--padding); // Use var(--gap) for the y-axis
 }
 
 ////////////////////////////////////////
@@ -28,7 +28,7 @@
 	} .collapsible.is-collapsed & {
 		opacity: 0;
 	}
-	padding: calc(var(--scale) * 2);
+	padding: var(--padding);
 	padding-top: 0; // Override padding
 	transition: calc(300ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1);
 	transition-property: opacity;

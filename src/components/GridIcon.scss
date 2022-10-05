@@ -34,7 +34,7 @@
 ////////////////////////////////////////
 
 .grid-icon {
-	padding: 0 var(--scale);
+	padding: 0 var(--gap); // Use var(--gap) for the x-axis
 	display: grid;
 	grid-template:
 		"." calc(32px / 2)
@@ -55,9 +55,9 @@
 .grid-icon > :nth-child(1) {
 	color: var(--fill-100-color);
 }
-.group:is(:hover:active, [data-state-active]) .grid-icon > :nth-child(1) {
+.group:is(.is-active, :hover:active) .grid-icon > :nth-child(1) {
 	color: white;
 }
-.group:is(:hover:active, [data-state-active]) .grid-icon > :nth-child(2) {
+.group:is(.is-active, :hover:active) .grid-icon > :nth-child(2) {
 	color: white;
 }

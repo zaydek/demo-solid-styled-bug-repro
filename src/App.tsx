@@ -43,7 +43,7 @@ function Sidebar() {
 
 	return <>
 		<div class="flex-shrink:0">
-			<nav class="px-$padding-x h-$search-bar-height flex-row flex-align-center">
+			<nav class="px-$padding h-$search-bar-height flex-row flex-align-center">
 				<NavIcon icon={Smiley} />
 				<div class="flex-grow"></div>
 				<NavIcon icon={Smiley} />
@@ -176,7 +176,7 @@ function Main() {
 				position: sticky;
 				z-index: 10;
 				top: 0;
-				padding: 0 var(--padding-x);
+				padding: 0 var(--padding);
 				height: var(--search-bar-height);
 				background-color: var(--card-color);
 				box-shadow: var(--card-hairline-box-shadow);
@@ -194,7 +194,7 @@ function Main() {
 
 			.main-grid {
 				padding: var(--padding);
-				padding-bottom: calc(var(--padding-y) * 2); // Override padding
+				padding-bottom: calc(var(--padding) * 2); // Override padding
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--main-grid-height), 1fr));
 				grid-auto-rows: var(--main-grid-height);

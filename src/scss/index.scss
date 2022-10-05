@@ -15,16 +15,8 @@
 	--full:   1000px;
 	--screen: 100vh;
 
-	// TODO: Consolidate and rename to spacing
-	// TODO: DEPRECATE
-	--padding-x: 16px;
-	--padding-y: 16px;
-	// TODO
-	--padding: var(--padding-y)
-		var(--padding-x);
-	--gap: 8px;
-
-	--scale: 8px;
+	--padding: 16px;
+	--gap:     8px;
 
 	--sidebar-width:          416px;
 	--expanded-sidebar-width: calc(var(--sidebar-width) * 1.25);
