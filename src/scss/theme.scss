@@ -24,16 +24,22 @@ $theme: (
 
 	//////////////////////////////////////
 
-	focus-ring-h: 200deg,
-	focus-ring-s: 100%,
-	focus-ring-l: 50%,
-
-	//////////////////////////////////////
-
-	base-h: 200deg,
+	base-h: 220deg,
 	base-s: 25%,
-	trim-h: 200deg,
+
+	trim-h: (
+		light: 200deg,
+		dark:  220deg,
+	),
 	trim-s: 100%,
+	trim-l: (
+		light: 50%,
+		dark:  60%,
+	),
+
+	focus-ring-h: var(--trim-h),
+	focus-ring-s: var(--trim-s),
+	focus-ring-l: var(--trim-l),
 
 	//////////////////////////////////////
 
