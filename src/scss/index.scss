@@ -3,8 +3,8 @@
 @use "theme" as *;
 @use "utils/define-theme" as *;
 
-:root.is-debug-css {
-	outline: 1px solid hsl(0 100% 50% / 15%);
+:root.is-debug-css * {
+	outline: 1px solid hsl(200deg 100% 50% / 50%);
 	outline-offset: -0.5px;
 }
 

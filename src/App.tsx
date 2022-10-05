@@ -88,7 +88,7 @@ function Sidebar() {
 				</Collapsible>
 			</Show>
 			<hr />
-			<Collapsible title="COPY TO CLIPBOARD AS" subtitle="BAR" open={true} setOpen={() => {}}>
+			<Collapsible title="COPY TO CLIPBOARD AS" subtitle="BAR" open={settings.clipboardOpen()} setOpen={settings.setClipboardOpen}>
 				<AriaRadiogroup class="flex-col gap-$gap" value={rdgValue2()} setValue={setRdgValue2}>
 					<Radio value="foo" />
 					<Radio value="bar" />
@@ -121,15 +121,15 @@ function Sidebar() {
 				</AriaRadiogroup>
 			</Collapsible>
 			<hr />
-			<Collapsible title="GRID DENSITY" subtitle="BAR" open={open4()} setOpen={setOpen4}>
+			<Collapsible title="GRID DENSITY" subtitle="BAR"open={settings.densityOpen()} setOpen={settings.setDensityOpen}>
 				<Slider value={sliderValue1()} setValue={setSliderValue1} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
-			<Collapsible title="PREVIEW SIZE" subtitle="BAR" open={open5()} setOpen={setOpen5}>
+			<Collapsible title="PREVIEW SIZE" subtitle="BAR" open={settings.sizeOpen()} setOpen={settings.setSizeOpen}>
 				<Slider value={sliderValue2()} setValue={setSliderValue2} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
-			<Collapsible title="PREVIEW STROKE WIDTH" subtitle="BAR" open={open6()} setOpen={setOpen6}>
+			<Collapsible title="PREVIEW STROKE WIDTH" subtitle="BAR" open={settings.strokeWidthOpen()} setOpen={settings.setStrokeWidthOpen}>
 				<Slider value={sliderValue3()} setValue={setSliderValue3} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />

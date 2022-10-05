@@ -1,4 +1,6 @@
 import { createResource, createRoot, createSignal, DEV } from "solid-js"
+import { createDirtySignal } from "../solid-utils"
+import { params } from "./params"
 
 ////////////////////////////////////////
 
@@ -23,21 +25,37 @@ export type VariantV1 = "outline" | "solid"
 export type VariantV2 = "20/solid" | "24/outline" | "24/solid"
 
 export const settings = createRoot(() => {
-	const [versionOpen, setVersionOpen] = createSignal(false)
-	const [version, setVersion] = createSignal<Version>("v2")
+	const [versionOpen, setVersionOpen] = createDirtySignal(params.get.boolean("version-open") ?? false)
+	const [version, setVersion] = createDirtySignal<Version>("v2")
 
-	const [_variantV1, setVariantV1] = createSignal<VariantV1>("solid")
-	const [_variantV2, setVariantV2] = createSignal<VariantV2>("20/solid")
+	const [variantOpen, setVariantOpen] = createDirtySignal(params.get.boolean("variant-open") ?? true)
+	const [variantV1, setVariantV1] = createDirtySignal<VariantV1>((() => {
+		const value = params.get.string("variant")
+		if (!(value === "solid" || value === "outline")) { return "solid" } // Fallback value
+		return value
+	})())
+	const [variantV2, setVariantV2] = createDirtySignal<VariantV2>((() => {
+		const value = params.get.string("variant")
+		if (!(value === "20/solid" || value === "24/outline" || value === "24/solid")) { return "20/solid" } // Fallback value
+		return value
+	})())
+	const variant = () => version() === "v1" ? variantV1() : variantV2()
 
-	const [variantOpen, setVariantOpen] = createSignal(false)
-	const variant = () => version() === "v1"
-		? _variantV1()
-		: _variantV2()
-
-	const [clipboardOpen, setClipboardOpen] = createSignal(true)
+	const [clipboardOpen, setClipboardOpen] = createDirtySignal(params.get.boolean("clipboard-open") ?? true)
 	const [textarea, setTextarea] = createSignal("")
 
-	// TODO: Extract to separate controller
+	const [densityOpen, setDensityOpen] = createDirtySignal(params.get.boolean("density-open") ?? false)
+	const [density, setDensity] = createDirtySignal(params.get.number("density") ?? 96)
+
+	const [sizeOpen, setSizeOpen] = createDirtySignal(params.get.boolean("size-open") ?? false)
+	const [size, setSize] = createDirtySignal(params.get.number("size") ?? 28)
+
+	const [strokeWidthOpen, setStrokeWidthOpen] = createDirtySignal(params.get.boolean("stroke-open") ?? false)
+	const [strokeWidth, setStrokeWidth] = createDirtySignal(params.get.number("stroke") || 1.5) // TODO: Depends on version
+
+	/*
+	 * Resources
+	 */
 	const [manifest] = createResource(version, async version => {
 		if (version === "v1") {
 			return cache("v1", import("../data/manifest@1.0.6"))
@@ -46,7 +64,6 @@ export const settings = createRoot(() => {
 		}
 	})
 
-	// TODO: Extract to separate controller
 	const [icons] = createResource(() => [version(), variant()] as const, async ([version, variant]) => {
 		if (version === "v1" && variant === "solid") {
 			return cache(variant, import("../assets/heroicons@1.0.6/solid"))
@@ -66,13 +83,19 @@ export const settings = createRoot(() => {
 		versionOpen,
 		version,
 		variantOpen,
-		variant,
+		variantV1,
+		variantV2,
+		variant, // Derived
 		clipboardOpen,
 		textarea,
-
-		// Resources
-		manifest,
-		icons,
+		densityOpen,
+		density,
+		sizeOpen,
+		size,
+		strokeWidthOpen,
+		strokeWidth,
+		manifest, // Derived (resources)
+		icons,    // Derived (resources)
 
 		// Actions
 		setVersionOpen,
@@ -82,6 +105,12 @@ export const settings = createRoot(() => {
 		setVariantV2,
 		setClipboardOpen,
 		setTextarea,
+		setDensityOpen,
+		setDensity,
+		setSizeOpen,
+		setSize,
+		setStrokeWidthOpen,
+		setStrokeWidth,
 	}
 })
 
