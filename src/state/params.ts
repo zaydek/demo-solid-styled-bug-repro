@@ -1,21 +1,20 @@
-// TODO: Breaks SSR?
 function createParams() {
-	const params = new URLSearchParams(window.location.search)
+	const search = new URLSearchParams(window.location.search)
 
 	return {
 		get: {
 			boolean(key: string) {
-				const value = params.get(key)
+				const value = search.get(key)
 				if (value === null) { return }
 				return value === "t" || value === "1"
 			},
 			number(key: string) {
-				const value = params.get(key)
+				const value = search.get(key)
 				if (value === null) { return }
 				return Number.isNaN(+value) ? undefined : +value
 			},
 			string(key: string) {
-				const value = params.get(key)
+				const value = search.get(key)
 				if (value === null) { return }
 				return value
 			},
@@ -23,4 +22,5 @@ function createParams() {
 	}
 }
 
+// TODO: Breaks SSR?
 export const params = createParams()

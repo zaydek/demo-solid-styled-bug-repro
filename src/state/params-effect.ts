@@ -24,11 +24,6 @@ createRoot(() => {
 		if (settings.strokeWidthOpen.dirty()) { encoded["stroke-open"]    = "" + (settings.strokeWidthOpen() ? "t" : "f") }
 		if (settings.density.dirty())         { encoded["stroke"]         = "" + (settings.strokeWidth()) }
 
-		if (!once) {
-			once++
-			return
-		}
-
 		if (!Object.keys(encoded).length) {
 			window.history.replaceState({}, "", "/")
 		} else {

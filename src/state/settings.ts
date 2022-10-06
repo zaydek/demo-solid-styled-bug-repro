@@ -25,33 +25,37 @@ export type VariantV1 = "outline" | "solid"
 export type VariantV2 = "20/solid" | "24/outline" | "24/solid"
 
 export const settings = createRoot(() => {
-	const [versionOpen, setVersionOpen] = createDirtySignal(params.get.boolean("version-open") ?? false)
-	const [version, setVersion] = createDirtySignal<Version>("v2")
+	const [versionOpen, setVersionOpen] = createDirtySignal(params.get.boolean("version-open"), false)
+	const [version, setVersion] = createDirtySignal<Version>((() => {
+		const value = params.get.string("version")
+		if (!(value === "v1" || value === "v2")) { return }
+		return value
+	})(), "v2")
 
-	const [variantOpen, setVariantOpen] = createDirtySignal(params.get.boolean("variant-open") ?? true)
+	const [variantOpen, setVariantOpen] = createDirtySignal(params.get.boolean("variant-open"), true)
 	const [variantV1, setVariantV1] = createDirtySignal<VariantV1>((() => {
 		const value = params.get.string("variant")
-		if (!(value === "solid" || value === "outline")) { return "solid" } // Fallback value
+		if (!(value === "solid" || value === "outline")) { return }
 		return value
-	})())
+	})(), "solid")
 	const [variantV2, setVariantV2] = createDirtySignal<VariantV2>((() => {
 		const value = params.get.string("variant")
-		if (!(value === "20/solid" || value === "24/outline" || value === "24/solid")) { return "20/solid" } // Fallback value
+		if (!(value === "20/solid" || value === "24/outline" || value === "24/solid")) { return }
 		return value
-	})())
+	})(), "20/solid")
 	const variant = () => version() === "v1" ? variantV1() : variantV2()
 
-	const [clipboardOpen, setClipboardOpen] = createDirtySignal(params.get.boolean("clipboard-open") ?? true)
+	const [clipboardOpen, setClipboardOpen] = createDirtySignal(params.get.boolean("clipboard-open"), true)
 	const [textarea, setTextarea] = createSignal("")
 
-	const [densityOpen, setDensityOpen] = createDirtySignal(params.get.boolean("density-open") ?? false)
-	const [density, setDensity] = createDirtySignal(params.get.number("density") ?? 96)
+	const [densityOpen, setDensityOpen] = createDirtySignal(params.get.boolean("density-open"), false)
+	const [density, setDensity] = createDirtySignal(params.get.number("density"), 96)
 
-	const [sizeOpen, setSizeOpen] = createDirtySignal(params.get.boolean("size-open") ?? false)
-	const [size, setSize] = createDirtySignal(params.get.number("size") ?? 28)
+	const [sizeOpen, setSizeOpen] = createDirtySignal(params.get.boolean("size-open"), false)
+	const [size, setSize] = createDirtySignal(params.get.number("size"), 28)
 
-	const [strokeWidthOpen, setStrokeWidthOpen] = createDirtySignal(params.get.boolean("stroke-open") ?? false)
-	const [strokeWidth, setStrokeWidth] = createDirtySignal(params.get.number("stroke") || 1.5) // TODO: Depends on version
+	const [strokeWidthOpen, setStrokeWidthOpen] = createDirtySignal(params.get.boolean("stroke-open"), false)
+	const [strokeWidth, setStrokeWidth] = createDirtySignal(params.get.number("stroke") || 1.5, 1.5) // TODO: Depends on version
 
 	/*
 	 * Resources

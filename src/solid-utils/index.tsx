@@ -1,4 +1,4 @@
 export * from "./css"
-export * from "./dirty-signal"
+export * from "./dirty"
 export * from "./extra-types"
 export * from "./ref"
