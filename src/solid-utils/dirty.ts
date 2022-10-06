@@ -11,8 +11,7 @@ export function createDirtySignal<T>(restoreValue: undefined | T, initialValue: 
 		dirty: () => value() !== initialValue || dirty()
 	})
 
-	createEffect(on(value, () => {
-		console.log("here")
+	createEffect(on(value, () => { // TODO
 		setDirty(true)
 	}, { defer: true }))
 

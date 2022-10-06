@@ -1,4 +1,4 @@
-import { createResource, createRoot, createSignal, DEV } from "solid-js"
+import { createEffect, createResource, createRoot, createSignal, DEV } from "solid-js"
 import { createDirtySignal } from "../solid-utils"
 import { params } from "./params"
 
@@ -40,10 +40,18 @@ export const settings = createRoot(() => {
 	})(), "solid")
 	const [variantV2, setVariantV2] = createDirtySignal<VariantV2>((() => {
 		const value = params.get.string("variant")
-		if (!(value === "20/solid" || value === "24/outline" || value === "24/solid")) { return }
-		return value
+		if (!(value === "20-solid" || value === "24-outline" || value === "24-solid")) { return }
+		return value.replace("-", "/") as VariantV2
 	})(), "20/solid")
 	const variant = () => version() === "v1" ? variantV1() : variantV2()
+
+	createEffect(() => {
+		console.log({
+			version: version(),
+			variantV1: variantV1(),
+			variantV2: variantV2(),
+		})
+	})
 
 	const [clipboardOpen, setClipboardOpen] = createDirtySignal(params.get.boolean("clipboard-open"), true)
 	const [textarea, setTextarea] = createSignal("")
