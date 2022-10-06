@@ -59,12 +59,12 @@
 	background-color: var(--card-color);
 }
 
-// TODO: DEPRECATE?
-[tabindex] {
-	cursor: pointer;
-	-webkit-user-select: none;
-	user-select: none;
-}
+//// // TODO: DEPRECATE?
+//// [tabindex] {
+//// 	cursor: pointer;
+//// 	-webkit-user-select: none;
+//// 	user-select: none;
+//// }
 
 hr {
 	height: var(--hairline-thickness);

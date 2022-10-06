@@ -13,8 +13,6 @@ function Sidebar() {
 
 	const [checked1, setChecked1] = createSignal(true)
 	const [checked2, setChecked2] = createSignal(true)
-	const [checked3, setChecked3] = createSignal(true)
-	const [rdgValue3, setRdgValue3] = createSignal("foo")
 
 	return <>
 		<div class="flex-shrink:0">
