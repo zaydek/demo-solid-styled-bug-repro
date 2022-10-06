@@ -1,4 +1,4 @@
-import { createEffect, createResource, createRoot, createSignal, DEV } from "solid-js"
+import { createResource, createRoot, createSignal, DEV } from "solid-js"
 import { createDirtySignal } from "../solid-utils"
 import { params } from "./params"
 
@@ -19,12 +19,13 @@ async function cache<T>(key: string, value: T): Promise<T> {
 
 ////////////////////////////////////////
 
-export type Version = "v1" | "v2"
-
+export type Version   = "v1" | "v2"
 export type VariantV1 = "outline" | "solid"
 export type VariantV2 = "20/solid" | "24/outline" | "24/solid"
+export type Framework = "svg" | "react" | "vue"
 
 export const settings = createRoot(() => {
+	// Version
 	const [versionOpen, setVersionOpen] = createDirtySignal(params.get.boolean("version-open"), false)
 	const [version, setVersion] = createDirtySignal<Version>((() => {
 		const value = params.get.string("version")
@@ -32,6 +33,7 @@ export const settings = createRoot(() => {
 		return value
 	})(), "v2")
 
+	// Variant
 	const [variantOpen, setVariantOpen] = createDirtySignal(params.get.boolean("variant-open"), true)
 	const [variantV1, setVariantV1] = createDirtySignal<VariantV1>((() => {
 		const value = params.get.string("variant")
@@ -45,29 +47,31 @@ export const settings = createRoot(() => {
 	})(), "20/solid")
 	const variant = () => version() === "v1" ? variantV1() : variantV2()
 
-	createEffect(() => {
-		console.log({
-			version: version(),
-			variantV1: variantV1(),
-			variantV2: variantV2(),
-		})
-	})
-
+	// Clipboard
+	//
+	// TODO: Add selected?
 	const [clipboardOpen, setClipboardOpen] = createDirtySignal(params.get.boolean("clipboard-open"), true)
 	const [textarea, setTextarea] = createSignal("")
+	const [license, setLicense] = createDirtySignal(params.get.boolean("license"), true)
+	const [framework, setFramework] = createDirtySignal<Framework>((() => {
+		const value = params.get.string("framework")
+		if (!(value === "svg" || value === "react" || value === "vue")) { return }
+		return value
+	})(), "svg")
 
+	// Grid density
 	const [densityOpen, setDensityOpen] = createDirtySignal(params.get.boolean("density-open"), false)
 	const [density, setDensity] = createDirtySignal(params.get.number("density"), 96)
 
+	// Size
 	const [sizeOpen, setSizeOpen] = createDirtySignal(params.get.boolean("size-open"), false)
 	const [size, setSize] = createDirtySignal(params.get.number("size"), 28)
 
-	const [strokeWidthOpen, setStrokeWidthOpen] = createDirtySignal(params.get.boolean("stroke-open"), false)
-	const [strokeWidth, setStrokeWidth] = createDirtySignal(params.get.number("stroke") || 1.5, 1.5) // TODO: Depends on version
+	// Stroke width
+	const [strokeOpen, setStrokeOpen] = createDirtySignal(params.get.boolean("stroke-open"), false)
+	const [stroke, setStroke] = createDirtySignal(params.get.number("stroke") || 1.5, 1.5) // TODO: Depends on version
 
-	/*
-	 * Resources
-	 */
+	// Resources
 	const [manifest] = createResource(version, async version => {
 		if (version === "v1") {
 			return cache("v1", import("../data/manifest@1.0.6"))
@@ -75,7 +79,6 @@ export const settings = createRoot(() => {
 			return cache("v2", import("../data/manifest@2.0.11"))
 		}
 	})
-
 	const [icons] = createResource(() => [version(), variant()] as const, async ([version, variant]) => {
 		if (version === "v1" && variant === "solid") {
 			return cache(variant, import("../assets/heroicons@1.0.6/solid"))
@@ -100,12 +103,14 @@ export const settings = createRoot(() => {
 		variant, // Derived
 		clipboardOpen,
 		textarea,
+		license,
+		framework,
 		densityOpen,
 		density,
 		sizeOpen,
 		size,
-		strokeWidthOpen,
-		strokeWidth,
+		strokeOpen,
+		stroke,
 		manifest, // Derived (resources)
 		icons,    // Derived (resources)
 
@@ -117,12 +122,14 @@ export const settings = createRoot(() => {
 		setVariantV2,
 		setClipboardOpen,
 		setTextarea,
+		setLicense,
+		setFramework,
 		setDensityOpen,
 		setDensity,
 		setSizeOpen,
 		setSize,
-		setStrokeWidthOpen,
-		setStrokeWidth,
+		setStrokeOpen,
+		setStroke,
 	}
 })
 

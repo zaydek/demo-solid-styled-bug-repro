@@ -1,6 +1,6 @@
 import "./columns.scss"
 
-import { Accessor, createSignal, For, JSX, onMount, Setter, Show, Suspense } from "solid-js"
+import { createSignal, For, JSX, Show, Suspense } from "solid-js"
 import { AriaRadiogroup } from "./aria"
 import { Collapsible, ColorButton, GridIcon, NavIcon, Radio, Slider, Smiley, Textarea } from "./components"
 import { FigmaSVG, GitHubSVG, TwitterSVG } from "./components/Brands"
@@ -9,38 +9,12 @@ import { search, settings, VariantV1, VariantV2, Version } from "./state"
 import { range } from "./utils"
 
 function Sidebar() {
-	const [open1, setOpen1] = createSignal(false)
-	const [open2, setOpen2] = createSignal(false)
-	const [open3, setOpen3] = createSignal(false)
-	const [open4, setOpen4] = createSignal(false)
-	const [open5, setOpen5] = createSignal(false)
-	const [open6, setOpen6] = createSignal(false)
-
-	//////////////////////////////////////
-
-	const [rdgValue1, setRdgValue1] = createSignal("foo")
 	const [rdgValue2, setRdgValue2] = createSignal("foo")
-
-	//////////////////////////////////////
 
 	const [checked1, setChecked1] = createSignal(true)
 	const [checked2, setChecked2] = createSignal(true)
 	const [checked3, setChecked3] = createSignal(true)
 	const [rdgValue3, setRdgValue3] = createSignal("foo")
-
-	//////////////////////////////////////
-
-	const [sliderValue1, setSliderValue1] = createSignal(25)
-	const [sliderValue2, setSliderValue2] = createSignal(25)
-	const [sliderValue3, setSliderValue3] = createSignal(25)
-
-	onMount(() => {
-		setTimeout(() => {
-			//// setOpen1(true)
-			setOpen2(true)
-			setOpen3(true)
-		}, 0)
-	})
 
 	return <>
 		<div class="flex-shrink:0">
@@ -95,7 +69,7 @@ function Sidebar() {
 				</AriaRadiogroup>
 				<div></div>
 				<div class="relative">
-					<Textarea />
+					<Textarea value={settings.textarea()} setValue={settings.setTextarea} />
 					<div class="absolute inset-b-$gap grid grid-cols-3 gap-$gap">
 						<div></div>
 						<ColorButton checked={checked1()} setChecked={setChecked1}>SAVE</ColorButton>
@@ -104,11 +78,11 @@ function Sidebar() {
 				</div>
 				<div></div>
 				<div class="grid grid-cols-1 gap-$gap">
-					<ColorButton checked={checked3()} setChecked={setChecked3}>
+					<ColorButton checked={settings.license()} setChecked={settings.setLicense}>
 						INCLUDE MIT LICENSE
 					</ColorButton>
 				</div>
-				<AriaRadiogroup class="grid grid-cols-3 gap-$gap" value={rdgValue3()} setValue={setRdgValue3}>
+				<AriaRadiogroup class="grid grid-cols-3 gap-$gap" value={settings.framework()} setValue={settings.setFramework}>
 					<For each={[
 						{ color: "var(--svg-color)",   value: "svg",   children: "SVG"   },
 						{ color: "var(--react-color)", value: "react", children: "REACT" },
@@ -121,16 +95,16 @@ function Sidebar() {
 				</AriaRadiogroup>
 			</Collapsible>
 			<hr />
-			<Collapsible title="GRID DENSITY" subtitle="BAR"open={settings.densityOpen()} setOpen={settings.setDensityOpen}>
-				<Slider value={sliderValue1()} setValue={setSliderValue1} min={0} max={100} step={1} />
+			<Collapsible title="GRID DENSITY" subtitle={"" + settings.density()}open={settings.densityOpen()} setOpen={settings.setDensityOpen}>
+				<Slider value={settings.density()} setValue={settings.setDensity} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
-			<Collapsible title="PREVIEW SIZE" subtitle="BAR" open={settings.sizeOpen()} setOpen={settings.setSizeOpen}>
-				<Slider value={sliderValue2()} setValue={setSliderValue2} min={0} max={100} step={1} />
+			<Collapsible title="PREVIEW SIZE" subtitle={"" + settings.size()} open={settings.sizeOpen()} setOpen={settings.setSizeOpen}>
+				<Slider value={settings.size()} setValue={settings.setSize} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
-			<Collapsible title="PREVIEW STROKE WIDTH" subtitle="BAR" open={settings.strokeWidthOpen()} setOpen={settings.setStrokeWidthOpen}>
-				<Slider value={sliderValue3()} setValue={setSliderValue3} min={0} max={100} step={1} />
+			<Collapsible title="PREVIEW STROKE WIDTH" subtitle={"" + settings.stroke()} open={settings.strokeOpen()} setOpen={settings.setStrokeOpen}>
+				<Slider value={settings.stroke()} setValue={settings.setStroke} min={0} max={100} step={1} />
 			</Collapsible>
 			<hr />
 		</div>
