@@ -10,9 +10,17 @@ function desugar(raw: undefined | string, { sign }: { sign?: string } = {}): und
 	let desugared = "" // Return variable
 	const str = "" + raw
 	if (sign) {
-		desugared = `calc(-1 * (${str}))`
+		if (str.startsWith("(") && str.endsWith(")")) {
+			desugared = `calc(-1*(${str.slice(1, -1)}))`
+		} else {
+			desugared = `calc(-1*(${str}))`
+		}
 	} else {
-		desugared = `${str}`
+		if (str.startsWith("(") && str.endsWith(")")) {
+			desugared = `calc(${str.slice(1, -1)})`
+		} else {
+			desugared = `${str}`
+		}
 	}
 	desugared = desugared.replaceAll(/\$([a-zA-Z][a-zA-Z-0-9]*)/g, "var(--$1)") // Desugar "$" -> var(...)
 	desugared = desugared.replaceAll("_", " ")                                  // Desugar "_" -> WS
