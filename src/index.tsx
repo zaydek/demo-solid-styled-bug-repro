@@ -2,7 +2,7 @@ import "the-new-css-reset"
 import "uno.css"
 import "./scss/index.scss"
 
-import { batch, createEffect, createSignal, For, JSX, onCleanup, onMount, Show } from "solid-js"
+import { batch, createEffect, createSignal, For, JSX, on, onCleanup, onMount, Show, untrack } from "solid-js"
 import { render } from "solid-js/web"
 import { createRef, css } from "./solid-utils"
 import { range } from "./utils"
@@ -517,4 +517,724 @@ function App6() {
 	</>
 }
 
-render(() => <App6 />, document.getElementById("root")!)
+function App7() {
+	const [pointerDown, setPointerDown] = createSignal(false)
+	const [start, setStart] = createSignal<{
+		x: number // E.g. e.clientX
+		y: number
+	}>()
+	const [transform, setTransform] = createSignal<JSX.CSSProperties>()
+
+	const delta = (to: { x: number, y: number }) => {
+		if (!start()) { return }
+		const from = start()!
+		return {
+			x: to.x - from.x,
+			y: to.y - from.y,
+		}
+	}
+
+	return <>
+		{css`
+			:root {
+				--inset-t: 0 auto 0;
+				--inset-r: 0 0 0 auto;
+				--inset-b: auto 0 0 0;
+				--inset-l: 0 auto 0 0;
+			}
+
+			.body {
+				height: 100vh;
+				height: 100dvh;
+			}
+			.footer {
+				position: fixed;
+				inset: var(--inset-b);
+				height: 72px;
+				background-color: whitesmoke;
+				box-shadow: 0 0 0 4px lightgray;
+			}
+		`}
+		<div>
+			Hello, world!
+		</div>
+		<div
+			class="footer"
+			style={transform()}
+			onPointerDown={e => {
+				batch(() => {
+					setPointerDown(true)
+					setStart({
+						x: e.clientX,
+						y: e.clientY,
+					})
+				})
+			}}
+			onPointerMove={e => {
+				if (!pointerDown()) { return }
+				const d = delta({ x: e.clientX, y: e.clientY })!
+				setTransform({ "transform": `translateY(${d.y}px)` })
+			}}
+			onPointerUp={e => setPointerDown(false)}
+			onPointerLeave={e => setPointerDown(false)} // Sanity check
+		>
+			<div>Hello, world!</div>
+		</div>
+	</>
+}
+
+function App8() {
+	const [active, setActive] = createSignal(false)
+	const [expand, setExpand] = createSignal(false)
+
+	const [point1, setPoint1] = createSignal<Point>()
+	const [point2, setPoint2] = createSignal<Point>()
+
+	const delta = () => {
+		if (!point1() || !point2()) { return }
+		const p1 = point1()!
+		const p2 = point2()!
+		return { x: p1.x - p2.x, y: p1.y - p2.y } as Point
+	}
+
+	const [style, setStyle] = createSignal<string | JSX.CSSProperties>()
+
+	// Idle state
+	createEffect(on(active, () => {
+		if (!active()) {
+			setStyle({
+				"--bs-delta": "0px",
+				"transition": "transform 300ms ease",
+			})
+		}
+	}, { defer: true }))
+
+	createEffect(() => {
+		if (!delta()) { return }
+
+		const d = delta()!
+		if (!untrack(() => expand())) {
+			if (d.y >= 300) { // TODO: Change to var(--bs-trigger-delta)
+				batch(() => {
+					setActive(false)
+					setExpand(true) // ON
+					setStyle({
+						"--bs-delta": "0px",                  // TODO: This can probably be automated
+						"transition": "transform 300ms ease", // TODO: This can probably be automated
+					})
+				})
+			} else {
+				setStyle({ "--bs-delta": `${d.y}px` })
+			}
+		} else {
+			if (d.y <= -100) { // TODO: Change to var(--bs-trigger-delta)
+				batch(() => {
+					setActive(false)
+					setExpand(false) // OFF
+					setStyle({
+						"--bs-delta": "0px",                  // TODO: This can probably be automated
+						"transition": "transform 300ms ease", // TODO: This can probably be automated
+					})
+				})
+			} else {
+				setStyle({ "--bs-delta": `${d.y}px` })
+			}
+		}
+	})
+
+	onMount(() => {
+		const bottomsheet = document.getElementsByClassName("bottomsheet")[0]
+
+		////////////////////////////////////
+
+		function handlePointerDown(e: PointerEvent) {
+			if (!bottomsheet.contains(e.target as HTMLElement)) { return }
+			batch(() => {
+				setActive(true)
+				setPoint1({ x: e.clientY, y: e.clientY })
+			})
+		}
+		document.addEventListener("pointerdown", handlePointerDown)
+		onCleanup(() => document.removeEventListener("pointerdown", handlePointerDown))
+
+		////////////////////////////////////
+
+		function handlePointerMove(e: PointerEvent) {
+			if (!active()) { return }
+			setPoint2({ x: e.clientY, y: e.clientY })
+		}
+		document.addEventListener("pointermove", handlePointerMove)
+		onCleanup(() => document.removeEventListener("pointermove", handlePointerMove))
+
+		////////////////////////////////////
+
+		function handlePointerUp(e: PointerEvent) {
+			batch(() => {
+				setActive(false)
+				setPoint1()
+				setPoint2()
+			})
+		}
+		document.addEventListener("pointerup", handlePointerUp)
+		onCleanup(() => document.removeEventListener("pointerup", handlePointerUp))
+
+		////////////////////////////////////
+
+		function handlePointerLeave(e: PointerEvent) {
+			batch(() => {
+				setActive(false) // Sanity check
+				setPoint1()
+				setPoint2()
+			})
+		}
+		document.addEventListener("pointerleave", handlePointerLeave)
+		onCleanup(() => document.removeEventListener("pointerleave", handlePointerLeave))
+	})
+
+	return <>
+		{css`
+			html, body { overscroll-behavior-y: none; }
+			html, body { position: fixed; inset: 0; overflow: hidden; } // COMPAT/Safari
+
+			:focus { outline: revert; }
+
+			* { overscroll-behavior: none; }
+
+			//////////////////////////////////
+
+			:root {
+				--inset:   0;
+				--inset-x: auto 0 auto 0;
+				--inset-y: 0 auto 0 auto;
+				--inset-t: 0 0 auto 0;
+				--inset-r: 0 0 0 auto;
+				--inset-b: auto 0 0 0;
+				--inset-l: 0 auto 0 0;
+			}
+
+			:root {
+				--bs-delta: 0px;
+				--bs-trigger-delta: 600px;
+
+				--tab-height: 72px;
+			}
+
+			.body {
+				min-height: 100vh;
+				min-height: 100dvh; // COMPAT
+			}
+			// TODO: Add max-height: 100dvh
+			.bottomsheet {
+				position: fixed;
+				z-index: 10;
+				inset: var(--inset-x);
+				top: 0;
+				/*
+				 *
+				 */
+				padding: 16px;
+				height: 100vh;  // COMPAT
+				height: 100dvh; // COMPAT
+				//// overflow-y: auto;
+				overflow-y: hidden;
+				border-radius: 16px 16px 0 0;
+				/*
+				 *
+				 */
+				background-color: whitesmoke;
+				box-shadow: 0 0 0 1px lightgray;
+				/*
+				 *
+				 */
+				-webkit-user-select: none; // COMPAT
+				user-select: none;
+				/*
+				 *
+				 */
+				transform: translateY(calc(100vh  - (72px + var(--bs-delta))));
+				transform: translateY(calc(100dvh - (72px + var(--bs-delta)))); // COMPAT
+			}
+			.bottomsheet.is-expanded {
+				transform: translateY(calc(0px - var(--bs-delta)));
+			}
+		`}
+		<div class="body">
+			<div>Hello, world!</div>
+		</div>
+		<div class={`bottomsheet ${expand() && "is-expanded"}`} style={style()} onTransitionEnd={e => setStyle()}>
+			<For each={range(200)}>{() => <>
+				<div>Hello, world!</div>
+			</>}</For>
+		</div>
+	</>
+}
+
+const INNER_HEIGHT = window.innerHeight
+
+function App9() {
+	document.documentElement.classList.add("disable-overscroll", "disable-scrolling")
+
+	const [bottomsheetBackdrop, setBottomsheetBackdrop] = createRef()
+	const [bottomsheet, setBottomsheet] = createRef()
+	const [bottomsheetState, setBottomsheetState] = createSignal<"closed" | "open">("closed")
+
+	// Use uninitialized states to dedupe startup effects
+	const [pointerDown, setPointerDown] = createSignal<boolean>()
+	const [p1, setP1] = createSignal<{ x: number, y: number }>()
+	const [p2, setP2] = createSignal<{ x: number, y: number }>()
+	const delta = () => {
+		if (!p2() || !p1()) { return }
+		return { x: p2()!.x - p1()!.x, y: p2()!.y - p1()!.y }
+	}
+
+	createEffect(() => {
+		if (delta()) {
+			if (!pointerDown()) {
+				batch(() => {
+					//// bottomsheetBackdrop()!.style.setProperty("--__bottomsheet-delta_float", "0%") // Reset
+					bottomsheet()!.style.setProperty("--__bottomsheet-delta", "0px")              // Reset
+					if (untrack(bottomsheetState) === "open" && delta()!.y >= INNER_HEIGHT / 3) {
+						setBottomsheetState("closed")
+					}  else if (untrack(bottomsheetState) === "closed" && delta()!.y <= -1 * INNER_HEIGHT / 3) {
+						setBottomsheetState("open")
+					}
+					setPointerDown(false) // Reset
+					setP1()               // Reset
+					setP2()               // Reset
+				})
+			} else {
+				batch(() => {
+					bottomsheet()!.style.setProperty("--__bottomsheet-delta", `${delta()!.y}px`)
+					const d = Math.abs(delta()!.y)
+					if (untrack(bottomsheetState) === "open") {
+						const float = Math.round((1 - d / INNER_HEIGHT) * 100)
+						bottomsheetBackdrop()!.style.setProperty("--__bottomsheet-delta-float", `${float}%`)
+					} else {
+						const float = Math.round((d / INNER_HEIGHT) * 100)
+						bottomsheetBackdrop()!.style.setProperty("--__bottomsheet-delta-float", `${float}%`)
+					}
+				})
+			}
+		}
+	})
+
+	onMount(() => {
+		function handlePointerDown(e: PointerEvent) {
+			if (bottomsheet()!.contains(e.target as HTMLElement)) {
+				batch(() => {
+					setPointerDown(true)
+					setP1({
+						x: e.clientX,
+						y: e.clientY,
+					})
+				})
+			}
+		}
+		document.addEventListener("pointerdown", handlePointerDown)
+		onCleanup(() => document.removeEventListener("pointerdown", handlePointerDown))
+
+		function handlePointerMove(e: PointerEvent) {
+			if (pointerDown()) {
+				setP2({
+					x: e.clientX,
+					y: e.clientY,
+				})
+			}
+		}
+		document.addEventListener("pointermove", handlePointerMove)
+		onCleanup(() => document.removeEventListener("pointermove", handlePointerMove))
+
+		// Release condition
+		function handlePointerUp(e: PointerEvent) {
+			setPointerDown(false)
+		}
+		document.addEventListener("pointerup", handlePointerUp)
+		onCleanup(() => document.removeEventListener("pointerup", handlePointerUp))
+
+		// Release condition
+		function handlePointerLeave(e: PointerEvent) {
+			setPointerDown(false)
+		}
+		document.addEventListener("pointerleave", handlePointerLeave)
+		onCleanup(() => document.removeEventListener("pointerleave", handlePointerLeave))
+	})
+
+	return <>
+		{css`
+			// Disables overscrolling
+			:root.disable-overscroll { overscroll-behavior: none; }
+
+			// Disables scrolling completely
+			//
+			// Add "inset: 0;" because of the-new-css-reset
+			:root.disable-scrolling { position: fixed; inset: 0; overflow: hidden; }
+
+			//////////////////////////////////
+
+			:root {
+				--inset:   0;
+				--inset-x: auto 0 auto 0;
+				--inset-y: 0 auto 0 auto;
+				--inset-t: 0 0 auto 0;
+				--inset-r: 0 0 0 auto;
+				--inset-b: auto 0 0 0;
+				--inset-l: 0 auto 0 0;
+			}
+
+			:root {
+				--bottomsheet-z-index: 100;
+				--bottomsheet-tab-is-closed-height: 64px;
+				--bottomsheet-tab-is-open-negative-height: 24px;
+
+				// Internal
+				--__bottomsheet-delta: 0px;
+				--__bottomsheet-delta_float: 0%;
+			}
+
+			//////////////////////////////////
+
+			.bottomsheet {
+				position: fixed;
+				z-index: var(--bottomsheet-z-index);
+				inset: var(--inset-x);
+				top: 0;
+				min-height: 200dvh;
+				border-radius: 16px 16px 0 0;
+				background-color: whitesmoke;
+				box-shadow: 0 0 0 4px gray;
+				-webkit-user-select: none;
+				user-select: none;
+			}
+			.bottomsheet.is-closed {
+				transform: translateY(calc(100dvh - var(--bottomsheet-tab-is-closed-height) + var(--__bottomsheet-delta)));
+			}
+			.bottomsheet.is-open {
+				transform: translateY(calc(var(--bottomsheet-tab-is-open-negative-height) + var(--__bottomsheet-delta)));
+			}
+
+			//////////////////////////////////
+
+			.bottomsheet-backdrop {
+				position: fixed;
+				z-index: calc(var(--bottomsheet-z-index) - 1);
+				inset: var(--inset);
+				min-height: 100dvh; // TODO: Use lvh?
+				background-color: hsl(0 0% 0% / var(--__bottomsheet-delta-float));
+			}
+			.bottomsheet-backdrop:has(+ .bottomsheet.is-closed) {
+				--__bottomsheet-delta-float: 0%;
+			}
+			.bottomsheet-backdrop:has(+ .bottomsheet.is-open) {
+				--__bottomsheet-delta-float: 50%;
+			}
+		`}
+		<div
+			ref={setBottomsheetBackdrop}
+			class="bottomsheet-backdrop"
+			style={{ "transition": pointerDown() === false ? "background-color 500ms cubic-bezier(0, 1, 0.25, 1)" : undefined }}
+			onClick={e => setBottomsheetState("closed")}
+		></div>
+		<div
+			ref={setBottomsheet}
+			class={`bottomsheet is-${bottomsheetState()}`}
+			style={{ "transition": pointerDown() === false ? "transform 500ms cubic-bezier(0, 1, 0.25, 1)" : undefined }}
+			onClick={e => setBottomsheetState("open")}
+		>
+			<For each={range(20)}>{() => <>
+				<div>Hello, world!</div>
+			</>}</For>
+		</div>
+	</>
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+function App10() {
+	document.documentElement.classList.add("disable-overscroll", "disable-scrolling")
+
+	const [ref, setRef] = createRef()
+	const [tabRef, setTabRef] = createRef()
+	const [backdropRef, setBackdropRef] = createRef()
+
+	const [state, setState] = createSignal<"CLOSED" | "CLOSING" | "OPENING" | "OPEN">("CLOSED")
+	const [pointerDown, setPointerDown] = createSignal(false)
+
+	const [origin, setOrigin] = createSignal<{ x: number, y: number }>()
+	const [offset, setOffset] = createSignal<{ x: number, y: number }>()
+
+	// DEBUG
+	document.addEventListener("keydown", e => {
+		if (e.key === "d") {
+			setState(curr => curr === "CLOSED" ? "OPEN" : "CLOSED")
+		}
+	}, false)
+
+	onMount(() => {
+		function handlePointerDown(e: PointerEvent) {
+			if (tabRef()!.contains(e.target as HTMLElement)) {
+				batch(() => {
+					if (state() === "OPENING") {
+						setState("OPEN")
+					} else if (state() === "CLOSING") {
+						setState("CLOSED")
+					}
+					setPointerDown(true)
+					setOrigin({ x: e.clientX, y: e.clientY })
+					setOffset({ x: 0, y: 0 })
+				})
+			}
+		}
+		document.addEventListener("pointerdown", handlePointerDown)
+		onCleanup(() => document.removeEventListener("pointerdown", handlePointerDown))
+
+		function handlePointerMove(e: PointerEvent) {
+			if (pointerDown()) {
+				setOffset({ x: e.clientX - origin()!.x, y: e.clientY - origin()!.y })
+			}
+		}
+		document.addEventListener("pointermove", handlePointerMove)
+		onCleanup(() => document.removeEventListener("pointermove", handlePointerMove))
+
+		// Release condition
+		function handlePointerUp(e: PointerEvent) {
+			if (!offset()) { return }
+			batch(() => {
+				if (state() === "OPEN") {
+					if (offset()!.y >= 100) {
+						setState("CLOSING")
+					} else {
+						setState("OPENING")
+					}
+				} else if (state() === "CLOSED") {
+					if (offset()!.y <= -200) {
+						setState("OPENING")
+					} else {
+						setState("CLOSING")
+					}
+				}
+				setPointerDown(false)
+				setOrigin() // No-op
+				setOffset() // No-op
+			})
+		}
+		document.addEventListener("pointerup", handlePointerUp)
+		onCleanup(() => document.removeEventListener("pointerup", handlePointerUp))
+
+		// Release condition
+		document.addEventListener("pointerleave", handlePointerUp)
+		onCleanup(() => document.removeEventListener("pointerleave", handlePointerUp))
+	})
+
+	createEffect(on(offset, () => {
+		if (offset()) {
+			ref()!.style.setProperty("--__bottomsheet-delta", `${offset()!.y}px`)
+			backdropRef()!.style.setProperty("--__bottomsheet-delta", `${offset()!.y}px`)
+		} else {
+			ref()!.style.setProperty("--__bottomsheet-delta", "0px")
+			backdropRef()!.style.setProperty("--__bottomsheet-delta", "0px")
+		}
+	}, { defer: true }))
+
+	return <>
+		{css`
+			// Disables overscrolling
+			:root.disable-overscroll { overscroll-behavior: none; }
+
+			// Disables scrolling completely
+			//
+			// Add "inset: 0;" because of the-new-css-reset
+			:root.disable-scrolling { position: fixed; inset: 0; overflow: hidden; }
+
+			//////////////////////////////////
+
+			:root {
+				--inset:   0;
+				--inset-x: auto 0 auto 0;
+				--inset-y: 0 auto 0 auto;
+				--inset-t: 0 0 auto 0;
+				--inset-r: 0 0 0 auto;
+				--inset-b: auto 0 0 0;
+				--inset-l: 0 auto 0 0;
+			}
+
+			.bottomsheet {
+				// Internal
+				--__bottomsheet-delta: 0px;
+
+				--bottomsheet-z-index: 100;
+				--bottomsheet-border-radius: 24px;
+				--bottomsheet-tab-height: 48px;
+				--bottomsheet-negative-tab-height: 32px;
+				--bottomsheet-transition: 500ms cubic-bezier(0, 1, 0.25, 1);
+			}
+
+			.bottomsheet-backdrop {
+				// Internal
+				--__bottomsheet-backdrop-delta-percentage: 0%;
+
+				--bottomsheet-backdrop-z-index: calc(var(--bottomsheet-z-index) - 10);
+				--bottomsheet-backdrop-transition: 1000ms cubic-bezier(0, 1, 0.25, 1);
+			}
+
+			//////////////////////////////////
+
+			.bottomsheet {
+				position: fixed;
+				z-index: var(--bottomsheet-z-index);
+				inset: var(--inset-x);
+				top: 0;
+				min-height: 200vh; // COMPAT
+				//// min-height: 200dvh;
+				border-radius: var(--bottomsheet-border-radius) var(--bottomsheet-border-radius) 0 0;
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+				-webkit-user-select: none; // COMPAT
+				user-select: none;
+				transform: var(--__bottomsheet-transform);
+			}
+			.bottomsheet:is(.is-opening, .is-closing) {
+				transition: transform var(--bottomsheet-transition);
+			}
+			.bottomsheet:is(.is-closing, .is-closed) {
+				--__bottomsheet-transform: translateY(calc(100vh - var(--bottomsheet-tab-height) + var(--__bottomsheet-delta))); // COMPAT
+				//// --__bottomsheet-transform: translateY(calc(100dvh - var(--bottomsheet-tab-height) + var(--__bottomsheet-delta)));
+			}
+			.bottomsheet:is(.is-opening, .is-open) { --__bottomsheet-transform: translateY(calc(var(--bottomsheet-negative-tab-height) + var(--__bottomsheet-delta))); }
+
+			//////////////////////////////////
+
+			.bottomsheet-tab {
+				display: grid;
+				place-items: center;
+				height: var(--bottomsheet-tab-height);
+			}
+			.bottomsheet-tab-icon {
+				height: 6px;
+				width: 48px;
+				border-radius: var(--full);
+				background-color: gray;
+			}
+
+			//////////////////////////////////
+
+			.bottomsheet-content {
+				height: calc(100vh - (var(--bottomsheet-negative-tab-height) + var(--bottomsheet-tab-height))); // COMPAT
+				//// height: calc(100dvh - (var(--bottomsheet-negative-tab-height) + var(--bottomsheet-tab-height)));
+				overflow-y: auto;
+			}
+			// COMPAT/Safari: Safari doesn’t disable inert unless there is some CSS
+			// listening to the presence of the property.
+			.bottomsheet-content[inert] { content: ""; } // COMPAT/Safari
+
+			//////////////////////////////////
+
+			.bottomsheet-backdrop {
+				position: fixed;
+				z-index: var(--bottomsheet-backdrop-z-index);
+				inset: var(--inset);
+				background-color: hsl(0 0% 0% / var(--__bottomsheet-backdrop-delta-percentage));
+			}
+			.bottomsheet-backdrop:has(+ .bottomsheet:is(.is-opening, .is-closing)) {
+				transition: background-color var(--bottomsheet-backdrop-transition);
+			}
+			.bottomsheet-backdrop:has(+ .bottomsheet:is(.is-closing, .is-closed)) { --__bottomsheet-backdrop-delta-percentage: 0; }
+			.bottomsheet-backdrop:has(+ .bottomsheet:is(.is-opening, .is-open)) { --__bottomsheet-backdrop-delta-percentage: 50%; }
+		`}
+		<div
+			ref={setBackdropRef}
+			class="bottomsheet-backdrop"
+			onClick={e => {
+				if (state() === "OPEN") {
+					setState("CLOSING")
+				}
+			}}
+		></div>
+		<div
+			ref={setRef}
+			class={`bottomsheet is-${state().toLowerCase()} `}
+			onTransitionEnd={e => {
+				if (state() === "OPENING") {
+					setState("OPEN")
+				} else if (state() === "CLOSING") {
+					setState("CLOSED")
+				}
+			}}
+		>
+			<div ref={setTabRef} class="bottomsheet-tab">
+				<div class="h-6px w-48px rounded-$full background-color:gray"></div>
+			</div>
+			<hr />
+			{/* @ts-expect-error */}
+			<div class="bottomsheet-content" inert={!(state() === "OPEN" || state() === "OPENING") || undefined}>
+				<For each={range(200)}>{() => <>
+					<div>Hello, world!</div>
+				</>}</For>
+			</div>
+		</div>
+	</>
+}
+
+render(() => <App10 />, document.getElementById("root")!)
