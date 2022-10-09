@@ -1,0 +1,87 @@
+:root {
+	--__bottomsheet-delta: 0px;
+	--__bottomsheet-backdrop-delta-percentage: 0%;
+
+	--bottomsheet-border-radius: 16px 16px 0 0;
+	--bottomsheet-negative-tab-height: 40px;
+	--bottomsheet-tab-height: 40px;
+	--bottomsheet-transition: 500ms cubic-bezier(0, 1, 0.25, 1);
+	--bottomsheet-z-index: 100;
+
+	--bottomsheet-backdrop-transition: 1000ms cubic-bezier(0, 1, 0.25, 1);
+	--bottomsheet-backdrop-z-index: calc(var(--bottomsheet-z-index) - 10);
+}
+
+////////////////////////////////////////
+
+.bottomsheet {
+	position: fixed;
+	z-index: var(--bottomsheet-z-index);
+	inset: 0;
+	height: calc(var(--screen) - var(--bottomsheet-negative-tab-height));
+	border-radius: var(--bottomsheet-border-radius);
+	background-color: white;
+	box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+}
+.bottomsheet:is(.is-opening, .is-closing) {
+	transition: transform var(--bottomsheet-transition);
+}
+.bottomsheet:is(.is-closing, .is-closed) { transform: translateY(calc(var(--screen) - var(--bottomsheet-tab-height) + var(--__bottomsheet-delta))); }
+.bottomsheet:is(.is-opening, .is-open)   { transform: translateY(calc(var(--bottomsheet-negative-tab-height) + var(--__bottomsheet-delta))); }
+
+////////////////////////////////////////
+
+.bottomsheet-backdrop {
+	position: fixed;
+	z-index: var(--bottomsheet-backdrop-z-index);
+	z-index: 100;
+	inset: 0;
+	background-color: hsl(0 0% 0% / var(--__bottomsheet-backdrop-delta-percentage));
+}
+.bottomsheet-backdrop:has(+ .bottomsheet:is(.is-opening, .is-closing)) {
+	transition: background-color var(--bottomsheet-backdrop-transition);
+}
+.bottomsheet-backdrop:has(+ .bottomsheet:is(.is-closing, .is-closed)) { --__bottomsheet-backdrop-delta-percentage: 0; }
+.bottomsheet-backdrop:has(+ .bottomsheet:is(.is-opening, .is-open))   { --__bottomsheet-backdrop-delta-percentage: 50%; }
+
+////////////////////////////////////////
+
+.bottomsheet-tab {
+	height: var(--bottomsheet-tab-height);
+
+	// CSS Grid
+	display: grid;
+	place-items: center;
+
+	cursor: grab;
+}
+
+////////////////////////////////////////
+
+.bottomsheet-tab-icon {
+	height: 4px;
+	width: 64px;
+	border-radius: var(--full);
+	background-color: gray;
+}
+
+////////////////////////////////////////
+
+// COMPAT/Safari: Safari doesn’t disable inert unless there is some CSS
+// listening to the presence of the property.
+.bottomsheet-content[inert] { content: ""; }
+.bottomsheet-content {
+	height: calc(
+		var(--screen) -
+		var(--bottomsheet-negative-tab-height) -
+		var(--bottomsheet-tab-height) -
+		1px // <hr>
+	);
+}
+// Hide scrollbar on closed
+.bottomsheet:is(.is-closing, .is-closed) .bottomsheet-content {
+	overflow-y: none;
+}
+.bottomsheet:is(.is-opening, .is-open) .bottomsheet-content {
+	overflow-y: auto;
+}

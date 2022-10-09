@@ -2,9 +2,10 @@ import "the-new-css-reset"
 import "uno.css"
 import "./scss/index.scss"
 
-import { batch, createEffect, createSignal, For, JSX, on, onCleanup, onMount, Show, untrack } from "solid-js"
+import { For } from "solid-js"
 import { render } from "solid-js/web"
-import { createRef, css } from "./solid-utils"
+import { Bottomsheet } from "./components"
+import { css } from "./solid-utils"
 import { range } from "./utils"
 //// import { App } from "./App"
 
@@ -150,252 +151,89 @@ function App2() {
 	</>
 }
 
-function App3() {
-	document.documentElement.classList.add("disable-overscroll", "disable-scrolling")
-
-	const [ref, setRef] = createRef()
-	const [tabRef, setTabRef] = createRef()
-	const [backdropRef, setBackdropRef] = createRef()
-
-	const [state, setState] = createSignal<"CLOSED" | "CLOSING" | "OPENING" | "OPEN">("CLOSED")
-	const [pointerDown, setPointerDown] = createSignal(false)
-
-	const [origin, setOrigin] = createSignal<{ x: number, y: number }>()
-	const [offset, setOffset] = createSignal<{ x: number, y: number }>()
-
-	// Sets the document cursor
-	function setCursor(cursor: string) {
-		document.body.style.cursor = cursor
-	}
-
-	// Removes the document cursor
-	function removeCursor() {
-		document.body.style.cursor = ""
-		if (!document.body.style.length) {
-			document.body.removeAttribute("style")
-		}
-	}
-
-	// Add global event listeners
-	onMount(() => {
-		function handlePointerDown(e: PointerEvent) {
-			if (tabRef()!.contains(e.target as HTMLElement)) {
-				// COMPAT/Safari: Click-dragging toggles "cursor: text;"
-				e.preventDefault()
-				setCursor("grab")
-				batch(() => {
-					if (state() === "OPENING") {
-						setState("OPEN")
-					} else if (state() === "CLOSING") {
-						setState("CLOSED")
-					}
-					setPointerDown(true)
-					setOrigin({ x: e.clientX, y: e.clientY })
-					setOffset({ x: 0, y: 0 })
-				})
-			}
-		}
-		document.addEventListener("pointerdown", handlePointerDown)
-		onCleanup(() => document.removeEventListener("pointerdown", handlePointerDown))
-
-		function handlePointerMove(e: PointerEvent) {
-			if (pointerDown()) {
-				// COMPAT/Safari: Click-dragging toggles "cursor: text;"
-				e.preventDefault()
-				setCursor("grab")
-				setOffset({ x: e.clientX - origin()!.x, y: e.clientY - origin()!.y })
-			}
-		}
-		document.addEventListener("pointermove", handlePointerMove)
-		onCleanup(() => document.removeEventListener("pointermove", handlePointerMove))
-
-		// Release condition
-		function handlePointerUp(e: PointerEvent) {
-			if (!offset()) { return }
-			batch(() => {
-				if (state() === "OPEN") {
-					if (offset()!.y >= 100) {
-						setState("CLOSING")
-					} else {
-						setState("OPENING")
-					}
-				} else if (state() === "CLOSED") {
-					if (offset()!.y <= -200) {
-						setState("OPENING")
-					} else {
-						setState("CLOSING")
-					}
-				}
-				setPointerDown(false)
-				setOrigin() // No-op
-				setOffset() // No-op
-			})
-			removeCursor()
-		}
-		document.addEventListener("pointerup", handlePointerUp)
-		onCleanup(() => document.removeEventListener("pointerup", handlePointerUp))
-
-		// Release condition
-		document.addEventListener("pointerleave", handlePointerUp)
-		onCleanup(() => document.removeEventListener("pointerleave", handlePointerUp))
-	})
-
-	createEffect(on(offset, () => {
-		if (offset()) {
-			ref()!.style.setProperty("--__bottomsheet-delta", `${offset()!.y}px`)
-			backdropRef()!.style.setProperty("--__bottomsheet-delta", `${offset()!.y}px`)
-		} else {
-			ref()!.style.setProperty("--__bottomsheet-delta", "0px")
-			backdropRef()!.style.setProperty("--__bottomsheet-delta", "0px")
-		}
-	}, { defer: true }))
-
+function App5() {
 	return <>
+		{/* <div class="main-content"> */}
 		{css`
-			// Disables overscrolling
-			:root.disable-overscroll { overscroll-behavior: none; }
-
-			// Disables scrolling completely
-			//
-			// Add "inset: 0;" because of the-new-css-reset
-			:root.disable-scrolling { position: fixed; inset: 0; overflow: hidden; }
-
-			//////////////////////////////////
-
 			:root {
-				--screen: 100vh;
+				--search-bar-height: 64px;
 			}
-			@supports (height: 100dvh) {
-				:root {
-					--screen: 100dvh;
-				}
-			}
-
-			:root {
-				--inset:   0;
-				--inset-x: auto 0 auto 0;
-				--inset-y: 0 auto 0 auto;
-				--inset-t: 0 0 auto 0;
-				--inset-r: 0 0 0 auto;
-				--inset-b: auto 0 0 0;
-				--inset-l: 0 auto 0 0;
-			}
-
-			//////////////////////////////////
-
-			.bottomsheet {
-				// Internal
-				--__bottomsheet-delta: 0px;
-
-				// External
-				--bottomsheet-z-index: 100;
-				--bottomsheet-border-radius: 24px;
-				--bottomsheet-tab-height: 48px;
-				--bottomsheet-negative-tab-height: 32px;
-				--bottomsheet-transition: 500ms cubic-bezier(0, 1, 0.25, 1);
-			}
-
-			.bottomsheet-backdrop {
-				// Internal
-				--__bottomsheet-backdrop-delta-percentage: 0%;
-
-				// External
-				--bottomsheet-backdrop-z-index: calc(var(--bottomsheet-z-index) - 10);
-				--bottomsheet-backdrop-transition: 1000ms cubic-bezier(0, 1, 0.25, 1);
-			}
-
-			//////////////////////////////////
-
-			.bottomsheet {
+			.search-bar {
 				position: fixed;
-				z-index: var(--bottomsheet-z-index);
-				inset: var(--inset-x);
-				top: 0;
-				min-height: calc(var(--screen) * 2);
-				border-radius: var(--bottomsheet-border-radius) var(--bottomsheet-border-radius) 0 0;
+				z-index: 10;
+				inset: 0;
+				bottom: auto;
+				padding: 0 24px;
+				height: var(--search-bar-height);
 				background-color: white;
-				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
-				transform: var(--__bottomsheet-transform);
+				box-shadow: 0 4px 0 0 hsl(0 0% 0% / 25%);
 			}
-			.bottomsheet:is(.is-opening, .is-closing) {
-				transition: transform var(--bottomsheet-transition);
-			}
-			.bottomsheet:is(.is-closing, .is-closed) { --__bottomsheet-transform: translateY(calc(var(--screen) - var(--bottomsheet-tab-height) + var(--__bottomsheet-delta))); }
-			.bottomsheet:is(.is-opening, .is-open)   { --__bottomsheet-transform: translateY(calc(var(--bottomsheet-negative-tab-height) + var(--__bottomsheet-delta))); }
-
-			//////////////////////////////////
-
-			.bottomsheet-tab {
-				display: grid;
-				place-items: center;
-				height: var(--bottomsheet-tab-height);
-				cursor: grab;
-				-webkit-user-select: none; // COMPAT
-				user-select: none;
-			}
-			.bottomsheet-tab-icon {
-				height: 5px;
-				width: 50px;
+			.search-icon {
+				height: 32px;
+				aspect-ratio: 1;
 				border-radius: var(--full);
 				background-color: gray;
 			}
-
-			//////////////////////////////////
-
-			.bottomsheet-content {
-				height: calc(var(--screen) - (var(--bottomsheet-negative-tab-height) + var(--bottomsheet-tab-height)));
-				overflow-y: auto;
-			}
-			// COMPAT/Safari: Safari doesn’t disable inert unless there is some CSS
-			// listening to the presence of the property.
-			.bottomsheet-content[inert] { content: ""; } // COMPAT/Safari
-
-			//////////////////////////////////
-
-			.bottomsheet-backdrop {
-				position: fixed;
-				z-index: var(--bottomsheet-backdrop-z-index);
-				inset: var(--inset);
-				background-color: hsl(0 0% 0% / var(--__bottomsheet-backdrop-delta-percentage));
-			}
-			.bottomsheet-backdrop:has(+ .bottomsheet:is(.is-opening, .is-closing)) {
-				transition: background-color var(--bottomsheet-backdrop-transition);
-			}
-			.bottomsheet-backdrop:has(+ .bottomsheet:is(.is-closing, .is-closed)) { --__bottomsheet-backdrop-delta-percentage: 0; }
-			.bottomsheet-backdrop:has(+ .bottomsheet:is(.is-opening, .is-open)) { --__bottomsheet-backdrop-delta-percentage: 50%; }
 		`}
-		<div
-			ref={setBackdropRef}
-			class="bottomsheet-backdrop"
-			onClick={e => {
-				if (state() === "OPEN") {
-					setState("CLOSING")
-				}
-			}}
-		></div>
-		<div
-			ref={setRef}
-			class={`bottomsheet is-${state().toLowerCase()} `}
-			onTransitionEnd={e => {
-				if (state() === "OPENING") {
-					setState("OPEN")
-				} else if (state() === "CLOSING") {
-					setState("CLOSED")
-				}
-			}}
-		>
-			<div ref={setTabRef} class="bottomsheet-tab">
-				<div class="bottomsheet-tab-icon"></div>
-			</div>
-			<hr />
-			{/* @ts-expect-error */}
-			<div class="bottomsheet-content" inert={!(state() === "OPEN" || state() === "OPENING") || undefined}>
-				<For each={range(200)}>{() => <>
-					<div>Hello, world!</div>
-				</>}</For>
-			</div>
+		<div class="search-bar flex-row flex-align-center">
+			<div class="search-icon"></div>
+			<div class="flex-grow"></div>
+			<div class="search-icon"></div>
 		</div>
+		{css`
+			:root {
+				--grid-icon-height: 64px;
+			}
+			.results-grid {
+				margin-top: var(--search-bar-height);
+				margin-bottom: var(--bottomsheet-tab-height);
+				padding: 16px 8px;
+				height: calc(var(--screen) - var(--search-bar-height) - var(--bottomsheet-tab-height));
+				overflow-y: auto;
+
+				// CSS Grid
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(var(--grid-icon-height), 1fr));
+				grid-auto-rows: var(--grid-icon-height);
+				justify-items: center;
+				gap: 8px;
+			}
+			.grid-cell {
+				height: var(--grid-icon-height);
+				aspect-ratio: 1;
+
+				// CSS Grid
+				display: grid;
+				place-items: center;
+			}
+			.grid-icon {
+				height: 32px;
+				aspect-ratio: 1;
+				border-radius: var(--full);
+				background-color: gray;
+			}
+			.grid-name {
+				height: 6px;
+				aspect-ratio: 8;
+				border-radius: var(--full);
+				background-color: gray;
+			}
+		`}
+		<div class="results-grid">
+			<For each={range(200)}>{() => <>
+				<div class="grid-cell">
+					<div class="grid-icon"></div>
+					<div class="grid-name"></div>
+				</div>
+			</>}</For>
+		</div>
+		{/* </div> */}
+		<Bottomsheet>
+			<For each={range(200)}>{() => <>
+				<div>x</div>
+			</>}</For>
+		</Bottomsheet>
 	</>
 }
 
-render(() => <App3 />, document.getElementById("root")!)
+render(() => <App5 />, document.getElementById("root")!)
