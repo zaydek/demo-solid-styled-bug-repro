@@ -18,9 +18,9 @@
 	position: fixed;
 	z-index: var(--bottomsheet-z-index);
 	inset: 0;
-	margin: 0 auto; // Self center x-axis
+	//// margin: 0 auto; // Self center x-axis
 	height: calc(var(--screen) - var(--bottomsheet-negative-tab-height));
-	max-width: 768px;
+	//// max-width: 768px;
 	border-radius: var(--bottomsheet-border-radius);
 	background-color: white;
 	box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);

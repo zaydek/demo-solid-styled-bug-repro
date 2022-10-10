@@ -156,6 +156,7 @@ export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & 
 
 		function handlePointerMove(e: PointerEvent) {
 			if (!pointerDown) { return }
+			e.preventDefault()
 			normalizeClientX(e.clientX)
 		}
 		document.addEventListener("pointermove", handlePointerMove, false)
@@ -195,15 +196,19 @@ export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & 
 				onKeyDown={(e: KeyboardEvent) => {
 					if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown") {
 						e.preventDefault()
+						e.stopImmediatePropagation()
 						decrement()
 					} else if (e.key === "Home") {
 						e.preventDefault()
+						e.stopImmediatePropagation()
 						decrementAll()
 					} else if (e.key === "ArrowRight" || e.key === "ArrowUp" || e.key === "PageUp") {
 						e.preventDefault()
+						e.stopImmediatePropagation()
 						increment()
 					} else if (e.key === "End") {
 						e.preventDefault()
+						e.stopImmediatePropagation()
 						incrementAll()
 					}
 				}}
