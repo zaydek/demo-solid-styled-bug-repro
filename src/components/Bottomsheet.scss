@@ -69,8 +69,8 @@
 
 // COMPAT/Safari: Safari doesn’t disable inert unless there is some CSS
 // listening to the presence of the property.
-.bottomsheet-content[inert] { content: ""; }
-.bottomsheet-content {
+.bottomsheet-content-scroller[inert] { content: ""; }
+.bottomsheet-content-scroller {
 	height: calc(
 		var(--screen) -
 		var(--bottomsheet-negative-tab-height) -
@@ -79,9 +79,9 @@
 	);
 }
 // Hide scrollbar on closed
-.bottomsheet:is(.is-closing, .is-closed) .bottomsheet-content {
+.bottomsheet:is(.is-closing, .is-closed) .bottomsheet-content-scroller {
 	overflow-y: none;
 }
-.bottomsheet:is(.is-opening, .is-open) .bottomsheet-content {
+.bottomsheet:is(.is-opening, .is-open) .bottomsheet-content-scroller {
 	overflow-y: auto;
 }

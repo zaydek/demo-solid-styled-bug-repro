@@ -1,5 +1,6 @@
 export * from "./canonicalize"
 export * from "./cases"
+export * from "./cursor"
 export * from "./echo"
 export * from "./format"
 export * from "./hash"

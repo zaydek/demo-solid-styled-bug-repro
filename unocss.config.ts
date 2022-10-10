@@ -1,9 +1,10 @@
 import { variantImportant, variantVariables } from "@unocss/preset-mini/variants"
 import { Rule } from "unocss"
 import { defineConfig } from "unocss/vite"
-import { cssSpec } from "./unocss.css.spec"
 
 function desugar(raw: undefined | string, { sign }: { sign?: string } = {}): undefined | 0 | string {
+	//// return sign + ("" + raw)
+
 	if (raw === "0") { return 0 }
 	if (!raw) { return }
 
@@ -40,21 +41,21 @@ function interpolate(shorthand: string, properties: string[]): Rule {
 }
 
 const rules: Rule[] = [
-	[/^(-)?((?:$)?[a-z]+(?:-[a-z]+)*):(.+)$/, ([_, sign, key, value]) => {
-		if (key.startsWith("$")) {
-			const key2 = `--${key.slice(1)}`
-			return { [key2]: desugar(value, { sign }) }
-		} else if (
-			key.startsWith("-webkit-") ||
-			key.startsWith("-moz-")    ||
-			key.startsWith("-ms-")     ||
-			key.startsWith("-o-")      ||
-			key in cssSpec
-		) {
-			return { [key]: desugar(value, { sign }) }
-		}
-		return {}
-	}],
+	//// [/^(-)?((?:$)?[a-z]+(?:-[a-z]+)*):(.+)$/, ([_, sign, key, value]) => {
+	//// 	if (key.startsWith("$")) {
+	//// 		const key2 = `--${key.slice(1)}`
+	//// 		return { [key2]: desugar(value, { sign }) }
+	//// 	} else if (
+	//// 		key.startsWith("-webkit-") ||
+	//// 		key.startsWith("-moz-")    ||
+	//// 		key.startsWith("-ms-")     ||
+	//// 		key.startsWith("-o-")      ||
+	//// 		key in cssSpec
+	//// 	) {
+	//// 		return { [key]: desugar(value, { sign }) }
+	//// 	}
+	//// 	return {}
+	//// }],
 
 	// TODO: Intellisense doesn’t resolve group
 	["group", { /* No-op */ }],

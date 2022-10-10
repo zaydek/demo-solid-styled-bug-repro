@@ -1,21 +1,35 @@
-.slider {
-	padding: 0 calc(var(--form-height) / 2);
-	height: var(--form-height);
-	touch-action: pan-x; // COMPAT/iOS
+.Slider {
+	padding: 0 16px;
+	height: 32px;
+
+	// Flexbox
+	display: flex;
+	flex-direction: column;  // Stretch x-axis
+	justify-content: center; // Center y-axis
+
+	cursor: grab;
+	touch-action: pan-x; // COMPAT/Safari
 }
 
 ////////////////////////////////////////
 
-.slider-track {
+.SliderTrack {
 	height: 6px;
 	border-radius: var(--full);
-	background-image: linear-gradient(90deg, var(--trim-color) var(--progress), var(--card-hairline-color) var(--progress));
+	background-image: linear-gradient(90deg, var(--trim-color) var(--slider-track-percentage),
+		var(--card-hairline-color) var(--slider-track-percentage));
+
+	// Flexbox
+	display: flex;
+	flex-direction: row;
+	align-items: center; // Center y-axis
+
 }
 
 ////////////////////////////////////////
 
-.slider-thumb {
-	height: var(--form-height);
+.SliderThumb {
+	height: 32px;
 	aspect-ratio: 1;
 	border-radius: var(--full);
 	background-color: var(--form-color);

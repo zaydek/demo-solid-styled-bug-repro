@@ -2,59 +2,42 @@ import "./Bottomsheet.scss"
 
 import { batch, createEffect, createSignal, on, onCleanup, onMount, ParentProps } from "solid-js"
 import { createRef } from "../solid-utils"
+import { unstyleGlobalCursor, styleGlobalCursor } from "../utils"
+
+export const [bottomsheetState, setBottomsheetState] = createSignal<"CLOSED" | "CLOSING" | "OPENING" | "OPEN">("CLOSED")
 
 export function Bottomsheet(props: ParentProps) {
 	const [bottomsheetRef, setBottomsheetRef] = createRef()
 	const [bottomsheetTabRef, setBottomsheetTabRef] = createRef()
 
-	const [state, setState] = createSignal<"CLOSED" | "CLOSING" | "OPENING" | "OPEN">("CLOSED")
-	const [pointerDown, setPointerDown] = createSignal(false)
-
 	const [origin, setOrigin] = createSignal<{ x: number, y: number }>()
 	const [offset, setOffset] = createSignal<{ x: number, y: number }>()
 
-	// Sets the document cursor
-	function setCursor(cursor: string) {
-		document.body.style.cursor = cursor
-	}
-
-	// Removes the document cursor
-	function removeCursor() {
-		document.body.style.cursor = ""
-		if (!document.body.style.length) {
-			document.body.removeAttribute("style")
-		}
-	}
-
-	// Add global event listeners
+	let pointerDown = false
 	onMount(() => {
 		function handlePointerDown(e: PointerEvent) {
-			if (bottomsheetTabRef()!.contains(e.target as HTMLElement)) {
-				// COMPAT/Safari: Click-dragging toggles "cursor: text;"
-				e.preventDefault()
-				setCursor("grab")
-				batch(() => {
-					if (state() === "OPENING") {
-						setState("OPEN")
-					} else if (state() === "CLOSING") {
-						setState("CLOSED")
-					}
-					setPointerDown(true)
-					setOrigin({ x: e.clientX, y: e.clientY })
-					setOffset({ x: 0, y: 0 })
-				})
-			}
+			if (!bottomsheetTabRef()!.contains(e.target as HTMLElement)) { return }
+			// COMPAT/Safari: Click-dragging toggles "cursor: text;"
+			e.preventDefault()
+			styleGlobalCursor("grab", () => pointerDown = true)
+			batch(() => {
+				if (bottomsheetState() === "OPENING") {
+					setBottomsheetState("OPEN")
+				} else if (bottomsheetState() === "CLOSING") {
+					setBottomsheetState("CLOSED")
+				}
+				setOrigin({ x: e.clientX, y: e.clientY })
+				setOffset({ x: 0, y: 0 })
+			})
 		}
 		document.addEventListener("pointerdown", handlePointerDown)
 		onCleanup(() => document.removeEventListener("pointerdown", handlePointerDown))
 
 		function handlePointerMove(e: PointerEvent) {
-			if (pointerDown()) {
-				// COMPAT/Safari: Click-dragging toggles "cursor: text;"
-				e.preventDefault()
-				setCursor("grab")
-				setOffset({ x: e.clientX - origin()!.x, y: e.clientY - origin()!.y })
-			}
+			if (!pointerDown) { return }
+			// COMPAT/Safari: Click-dragging toggles "cursor: text;"
+			e.preventDefault()
+			setOffset({ x: e.clientX - origin()!.x, y: e.clientY - origin()!.y })
 		}
 		document.addEventListener("pointermove", handlePointerMove)
 		onCleanup(() => document.removeEventListener("pointermove", handlePointerMove))
@@ -63,24 +46,23 @@ export function Bottomsheet(props: ParentProps) {
 		function handlePointerUp(e: PointerEvent) {
 			if (!offset()) { return }
 			batch(() => {
-				if (state() === "OPEN") {
+				if (bottomsheetState() === "OPEN") {
 					if (offset()!.y >= 100) {
-						setState("CLOSING")
+						setBottomsheetState("CLOSING")
 					} else {
-						setState("OPENING")
+						setBottomsheetState("OPENING")
 					}
-				} else if (state() === "CLOSED") {
+				} else if (bottomsheetState() === "CLOSED") {
 					if (offset()!.y <= -200) {
-						setState("OPENING")
+						setBottomsheetState("OPENING")
 					} else {
-						setState("CLOSING")
+						setBottomsheetState("CLOSING")
 					}
 				}
-				setPointerDown(false)
 				setOrigin() // No-op
 				setOffset() // No-op
 			})
-			removeCursor()
+			unstyleGlobalCursor(() => pointerDown = false)
 		}
 		document.addEventListener("pointerup", handlePointerUp)
 		onCleanup(() => document.removeEventListener("pointerup", handlePointerUp))
@@ -102,21 +84,21 @@ export function Bottomsheet(props: ParentProps) {
 		<div
 			class="bottomsheet-backdrop"
 			onClick={e => {
-				if (state() === "OPEN") {
-					setState("CLOSING")
+				if (bottomsheetState() === "OPEN") {
+					setBottomsheetState("CLOSING")
 				}
 			}}
 			// @ts-expect-error
-			inert={(state() === "CLOSING" || state() === "CLOSED") || undefined}
+			inert={(bottomsheetState() === "CLOSING" || bottomsheetState() === "CLOSED") || undefined}
 		></div>
 		<div
 			ref={setBottomsheetRef}
-			class={`bottomsheet is-${state().toLowerCase()} `}
+			class={`bottomsheet is-${bottomsheetState().toLowerCase()}`}
 			onTransitionEnd={e => {
-				if (state() === "OPENING") {
-					setState("OPEN")
-				} else if (state() === "CLOSING") {
-					setState("CLOSED")
+				if (bottomsheetState() === "OPENING") {
+					setBottomsheetState("OPEN")
+				} else if (bottomsheetState() === "CLOSING") {
+					setBottomsheetState("CLOSED")
 				}
 			}}
 		>
@@ -125,7 +107,7 @@ export function Bottomsheet(props: ParentProps) {
 			</div>
 			<hr />
 			{/* @ts-expect-error */}
-			<div class="bottomsheet-content" inert={(state() === "CLOSING" || state() === "CLOSED") || undefined}>
+			<div class="bottomsheet-content-scroller" inert={(bottomsheetState() === "CLOSING" || bottomsheetState() === "CLOSED") || undefined}>
 				{props.children}
 			</div>
 		</div>

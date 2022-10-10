@@ -2,6 +2,7 @@ import { Accessor, batch, createContext, createSignal, FlowProps, JSX, onCleanup
 import { Dynamic } from "solid-js/web"
 import { createRef, omitProps } from "../solid-utils"
 import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
+import { styleGlobalCursor, unstyleGlobalCursor } from "../utils"
 import { bound, round } from "../utils/precision"
 
 type Actions = {
@@ -109,8 +110,8 @@ export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & 
 	step:     number
 }, ({ float, translateX }: { float: Accessor<number>, translateX: Accessor<undefined | number> }) => JSX.Element>) {
 	const [ref, setRef] = createRef()
-	const [trackRect, setTrackRect] = createSignal<DOMRect>()
-	const [thumbRect, setThumbRect] = createSignal<DOMRect>()
+	const [trackClientRect, setTrackClientRect] = createSignal<DOMRect>()
+	const [thumbClientRect, setThumbClientRect] = createSignal<DOMRect>()
 
 	function normalize(value: number) {
 		const rounded = round(value)
@@ -120,9 +121,9 @@ export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & 
 	normalize(props.value) // Synchronously normalize
 
 	function normalizeClientX(clientX: number) {
-		const track_x = trackRect()!.x
-		const track_w = trackRect()!.width
-		const float = (clientX - track_x) / track_w // Get float from measurements
+		const trackX = trackClientRect()!.x
+		const trackW = trackClientRect()!.width
+		const float = (clientX - trackX) / trackW // Get float from measurements
 		const value = float * (props.max - props.min) + props.min
 		normalize(value - value % props.step)
 	}
@@ -135,45 +136,48 @@ export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & 
 	const float = () => (props.value - props.min) / (props.max - props.min) // Get float from values
 
 	const translateX = () => {
-		if (!trackRect() || !thumbRect()) { return }
-		const track_w = trackRect()!.width
-		const thumb_w = thumbRect()!.width
-		return (float() * track_w) - (thumb_w / 2)
+		if (!trackClientRect() || !thumbClientRect()) { return }
+		const trackW = trackClientRect()!.width
+		const thumbW = thumbClientRect()!.width
+		return (float() * trackW) - (thumbW / 2)
 	}
 
-	let isPointerDown = false
+	let pointerDown = false
 	onMount(() => {
 		function handlePointerDown(e: PointerEvent) {
 			if (e.button !== 0 || !e.composedPath().includes(ref()!)) { return }
-			isPointerDown = true
+			// COMPAT/Safari: Click-dragging toggles "cursor: text;"
+			e.preventDefault()
+			styleGlobalCursor("grab", () => pointerDown = true)
 			normalizeClientX(e.clientX)
 		}
 		document.addEventListener("pointerdown", handlePointerDown, false)
 		onCleanup(() => document.addEventListener("pointerdown", handlePointerDown, false))
-	})
 
-	onMount(() => {
 		function handlePointerMove(e: PointerEvent) {
-			if (!isPointerDown) { return }
+			if (!pointerDown) { return }
 			normalizeClientX(e.clientX)
 		}
 		document.addEventListener("pointermove", handlePointerMove, false)
 		onCleanup(() => document.addEventListener("pointermove", handlePointerMove, false))
-	})
 
-	onMount(() => {
+		// Release condition
 		function handlePointerUp(e: PointerEvent) {
-			isPointerDown = false
+			unstyleGlobalCursor(() => pointerDown = false)
 		}
 		document.addEventListener("pointerup", handlePointerUp, false)
 		onCleanup(() => document.addEventListener("pointerup", handlePointerUp, false))
+
+		// Release condition
+		document.addEventListener("pointerleave", handlePointerUp, false)
+		onCleanup(() => document.addEventListener("pointerleave", handlePointerUp, false))
 	})
 
 	return <>
 		<SliderContext.Provider
 			value={{
 				state: {}, // No-op
-				actions: { setTrackRect, setThumbRect },
+				actions: { setTrackRect: setTrackClientRect, setThumbRect: setThumbClientRect },
 			}}
 		>
 			<Dynamic

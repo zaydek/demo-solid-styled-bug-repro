@@ -7,7 +7,8 @@
 // from resizing the toolbar and
 // breaking bottomsheet pointer events
 :root { position: fixed; inset: 0; overflow: hidden; }
-//// * { overscroll-behavior: none; }
+
+* { touch-action: pan-y; }
 
 :root {
 	-webkit-font-smoothing: antialiased;
@@ -88,9 +89,7 @@
 
 	--full:   1000px;
 	--screen: 100vh;
-	@supports (height: 100dvh) {
-		--screen: 100dvh;
-	}
+	@supports (height: 100dvh) { --screen: 100dvh; }
 
 	--padding: 16px;
 	--gap:     8px;
@@ -98,8 +97,10 @@
 	//// --sidebar-width:     448px;
 	//// --search-bar-height: 64px;
 	//// --main-grid-height:  96px;
-	//// --form-height:       28px;
-	//// --form-radio-height: 24px;
+
+	// TODO
+	--form-height:       32px;
+	--form-radio-height: 24px;
 
 	--sans:
 		system-ui,
