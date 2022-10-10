@@ -1,7 +1,10 @@
 .focus-ring {
 	--focus-ring-border-radius: 0px; // Use 0px because of calc(...)
-	--focus-ring-offset:        2.5px;
-	--focus-ring-thickness:     3px;
+	//// --focus-ring-offset:        2.5px;
+	//// --focus-ring-thickness:     3px;
+
+	--focus-ring-offset:        4px;
+	--focus-ring-thickness:     4px;
 
 	--focus-ring-color: hsl(var(--focus-ring-h) var(--focus-ring-s) var(--focus-ring-l));
 }

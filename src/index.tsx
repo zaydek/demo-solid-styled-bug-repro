@@ -4,9 +4,10 @@ import "./scss/index.scss"
 
 import { createSignal, For } from "solid-js"
 import { render } from "solid-js/web"
-import { Bottomsheet, bottomsheetState, ColorButton, Slider } from "./components"
+import { Bottomsheet, bottomsheetState, ColorButton, Radio, Slider } from "./components"
 import { css } from "./solid-utils"
 import { range } from "./utils"
+import { AriaRadiogroup } from "./aria"
 //// import { App } from "./App"
 
 function NavIcon() {
@@ -152,9 +153,6 @@ function App2() {
 }
 
 function App5() {
-	const [value, setValue] = createSignal(35)
-	//// const [checked, setChecked] = createSignal(false)
-
 	return <>
 		{/* @ts-expect-error */}
 		<div inert={(bottomsheetState() === "OPENING" || bottomsheetState() === "OPEN") || undefined}>
@@ -296,10 +294,27 @@ function App5() {
 				}
 			`}
 			<div class="bottomsheet-content">
-				<Slider value={value()} setValue={setValue} min={0} max={100} step={1} />
-				<Slider value={value()} setValue={setValue} min={0} max={100} step={1} />
-				<Slider value={value()} setValue={setValue} min={0} max={100} step={1} />
-				<Slider value={value()} setValue={setValue} min={0} max={100} step={1} />
+				{() => {
+					const [value1, setValue1] = createSignal(35)
+					const [value2, setValue2] = createSignal(35)
+					const [value3, setValue3] = createSignal(35)
+					const [value4, setValue4] = createSignal(35)
+
+					const [rdgValue, setRdgValue] = createSignal<"foo" | "bar" | "baz" | "qux">("foo")
+
+					return <>
+						<Slider value={value1()} setValue={setValue1} min={0} max={100} step={1} />
+						<Slider value={value2()} setValue={setValue2} min={0} max={100} step={1} />
+						<Slider value={value3()} setValue={setValue3} min={0} max={100} step={1} />
+						<Slider value={value4()} setValue={setValue4} min={0} max={100} step={1} />
+						<AriaRadiogroup class="flex-col gap-8px" value={rdgValue()} setValue={setRdgValue}>
+							<Radio value="foo">HELLO</Radio>
+							<Radio value="bar">HELLO</Radio>
+							<Radio value="baz">HELLO</Radio>
+							<Radio value="qux">HELLO</Radio>
+						</AriaRadiogroup>
+					</>
+				}}
 			</div>
 		</Bottomsheet>
 	</>

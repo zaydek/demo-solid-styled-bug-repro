@@ -1,17 +1,63 @@
+:root {
+	--radio-height: 32px;
+	--radio-label-icon-height: 16px;
+	--radio-icon-height: 10px;
+}
+
+////////////////////////////////////////
+
+.radio-container {
+	// Flexbox
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+
+	cursor: pointer;
+}
+
+////////////////////////////////////////
+
+// TODO: Add accessibility e.g. <label>
+.radio-label {
+	padding: 0 8px;
+	height: var(--radio-height);
+	border-radius: var(--full);
+	background-color: whitesmoke;
+
+	// Flexbox
+	flex-grow: 1; // Stretch main-axis
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+}
+
+////////////////////////////////////////
+
+.radio-label-icon {
+	height: var(--radio-label-icon-height);
+	aspect-ratio: 1;
+	border-radius: var(--full);
+	background-color: var(--trim-color);
+}
+
+////////////////////////////////////////
+
 // Preamble
 .radio { position: relative; }  // For pseudo
 .radio::before { content: ""; } // For pseudo
 .radio::after { content: ""; }  // For pseudo
 
-////////////////////////////////////////
-
 .radio {
-	height: var(--form-radio-height);
+	height: var(--radio-height);
 	aspect-ratio: 1;
 	border-radius: var(--full);
+
+	// CSS Grid
+	display: grid;
+	place-items: center;
 }
 
-// ::BEFORE
 .radio::before {
 	position: absolute;     // For pseudo
 	z-index: -10;           // For pseudo
@@ -21,7 +67,6 @@
 	box-shadow: var(--form-inset-box-shadow);
 }
 
-// ::AFTER
 .radio::after {
 	position: absolute;     // For pseudo
 	z-index: -10;           // For pseudo
@@ -34,15 +79,15 @@
 	background-color: transparent;
 	transform: scale(0);
 }
-.group[aria-checked=true] .radio::after {
+[aria-checked=true] .radio::after {
 	background-color: var(--trim-color);
 	transform: scale(1);
 }
 
 ////////////////////////////////////////
 
-.radio > :nth-child(1) {
-	height: 8px;
+.radio-icon {
+	height: var(--radio-icon-height);
 	aspect-ratio: 1;
 	border-radius: var(--full);
 	transition: calc(150ms * var(--motion-safe)) cubic-bezier(0, 1, 0.25, 1.15);
@@ -52,7 +97,7 @@
 	background-color: transparent;
 	transform: scale(0);
 }
-.group[aria-checked=true] .radio > :nth-child(1) {
+[aria-checked=true] .radio-icon {
 	background-color: white;
 	transform: scale(1);
 }
