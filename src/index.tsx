@@ -2,12 +2,12 @@ import "the-new-css-reset"
 import "uno.css"
 import "./scss/index.scss"
 
-import { createSignal, For, Show } from "solid-js"
+import { batch, createEffect, createSignal, For, on, onCleanup, onMount } from "solid-js"
 import { render } from "solid-js/web"
-import { Bottomsheet, bottomsheetState, ColorButton, Radio, Slider } from "./components"
-import { css } from "./solid-utils"
-import { range } from "./utils"
 import { AriaRadiogroup } from "./aria"
+import { Bottomsheet, bottomsheetState, Radio, Slider } from "./components"
+import { createRef, css, cx } from "./solid-utils"
+import { range, styleGlobalCursor, toKebabCase, unstyleGlobalCursor } from "./utils"
 //// import { App } from "./App"
 
 function NavIcon() {
@@ -338,10 +338,6 @@ function App5() {
 function App6() {
 	return <>
 		{css`
-			:root {
-				--navbar-height: 64px;
-				--sidesheet-width: 448px;
-			}
 			.navbar {
 				position: fixed;
 				z-index: 20;
@@ -351,37 +347,150 @@ function App6() {
 				box-shadow: 0 0 0 var(--box-shadow-thickness) hsl(0 0% 0% / 25%);
 			}
 			.main-content {
+				// TODO
+				//// --margin-right: calc(var(--sidesheet-width) + -1 * max(0px, var(--__sidesheet-delta-x)));
 				margin: var(--navbar-height) var(--sidesheet-width) 0 0;
 				height: calc(var(--screen) - var(--navbar-height));
+			}
+		`}
+		<nav class="navbar">
+			{/* ... */}
+		</nav>
+		<main class="main-content">
+			<For each={range(1000)}>{index => <>
+				{index === 0 ? "" : " "}
+				x
+			</>}</For>
+		</main>
+		<Sidesheet />
+	</>
+}
+
+const TRIGGER_DELTA = 0
+
+function Sidesheet() {
+	//// const [ref, setRef] = createRef()
+	const [handleRef, setHandleRef] = createRef()
+
+	const [state, setState] = createSignal<"COLLAPSED" | "NORMAL" | "EXPANDED">("NORMAL")
+	const [transitioning, setTransitioning] = createSignal(false)
+
+	const [start, setStart] = createSignal<{ x: number, y: number }>()
+	const [delta, setDelta] = createSignal<{ x: number, y: number }>()
+
+	let pointerDown = false
+	onMount(() => {
+		function handlePointerDown(e: PointerEvent) {
+			if (!handleRef()!.contains(e.target as HTMLElement)) { return }
+			// COMPAT/Safari: Click-dragging toggles "cursor: text;"
+			e.preventDefault()
+			styleGlobalCursor("grab", () => pointerDown = true)
+			batch(() => {
+				setTransitioning(false)
+				setStart({ x: e.clientX, y: e.clientY })
+				setDelta({ x: 0, y: 0 })
+			})
+		}
+		document.addEventListener("pointerdown", handlePointerDown)
+		onCleanup(() => document.removeEventListener("pointerdown", handlePointerDown))
+
+		function handlePointerMove(e: PointerEvent) {
+			if (!pointerDown) { return }
+			// COMPAT/Safari: Click-dragging toggles "cursor: text;"
+			e.preventDefault()
+			setDelta({ x: e.clientX - start()!.x, y: start()!.y - e.clientY })
+		}
+		document.addEventListener("pointermove", handlePointerMove)
+		onCleanup(() => document.removeEventListener("pointermove", handlePointerMove))
+
+		// Release condition
+		function handlePointerUp(e: PointerEvent) {
+			if (!delta()) { return }
+			batch(() => {
+				const { x } = delta()!
+				if (state() === "NORMAL") {
+					if (x < -TRIGGER_DELTA) {
+						setState("EXPANDED")
+					} else if (x > TRIGGER_DELTA) {
+						setState("COLLAPSED")
+					}
+				} else if (state() === "EXPANDED") {
+					if (x > 448) {
+						setState("COLLAPSED")
+					} else if (x > TRIGGER_DELTA) {
+						setState("NORMAL")
+					}
+				} else if (state() === "COLLAPSED") {
+					if (x < -448) {
+						setState("EXPANDED")
+					} else if (x < -TRIGGER_DELTA) {
+						setState("NORMAL")
+					}
+				}
+				setTransitioning(true)
+				setStart() // No-op
+				setDelta() // No-op
+			})
+			unstyleGlobalCursor(() => pointerDown = false)
+		}
+		document.addEventListener("pointerup", handlePointerUp)
+		onCleanup(() => document.removeEventListener("pointerup", handlePointerUp))
+
+		// Release condition
+		document.addEventListener("pointerleave", handlePointerUp)
+		onCleanup(() => document.removeEventListener("pointerleave", handlePointerUp))
+	})
+
+	createEffect(on(delta, () => {
+		if (delta()) {
+			document.body.style.setProperty("--__sidesheet-delta-x", `${delta()!.x}px`)
+			document.body.style.setProperty("--__sidesheet-delta-y", `${delta()!.y}px`)
+		} else {
+			document.body.style.setProperty("--__sidesheet-delta-x", "0px")
+			document.body.style.setProperty("--__sidesheet-delta-y", "0px")
+		}
+	}, { defer: true }))
+
+	return <>
+		{css`
+			// TODO: Document snap points
+			:root {
+				--__sidesheet-delta-x: 0px;
+				--__sidesheet-delta-y: 0px;
 			}
 			.sidesheet {
 				position: fixed;
 				z-index: 10;
-				inset: var(--navbar-height) 0 0 auto; // E.g. inset-right
-				width: var(--sidesheet-width);
+				inset: var(--navbar-height) 0 0 auto;
+				//// width: calc(var(--sidesheet-width) + -1 * min(0px, var(--__sidesheet-delta-x)));
+				//// width: calc(var(--sidesheet-width) + -1 * var(--__sidesheet-delta-x));
+				//// width: var(--sidesheet-width);
+				//// transform: translateX(
+				//// 	clamp(0px, var(--__sidesheet-delta-x),
+				//// 		var(--sidesheet-width) - var(--sidesheet-drag-indicator-container-width)));
+			}
+			.sidesheet.is-normal {
+				width: calc(var(--sidesheet-width) + -1 * var(--__sidesheet-delta-x));
+			}
+			.sidesheet.is-expanded {
+				width: calc(var(--sidesheet-width) + 320px + -1 * var(--__sidesheet-delta-x));
+				//// width: calc(var(--sidesheet-width) + -1 * min(0px, var(--__sidesheet-delta-x)));
+			}
+			.sidesheet.is-collapsed {
+				width: calc(var(--sidesheet-width) + -1 * var(--__sidesheet-delta-x));
+				transform: translateX(calc(var(--sidesheet-width) - var(--sidesheet-drag-indicator-container-width)));
+			}
+			.sidesheet.is-transitioning {
+				transition: width 500ms cubic-bezier(0, 0.7, 0.3, 1),
+					transform 500ms cubic-bezier(0, 0.7, 0.3, 1);
 			}
 		`}
-		<nav class="navbar"></nav>
-		<main class="main-content">
-			{/*  */}
-		</main>
-		{css`
-			//// * {
-			//// 	outline: 2px solid red;
-			//// 	outline-offset: -1px;
-			//// }
-
-			:root {
-				--box-shadow-thickness: 4px;
-				--hairline-thickness:   0.5px;
-				--draggable-thickness:  6px;
-				--draggable-length:     60px;
-			}
-		`}
-		<aside class="sidesheet flex-row">
-			<div class="w-($draggable-thickness_*_(2_+_1_+_2)) grid grid-center">
-				{/* Use -mt-$navbar-height so the drag indicator is centered on the y-axis */}
-				<div class="-mt-$navbar-height h-$draggable-length w-$draggable-thickness rounded-$full [background-color]-hsl(0_0%_0%_/_25%)"></div>
+		<aside class={cx(`sidesheet is-${toKebabCase(state())} ${transitioning() ? "is-transitioning" : ""} flex-row`)} onTransitionEnd={e => {
+			setTransitioning(false)
+		}}>
+			{/* TODO: [&:hover]:[background-color]-whitesmoke breaks */}
+			<div ref={setHandleRef} class="w-$sidesheet-drag-indicator-container-width grid grid-center [cursor]-grab [&:hover]:[background-color]-whitesmoke">
+				<div class="drag-indicator variant-vertical -mt-$navbar-height"></div>
 			</div>
 			<div class="flex-grow flex-col [background-color]-white [box-shadow]-0_0_0_$box-shadow-thickness_hsl(0_0%_0%_/_25%)">
 				<section class="flex-shrink-0">
@@ -410,4 +519,40 @@ function App6() {
 	</>
 }
 
-render(() => <App6 />, document.getElementById("root")!)
+render(() => <>
+	{css`
+		////////////////////////////////////
+
+		:root {
+			--navbar-height: 64px;
+
+			// Describes the container containing .drag-indicator
+			--sidesheet-drag-indicator-container-width: 30px;
+			--sidesheet-width: calc(448px + var(--sidesheet-drag-indicator-container-width));
+
+			--box-shadow-thickness:     4px;
+			--hairline-thickness:       0.5px;
+			--drag-indicator-thickness: 6px;
+			--drag-indicator-length:    60px;
+		}
+
+		////////////////////////////////////
+
+		.drag-indicator {
+			// Defer "height" and "width" to variants
+			border-radius: var(--full);
+			background-color: hsl(0 0% 0% / 25%);
+		}
+		.drag-indicator.variant-horizontal {
+			height: var(--drag-indicator-thickness);
+			width: var(--drag-indicator-length);
+		}
+		.drag-indicator.variant-vertical {
+			height: var(--drag-indicator-length); // Reverse order
+			width: var(--drag-indicator-thickness);
+		}
+
+		////////////////////////////////////
+	`}
+	<App6 />
+</>, document.getElementById("root")!)
