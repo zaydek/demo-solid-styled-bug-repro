@@ -11,10 +11,10 @@ export function Slider(props: VoidProps<{
 	step:     number
 }>) {
 	return <>
-		<AriaHorizontalSlider {...props} class="Slider focus-ring focus-ring-$full">
+		<AriaHorizontalSlider {...props} class="slider focus-ring focus-ring-$full">
 			{({ float, translateX }) => <>
-				<AriaSliderTrack class="SliderTrack" style={{ "--slider-track-percentage": `${float() * 100}%` }}>
-					<AriaSliderThumb class="SliderThumb focus-ring focus-ring-$full" style={{ "transform": translateX() ? `translateX(${translateX()}px)` : undefined }} />
+				<AriaSliderTrack class="slider-track" style={{ "--slider-track-percentage": `${float() * 100}%` }}>
+					<AriaSliderThumb class="slider-thumb focus-ring focus-ring-$full" style={{ "transform": translateX() ? `translateX(${translateX()}px)` : undefined }} />
 				</AriaSliderTrack>
 			</>}
 		</AriaHorizontalSlider>

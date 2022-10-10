@@ -162,6 +162,9 @@ function App5() {
 				:root {
 					--search-bar-height: 64px;
 				}
+
+				////////////////////////////////
+
 				.search-bar {
 					position: fixed;
 					z-index: 10;
@@ -171,42 +174,59 @@ function App5() {
 					height: var(--search-bar-height);
 					background-color: white;
 					box-shadow: 0 4px 0 0 hsl(0 0% 0% / 25%);
+
+					// Flexbox
+					display: flex;
+					flex-direction: row;
+					align-items: center; // Center y-axis
 				}
-				.search-icon {
+
+				////////////////////////////////
+
+				.search-bar-icon {
 					height: 32px;
 					aspect-ratio: 1;
 					border-radius: var(--full);
 					background-color: gray;
 				}
-				.search-text-container {
+
+				////////////////////////////////
+
+				.search-bar-text-container {
 					padding: 0 16px;
 
 					// Flexbox
 					flex-grow: 1;
 				}
-				.search-text {
+
+				////////////////////////////////
+
+				.search-bar-text {
 					height: 6px;
 					aspect-ratio: 16;
 					border-radius: var(--full);
 					background-color: gray;
 				}
 			`}
-			<div class="search-bar flex-row flex-align-center">
-				<div class="search-icon"></div>
-				<div class="search-text-container">
-					<div class="search-text"></div>
+			<div class="search-bar">
+				<div class="search-bar-icon"></div>
+				<div class="search-bar-text-container">
+					<div class="search-bar-text"></div>
 				</div>
-				<div class="search-icon"></div>
+				<div class="search-bar-icon"></div>
 			</div>
 			{css`
 				:root {
-					--grid-icon-height: 64px;
+					--results-grid-icon-height: 64px;
 				}
-				@media (min-width:  512px) { :root { --grid-icon-height: 64px; } }
-				@media (min-width:  768px) { :root { --grid-icon-height: 68px; } }
-				@media (min-width: 1024px) { :root { --grid-icon-height: 72px; } }
-				//// @media (min-width: 1280px) { :root { --grid-icon-height: 76px; } }
-				//// @media (min-width: 1536px) { :root { --grid-icon-height: 80px; } }
+				@media (min-width:  512px) { :root { --results-grid-icon-height: 64px; } }
+				@media (min-width:  768px) { :root { --results-grid-icon-height: 68px; } }
+				@media (min-width: 1024px) { :root { --results-grid-icon-height: 72px; } }
+				//// @media (min-width: 1280px) { :root { --results-grid-icon-height: 76px; } }
+				//// @media (min-width: 1536px) { :root { --results-grid-icon-height: 80px; } }
+
+				////////////////////////////////
+
 				.results-grid {
 					margin-top: var(--search-bar-height);
 					margin-bottom: var(--bottomsheet-tab-height);
@@ -216,31 +236,39 @@ function App5() {
 
 					// CSS Grid
 					display: grid;
-					grid-template-columns: repeat(auto-fill, minmax(var(--grid-icon-height), 1fr));
-					grid-auto-rows: var(--grid-icon-height);
+					grid-template-columns: repeat(auto-fill, minmax(var(--results-grid-icon-height), 1fr));
+					grid-auto-rows: var(--results-grid-icon-height);
 					justify-items: center;
-					//// gap: 8px;
 				}
-				.grid-cell {
-					height: var(--grid-icon-height);
+
+				////////////////////////////////
+
+				.results-grid-cell {
+					height: var(--results-grid-icon-height);
 					aspect-ratio: 1;
 
 					// CSS Grid
 					display: grid;
 					place-items: center;
 				}
-				.grid-icon {
+
+				////////////////////////////////
+
+				.results-grid-icon {
 					height: 32px;
 					aspect-ratio: 1;
 					border-radius: var(--full);
 					background-color: gray;
 				}
-				@media (min-width:  512px) { .grid-icon { height: calc(64px / 2); } }
-				@media (min-width:  768px) { .grid-icon { height: calc(68px / 2); } }
-				@media (min-width: 1024px) { .grid-icon { height: calc(72px / 2); } }
-				//// @media (min-width: 1280px) { .grid-icon { height: calc(76px / 2); } }
-				//// @media (min-width: 1536px) { .grid-icon { height: calc(80px / 2); } }
-				.grid-name {
+				@media (min-width:  512px) { .results-grid-icon { height: calc(64px / 2); } }
+				@media (min-width:  768px) { .results-grid-icon { height: calc(68px / 2); } }
+				@media (min-width: 1024px) { .results-grid-icon { height: calc(72px / 2); } }
+				//// @media (min-width: 1280px) { .results-grid-icon { height: calc(76px / 2); } }
+				//// @media (min-width: 1536px) { .results-grid-icon { height: calc(80px / 2); } }
+
+				////////////////////////////////
+
+				.results-grid-text {
 					height: 6px;
 					aspect-ratio: 8;
 					border-radius: var(--full);
@@ -249,9 +277,9 @@ function App5() {
 			`}
 			<div class="results-grid">
 				<For each={range(200)}>{() => <>
-					<div class="grid-cell">
-						<div class="grid-icon"></div>
-						<div class="grid-name"></div>
+					<div class="results-grid-cell">
+						<div class="results-grid-icon"></div>
+						<div class="results-grid-text"></div>
 					</div>
 				</>}</For>
 			</div>

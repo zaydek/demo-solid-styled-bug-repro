@@ -2,7 +2,7 @@ import "./Bottomsheet.scss"
 
 import { batch, createEffect, createSignal, on, onCleanup, onMount, ParentProps } from "solid-js"
 import { createRef } from "../solid-utils"
-import { unstyleGlobalCursor, styleGlobalCursor } from "../utils"
+import { styleGlobalCursor, toKebabCase, unstyleGlobalCursor } from "../utils"
 
 export const [bottomsheetState, setBottomsheetState] = createSignal<"CLOSED" | "CLOSING" | "OPENING" | "OPEN">("CLOSED")
 
@@ -93,7 +93,7 @@ export function Bottomsheet(props: ParentProps) {
 		></div>
 		<div
 			ref={setBottomsheetRef}
-			class={`bottomsheet is-${bottomsheetState().toLowerCase()}`}
+			class={`bottomsheet is-${toKebabCase(bottomsheetState())}`}
 			onTransitionEnd={e => {
 				if (bottomsheetState() === "OPENING") {
 					setBottomsheetState("OPEN")

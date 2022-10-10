@@ -1,4 +1,4 @@
-.Slider {
+.slider {
 	padding: 0 16px;
 	height: 32px;
 
@@ -13,7 +13,7 @@
 
 ////////////////////////////////////////
 
-.SliderTrack {
+.slider-track {
 	height: 6px;
 	border-radius: var(--full);
 	background-image: linear-gradient(90deg, var(--trim-color) var(--slider-track-percentage),
@@ -28,7 +28,7 @@
 
 ////////////////////////////////////////
 
-.SliderThumb {
+.slider-thumb {
 	height: 32px;
 	aspect-ratio: 1;
 	border-radius: var(--full);
