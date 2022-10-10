@@ -2,7 +2,7 @@ import "the-new-css-reset"
 import "uno.css"
 import "./scss/index.scss"
 
-import { createSignal, For } from "solid-js"
+import { createSignal, For, Show } from "solid-js"
 import { render } from "solid-js/web"
 import { Bottomsheet, bottomsheetState, ColorButton, Radio, Slider } from "./components"
 import { css } from "./solid-utils"
@@ -335,4 +335,79 @@ function App5() {
 	</>
 }
 
-render(() => <App5 />, document.getElementById("root")!)
+function App6() {
+	return <>
+		{css`
+			:root {
+				--navbar-height: 64px;
+				--sidesheet-width: 448px;
+			}
+			.navbar {
+				position: fixed;
+				z-index: 20;
+				inset: 0 0 auto 0; // E.g. inset-top
+				height: 64px;
+				background-color: white;
+				box-shadow: 0 0 0 var(--box-shadow-thickness) hsl(0 0% 0% / 25%);
+			}
+			.main-content {
+				margin: var(--navbar-height) var(--sidesheet-width) 0 0;
+				height: calc(var(--screen) - var(--navbar-height));
+			}
+			.sidesheet {
+				position: fixed;
+				z-index: 10;
+				inset: var(--navbar-height) 0 0 auto; // E.g. inset-right
+				width: var(--sidesheet-width);
+			}
+		`}
+		<nav class="navbar"></nav>
+		<main class="main-content">
+			{/*  */}
+		</main>
+		{css`
+			//// * {
+			//// 	outline: 2px solid red;
+			//// 	outline-offset: -1px;
+			//// }
+
+			:root {
+				--box-shadow-thickness: 4px;
+				--hairline-thickness:   0.5px;
+				--draggable-thickness:  6px;
+				--draggable-length:     60px;
+			}
+		`}
+		<aside class="sidesheet flex-row">
+			<div class="w-($draggable-thickness_*_(2_+_1_+_2)) grid grid-center">
+				{/* Use -mt-$navbar-height so the drag indicator is centered on the y-axis */}
+				<div class="-mt-$navbar-height h-$draggable-length w-$draggable-thickness rounded-$full [background-color]-hsl(0_0%_0%_/_25%)"></div>
+			</div>
+			<div class="flex-grow flex-col [background-color]-white [box-shadow]-0_0_0_$box-shadow-thickness_hsl(0_0%_0%_/_25%)">
+				<section class="flex-shrink-0">
+					<For each={range(2)}>{() => <>
+						<div class="p-16px">Hello, world!</div>
+						<hr class="h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)" />
+					</>}</For>
+				</section>
+				<section class="flex-grow overflow-y">
+					<For each={range(8)}>{() => <>
+						<div class="p-16px">Hello, world!</div>
+						<hr class="h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)" />
+					</>}</For>
+				</section>
+				<section class="flex-shrink-0">
+					<For each={range(2)}>{index => <>
+						<hr class={index === 0
+							? "-mt-$thickness h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)" // Collapsible
+							: "h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)"
+						} />
+						<div class="p-16px">Hello, world!</div>
+					</>}</For>
+				</section>
+			</div>
+		</aside>
+	</>
+}
+
+render(() => <App6 />, document.getElementById("root")!)

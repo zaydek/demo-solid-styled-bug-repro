@@ -57,6 +57,23 @@ const rules: Rule[] = [
 	//// 	return {}
 	//// }],
 
+	[/^\[(-)?((?:$)?[a-z]+(?:-[a-z]+)*)\]-(.+)$/, ([_, sign, key, value]) => {
+		//// if (key.startsWith("$")) {
+		//// 	const key2 = `--${key.slice(1)}`
+		//// 	return { [key2]: desugar(value, { sign }) }
+		//// } else if (
+		//// 	key.startsWith("-webkit-") ||
+		//// 	key.startsWith("-moz-")    ||
+		//// 	key.startsWith("-ms-")     ||
+		//// 	key.startsWith("-o-")      ||
+		//// 	key in cssSpec
+		//// ) {
+		//// 	return { [key]: desugar(value, { sign }) }
+		//// }
+		//// return {}
+		return { [key]: desugar(value, { sign }) }
+	}],
+
 	// TODO: Intellisense doesn’t resolve group
 	["group", { /* No-op */ }],
 	["contents", { "display": "contents" }],
@@ -134,7 +151,8 @@ const rules: Rule[] = [
 	/*
 	 * Flexbox
 	 */
-	[/^flex-grow(?:-(.+))?$/, ([_, value]) => ({ "flex-grow": desugar(value) ?? 1 })],
+	[/^flex-grow(?:-(.+))?$/,   ([_, value]) => ({ "flex-grow":   desugar(value) ?? 1 })],
+	[/^flex-shrink(?:-(.+))?$/, ([_, value]) => ({ "flex-shrink": desugar(value) ?? 1 })],
 
 	["flex-row", { "display": "flex", "flex-direction": "row" }],
 	["flex-col", { "display": "flex", "flex-direction": "column" }],
@@ -162,6 +180,20 @@ const rules: Rule[] = [
 	interpolate("gap",     ["gap"]),
 	interpolate("col-gap", ["column-gap"]),
 	interpolate("row-gap", ["row-gap"]),
+
+	/*
+	 * Overflow
+	 */
+	[/^overflow(?:-(.+))?$/,   ([_, value]) => ({ "overflow":   desugar(value) ?? "auto" })],
+	[/^overflow-x(?:-(.+))?$/, ([_, value]) => ({ "overflow-x": desugar(value) ?? "auto" })],
+	[/^overflow-y(?:-(.+))?$/, ([_, value]) => ({ "overflow-y": desugar(value) ?? "auto" })],
+
+	/*
+	 * Overscroll
+	 */
+	[/^overscroll(?:-(.+))?$/,   ([_, value]) => ({ "overscroll-behavior":   desugar(value) ?? "auto" })],
+	[/^overscroll-x(?:-(.+))?$/, ([_, value]) => ({ "overscroll-behavior-x": desugar(value) ?? "auto" })],
+	[/^overscroll-y(?:-(.+))?$/, ([_, value]) => ({ "overscroll-behavior-y": desugar(value) ?? "auto" })],
 ]
 
 ////////////////////////////////////////////////////////////////////////////////
