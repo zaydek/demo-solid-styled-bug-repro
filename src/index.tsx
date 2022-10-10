@@ -283,35 +283,50 @@ function App5() {
 			</div>
 		</div>
 		<Bottomsheet>
-			{css`
-				.bottomsheet-content {
-					padding: 16px;
-
-					// Flexbox
-					display: flex;
-					flex-direction: column;
-					gap: 16px;
-				}
-			`}
-			<div class="bottomsheet-content">
+			<div class="p-16px flex-col gap-16px">
 				{() => {
 					const [value1, setValue1] = createSignal(35)
 					const [value2, setValue2] = createSignal(35)
 					const [value3, setValue3] = createSignal(35)
 					const [value4, setValue4] = createSignal(35)
+					const [value5, setValue5] = createSignal(35)
+					const [value6, setValue6] = createSignal(35)
+					const [value7, setValue7] = createSignal(35)
+					const [value8, setValue8] = createSignal(35)
 
-					const [rdgValue, setRdgValue] = createSignal<"foo" | "bar" | "baz" | "qux">("foo")
+					const [rdgValue1, setRdgValue1] = createSignal<"foo" | "bar" | "baz">("foo")
+					const [rdgValue2, setRdgValue2] = createSignal<"foo" | "bar" | "baz">("foo")
+					const [rdgValue3, setRdgValue3] = createSignal<"foo" | "bar" | "baz">("foo")
+					const [rdgValue4, setRdgValue4] = createSignal<"foo" | "bar" | "baz">("foo")
 
 					return <>
 						<Slider value={value1()} setValue={setValue1} min={0} max={100} step={1} />
 						<Slider value={value2()} setValue={setValue2} min={0} max={100} step={1} />
 						<Slider value={value3()} setValue={setValue3} min={0} max={100} step={1} />
 						<Slider value={value4()} setValue={setValue4} min={0} max={100} step={1} />
-						<AriaRadiogroup class="flex-col gap-8px" value={rdgValue()} setValue={setRdgValue}>
+						<AriaRadiogroup class="flex-col gap-8px" value={rdgValue1()} setValue={setRdgValue1}>
 							<Radio value="foo">HELLO</Radio>
 							<Radio value="bar">HELLO</Radio>
 							<Radio value="baz">HELLO</Radio>
-							<Radio value="qux">HELLO</Radio>
+						</AriaRadiogroup>
+						<AriaRadiogroup class="flex-col gap-8px" value={rdgValue2()} setValue={setRdgValue2}>
+							<Radio value="foo">HELLO</Radio>
+							<Radio value="bar">HELLO</Radio>
+							<Radio value="baz">HELLO</Radio>
+						</AriaRadiogroup>
+						<Slider value={value5()} setValue={setValue5} min={0} max={100} step={1} />
+						<Slider value={value6()} setValue={setValue6} min={0} max={100} step={1} />
+						<Slider value={value7()} setValue={setValue7} min={0} max={100} step={1} />
+						<Slider value={value8()} setValue={setValue8} min={0} max={100} step={1} />
+						<AriaRadiogroup class="flex-col gap-8px" value={rdgValue3()} setValue={setRdgValue3}>
+							<Radio value="foo">HELLO</Radio>
+							<Radio value="bar">HELLO</Radio>
+							<Radio value="baz">HELLO</Radio>
+						</AriaRadiogroup>
+						<AriaRadiogroup class="flex-col gap-8px" value={rdgValue4()} setValue={setRdgValue4}>
+							<Radio value="foo">HELLO</Radio>
+							<Radio value="bar">HELLO</Radio>
+							<Radio value="baz">HELLO</Radio>
 						</AriaRadiogroup>
 					</>
 				}}

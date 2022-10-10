@@ -7,16 +7,18 @@ import { styleGlobalCursor, toKebabCase, unstyleGlobalCursor } from "../utils"
 export const [bottomsheetState, setBottomsheetState] = createSignal<"CLOSED" | "CLOSING" | "OPENING" | "OPEN">("CLOSED")
 
 export function Bottomsheet(props: ParentProps) {
-	const [bottomsheetRef, setBottomsheetRef] = createRef()
-	const [bottomsheetTabRef, setBottomsheetTabRef] = createRef()
+	const [ref, setRef] = createRef()
+	const [tabRef, setTabRef] = createRef()
 
 	const [origin, setOrigin] = createSignal<{ x: number, y: number }>()
 	const [offset, setOffset] = createSignal<{ x: number, y: number }>()
 
+	const [didScrollScroller, setDidScrollScroller] = createSignal(false)
+
 	let pointerDown = false
 	onMount(() => {
 		function handlePointerDown(e: PointerEvent) {
-			if (!bottomsheetTabRef()!.contains(e.target as HTMLElement)) { return }
+			if (!tabRef()!.contains(e.target as HTMLElement)) { return }
 			// COMPAT/Safari: Click-dragging toggles "cursor: text;"
 			e.preventDefault()
 			styleGlobalCursor("grab", () => pointerDown = true)
@@ -74,9 +76,9 @@ export function Bottomsheet(props: ParentProps) {
 
 	createEffect(on(offset, () => {
 		if (offset()) {
-			bottomsheetRef()!.style.setProperty("--__bottomsheet-delta", `${offset()!.y}px`)
+			ref()!.style.setProperty("--__bottomsheet-delta", `${offset()!.y}px`)
 		} else {
-			bottomsheetRef()!.style.setProperty("--__bottomsheet-delta", "0px")
+			ref()!.style.setProperty("--__bottomsheet-delta", "0px")
 		}
 	}, { defer: true }))
 
@@ -92,7 +94,7 @@ export function Bottomsheet(props: ParentProps) {
 			inert={(bottomsheetState() === "CLOSING" || bottomsheetState() === "CLOSED") || undefined}
 		></div>
 		<div
-			ref={setBottomsheetRef}
+			ref={setRef}
 			class={`bottomsheet is-${toKebabCase(bottomsheetState())}`}
 			onTransitionEnd={e => {
 				if (bottomsheetState() === "OPENING") {
@@ -102,12 +104,14 @@ export function Bottomsheet(props: ParentProps) {
 				}
 			}}
 		>
-			<div ref={setBottomsheetTabRef} class="bottomsheet-tab">
+			<div ref={setTabRef} class="bottomsheet-tab">
 				<div class="bottomsheet-tab-icon"></div>
 			</div>
-			<hr />
+			<hr style={{ opacity: didScrollScroller() ? 1 : 0 }} />
 			{/* @ts-expect-error */}
-			<div class="bottomsheet-content-scroller" inert={(bottomsheetState() === "CLOSING" || bottomsheetState() === "CLOSED") || undefined}>
+			<div class="bottomsheet-scroller" inert={(bottomsheetState() === "CLOSING" || bottomsheetState() === "CLOSED") || undefined} onScroll={e => {
+				setDidScrollScroller(e.currentTarget.scrollTop > 0)
+			}}>
 				{props.children}
 			</div>
 		</div>

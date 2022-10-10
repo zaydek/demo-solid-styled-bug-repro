@@ -10,6 +10,11 @@
 
 * { touch-action: pan-y; }
 
+* {
+	-webkit-user-select: none; // COMPAT
+	user-select: none;
+}
+
 :root {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

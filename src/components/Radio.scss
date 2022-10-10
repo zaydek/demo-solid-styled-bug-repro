@@ -1,5 +1,5 @@
 :root {
-	--radio-height: 32px;
+	--radio-height: 30px;
 	--radio-label-icon-height: 16px;
 	--radio-icon-height: 10px;
 }
@@ -38,7 +38,7 @@
 	height: var(--radio-label-icon-height);
 	aspect-ratio: 1;
 	border-radius: var(--full);
-	background-color: var(--trim-color);
+	background-color: gray;
 }
 
 ////////////////////////////////////////
