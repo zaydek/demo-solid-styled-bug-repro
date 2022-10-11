@@ -372,7 +372,7 @@ function Sidesheet() {
 	//// const [ref, setRef] = createRef()
 	const [handleRef, setHandleRef] = createRef()
 
-	const [state, setState] = createSignal<"COLLAPSED" | "NORMAL" | "EXPANDED">("NORMAL")
+	const [state, setState] = createSignal<undefined | "COLLAPSED" | "EXPANDED">()
 	const [transitioning, setTransitioning] = createSignal(false)
 
 	const [start, setStart] = createSignal<{ x: number, y: number }>()
@@ -408,7 +408,7 @@ function Sidesheet() {
 			if (!delta()) { return }
 			batch(() => {
 				const { x } = delta()!
-				if (state() === "NORMAL") {
+				if (!state()) {
 					if (x < -TRIGGER_DELTA) {
 						setState("EXPANDED")
 					} else if (x > TRIGGER_DELTA) {
@@ -418,18 +418,18 @@ function Sidesheet() {
 					if (x > 448) {
 						setState("COLLAPSED")
 					} else if (x > TRIGGER_DELTA) {
-						setState("NORMAL")
+						setState()
 					}
 				} else if (state() === "COLLAPSED") {
 					if (x < -448) {
 						setState("EXPANDED")
 					} else if (x < -TRIGGER_DELTA) {
-						setState("NORMAL")
+						setState()
 					}
 				}
 				setTransitioning(true)
-				setStart() // No-op
-				setDelta() // No-op
+				setStart()
+				setDelta()
 			})
 			unstyleGlobalCursor(() => pointerDown = false)
 		}
@@ -453,43 +453,36 @@ function Sidesheet() {
 
 	return <>
 		{css`
-			// TODO: Document snap points
 			:root {
-				--__sidesheet-delta-x: 0px;
-				--__sidesheet-delta-y: 0px;
+				--__sidesheet-delta-x:     0px;
+				--__sidesheet-delta-y:     0px;
+				--__sidesheet-width:       0px;
+				--__sidesheet_translate-x: 0px;
 			}
 			.sidesheet {
 				position: fixed;
 				z-index: 10;
 				inset: var(--navbar-height) 0 0 auto;
-				//// width: calc(var(--sidesheet-width) + -1 * min(0px, var(--__sidesheet-delta-x)));
-				//// width: calc(var(--sidesheet-width) + -1 * var(--__sidesheet-delta-x));
-				//// width: var(--sidesheet-width);
-				//// transform: translateX(
-				//// 	clamp(0px, var(--__sidesheet-delta-x),
-				//// 		var(--sidesheet-width) - var(--sidesheet-drag-indicator-container-width)));
+				width: calc(var(--sidesheet-width) + var(--__sidesheet-width) + -1 * min(var(--__sidesheet-delta-x), 0px));
+				transform: translateX(calc(var(--__sidesheet_translate-x) + max(var(--__sidesheet-delta-x), 0px)));
 			}
-			.sidesheet.is-normal {
-				width: calc(var(--sidesheet-width) + -1 * var(--__sidesheet-delta-x));
-			}
-			.sidesheet.is-expanded {
-				width: calc(var(--sidesheet-width) + 320px + -1 * var(--__sidesheet-delta-x));
-				//// width: calc(var(--sidesheet-width) + -1 * min(0px, var(--__sidesheet-delta-x)));
-			}
-			.sidesheet.is-collapsed {
-				width: calc(var(--sidesheet-width) + -1 * var(--__sidesheet-delta-x));
-				transform: translateX(calc(var(--sidesheet-width) - var(--sidesheet-drag-indicator-container-width)));
-			}
+			.sidesheet.is-expanded  { --__sidesheet-width: 320px; }
+			.sidesheet.is-collapsed { --__sidesheet_translate-x: calc(var(--sidesheet-width) - var(--sidesheet-drag-indicator-container-width)); }
 			.sidesheet.is-transitioning {
-				transition: width 500ms cubic-bezier(0, 0.7, 0.3, 1),
-					transform 500ms cubic-bezier(0, 0.7, 0.3, 1);
+				transition: width 600ms cubic-bezier(0, 1, 0.25, 1),
+					transform 600ms cubic-bezier(0, 1, 0.25, 1);
 			}
 		`}
-		<aside class={cx(`sidesheet is-${toKebabCase(state())} ${transitioning() ? "is-transitioning" : ""} flex-row`)} onTransitionEnd={e => {
-			setTransitioning(false)
-		}}>
+		<aside class={cx(`
+			sidesheet
+			${state() ? `is-${toKebabCase(state()!)}` : ""}
+			${transitioning() ? "is-transitioning" : ""}
+			flex-row
+		`)} onTransitionEnd={e => setTransitioning(false)}>
 			{/* TODO: [&:hover]:[background-color]-whitesmoke breaks */}
-			<div ref={setHandleRef} class="w-$sidesheet-drag-indicator-container-width grid grid-center [cursor]-grab [&:hover]:[background-color]-whitesmoke">
+			{/* [cursor]-grab */}
+			{/* [&:hover]:[background-color]-whitesmoke */}
+			<div ref={setHandleRef} class="w-$sidesheet-drag-indicator-container-width grid grid-center">
 				<div class="drag-indicator variant-vertical -mt-$navbar-height"></div>
 			</div>
 			<div class="flex-grow flex-col [background-color]-white [box-shadow]-0_0_0_$box-shadow-thickness_hsl(0_0%_0%_/_25%)">
@@ -519,6 +512,187 @@ function Sidesheet() {
 	</>
 }
 
+function App7() {
+	const [sidesheetRef, setSidesheetRef] = createRef()
+	const [draggableRef, setDraggableRef] = createRef()
+
+	const [state, setState] = createSignal<"closed" | "open" | "expanded">("open")
+	const [pointerDown, setPointerDown] = createSignal<undefined | true>()
+
+	const [start, setStart] = createSignal<number>()
+	const [delta, setDelta] = createSignal<number>()
+	const [trans, setTrans] = createSignal<undefined | true>()
+
+	//// onMount(() => {
+	//// 	document.addEventListener("keydown", e => {
+	//// 		if (e.key === "d") {
+	//// 			if (state() === "closed") {
+	//// 				batch(() => {
+	//// 					setState("open")
+	//// 					setTransition(true)
+	//// 				})
+	//// 			} else if (state() === "open") {
+	//// 				batch(() => {
+	//// 					setState("expanded")
+	//// 					setTransition(true)
+	//// 				})
+	//// 			} else if (state() === "expanded") {
+	//// 				batch(() => {
+	//// 					setState("closed")
+	//// 					setTransition(true)
+	//// 				})
+	//// 			}
+	//// 		}
+	//// 	})
+	//// })
+
+	onMount(() => {
+		function handlePointerDown(e: PointerEvent) {
+			if (!draggableRef()!.contains(e.target as HTMLElement)) { return }
+			batch(() => {
+				setPointerDown(true)
+				setStart(Math.round(e.clientX))
+				setTrans()
+			})
+		}
+		function handlePointerMove(e: PointerEvent) {
+			if (!pointerDown()) { return }
+			setDelta(Math.round(e.clientX - start()!))
+		}
+		function handlePointerUp(e: PointerEvent) {
+			batch(() => {
+				if (state() === "open") {
+					if (delta()! < 0) {
+						setState("expanded")
+					} else if (delta()! > 0) {
+						setState("closed")
+					}
+				} else if (state() === "expanded") {
+					if (delta()! < 0) {
+						// No-op
+					} else if (delta()! > 0) {
+						setState("open")
+					}
+				} else if (state() === "closed") {
+					if (delta()! < 0) {
+						setState("open")
+					} else if (delta()! > 0) {
+						// No-op
+					}
+				}
+				setPointerDown()
+				setStart()
+				setDelta()
+				setTrans(true)
+			})
+		}
+		document.addEventListener("pointerdown",  handlePointerDown, false)
+		document.addEventListener("pointermove",  handlePointerMove, false)
+		document.addEventListener("pointerup",    handlePointerUp,   false)
+		document.addEventListener("pointerleave", handlePointerUp,   false)
+		onCleanup(() => {
+			document.removeEventListener("pointerdown",  handlePointerDown, false)
+			document.removeEventListener("pointermove",  handlePointerMove, false)
+			document.removeEventListener("pointerup",    handlePointerUp,   false)
+			document.removeEventListener("pointerleave", handlePointerUp,   false)
+		})
+	})
+
+	createEffect(() => {
+		if (delta() === undefined) {
+			sidesheetRef()!.style.setProperty("--sidesheet-drag-offset", "0px")
+		} else {
+			sidesheetRef()!.style.setProperty("--sidesheet-drag-offset", `${delta()}px`)
+		}
+	})
+
+	return <>
+		{css`
+			:root {
+				--sidesheet-drag-width: 25px;
+
+				// Runtime values
+				--sidesheet-drag-offset: 0px;
+				--sidesheet-offset: 0px;
+			}
+			.sidesheet {
+				position: fixed;
+				inset: 0 0 0 auto;
+				width: 768px;
+				transform: translateX(calc(var(--sidesheet-offset) + var(--sidesheet-drag-offset)));
+			}
+			.sidesheet.is-closed        { --sidesheet-offset: calc(768px - var(--sidesheet-drag-width)); }
+			.sidesheet.is-open          { --sidesheet-offset: 320px; }
+			.sidesheet.is-open-expanded { --sidesheet-offset: 0px; }
+			.sidesheet.is-trans {
+				transition: transform 600ms cubic-bezier(0, 1, 0.25, 1);
+			}
+			.sidesheet-card {
+				height: 100%;
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+			}
+			//// .sidesheet-content {
+			//// 	width: calc(448px - var(--sidesheet-drag-width));
+			//// }
+			//// .sidesheet.is-expanded .sidesheet-content {
+			//// 	width: calc(768px - var(--sidesheet-drag-width));
+			//// }
+			.sidesheet:not(.is-expanded) .sidesheet-content {
+				width: calc(448px - var(--sidesheet-drag-width));
+			}
+			.sidesheet:is(.is-expanded, .is-closed) .sidesheet-content {
+				width: calc(768px - var(--sidesheet-drag-width));
+			}
+
+			//////////////////////////////////
+
+			.draggable {
+				width: var(--sidesheet-drag-width);
+
+				// CSS Grid
+				display: grid;
+				place-items: center;
+
+				cursor: grab;
+			}
+			.draggable:is(:hover, .is-pointer-down) {
+				background-color: hsl(0 0% 0% / 5%);
+			}
+			:root:has(.draggable.is-pointer-down) {
+				cursor: grab;
+			}
+			.drag-indicator {
+				height: 50px;
+				aspect-ratio: 1 / 10;
+				border-radius: var(--full);
+				background-color: hsl(0 0% 50%);
+			}
+			.draggable.is-pointer-down .drag-indicator {
+				background-color: hsl(0 0% 25%);
+			}
+		`}
+		<div
+			ref={setSidesheetRef}
+			class={cx(`sidesheet is-${state()} ${trans() ? "is-trans" : ""} flex-row`)}
+			onTransitionEnd={e => setTrans()}
+		>
+			<div ref={setDraggableRef} class={cx(`draggable ${pointerDown() ? "is-pointer-down" : ""}`)}>
+				<div class="drag-indicator"></div>
+			</div>
+			<div class="flex-grow flex-col">
+				<div class="sidesheet-card">
+					<div class="sidesheet-content">
+						<For each={range(200)}>{() => <>
+							hello world
+						</>}</For>
+					</div>
+				</div>
+			</div>
+		</div>
+	</>
+}
+
 render(() => <>
 	{css`
 		////////////////////////////////////
@@ -532,27 +706,9 @@ render(() => <>
 
 			--box-shadow-thickness:     4px;
 			--hairline-thickness:       0.5px;
-			--drag-indicator-thickness: 6px;
-			--drag-indicator-length:    60px;
+			//// --drag-indicator-thickness: 6px;
+			//// --drag-indicator-length:    60px;
 		}
-
-		////////////////////////////////////
-
-		.drag-indicator {
-			// Defer "height" and "width" to variants
-			border-radius: var(--full);
-			background-color: hsl(0 0% 0% / 25%);
-		}
-		.drag-indicator.variant-horizontal {
-			height: var(--drag-indicator-thickness);
-			width: var(--drag-indicator-length);
-		}
-		.drag-indicator.variant-vertical {
-			height: var(--drag-indicator-length); // Reverse order
-			width: var(--drag-indicator-thickness);
-		}
-
-		////////////////////////////////////
 	`}
-	<App6 />
+	<App7 />
 </>, document.getElementById("root")!)
