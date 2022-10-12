@@ -369,8 +369,8 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 	const [pointerDown, setPointerDown] = createSignal<undefined | true>()
 
 	const [offset, setOffset] = createSignal<number>()
-	const [x1, setX1] = createSignal<number>()
-	const [x2, setX2] = createSignal<number>()
+	const [point1, setPoint1] = createSignal<number>()
+	const [point2, setPoint2] = createSignal<number>()
 
 	const [transition, setTransition] = createSignal<undefined | true>()
 
@@ -379,55 +379,56 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 			setState("closed")
 			setPointerDown()
 			setOffset()
-			setX1()
-			setX2()
+			setPoint1()
+			setPoint2()
 			setTransition(true)
 		})
 	}
 
-	onMount(() => {
-		if (DEV) {
-			document.addEventListener("keydown", e => {
-				if (e.key !== "d") { return }
-				if (state() === "closed") {
-					batch(() => {
-						setState("open")
-						setTransition(true)
-					})
-				} else if (state() === "open") {
-					batch(() => {
-						setState("expanded")
-						setTransition(true)
-					})
-				} else if (state() === "expanded") {
-					batch(() => {
-						setState("closed")
-						setTransition(true)
-					})
-				}
-			})
-		}
+	if (DEV) {
+		document.addEventListener("keydown", e => {
+			if (e.key !== "d") { return }
+			if (state() === "closed") {
+				batch(() => {
+					setState("open")
+					setTransition(true)
+				})
+			} else if (state() === "open") {
+				batch(() => {
+					setState("expanded")
+					setTransition(true)
+				})
+			} else if (state() === "expanded") {
+				batch(() => {
+					setState("closed")
+					setTransition(true)
+				})
+			}
+		})
+	}
 
+	onMount(() => {
 		function handlePointerDown(e: PointerEvent) {
 			if (!(e.button === 0 || e.buttons === 1)) { return }
 			if (!(backdropRef()!.contains(e.target as HTMLElement) ||
 				draggableRef()!.contains(e.target as HTMLElement))) { return }
+			e.preventDefault() // COMPAT/Safari: Prevent cursor from changing
 			batch(() => {
 				const clientRect = draggableRef()!.getBoundingClientRect()
 				setPointerDown(true)
 				setOffset(Math.round(clientRect.right - e.clientX))
-				setX1(Math.round(e.clientX))
+				setPoint1(Math.round(e.clientX))
 				setTransition()
 			})
 		}
 		function handlePointerMove(e: PointerEvent) {
 			if (!pointerDown()) { return }
-			setX2(Math.round(e.clientX))
+			setPoint2(Math.round(e.clientX))
 		}
 		function handlePointerUp(e: PointerEvent) {
 			if (!pointerDown()) { return }
 			batch(() => {
-				const delta = (x2()! + offset()!) - (x1()! + offset()!)
+				const delta = (point2()! + offset()!) - (point1()! + offset()!)
 				if (state() === "closed") {
 					if (delta < -384) {
 						setState("expanded")
@@ -449,8 +450,8 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 				}
 				setPointerDown()
 				setOffset()
-				setX1()
-				setX2()
+				setPoint1()
+				setPoint2()
 				setTransition(true)
 			})
 		}
@@ -467,10 +468,10 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 	})
 
 	createEffect(() => {
-		if (guard(offset, x1, x2)) {
+		if (guard(offset, point1, point2)) {
 			ref()!.style.setProperty("--sidesheet-drag-translate-x", "0px")
 		} else {
-			const delta = (x2()! + offset()!) - (x1()! + offset()!)
+			const delta = (point2()! + offset()!) - (point1()! + offset()!)
 			ref()!.style.setProperty("--sidesheet-drag-translate-x", `${delta}px`)
 		}
 	})
@@ -561,7 +562,7 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 			class="sidesheet-backdrop"
 			onClick={forceClose}
 			// @ts-expect-error
-			inert={state() === "closed" || undefined}
+			inert={!(state() === "expanded") || undefined}
 		></div>
 		<div
 			ref={setRef}
@@ -592,8 +593,8 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 	const [pointerDown, setPointerDown] = createSignal<undefined | true>()
 
 	const [offset, setOffset] = createSignal<number>()
-	const [x1, setX1] = createSignal<number>()
-	const [x2, setX2] = createSignal<number>()
+	const [point1, setPoint1] = createSignal<number>()
+	const [point2, setPoint2] = createSignal<number>()
 
 	const [transition, setTransition] = createSignal<undefined | true>()
 
@@ -602,50 +603,51 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 			setState("closed")
 			setPointerDown()
 			setOffset()
-			setX1()
-			setX2()
+			setPoint1()
+			setPoint2()
 			setTransition(true)
 		})
 	}
 
-	onMount(() => {
-		if (DEV) {
-			document.addEventListener("keydown", e => {
-				if (e.key !== "d") { return }
-				if (state() === "closed") {
-					batch(() => {
-						setState("open")
-						setTransition(true)
-					})
-				} else if (state() === "open") {
-					batch(() => {
-						setState("closed")
-						setTransition(true)
-					})
-				}
-			})
-		}
+	if (DEV) {
+		document.addEventListener("keydown", e => {
+			if (e.key !== "d") { return }
+			if (state() === "closed") {
+				batch(() => {
+					setState("open")
+					setTransition(true)
+				})
+			} else if (state() === "open") {
+				batch(() => {
+					setState("closed")
+					setTransition(true)
+				})
+			}
+		})
+	}
 
+	onMount(() => {
 		function handlePointerDown(e: PointerEvent) {
 			if (!(e.button === 0 || e.buttons === 1)) { return }
 			if (!(backdropRef()!.contains(e.target as HTMLElement) ||
 				draggableRef()!.contains(e.target as HTMLElement))) { return }
+			e.preventDefault() // COMPAT/Safari: Prevent cursor from changing
 			batch(() => {
 				const clientRect = draggableRef()!.getBoundingClientRect()
 				setPointerDown(true)
 				setOffset(Math.round(clientRect.top - e.clientY))
-				setX1(Math.round(e.clientY))
+				setPoint1(Math.round(e.clientY))
 				setTransition()
 			})
 		}
 		function handlePointerMove(e: PointerEvent) {
 			if (!pointerDown()) { return }
-			setX2(Math.round(e.clientY))
+			setPoint2(Math.round(e.clientY))
 		}
 		function handlePointerUp(e: PointerEvent) {
 			if (!pointerDown()) { return }
 			batch(() => {
-				const delta = (x2()! + offset()!) - (x1()! + offset()!)
+				const delta = (point2()! + offset()!) - (point1()! + offset()!)
 				if (state() === "closed") {
 					if (delta < 0) {
 						setState("open")
@@ -657,8 +659,8 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 				}
 				setPointerDown()
 				setOffset()
-				setX1()
-				setX2()
+				setPoint1()
+				setPoint2()
 				setTransition(true)
 			})
 		}
@@ -675,10 +677,10 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 	})
 
 	createEffect(() => {
-		if (guard(offset, x1, x2)) {
+		if (guard(offset, point1, point2)) {
 			ref()!.style.setProperty("--bottomsheet-drag-translate-y", "0px")
 		} else {
-			const delta = (x2()! + offset()!) - (x1()! + offset()!)
+			const delta = (point2()! + offset()!) - (point1()! + offset()!)
 			ref()!.style.setProperty("--bottomsheet-drag-translate-y", `${delta}px`)
 		}
 	})
@@ -774,7 +776,7 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 			class="bottomsheet-backdrop"
 			onClick={forceClose}
 			// @ts-expect-error
-			inert={state() === "closed" || undefined}
+			inert={!(state() === "open") || undefined}
 		></div>
 		<div
 			ref={setRef}

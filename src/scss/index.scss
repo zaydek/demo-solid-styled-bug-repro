@@ -3,111 +3,28 @@
 @use "theme" as *;
 @use "utils/define-theme" as *;
 
-//// @mixin ios {
-//// 	@media (hover: none) {
-//// 		@content;
-//// 	}
-//// }
-
-// Fix the document; this prevents iOS
-// from resizing the toolbar and
-// breaking bottomsheet pointer events
+// E.g. iOS/Safari
 @media (hover: none) {
 	body {
+		// Prevent Safari from scaling text
 		-webkit-text-size-adjust: 100%; // COMPAT/Safari
+		// Fix the document; prevents the
+		// toolbar from resizing
 		position: fixed;
 		inset: 0; // COMPAT/the-new-css-reset
 		overflow: hidden;
+		// Prevent user from zooming
+		touch-action: pan-y;
 	}
-}
-
-// TODO
-* { touch-action: pan-y; }
-
-// TODO
-* {
-	-webkit-user-select: none; // COMPAT
-	user-select: none;
 }
 
 :root {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
-	//// // TODO: DEPRECATE
-	//// --inset:
-	//// 	env(safe-area-inset-top)
-	//// 	env(safe-area-inset-right)
-	//// 	env(safe-area-inset-bottom)
-	//// 	env(safe-area-inset-left);
-	//// --inset-x:
-	//// 	auto
-	//// 	env(safe-area-inset-right)
-	//// 	env(safe-area-inset-bottom)
-	//// 	auto;
-	//// --inset-y:
-	//// 	env(safe-area-inset-top)
-	//// 	auto
-	//// 	env(safe-area-inset-bottom)
-	//// 	auto;
-	//// --inset-t:
-	//// 	env(safe-area-inset-top)
-	//// 	env(safe-area-inset-right)
-	//// 	auto
-	//// 	env(safe-area-inset-left);
-	//// --inset-r:
-	//// 	env(safe-area-inset-top)
-	//// 	env(safe-area-inset-right)
-	//// 	env(safe-area-inset-bottom)
-	//// 	auto;
-	//// --inset-b:
-	//// 	auto
-	//// 	env(safe-area-inset-right)
-	//// 	env(safe-area-inset-bottom)
-	//// 	env(safe-area-inset-left);
-	//// --inset-l:
-	//// 	env(safe-area-inset-top)
-	//// 	auto
-	//// 	env(safe-area-inset-bottom)
-	//// 	env(safe-area-inset-left);
-	////
-	//// --inset:
-	//// 	env(safe-area-inset-top)
-	//// 	env(safe-area-inset-right)
-	//// 	env(safe-area-inset-bottom)
-	//// 	env(safe-area-inset-left);
-	//// --inset-x:
-	//// 	auto
-	//// 	env(safe-area-inset-right)
-	//// 	env(safe-area-inset-bottom)
-	//// 	auto;
-	//// --inset-y:
-	//// 	env(safe-area-inset-top)
-	//// 	auto
-	//// 	env(safe-area-inset-bottom)
-	//// 	auto;
-	//// --inset-top:
-	//// 	env(safe-area-inset-top)
-	//// 	env(safe-area-inset-right)
-	//// 	auto
-	//// 	env(safe-area-inset-left);
-	//// --inset-right:
-	//// 	env(safe-area-inset-top)
-	//// 	env(safe-area-inset-right)
-	//// 	env(safe-area-inset-bottom)
-	//// 	auto;
-	//// --inset-bottom:
-	//// 	auto
-	//// 	env(safe-area-inset-right)
-	//// 	env(safe-area-inset-bottom)
-	//// 	env(safe-area-inset-left);
-	//// --inset-left:
-	//// 	env(safe-area-inset-top)
-	//// 	auto
-	//// 	env(safe-area-inset-bottom)
-	//// 	env(safe-area-inset-left);
-
 	--full:   1000px;
+
+	// TODO: DEPRECATE?
 	--screen: 100vh;
 	@supports (height: 100dvh) { --screen: 100dvh; }
 
