@@ -3,13 +3,28 @@
 @use "theme" as *;
 @use "utils/define-theme" as *;
 
+//// @mixin ios {
+//// 	@media (hover: none) {
+//// 		@content;
+//// 	}
+//// }
+
 // Fix the document; this prevents iOS
 // from resizing the toolbar and
 // breaking bottomsheet pointer events
-:root { position: fixed; inset: 0; overflow: hidden; }
+@media (hover: none) {
+	body {
+		-webkit-text-size-adjust: 100%; // COMPAT/Safari
+		position: fixed;
+		inset: 0; // COMPAT/the-new-css-reset
+		overflow: hidden;
+	}
+}
 
+// TODO
 * { touch-action: pan-y; }
 
+// TODO
 * {
 	-webkit-user-select: none; // COMPAT
 	user-select: none;
