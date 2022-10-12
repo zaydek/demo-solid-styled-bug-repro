@@ -4,10 +4,8 @@ import "./scss/index.scss"
 
 import { batch, createEffect, createSignal, DEV, For, onCleanup, onMount, ParentProps, Show } from "solid-js"
 import { render } from "solid-js/web"
-//// import { Bottomsheet, bottomsheetState, Radio, Slider } from "./components"
 import { createRef, css, cx } from "./solid-utils"
 import { guard, range } from "./utils"
-//// import { App } from "./App"
 
 function NavIcon() {
 	return <>
@@ -492,9 +490,10 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 
 			//////////////////////////////////
 
+			:root {
+				--sidesheet-draggable-width: 32px;
+			}
 			.sidesheet {
-				--sidesheet-drag-width: 32px;
-
 				// Runtime values
 				--sidesheet-translate-x: 0px;
 				--sidesheet-drag-translate-x: 0px;
@@ -502,7 +501,7 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 				position: fixed;
 				z-index: 100;
 				inset: 0 0 0 auto;
-				width: calc(768px + var(--sidesheet-drag-width));
+				width: calc(768px + var(--sidesheet-draggable-width));
 				transform: translateX(calc(var(--sidesheet-translate-x) + var(--sidesheet-drag-translate-x)));
 			}
 			.sidesheet.is-closed   { --sidesheet-translate-x: 768px; }
@@ -530,7 +529,7 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 			//////////////////////////////////
 
 			.sidesheet-draggable {
-				width: var(--sidesheet-drag-width);
+				width: var(--sidesheet-draggable-width);
 
 				// CSS Grid
 				display: grid;
@@ -700,9 +699,10 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 
 			//////////////////////////////////
 
-			.bottomsheet {
+			:root {
 				--bottomsheet-draggable-height: 40px;
-
+			}
+			.bottomsheet {
 				// Runtime values
 				--bottomsheet-screen-y: var(--screen-y);
 				--bottomsheet-translate-y: 0px;
@@ -846,7 +846,7 @@ function Entrypoint() {
 			// Non-iOS
 			@media (hover: hover) {
 				:root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
-					padding-right: calc(384px + var(--sidesheet-drag-width));
+					padding-right: calc(384px + var(--sidesheet-draggable-width));
 				}
 			}
 		`}

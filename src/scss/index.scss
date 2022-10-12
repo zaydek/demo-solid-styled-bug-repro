@@ -5,35 +5,36 @@
 
 // E.g. iOS/Safari
 @media (hover: none) {
-	body {
-		// Prevent Safari from scaling text
-		-webkit-text-size-adjust: 100%; // COMPAT/Safari
-		// Fix the document; prevents the
-		// toolbar from resizing
-		position: fixed;
-		inset: 0; // COMPAT/the-new-css-reset
-		overflow: hidden;
-		// Prevent user from zooming
-		touch-action: pan-y;
-	}
+
+body {
+	//// // iOS scrollbars
+	//// //
+	//// // https://bugs.webkit.org/show_bug.cgi?id=206771
+	//// color-scheme: light dark;
+	// Prevent Safari from scaling text
+	-webkit-text-size-adjust: 100%; // COMPAT/Safari
+	// Fix the document; prevents the
+	// toolbar from resizing
+	position: fixed;
+	inset: 0; // COMPAT/the-new-css-reset
+	overflow: hidden;
+}
+* {
+	// Prevent user from zooming
+	touch-action: pan-y;
+}
+
 }
 
 :root {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
-	--full:   1000px;
-
-	// TODO: DEPRECATE?
-	--screen: 100vh;
-	@supports (height: 100dvh) { --screen: 100dvh; }
-
+	--full: 1000px;
+	//// --screen-x: 100vw;
+	//// --screen-y: 100vh;
 	--padding: 16px;
-	--gap:     8px;
-
-	//// --sidebar-width:     448px;
-	//// --search-bar-height: 64px;
-	//// --main-grid-height:  96px;
+	--gap: 8px;
 
 	// TODO
 	--form-height:       32px;
