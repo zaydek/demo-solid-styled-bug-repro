@@ -2,11 +2,11 @@ import "the-new-css-reset"
 import "uno.css"
 import "./scss/index.scss"
 
-import { batch, createEffect, createSignal, DEV, For, Match, on, onCleanup, onMount, ParentProps, Show, Switch } from "solid-js"
+import { batch, createEffect, createSignal, DEV, For, onCleanup, onMount, ParentProps, Show } from "solid-js"
 import { render } from "solid-js/web"
 //// import { Bottomsheet, bottomsheetState, Radio, Slider } from "./components"
 import { createRef, css, cx } from "./solid-utils"
-import { guard, range, styleGlobalCursor, toKebabCase, unstyleGlobalCursor } from "./utils"
+import { guard, range } from "./utils"
 //// import { App } from "./App"
 
 function NavIcon() {
@@ -334,186 +334,34 @@ function App2() {
 //// 	</>
 //// }
 
-function App6() {
-	return <>
-		{css`
-			.navbar {
-				position: fixed;
-				z-index: 20;
-				inset: 0 0 auto 0; // E.g. inset-top
-				height: 64px;
-				background-color: white;
-				box-shadow: 0 0 0 var(--box-shadow-thickness) hsl(0 0% 0% / 25%);
-			}
-			.main-content {
-				// TODO
-				//// --margin-right: calc(var(--sidesheet-width) + -1 * max(0px, var(--__sidesheet-delta-x)));
-				margin: var(--navbar-height) var(--sidesheet-width) 0 0;
-				height: calc(var(--screen) - var(--navbar-height));
-			}
-		`}
-		<nav class="navbar">
-			{/* ... */}
-		</nav>
-		<main class="main-content">
-			<For each={range(1000)}>{index => <>
-				{index === 0 ? "" : " "}
-				x
-			</>}</For>
-		</main>
-		<Sidesheet />
-	</>
-}
-
-const TRIGGER_DELTA = 0
-
-function Sidesheet0() {
-	//// const [ref, setRef] = createRef()
-	const [handleRef, setHandleRef] = createRef()
-
-	const [state, setState] = createSignal<undefined | "COLLAPSED" | "EXPANDED">()
-	const [transitioning, setTransitioning] = createSignal(false)
-
-	const [start, setStart] = createSignal<{ x: number, y: number }>()
-	const [delta, setDelta] = createSignal<{ x: number, y: number }>()
-
-	let pointerDown = false
-	onMount(() => {
-		function handlePointerDown(e: PointerEvent) {
-			if (!handleRef()!.contains(e.target as HTMLElement)) { return }
-			// COMPAT/Safari: Click-dragging toggles "cursor: text;"
-			e.preventDefault()
-			styleGlobalCursor("grab", () => pointerDown = true)
-			batch(() => {
-				setTransitioning(false)
-				setStart({ x: e.clientX, y: e.clientY })
-				setDelta({ x: 0, y: 0 })
-			})
-		}
-		document.addEventListener("pointerdown", handlePointerDown)
-		onCleanup(() => document.removeEventListener("pointerdown", handlePointerDown))
-
-		function handlePointerMove(e: PointerEvent) {
-			if (!pointerDown) { return }
-			// COMPAT/Safari: Click-dragging toggles "cursor: text;"
-			e.preventDefault()
-			setDelta({ x: e.clientX - start()!.x, y: start()!.y - e.clientY })
-		}
-		document.addEventListener("pointermove", handlePointerMove)
-		onCleanup(() => document.removeEventListener("pointermove", handlePointerMove))
-
-		// Release condition
-		function handlePointerUp(e: PointerEvent) {
-			if (!delta()) { return }
-			batch(() => {
-				const { x } = delta()!
-				if (!state()) {
-					if (x < -TRIGGER_DELTA) {
-						setState("EXPANDED")
-					} else if (x > TRIGGER_DELTA) {
-						setState("COLLAPSED")
-					}
-				} else if (state() === "EXPANDED") {
-					if (x > 448) {
-						setState("COLLAPSED")
-					} else if (x > TRIGGER_DELTA) {
-						setState()
-					}
-				} else if (state() === "COLLAPSED") {
-					if (x < -448) {
-						setState("EXPANDED")
-					} else if (x < -TRIGGER_DELTA) {
-						setState()
-					}
-				}
-				setTransitioning(true)
-				setStart()
-				setDelta()
-			})
-			unstyleGlobalCursor(() => pointerDown = false)
-		}
-		document.addEventListener("pointerup", handlePointerUp)
-		onCleanup(() => document.removeEventListener("pointerup", handlePointerUp))
-
-		// Release condition
-		document.addEventListener("pointerleave", handlePointerUp)
-		onCleanup(() => document.removeEventListener("pointerleave", handlePointerUp))
-	})
-
-	createEffect(on(delta, () => {
-		if (delta()) {
-			document.body.style.setProperty("--__sidesheet-delta-x", `${delta()!.x}px`)
-			document.body.style.setProperty("--__sidesheet-delta-y", `${delta()!.y}px`)
-		} else {
-			document.body.style.setProperty("--__sidesheet-delta-x", "0px")
-			document.body.style.setProperty("--__sidesheet-delta-y", "0px")
-		}
-	}, { defer: true }))
-
-	return <>
-		{css`
-			:root {
-				--__sidesheet-delta-x:     0px;
-				--__sidesheet-delta-y:     0px;
-				--__sidesheet-width:       0px;
-				--__sidesheet_translate-x: 0px;
-			}
-			.sidesheet {
-				position: fixed;
-				z-index: 10;
-				inset: var(--navbar-height) 0 0 auto;
-				width: calc(var(--sidesheet-width) + var(--__sidesheet-width) + -1 * min(var(--__sidesheet-delta-x), 0px));
-				transform: translateX(calc(var(--__sidesheet_translate-x) + max(var(--__sidesheet-delta-x), 0px)));
-			}
-			.sidesheet.is-expanded  { --__sidesheet-width: 320px; }
-			.sidesheet.is-collapsed { --__sidesheet_translate-x: calc(var(--sidesheet-width) - var(--sidesheet-drag-indicator-container-width)); }
-			.sidesheet.is-transitioning {
-				transition: width 600ms cubic-bezier(0, 1, 0.25, 1),
-					transform 600ms cubic-bezier(0, 1, 0.25, 1);
-			}
-		`}
-		<aside class={cx(`
-			sidesheet
-			${state() ? `is-${toKebabCase(state()!)}` : ""}
-			${transitioning() ? "is-transitioning" : ""}
-			flex-row
-		`)} onTransitionEnd={e => setTransitioning(false)}>
-			{/* TODO: [&:hover]:[background-color]-whitesmoke breaks */}
-			{/* [cursor]-grab */}
-			{/* [&:hover]:[background-color]-whitesmoke */}
-			<div ref={setHandleRef} class="w-$sidesheet-drag-indicator-container-width grid grid-center">
-				<div class="drag-indicator variant-vertical -mt-$navbar-height"></div>
-			</div>
-			<div class="flex-grow flex-col [background-color]-white [box-shadow]-0_0_0_$box-shadow-thickness_hsl(0_0%_0%_/_25%)">
-				<section class="flex-shrink-0">
-					<For each={range(2)}>{() => <>
-						<div class="p-16px">Hello, world!</div>
-						<hr class="h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)" />
-					</>}</For>
-				</section>
-				<section class="flex-grow overflow-y">
-					<For each={range(8)}>{() => <>
-						<div class="p-16px">Hello, world!</div>
-						<hr class="h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)" />
-					</>}</For>
-				</section>
-				<section class="flex-shrink-0">
-					<For each={range(2)}>{index => <>
-						<hr class={index === 0
-							? "-mt-$thickness h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)" // Collapsible
-							: "h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)"
-						} />
-						<div class="p-16px">Hello, world!</div>
-					</>}</For>
-				</section>
-			</div>
-		</aside>
-	</>
-}
+//// <div class="flex-grow flex-col [background-color]-white [box-shadow]-0_0_0_$box-shadow-thickness_hsl(0_0%_0%_/_25%)">
+//// 	<section class="flex-shrink-0">
+//// 		<For each={range(2)}>{() => <>
+//// 			<div class="p-16px">Hello, world!</div>
+//// 			<hr class="h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)" />
+//// 		</>}</For>
+//// 	</section>
+//// 	<section class="flex-grow overflow-y">
+//// 		<For each={range(8)}>{() => <>
+//// 			<div class="p-16px">Hello, world!</div>
+//// 			<hr class="h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)" />
+//// 		</>}</For>
+//// 	</section>
+//// 	<section class="flex-shrink-0">
+//// 		<For each={range(2)}>{index => <>
+//// 			<hr class={index === 0
+//// 				? "-mt-$thickness h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)" // Collapsible
+//// 				: "h-$hairline-thickness [background-color]-hsl(0_0%_0%_/_25%)"
+//// 			} />
+//// 			<div class="p-16px">Hello, world!</div>
+//// 		</>}</For>
+//// 	</section>
+//// </div>
 
 type SidesheetState = "closed" | "open" | "expanded"
 
 function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
+	const [backdropRef, setBackdropRef] = createRef()
 	const [ref, setRef] = createRef()
 	const [draggableRef, setDraggableRef] = createRef()
 
@@ -526,10 +374,21 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 
 	const [transition, setTransition] = createSignal<undefined | true>()
 
+	function forceClose() {
+		batch(() => {
+			setState("closed")
+			setPointerDown()
+			setOffset()
+			setX1()
+			setX2()
+			setTransition(true)
+		})
+	}
+
 	onMount(() => {
 		if (DEV) {
 			document.addEventListener("keydown", e => {
-				if (e.key !== "2") { return }
+				if (e.key !== "d") { return }
 				if (state() === "closed") {
 					batch(() => {
 						setState("open")
@@ -551,7 +410,8 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 
 		function handlePointerDown(e: PointerEvent) {
 			if (!(e.button === 0 || e.buttons === 1)) { return }
-			if (!draggableRef()!.contains(e.target as HTMLElement)) { return }
+			if (!(backdropRef()!.contains(e.target as HTMLElement) ||
+				draggableRef()!.contains(e.target as HTMLElement))) { return }
 			batch(() => {
 				const clientRect = draggableRef()!.getBoundingClientRect()
 				setPointerDown(true)
@@ -617,17 +477,27 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 
 	return <>
 		{css`
-			:root {
-				--sidesheet-drag-width: 32px;
-
-				// Runtime values
-				--sidesheet-translate-x: 0px;
-				--sidesheet-drag-translate-x: 0px;
+			.sidesheet-backdrop {
+				position: fixed;
+				z-index: 90;
+				inset: 0;
+			}
+			.sidesheet-backdrop:has(+ .sidesheet.is-closed)   { background-color: transparent; }
+			.sidesheet-backdrop:has(+ .sidesheet.is-open)     { background-color: transparent; }
+			.sidesheet-backdrop:has(+ .sidesheet.is-expanded) { background-color: hsl(0 0% 0% / 25%); }
+			.sidesheet-backdrop:has(+ .sidesheet.is-transition) {
+				transition: background-color 600ms cubic-bezier(0, 1, 0.25, 1);
 			}
 
 			//////////////////////////////////
 
 			.sidesheet {
+				--sidesheet-drag-width: 32px;
+
+				// Runtime values
+				--sidesheet-translate-x: 0px;
+				--sidesheet-drag-translate-x: 0px;
+
 				position: fixed;
 				z-index: 100;
 				inset: 0 0 0 auto;
@@ -687,6 +557,13 @@ function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 			}
 		`}
 		<div
+			ref={setBackdropRef}
+			class="sidesheet-backdrop"
+			onClick={forceClose}
+			// @ts-expect-error
+			inert={state() === "closed" || undefined}
+		></div>
+		<div
 			ref={setRef}
 			class={cx(`sidesheet is-${state()} ${transition() ? "is-transition" : ""} flex-row`)}
 			onTransitionEnd={e => setTransition()}
@@ -720,7 +597,7 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 
 	const [transition, setTransition] = createSignal<undefined | true>()
 
-	function close() {
+	function forceClose() {
 		batch(() => {
 			setState("closed")
 			setPointerDown()
@@ -734,7 +611,7 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 	onMount(() => {
 		if (DEV) {
 			document.addEventListener("keydown", e => {
-				if (e.key !== "1") { return }
+				if (e.key !== "d") { return }
 				if (state() === "closed") {
 					batch(() => {
 						setState("open")
@@ -751,7 +628,8 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 
 		function handlePointerDown(e: PointerEvent) {
 			if (!(e.button === 0 || e.buttons === 1)) { return }
-			if (!(backdropRef()!.contains(e.target as HTMLElement) || draggableRef()!.contains(e.target as HTMLElement))) { return }
+			if (!(backdropRef()!.contains(e.target as HTMLElement) ||
+				draggableRef()!.contains(e.target as HTMLElement))) { return }
 			batch(() => {
 				const clientRect = draggableRef()!.getBoundingClientRect()
 				setPointerDown(true)
@@ -807,17 +685,6 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 
 	return <>
 		{css`
-			:root {
-				--bottomsheet-draggable-height: 40px;
-
-				// Runtime values
-				--bottomsheet-screen-y: var(--screen-y);
-				--bottomsheet-translate-y: 0px;
-				--bottomsheet-drag-translate-y: 0px;
-			}
-
-			//////////////////////////////////
-
 			.bottomsheet-backdrop {
 				position: fixed;
 				z-index: 90;
@@ -832,6 +699,13 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 			//////////////////////////////////
 
 			.bottomsheet {
+				--bottomsheet-draggable-height: 40px;
+
+				// Runtime values
+				--bottomsheet-screen-y: var(--screen-y);
+				--bottomsheet-translate-y: 0px;
+				--bottomsheet-drag-translate-y: 0px;
+
 				position: fixed;
 				z-index: 100;
 				inset: 0 0 auto 0;
@@ -898,7 +772,7 @@ function Bottomsheet2(props: ParentProps<{ initialState: BottomsheetState }>) {
 		<div
 			ref={setBackdropRef}
 			class="bottomsheet-backdrop"
-			onClick={close}
+			onClick={forceClose}
 			// @ts-expect-error
 			inert={state() === "closed" || undefined}
 		></div>
