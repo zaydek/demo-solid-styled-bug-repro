@@ -1,64 +1,34 @@
-import { createMemo, JSX, onCleanup } from "solid-js"
-import { decomment } from "../utils"
+import { createMemo, onCleanup } from "solid-js"
+import { decomment } from "../utils/format"
 
-export function cx(...args: any[]): undefined | string {
-	const str = args
-		.flat()
-		.filter(Boolean)
-		.join(" ")
-		.trim()
-		.replaceAll(/\s+/g, " ")
-	if (!str) {return undefined }
-	return str
-}
+export type CSS = ([raw]: TemplateStringsArray) => null
 
-// TODO: Is there a better way to type the for-loop?
-export function sx(ref: JSX.CSSProperties): JSX.CSSProperties {
-	const ref2: JSX.CSSProperties = {}
-	for (const key in ref) {
-		// @ts-expect-error
-		if (ref[key] === undefined) {
-			// @ts-expect-error
-			ref2[key] = "initial"
-		} else {
-			// @ts-expect-error
-			ref2[key] = ref[key]
-		}
+export function createCSS(scope?: HTMLElement, { prepend }: { prepend?: boolean } = {}) {
+	const cache = new Map<string, true>()
+
+	function css([raw]: TemplateStringsArray) {
+		const str = createMemo(() => decomment(raw))
+		if (cache.has(str())) { return null }
+
+		// Create <style type="text/css">
+		const style = document.createElement("style")
+		style.setAttribute("type", "text/css")
+		style.textContent = str()
+		// Define lifecycle methods
+		scope ??= document.head // Globally or locally-scoped
+		cache.set(str(), true)
+		if (prepend) scope!.prepend(style)
+		else scope!.append(style)
+		onCleanup(() => {
+			cache.delete(str())
+			style.remove()
+		})
+
+		return null
 	}
-	return ref2
+
+	return css
 }
 
-const _cssCache = new Map<string, true>()
-
-export function css([rawStr]: TemplateStringsArray): null {
-	const cssStr = createMemo(() => decomment(rawStr))
-	if (_cssCache.has(cssStr())) { return null }
-
-	_cssCache.set(cssStr(), true) // Cache code
-	const style = document.createElement("style")
-	style.setAttribute("type", "text/css")
-	style.setAttribute("data-css", "")
-	style.textContent = cssStr()
-	document.head.appendChild(style)
-	onCleanup(() => {
-		_cssCache.delete(cssStr()) // Cache code
-		document.head.removeChild(style)
-	})
-	return null
-}
-
-if (import.meta.vitest) {
-	const { expect, it: test } = import.meta.vitest
-	test("cx", () => {
-		expect(cx()).toEqual(undefined)
-		expect(cx("foo")).toEqual("foo")
-		expect(cx("foo", "bar")).toEqual("foo bar")
-		expect(cx("foo", "bar", undefined)).toEqual("foo bar")
-		expect(cx("foo", "bar", null)).toEqual("foo bar")
-		expect(cx("foo", "bar", false)).toEqual("foo bar")
-		expect(cx("foo", "bar", "baz")).toEqual("foo bar baz")
-		expect(cx("foo", "bar", () => "baz")).toEqual("foo bar baz")
-		expect(cx("foo", "bar", () => () => "baz")).toEqual("foo bar baz")
-		expect(cx("foo", "bar", () => () => () => "baz")).toEqual("foo bar baz")
-	})
-}
+// Globally-scoped
+export const css = createCSS()

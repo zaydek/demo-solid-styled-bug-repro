@@ -31,8 +31,8 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 
 	--full: 1000px;
-	//// --screen-x: 100vw;
-	//// --screen-y: 100vh;
+	--screen-x: 100vw;
+	--screen-y: 100vh;
 	--padding: 16px;
 	--gap: 8px;
 
@@ -72,8 +72,8 @@ body {
 		}
 	}
 
-	// TODO
-	background-color: var(--card-color);
+	//// // TODO
+	//// background-color: var(--card-color);
 }
 
 //// // TODO: DEPRECATE?

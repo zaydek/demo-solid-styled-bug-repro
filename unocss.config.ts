@@ -3,8 +3,6 @@ import { Rule } from "unocss"
 import { defineConfig } from "unocss/vite"
 
 function desugar(raw: undefined | string, { sign }: { sign?: string } = {}): undefined | 0 | string {
-	//// return sign + ("" + raw)
-
 	if (raw === "0") { return 0 }
 	if (!raw) { return }
 
@@ -41,46 +39,15 @@ function interpolate(shorthand: string, properties: string[]): Rule {
 }
 
 const rules: Rule[] = [
-	//// [/^(-)?((?:$)?[a-z]+(?:-[a-z]+)*):(.+)$/, ([_, sign, key, value]) => {
-	//// 	if (key.startsWith("$")) {
-	//// 		const key2 = `--${key.slice(1)}`
-	//// 		return { [key2]: desugar(value, { sign }) }
-	//// 	} else if (
-	//// 		key.startsWith("-webkit-") ||
-	//// 		key.startsWith("-moz-")    ||
-	//// 		key.startsWith("-ms-")     ||
-	//// 		key.startsWith("-o-")      ||
-	//// 		key in cssSpec
-	//// 	) {
-	//// 		return { [key]: desugar(value, { sign }) }
-	//// 	}
-	//// 	return {}
-	//// }],
-
 	[/^\[(-)?((?:$)?[a-z]+(?:-[a-z]+)*)\]-(.+)$/, ([_, sign, key, value]) => {
-		//// if (key.startsWith("$")) {
-		//// 	const key2 = `--${key.slice(1)}`
-		//// 	return { [key2]: desugar(value, { sign }) }
-		//// } else if (
-		//// 	key.startsWith("-webkit-") ||
-		//// 	key.startsWith("-moz-")    ||
-		//// 	key.startsWith("-ms-")     ||
-		//// 	key.startsWith("-o-")      ||
-		//// 	key in cssSpec
-		//// ) {
-		//// 	return { [key]: desugar(value, { sign }) }
-		//// }
-		//// return {}
 		return { [key]: desugar(value, { sign }) }
 	}],
 
-	// TODO: Intellisense doesn’t resolve group
 	["group", { /* No-op */ }],
 	["contents", { "display": "contents" }],
 
-	/*
-	 * Positioning
-	 */
+	//////////////////////////////////////
+
 	["absolute", { "position": "absolute", "z-index": "10" }],
 	["fixed",    { "position": "fixed",    "z-index": "10" }],
 	["relative", { "position": "relative", "z-index": "10" }],
@@ -105,9 +72,8 @@ const rules: Rule[] = [
 	[/^(-?)b-(.+)$/, ([_, sign, value]) => ({ "bottom": desugar(value, { sign }) ?? 0 })],
 	[/^(-?)l-(.+)$/, ([_, sign, value]) => ({ "left":   desugar(value, { sign }) ?? 0 })],
 
-	/*
-	 * Spacing
-	 */
+	//////////////////////////////////////
+
 	interpolate("m",  ["margin"]),
 	interpolate("mx", ["margin-left", "margin-right"]),
 	interpolate("my", ["margin-top", "margin-bottom"]),
@@ -124,9 +90,8 @@ const rules: Rule[] = [
 	interpolate("pb", ["padding-bottom"]),
 	interpolate("pl", ["padding-left"]),
 
-	/*
-	 * Sizing
-	 */
+	//////////////////////////////////////
+
 	[/^h-(.+)$/,      ([_, value]) => ({ "height":       desugar(value) })],
 	[/^min-h-(.+)$/,  ([_, value]) => ({ "min-height":   desugar(value) })],
 	[/^max-h-(.+)$/,  ([_, value]) => ({ "max-height":   desugar(value) })],
@@ -135,9 +100,8 @@ const rules: Rule[] = [
 	[/^max-w-(.+)$/,  ([_, value]) => ({ "max-width":    desugar(value) })],
 	[/^aspect-(.+)$/, ([_, value]) => ({ "aspect-ratio": desugar(value) })],
 
-	/*
-	 * Border-radius
-	 */
+	//////////////////////////////////////
+
 	interpolate("rounded",    ["border-radius"]),
 	interpolate("rounded-t",  ["border-top-left-radius", "border-top-right-radius"]),
 	interpolate("rounded-r",  ["border-top-right-radius", "border-bottom-right-radius"]),
@@ -148,49 +112,47 @@ const rules: Rule[] = [
 	interpolate("rounded-bl", ["border-bottom-left-radius"]),
 	interpolate("rounded-tl", ["border-top-left-radius"]),
 
-	/*
-	 * Flexbox
-	 */
+	//////////////////////////////////////
+
 	[/^flex-grow(?:-(.+))?$/,   ([_, value]) => ({ "flex-grow":   desugar(value) ?? 1 })],
 	[/^flex-shrink(?:-(.+))?$/, ([_, value]) => ({ "flex-shrink": desugar(value) ?? 1 })],
+	[/^flex-basis(?:-(.+))?$/,  ([_, value]) => ({ "flex-basis":  desugar(value) ?? "auto" })],
 
 	["flex-row", { "display": "flex", "flex-direction": "row" }],
 	["flex-col", { "display": "flex", "flex-direction": "column" }],
 
-	[/^flex-justify-(.+)$/, ([_, value]) => ({ "justify-content": value })],
-	[/^flex-align-(.+)$/,   ([_, value]) => ({ "align-items":     value })],
+	[/^flex-justify-(.+)$/, ([_, value]) => ({ "justify-content": desugar(value) })],
+	[/^flex-align-(.+)$/,   ([_, value]) => ({ "align-items":     desugar(value) })],
 
 	// Shorthand for flex-justify-center flex-align-center
 	["flex-center", { "justify-content": "center", "align-items": "center" }],
 
-	/*
-	 * CSS Grid
-	 */
+	[/^flex-wrap-(.+)$/, ([_, value]) => ({ "align-items": desugar(value) })],
+
+	//////////////////////////////////////
+
 	["grid", { "display": "grid" }],
 
-	[/^grid-cols-(\d+)$/, ([_, x]) => ({ "display": "grid", "grid-template-columns": x === "1" ? "1fr" : `repeat(${x}, 1fr)` })],
-	[/^grid-rows-(\d+)$/, ([_, y]) => ({ "display": "grid", "grid-template-rows":    y === "1" ? "1fr" : `repeat(${y}, 1fr)` })],
+	[/^grid-cols-(\d+)$/, ([_, x]) => ({ "display": "grid", "grid-template-columns": x === "1" ? "1fr" : `repeat(${desugar(x)}, 1fr)` })],
+	[/^grid-rows-(\d+)$/, ([_, y]) => ({ "display": "grid", "grid-template-rows":    y === "1" ? "1fr" : `repeat(${desugar(y)}, 1fr)` })],
 
 	// Shorthand for place-items:center
 	["grid-center", { "place-items": "center" }],
 
-	/*
-	 * Gap
-	 */
+	//////////////////////////////////////
+
 	interpolate("gap",     ["gap"]),
 	interpolate("col-gap", ["column-gap"]),
 	interpolate("row-gap", ["row-gap"]),
 
-	/*
-	 * Overflow
-	 */
+	//////////////////////////////////////
+
 	[/^overflow(?:-(.+))?$/,   ([_, value]) => ({ "overflow":   desugar(value) ?? "auto" })],
 	[/^overflow-x(?:-(.+))?$/, ([_, value]) => ({ "overflow-x": desugar(value) ?? "auto" })],
 	[/^overflow-y(?:-(.+))?$/, ([_, value]) => ({ "overflow-y": desugar(value) ?? "auto" })],
 
-	/*
-	 * Overscroll
-	 */
+	//////////////////////////////////////
+
 	[/^overscroll(?:-(.+))?$/,   ([_, value]) => ({ "overscroll-behavior":   desugar(value) ?? "auto" })],
 	[/^overscroll-x(?:-(.+))?$/, ([_, value]) => ({ "overscroll-behavior-x": desugar(value) ?? "auto" })],
 	[/^overscroll-y(?:-(.+))?$/, ([_, value]) => ({ "overscroll-behavior-y": desugar(value) ?? "auto" })],
