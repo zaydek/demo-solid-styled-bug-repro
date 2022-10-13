@@ -2,7 +2,6 @@ import { Accessor, batch, createContext, createSignal, FlowProps, JSX, onCleanup
 import { Dynamic } from "solid-js/web"
 import { createRef, omitProps } from "../solid-utils"
 import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
-import { styleGlobalCursor, unstyleGlobalCursor } from "../utils"
 import { bound, round } from "../utils/precision"
 
 type Actions = {
@@ -148,7 +147,8 @@ export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & 
 			if (e.button !== 0 || !e.composedPath().includes(ref()!)) { return }
 			// COMPAT/Safari: Click-dragging toggles "cursor: text;"
 			e.preventDefault()
-			styleGlobalCursor("grab", () => pointerDown = true)
+			// TODO: FIXME
+			//// styleGlobalCursor("grab", () => pointerDown = true)
 			normalizeClientX(e.clientX)
 		}
 		document.addEventListener("pointerdown", handlePointerDown, false)
@@ -164,7 +164,8 @@ export function AriaHorizontalSlider(props: FlowProps<DynamicProps & CSSProps & 
 
 		// Release condition
 		function handlePointerUp(e: PointerEvent) {
-			unstyleGlobalCursor(() => pointerDown = false)
+		// TODO: FIXME
+			//// unstyleGlobalCursor(() => pointerDown = false)
 		}
 		document.addEventListener("pointerup", handlePointerUp, false)
 		onCleanup(() => document.addEventListener("pointerup", handlePointerUp, false))
