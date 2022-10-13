@@ -193,7 +193,7 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 			class="bottomsheet-backdrop"
 			onClick={forceClose}
 			// @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322)
-			inert={!(state() === "closed") || undefined}
+			inert={state() === "closed" || undefined}
 		></div>
 		<div
 			ref={setRef}

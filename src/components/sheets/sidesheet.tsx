@@ -203,7 +203,7 @@ export function Sidesheet(props: ParentProps<{
 			class="sidesheet-backdrop"
 			onClick={forceClose}
 			// @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322)
-			inert={!(state() === "closed") || undefined}
+			inert={(state() === "closed" || state() === "open") || undefined}
 		></div>
 		<div
 			ref={setRef}
