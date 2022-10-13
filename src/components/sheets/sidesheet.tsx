@@ -1,9 +1,12 @@
-import { batch, createEffect, createSignal, DEV, onCleanup, onMount, ParentProps } from "solid-js"
+import { batch, createEffect, createSignal, DEV, JSX, onCleanup, onMount, ParentProps } from "solid-js"
 import { createRef, css, cx } from "../../solid-utils"
 
 export type SidesheetState = "closed" | "open" | "expanded"
 
-export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
+export function Sidesheet(props: ParentProps<{
+	style?:        JSX.CSSProperties,
+	initialState?: SidesheetState
+}>) {
 	const [backdropRef, setBackdropRef] = createRef()
 	const [ref, setRef] = createRef()
 	const [draggableRef, setDraggableRef] = createRef()
@@ -128,30 +131,32 @@ export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>)
 			.sidesheet-backdrop:has(+ .sidesheet.is-closed)   { background-color: transparent; }
 			.sidesheet-backdrop:has(+ .sidesheet.is-open)     { background-color: transparent; }
 			.sidesheet-backdrop:has(+ .sidesheet.is-expanded) { background-color: hsl(0 0% 0% / 25%); }
-			.sidesheet-backdrop:has(+ .sidesheet.is-transition) {
+			.sidesheet-backdrop:has(+ .sidesheet.transition) {
 				transition: background-color 600ms cubic-bezier(0, 1, 0.25, 1);
 			}
 
 			//////////////////////////////////
 
-			:root {
-				--sidesheet-draggable-width: 32px;
-			}
 			.sidesheet {
+				--sidesheet-top: 0px;    // For inset
+				--sidesheet-right: 0px;  // For inset
+				--sidesheet-bottom: 0px; // For inset
+				--sidesheet-draggable-width: 32px;
+
 				// Runtime values
 				--sidesheet-translate-x: 0px;
 				--sidesheet-drag-translate-x: 0px;
 
 				position: fixed;
 				z-index: 100;
-				inset: 0 0 0 auto;
+				inset: var(--sidesheet-top) var(--sidesheet-right) var(--sidesheet-bottom) auto;
 				width: calc(768px + var(--sidesheet-draggable-width));
 				transform: translateX(calc(var(--sidesheet-translate-x) + var(--sidesheet-drag-translate-x)));
 			}
 			.sidesheet.is-closed   { --sidesheet-translate-x: 768px; }
 			.sidesheet.is-open     { --sidesheet-translate-x: 384px; }
 			.sidesheet.is-expanded { --sidesheet-translate-x: 0px; }
-			.sidesheet.is-transition {
+			.sidesheet.transition {
 				transition: transform 600ms cubic-bezier(0, 1, 0.25, 1);
 			}
 
@@ -173,6 +178,7 @@ export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>)
 			//////////////////////////////////
 
 			.sidesheet-drag-indicator {
+				margin: calc(-1 * var(--sidesheet-top)) calc(-1 * var(--sidesheet-right)) calc(-1 * var(--sidesheet-bottom)) 0px;
 				width: 4px;
 				aspect-ratio: 1 / 12;
 				border-radius: var(--full);
@@ -206,7 +212,8 @@ export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>)
 		></div>
 		<div
 			ref={setRef}
-			class={cx(`sidesheet is-${state()} ${transition() ? "is-transition" : ""} flex-row`)}
+			class={cx(`sidesheet is-${state()} ${transition() ? "transition" : ""} flex-row`)}
+			style={props.style}
 			onTransitionEnd={e => setTransition()}
 		>
 			<div ref={setDraggableRef} class={cx(`sidesheet-draggable ${pointerDown() ? "is-pointer-down" : ""}`)}>

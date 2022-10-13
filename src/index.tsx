@@ -2,10 +2,10 @@ import "the-new-css-reset"
 import "uno.css"
 import "./scss/index.scss"
 
-import { For, Show } from "solid-js"
+import { For, ParentProps, Show } from "solid-js"
 import { render } from "solid-js/web"
 import { Bottomsheet, Sidesheet } from "./components"
-import { useMediaQuery, useScreenCSSVars } from "./hooks"
+import { useMediaQuery, useScreenCSSVars } from "./effects"
 import { css } from "./solid-utils"
 import { range } from "./utils"
 
@@ -334,49 +334,16 @@ function App2() {
 //// 	</>
 //// }
 
-function Entry() {
+function Sheet(props: ParentProps) {
 	const mobile = useMediaQuery("(min-width: 501px)")
-	useScreenCSSVars()
 
 	return <>
-		{css`
-			:root {
-				--navbar-height: 64px;
-
-				--box-shadow-thickness: 4px;
-				--hairline-thickness: 0.5px;
-			}
-
-			//////////////////////////////////
-
-			// iOS
-			@media (hover: none) {
-				.main-content {
-					padding-bottom: var(--bottomsheet-draggable-height);
-					height: var(--screen-y);
-					overflow-y: auto;
-				}
-			}
-			// Non-iOS
-			@media (hover: hover) {
-				:root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
-					padding-right: calc(384px + var(--sidesheet-draggable-width));
-				}
-			}
-		`}
-		<div class="main-content">
-			<For each={range(2000)}>{() => <>
-				hello world
-			</>}</For>
-		</div>
 		<Show when={mobile()} fallback={<>
 			<Bottomsheet initialState="closed">
-				<For each={range(400)}>{() => <>
-					hello world
-				</>}</For>
+				{props.children}
 			</Bottomsheet>
 		</>}>
-			<Sidesheet initialState="closed">
+			<Sidesheet style={{ "--sidesheet-top": "64px" }} initialState="closed">
 				<For each={range(200)}>{() => <>
 					hello world
 				</>}</For>
@@ -385,6 +352,72 @@ function Entry() {
 	</>
 }
 
+function Entrypoint() {
+	useScreenCSSVars()
+
+	return <>
+		{css`
+			.search-bar {
+				position: fixed;
+				z-index: 200;
+				inset: 0 0 auto 0;
+				height: 64px;
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+			}
+		`}
+
+		{/* TODO: Extract to components */}
+		<div class="search-bar"></div>
+		<div class="main-content"></div>
+
+		<Sheet>
+			<For each={range(400)}>{() => <>
+				hello world
+			</>}</For>
+		</Sheet>
+	</>
+
+	//// return <>
+	//// 	{css`
+	//// 		:root {
+	//// 			--navbar-height: 64px;
+////
+	//// 			// TODO: Extract?
+	//// 			--box-shadow-thickness: 4px;
+	//// 			--hairline-thickness: 0.5px;
+	//// 		}
+////
+	//// 		//////////////////////////////////
+////
+	//// 		// iOS
+	//// 		@media (hover: none) {
+	//// 			.main-content {
+	//// 				padding-bottom: var(--bottomsheet-draggable-height);
+	//// 				height: var(--screen-y);
+	//// 				overflow-y: auto;
+	//// 			}
+	//// 		}
+	//// 		// Non-iOS
+	//// 		@media (hover: hover) {
+	//// 			:root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
+	//// 				padding-right: calc(384px + var(--sidesheet-draggable-width));
+	//// 			}
+	//// 		}
+	//// 	`}
+	//// 	<div class="main-content">
+	//// 		<For each={range(2000)}>{() => <>
+	//// 			hello world
+	//// 		</>}</For>
+	//// 	</div>
+	//// 	<Sheet>
+	//// 		<For each={range(400)}>{() => <>
+	//// 			hello world
+	//// 		</>}</For>
+	//// 	</Sheet>
+	//// </>
+}
+
 render(() => <>
-	<Entry />
+	<Entrypoint />
 </>, document.getElementById("root")!)

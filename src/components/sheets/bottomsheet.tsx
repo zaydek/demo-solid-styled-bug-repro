@@ -107,7 +107,7 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 		{css`
 			.bottomsheet-backdrop {
 				position: fixed;
-				z-index: 90;
+				z-index: 290;
 				inset: 0;
 			}
 			.bottomsheet-backdrop:has(+ .bottomsheet.is-closed) { background-color: transparent; }
@@ -118,17 +118,16 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 
 			//////////////////////////////////
 
-			:root {
-				--bottomsheet-draggable-height: 40px;
-			}
 			.bottomsheet {
+				--bottomsheet-draggable-height: 40px;
+
 				// Runtime values
 				--bottomsheet-screen-y: var(--screen-y);
 				--bottomsheet-translate-y: 0px;
 				--bottomsheet-drag-translate-y: 0px;
 
 				position: fixed;
-				z-index: 100;
+				z-index: 300;
 				inset: 0 0 auto 0;
 				min-height: calc(100vh - var(--bottomsheet-draggable-height) * 2);
 				border-radius: calc(var(--bottomsheet-draggable-height) / 2) calc(var(--bottomsheet-draggable-height) / 2) 0 0;
