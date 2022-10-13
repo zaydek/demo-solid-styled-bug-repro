@@ -2,8 +2,7 @@
 
 import { batch, ParentProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import { createRef, omitProps } from "../solid-utils"
-import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
+import { createRef, CSSProps, DynamicProps, omitProps } from "../../solid-utils"
 
 export function AriaButton(props: ParentProps<DynamicProps & CSSProps & { onClick: (e: MouseEvent) => void }>) {
 	const [ref, setRef] = createRef()

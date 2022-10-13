@@ -107,7 +107,7 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 		{css`
 			.bottomsheet-backdrop {
 				position: fixed;
-				z-index: 290;
+				z-index: 90;
 				inset: 0;
 			}
 			.bottomsheet-backdrop:has(+ .bottomsheet.is-closed) { background-color: transparent; }
@@ -118,16 +118,15 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 
 			//////////////////////////////////
 
+			:root { --bottomsheet-draggable-height: 40px; }
 			.bottomsheet {
-				--bottomsheet-draggable-height: 40px;
-
 				// Runtime values
 				--bottomsheet-screen-y: var(--screen-y);
 				--bottomsheet-translate-y: 0px;
 				--bottomsheet-drag-translate-y: 0px;
 
 				position: fixed;
-				z-index: 300;
+				z-index: 100;
 				inset: 0 0 auto 0;
 				min-height: calc(100vh - var(--bottomsheet-draggable-height) * 2);
 				border-radius: calc(var(--bottomsheet-draggable-height) / 2) calc(var(--bottomsheet-draggable-height) / 2) 0 0;
@@ -158,7 +157,7 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 
 				cursor: grab;
 			}
-			:root:has(.bottomsheet-draggable.is-pointer-down) {
+			:root:has(.bottomsheet-draggable:active) {
 				cursor: grab;
 			}
 
@@ -170,7 +169,7 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 				border-radius: var(--full);
 				background-color: hsl(0 0% 50%);
 			}
-			.bottomsheet-draggable.is-pointer-down .bottomsheet-drag-indicator {
+			.bottomsheet-draggable:active .bottomsheet-drag-indicator {
 				background-color: hsl(0 0% 25%);
 			}
 
@@ -194,17 +193,17 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 			class="bottomsheet-backdrop"
 			onClick={forceClose}
 			// @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322)
-			inert={!(state() === "open") || undefined}
+			inert={!(state() === "closed") || undefined}
 		></div>
 		<div
 			ref={setRef}
 			class={cx(`bottomsheet is-${state()} ${transition() ? "is-transition" : ""}`)}
 			onTransitionEnd={e => setTransition()}
 		>
-			<div ref={setDraggableRef} class={`bottomsheet-draggable ${pointerDown() ? "is-pointer-down" : ""}`}>
+			<div ref={setDraggableRef} class="bottomsheet-draggable" tabIndex={0}>
 				<div class="bottomsheet-drag-indicator"></div>
 			</div>
-			<hr />
+			<hr class="h-1px [background-color]-hsl(0_0%_75%)" />
 			{/* @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322) */}
 			<div class="bottomsheet-content" inert={state() === "closed" || undefined}>
 				{props.children}

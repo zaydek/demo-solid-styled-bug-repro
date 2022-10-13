@@ -137,19 +137,15 @@ export function Sidesheet(props: ParentProps<{
 
 			//////////////////////////////////
 
+			:root { --sidesheet-draggable-width: 40px; }
 			.sidesheet {
-				--sidesheet-top: 0px;    // For inset
-				--sidesheet-right: 0px;  // For inset
-				--sidesheet-bottom: 0px; // For inset
-				--sidesheet-draggable-width: 32px;
-
 				// Runtime values
 				--sidesheet-translate-x: 0px;
 				--sidesheet-drag-translate-x: 0px;
 
 				position: fixed;
 				z-index: 100;
-				inset: var(--sidesheet-top) var(--sidesheet-right) var(--sidesheet-bottom) auto;
+				inset: 0 0 0 auto;
 				width: calc(768px + var(--sidesheet-draggable-width));
 				transform: translateX(calc(var(--sidesheet-translate-x) + var(--sidesheet-drag-translate-x)));
 			}
@@ -171,20 +167,19 @@ export function Sidesheet(props: ParentProps<{
 
 				cursor: grab;
 			}
-			:root:has(.sidesheet-draggable.is-pointer-down) {
+			:root:has(.sidesheet-draggable:active) {
 				cursor: grab;
 			}
 
 			//////////////////////////////////
 
 			.sidesheet-drag-indicator {
-				margin: calc(-1 * var(--sidesheet-top)) calc(-1 * var(--sidesheet-right)) calc(-1 * var(--sidesheet-bottom)) 0px;
 				width: 4px;
 				aspect-ratio: 1 / 12;
 				border-radius: var(--full);
 				background-color: hsl(0 0% 50%);
 			}
-			.sidesheet-draggable.is-pointer-down .sidesheet-drag-indicator {
+			.sidesheet-draggable:active .sidesheet-drag-indicator {
 				background-color: hsl(0 0% 25%);
 			}
 
@@ -192,7 +187,7 @@ export function Sidesheet(props: ParentProps<{
 
 			.sidesheet-card {
 				background-color: white;
-				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+				box-shadow: 0 0 0 1px hsl(0 0% 0% / 25%);
 			}
 
 			//////////////////////////////////
@@ -208,19 +203,18 @@ export function Sidesheet(props: ParentProps<{
 			class="sidesheet-backdrop"
 			onClick={forceClose}
 			// @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322)
-			inert={!(state() === "expanded") || undefined}
+			inert={!(state() === "closed") || undefined}
 		></div>
 		<div
 			ref={setRef}
 			class={cx(`sidesheet is-${state()} ${transition() ? "transition" : ""} flex-row`)}
-			style={props.style}
 			onTransitionEnd={e => setTransition()}
 		>
-			<div ref={setDraggableRef} class={cx(`sidesheet-draggable ${pointerDown() ? "is-pointer-down" : ""}`)}>
+			<div ref={setDraggableRef} class="sidesheet-draggable" tabIndex={0}>
 				<div class="sidesheet-drag-indicator"></div>
 			</div>
 			{/* @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322) */}
-			<div class="sidesheet-card flex-grow flex-col" inert={!(state() === "open") || undefined}>
+			<div class="sidesheet-card flex-grow flex-col" inert={state() === "closed" || undefined}>
 				<div class="sidesheet-content">
 					{props.children}
 				</div>

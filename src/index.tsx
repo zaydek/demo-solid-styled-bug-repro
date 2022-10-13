@@ -2,10 +2,10 @@ import "the-new-css-reset"
 import "uno.css"
 import "./scss/index.scss"
 
-import { For, ParentProps, Show } from "solid-js"
+import { createSignal, For, ParentProps, Show } from "solid-js"
 import { render } from "solid-js/web"
-import { Bottomsheet, Sidesheet } from "./components"
-import { useMediaQuery, useScreenCSSVars } from "./effects"
+import { AriaRadiogroup, Bottomsheet, Radio, Sidesheet, Slider } from "./components"
+import { createMediaQuery, useMediaQuery, useScreenCSSVars } from "./effects"
 import { css } from "./solid-utils"
 import { range } from "./utils"
 
@@ -334,88 +334,207 @@ function App2() {
 //// 	</>
 //// }
 
-function Sheet(props: ParentProps) {
-	const mobile = useMediaQuery("(min-width: 501px)")
+// TODO: Extract to responsive?
+const mediaQuery = createMediaQuery("(min-width: 501px)")
 
+function Mobile(props: ParentProps) {
 	return <>
-		<Show when={mobile()} fallback={<>
+		<Show when={!mediaQuery()}>
+			{props.children}
+		</Show>
+	</>
+}
+
+function Desktop(props: ParentProps) {
+	return <>
+		<Show when={mediaQuery()}>
+			{props.children}
+		</Show>
+	</>
+}
+
+function Sidebar(props: ParentProps) {
+	return <>
+		<Mobile>
 			<Bottomsheet initialState="closed">
 				{props.children}
 			</Bottomsheet>
-		</>}>
-			<Sidesheet style={{ "--sidesheet-top": "64px" }} initialState="closed">
-				<For each={range(200)}>{() => <>
-					hello world
-				</>}</For>
+		</Mobile>
+		<Desktop>
+			<Sidesheet initialState="open">
+				{props.children}
 			</Sidesheet>
-		</Show>
+		</Desktop>
+	</>
+}
+
+function PlaceholderButtonIcon() {
+	return <>
+		<div class="h-48px aspect-1 rounded-$full grid grid-center">
+			<div class="h-32px aspect-1 rounded-$full [background-color]-gray"></div>
+		</div>
 	</>
 }
 
 function Entrypoint() {
 	useScreenCSSVars()
 
+	const [value1, setValue1] = createSignal(35)
+	const [value2, setValue2] = createSignal(35)
+	const [value3, setValue3] = createSignal(35)
+	const [value4, setValue4] = createSignal(35)
+	const [value5, setValue5] = createSignal(35)
+	const [value6, setValue6] = createSignal(35)
+	const [value7, setValue7] = createSignal(35)
+	const [value8, setValue8] = createSignal(35)
+
+	const [rdgValue1, setRdgValue1] = createSignal<"foo" | "bar" | "baz">("foo")
+	const [rdgValue2, setRdgValue2] = createSignal<"foo" | "bar" | "baz">("foo")
+	const [rdgValue3, setRdgValue3] = createSignal<"foo" | "bar" | "baz">("foo")
+	const [rdgValue4, setRdgValue4] = createSignal<"foo" | "bar" | "baz">("foo")
+
 	return <>
 		{css`
+			:root {
+				--navbar-height: 64px;
+				--sidebar-width: 384px; // TODO
+				--sidebar-is-extended: 768px; // TODO
+			}
+
+			//////////////////////////////////
+
 			.search-bar {
 				position: fixed;
-				z-index: 200;
+				z-index: 50;
 				inset: 0 0 auto 0;
-				height: 64px;
+				padding: 0 16px;
+				height: var(--navbar-height);
 				background-color: white;
-				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+				box-shadow: 0 0 0 1px hsl(0 0% 0% / 25%);
+
+				// Flexbox
+				display: flex;
+				flex-direction: row;
+				align-items: center; // Center y-axis
+				gap: 8px;
+			}
+			:root:has(.sidesheet:is(.is-open, .is-expanded)) .search-bar {
+				margin-right: 384px;
+			}
+
+			//////////////////////////////////
+
+			.search-results {
+				margin-top: 64px;
+			}
+			:root:has(.sidesheet:is(.is-open, .is-expanded)) .search-results {
+				margin-right: 384px;
+			}
+			@media (hover: none) { // COMPAT/Safari (iOS)
+			// Because we use "position: fixed;", we need to imperatively
+			// model a scrollable body here
+			.search-results {
+				// Use padding-bottom because margin-bottom doesn’t work
+				// and we scrollable content to underflow
+				padding-bottom: var(--bottomsheet-draggable-height);
+				height: calc(var(--screen-y) - 64px);
+				overflow-y: auto;
+			} }
+
+			//////////////////////////////////
+
+			// TODO: DEPRECATE
+			.search-bar-placeholder-container {
+				padding: 8px;
+
+				// Flexbox
+				flex-grow: 1;
+				display: flex;
+				flex-direction: row;
+				align-items: center; // Center y-axis
+			}
+			.search-bar-placeholder {
+				height: 6px;
+				aspect-ratio: 24;
+				border-radius: var(--full);
+				background-color: hsl(0 0% 75%);
 			}
 		`}
-
-		{/* TODO: Extract to components */}
-		<div class="search-bar"></div>
-		<div class="main-content"></div>
-
-		<Sheet>
-			<For each={range(400)}>{() => <>
+		<div class="search-bar">
+			<PlaceholderButtonIcon />
+			<div class="search-bar-placeholder-container">
+				<div class="search-bar-placeholder"></div>
+			</div>
+			<PlaceholderButtonIcon />
+		</div>
+		<div class="search-results">
+			<For each={range(2000)}>{() => <>
 				hello world
 			</>}</For>
-		</Sheet>
-	</>
+		</div>
+		<Sidebar>
+			<Desktop>
+				{css`
+					.sidebar-nav {
+						padding: 0 16px;
+						height: var(--navbar-height);
 
-	//// return <>
-	//// 	{css`
-	//// 		:root {
-	//// 			--navbar-height: 64px;
-////
-	//// 			// TODO: Extract?
-	//// 			--box-shadow-thickness: 4px;
-	//// 			--hairline-thickness: 0.5px;
-	//// 		}
-////
-	//// 		//////////////////////////////////
-////
-	//// 		// iOS
-	//// 		@media (hover: none) {
-	//// 			.main-content {
-	//// 				padding-bottom: var(--bottomsheet-draggable-height);
-	//// 				height: var(--screen-y);
-	//// 				overflow-y: auto;
-	//// 			}
-	//// 		}
-	//// 		// Non-iOS
-	//// 		@media (hover: hover) {
-	//// 			:root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
-	//// 				padding-right: calc(384px + var(--sidesheet-draggable-width));
-	//// 			}
-	//// 		}
-	//// 	`}
-	//// 	<div class="main-content">
-	//// 		<For each={range(2000)}>{() => <>
-	//// 			hello world
-	//// 		</>}</For>
-	//// 	</div>
-	//// 	<Sheet>
-	//// 		<For each={range(400)}>{() => <>
-	//// 			hello world
-	//// 		</>}</For>
-	//// 	</Sheet>
-	//// </>
+						// Flexbox
+						display: flex;
+						flex-direction: row;
+						align-items: center; // Center y-axis
+						gap: 8px;
+					}
+				`}
+				<div class="sidebar-nav">
+					<PlaceholderButtonIcon />
+					<div class="flex-grow"></div>
+					<PlaceholderButtonIcon />
+					<PlaceholderButtonIcon />
+				</div>
+				<hr class="h-1px [background-color]-hsl(0_0%_75%)" />
+			</Desktop>
+			<div class="py-16px flex-col gap-16px">
+				<div class="px-16px flex-col gap-8px">
+					<Slider value={value1()} setValue={setValue1} min={0} max={100} step={1} />
+					<Slider value={value2()} setValue={setValue2} min={0} max={100} step={1} />
+					<Slider value={value3()} setValue={setValue3} min={0} max={100} step={1} />
+					<Slider value={value4()} setValue={setValue4} min={0} max={100} step={1} />
+				</div>
+				<hr class="h-1px [background-color]-hsl(0_0%_75%)" />
+				<AriaRadiogroup class="px-16px flex-col gap-8px" value={rdgValue1()} setValue={setRdgValue1}>
+					<Radio value="foo">HELLO</Radio>
+					<Radio value="bar">HELLO</Radio>
+					<Radio value="baz">HELLO</Radio>
+				</AriaRadiogroup>
+				<hr class="h-1px [background-color]-hsl(0_0%_75%)" />
+				<AriaRadiogroup class="px-16px flex-col gap-8px" value={rdgValue2()} setValue={setRdgValue2}>
+					<Radio value="foo">HELLO</Radio>
+					<Radio value="bar">HELLO</Radio>
+					<Radio value="baz">HELLO</Radio>
+				</AriaRadiogroup>
+				<hr class="h-1px [background-color]-hsl(0_0%_75%)" />
+				<div class="px-16px flex-col gap-8px">
+					<Slider value={value5()} setValue={setValue5} min={0} max={100} step={1} />
+					<Slider value={value6()} setValue={setValue6} min={0} max={100} step={1} />
+					<Slider value={value7()} setValue={setValue7} min={0} max={100} step={1} />
+					<Slider value={value8()} setValue={setValue8} min={0} max={100} step={1} />
+				</div>
+				<hr class="h-1px [background-color]-hsl(0_0%_75%)" />
+				<AriaRadiogroup class="px-16px flex-col gap-8px" value={rdgValue3()} setValue={setRdgValue3}>
+					<Radio value="foo">HELLO</Radio>
+					<Radio value="bar">HELLO</Radio>
+					<Radio value="baz">HELLO</Radio>
+				</AriaRadiogroup>
+				<hr class="h-1px [background-color]-hsl(0_0%_75%)" />
+				<AriaRadiogroup class="px-16px flex-col gap-8px" value={rdgValue4()} setValue={setRdgValue4}>
+					<Radio value="foo">HELLO</Radio>
+					<Radio value="bar">HELLO</Radio>
+					<Radio value="baz">HELLO</Radio>
+				</AriaRadiogroup>
+			</div>
+		</Sidebar>
+	</>
 }
 
 render(() => <>

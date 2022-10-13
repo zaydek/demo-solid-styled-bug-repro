@@ -1,6 +1,6 @@
 // Preamble
-.nav-icon { position: relative; }  // For pseudo
-.nav-icon::before { content: ""; } // For pseudo
+.nav-icon { position: relative; isolation: isolate; } // For pseudo
+.nav-icon::before { content: ""; }                    // For pseudo
 
 ////////////////////////////////////////
 

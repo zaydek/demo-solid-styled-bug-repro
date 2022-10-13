@@ -2,8 +2,7 @@
 
 import { batch, ParentProps, Setter } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import { createRef, omitProps } from "../solid-utils"
-import { CSSProps, DynamicProps } from "../solid-utils/extra-types"
+import { createRef, CSSProps, DynamicProps, omitProps } from "../../solid-utils"
 
 export function AriaCheckbox(props: ParentProps<DynamicProps & CSSProps & {
 	checked:    boolean
