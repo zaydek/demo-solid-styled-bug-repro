@@ -539,9 +539,9 @@ function Entrypoint() {
 
 function App3() {
 	return <>
-		<Bottomsheet initialState="open">
+		<Sidesheet initialState="open">
 			<div>Hello, world!</div>
-		</Bottomsheet>
+		</Sidesheet>
 	</>
 }
 

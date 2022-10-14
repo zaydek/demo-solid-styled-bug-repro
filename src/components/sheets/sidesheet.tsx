@@ -1,12 +1,12 @@
 import { batch, createSignal, DEV, onCleanup, onMount, ParentProps } from "solid-js"
 import { createRef, css, cx } from "../../solid-utils"
-import { round } from "../../utils"
+import { only, round } from "../../utils"
 
 export type SidesheetState = "closed" | "open" | "expanded"
 
 export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
-	const [backdropRef, setBackdropRef] = createRef()
-	const [draggableRef, setDraggableRef] = createRef()
+	const [backdrop, setBackdrop] = createRef()
+	const [draggable, setDraggable] = createRef()
 
 	const [state, setState] = createSignal(props.initialState ?? "open")
 	const [pointerDown, setPointerDown] = createSignal<undefined | true>()
@@ -52,11 +52,11 @@ export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>)
 	onMount(() => {
 		function handlePointerDown(e: PointerEvent) {
 			if (!(e.button === 0 || e.buttons === 1)) { return }
-			if (!(backdropRef()!.contains(e.target as HTMLElement) ||
-				draggableRef()!.contains(e.target as HTMLElement))) { return }
+			if (!(backdrop()!.contains(e.target as HTMLElement) ||
+				draggable()!.contains(e.target as HTMLElement))) { return }
 			e.preventDefault() // COMPAT/Safari: Prevent cursor from changing
 			batch(() => {
-				const clientRect = draggableRef()!.getBoundingClientRect()
+				const clientRect = draggable()!.getBoundingClientRect()
 				setPointerDown(true)
 				setPointerOffset(round(clientRect.right - e.clientX, { precision: 1 }))
 				setP1(round(e.clientX, { precision: 1 }))
@@ -188,11 +188,11 @@ export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>)
 			.sidesheet.is-expanded .sidesheet-content { width: 768px; }
 		`}
 		<div
-			ref={setBackdropRef}
+			ref={setBackdrop}
 			class="sidesheet-backdrop"
 			onClick={forceClose}
 			// @ts-expect-error
-			inert={!(state() === "expanded") || undefined}
+			inert={only(state() === "closed" || state() === "open")}
 		></div>
 		<div
 			class={cx(`sidesheet is-${state()} ${transition() ? "transition" : ""} flex-row`)}
@@ -200,15 +200,15 @@ export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>)
 				"--sidesheet-drag-translate-x":
 					(!pointerOffset() || !p1() || !p2())
 						? "0px"
-						: `${(p2()! + pointerOffset()!) - (p1()! + pointerOffset()!)}px`
+						: `${(p2()! + pointerOffset()!) - (p1()! + pointerOffset()!)}px`,
 			}}
 			onTransitionEnd={e => setTransition()}
 		>
-			<div ref={setDraggableRef} class="sidesheet-draggable" tabIndex={0}>
+			<div ref={setDraggable} class="sidesheet-draggable" tabIndex={0}>
 				<div class="sidesheet-drag-indicator"></div>
 			</div>
 			{/* @ts-expect-error */}
-			<div class="sidesheet-card flex-grow flex-col" inert={(state() === "open" || state() === "expanded") || undefined}>
+			<div class="sidesheet-card flex-grow flex-col" inert={only(state() === "closed")}>
 				<div class="sidesheet-content">
 					{props.children}
 				</div>

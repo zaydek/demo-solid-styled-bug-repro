@@ -1,12 +1,12 @@
-import { batch, createEffect, createSignal, DEV, onCleanup, onMount, ParentProps } from "solid-js"
+import { batch, createSignal, DEV, onCleanup, onMount, ParentProps } from "solid-js"
 import { createRef, css, cx } from "../../solid-utils"
+import { only, round } from "../../utils"
 
 export type BottomsheetState = "closed" | "open"
 
 export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState }>) {
-	const [backdropRef, setBackdropRef] = createRef()
-	const [ref, setRef] = createRef()
-	const [draggableRef, setDraggableRef] = createRef()
+	const [backdrop, setBackdrop] = createRef()
+	const [draggable, setDraggable] = createRef()
 
 	const [state, setState] = createSignal(props.initialState ?? "open")
 	const [pointerDown, setPointerDown] = createSignal<undefined | true>()
@@ -47,20 +47,20 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 	onMount(() => {
 		function handlePointerDown(e: PointerEvent) {
 			if (!(e.button === 0 || e.buttons === 1)) { return }
-			if (!(backdropRef()!.contains(e.target as HTMLElement) ||
-				draggableRef()!.contains(e.target as HTMLElement))) { return }
+			if (!(backdrop()!.contains(e.target as HTMLElement) ||
+				draggable()!.contains(e.target as HTMLElement))) { return }
 			e.preventDefault() // COMPAT/Safari: Prevent cursor from changing
 			batch(() => {
-				const clientRect = draggableRef()!.getBoundingClientRect()
+				const clientRect = draggable()!.getBoundingClientRect()
 				setPointerDown(true)
-				setPointerOffset(Math.round(clientRect.top - e.clientY))
-				setP1(Math.round(e.clientY))
+				setPointerOffset(round(clientRect.top - e.clientY, { precision: 1 }))
+				setP1(round(e.clientY, { precision: 1 }))
 				setTransition()
 			})
 		}
 		function handlePointerMove(e: PointerEvent) {
 			if (!pointerDown()) { return }
-			setP2(Math.round(e.clientY))
+			setP2(round(e.clientY, { precision: 1 }))
 		}
 		function handlePointerUp(e: PointerEvent) {
 			if (!pointerDown()) { return }
@@ -94,14 +94,14 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 		})
 	})
 
-	createEffect(() => {
-		if (!pointerOffset() || !p1() || !p2()) {
-			ref()!.style.setProperty("--bottomsheet-drag-translate-y", "0px")
-		} else {
-			const delta = (p2()! + pointerOffset()!) - (p1()! + pointerOffset()!)
-			ref()!.style.setProperty("--bottomsheet-drag-translate-y", `${delta}px`)
-		}
-	})
+	//// createEffect(() => {
+	//// 	if (!pointerOffset() || !p1() || !p2()) {
+	//// 		ref()!.style.setProperty("--bottomsheet-drag-translate-y", "0px")
+	//// 	} else {
+	//// 		const delta = (p2()! + pointerOffset()!) - (p1()! + pointerOffset()!)
+	//// 		ref()!.style.setProperty("--bottomsheet-drag-translate-y", `${delta}px`)
+	//// 	}
+	//// })
 
 	return <>
 		{css`
@@ -189,23 +189,28 @@ export function Bottomsheet(props: ParentProps<{ initialState: BottomsheetState 
 			}
 		`}
 		<div
-			ref={setBackdropRef}
+			ref={setBackdrop}
 			class="bottomsheet-backdrop"
 			onClick={forceClose}
-			// @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322)
-			inert={state() === "closed" || undefined}
+			// @ts-expect-error
+			inert={only(state() === "closed")}
 		></div>
 		<div
-			ref={setRef}
 			class={cx(`bottomsheet is-${state()} ${transition() ? "is-transition" : ""}`)}
+			style={{
+				"--bottomsheet-drag-translate-y":
+					(!pointerOffset() || !p1() || !p2())
+						? "0px"
+						: `${(p2()! + pointerOffset()!) - (p1()! + pointerOffset()!)}px`,
+			}}
 			onTransitionEnd={e => setTransition()}
 		>
-			<div ref={setDraggableRef} class="bottomsheet-draggable" tabIndex={0}>
+			<div ref={setDraggable} class="bottomsheet-draggable" tabIndex={0}>
 				<div class="bottomsheet-drag-indicator"></div>
 			</div>
 			<hr class="h-1px [background-color]-hsl(0_0%_75%)" />
-			{/* @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322) */}
-			<div class="bottomsheet-content" inert={state() === "closed" || undefined}>
+			{/* @ts-expect-error */}
+			<div class="bottomsheet-content" inert={only(state() === "closed")}>
 				{props.children}
 			</div>
 		</div>

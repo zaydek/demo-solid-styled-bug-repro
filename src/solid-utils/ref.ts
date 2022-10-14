@@ -1,8 +1,8 @@
 import { createSignal, splitProps } from "solid-js"
 
-export const createRef = <Tag extends HTMLElement>() => createSignal<Tag>()
+export const createRef = <E extends HTMLElement>() => createSignal<E>()
 
-// Types from splitProps:
+// Type from splitProps:
 //
 // - export declare function splitProps<T, K extends [readonly (keyof T)[], ...(readonly (keyof T)[])[]]>(props: T, ...keys: K): SplitProps<T, K>
 //
