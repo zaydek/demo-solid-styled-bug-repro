@@ -8,4 +8,5 @@
 
 export * from "./aria"
 export * from "./forms"
+export * from "./placeholders"
 export * from "./sheets"

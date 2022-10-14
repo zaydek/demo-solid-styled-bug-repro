@@ -3,7 +3,6 @@
 @use "theme" as *;
 @use "utils/define-theme" as *;
 
-//
 @media (hover: none) { // COMPAT/Safari (iOS)
 body {
 	// Prevent Safari from scaling text
@@ -19,6 +18,12 @@ body {
 	// Prevent user from zooming
 	touch-action: pan-y;
 } }
+
+// TODO
+* {
+	-webkit-user-select: none;
+	user-select: none;
+}
 
 :root {
 	-webkit-font-smoothing: antialiased;
@@ -66,8 +71,7 @@ body {
 		}
 	}
 
-	//// // TODO
-	//// background-color: var(--card-color);
+	background-color: var(--card-color);
 }
 
 //// // TODO: DEPRECATE?
@@ -76,6 +80,15 @@ body {
 //// 	-webkit-user-select: none;
 //// 	user-select: none;
 //// }
+
+hr:not(.variant-vertical) {
+	height: var(--hairline-thickness);
+	background-color: var(--card-hairline-color);
+}
+hr.variant-vertical {
+	width: var(--hairline-thickness);
+	background-color: var(--card-hairline-color);
+}
 
 //// hr {
 //// 	height: var(--hairline-thickness);

@@ -4,11 +4,11 @@ input[type=text].typography-search-bar {
 	font-feature-settings: "tnum";
 	letter-spacing: calc(1em / 64);
 
-	// Theming
-	color: var(--fill-100-color);
-	&::placeholder {
-		color: var(--fill-300-color);
-	}
+	//// // Theming
+	//// color: var(--fill-100-color);
+	//// &::placeholder {
+	//// 	color: var(--fill-300-color);
+	//// }
 }
 
 .typography-sans {
@@ -17,10 +17,10 @@ input[type=text].typography-search-bar {
 	font-feature-settings: "tnum";
 	letter-spacing: calc(1em / 128);
 
-	// Theming
-	color: var(--fill-100-color);
-	&.is-200 { color: var(--fill-200-color); }
-	&.is-300 { color: var(--fill-300-color); }
+	//// // Theming
+	//// color: var(--fill-100-color);
+	//// &.is-200 { color: var(--fill-200-color); }
+	//// &.is-300 { color: var(--fill-300-color); }
 }
 
 .typography-caps {
@@ -29,13 +29,13 @@ input[type=text].typography-search-bar {
 	font-feature-settings: "tnum";
 	letter-spacing: calc(1em / 8);
 
-	// Theming
-	color: var(--fill-100-color);
-	&.is-200 { color: var(--fill-200-color); }
-	&.is-300 { color: var(--fill-300-color); }
+	//// // Theming
+	//// color: var(--fill-100-color);
+	//// &.is-200 { color: var(--fill-200-color); }
+	//// &.is-300 { color: var(--fill-300-color); }
 }
 
-[class^=typography].has-ellipsis {
+[class*=typography-].ellipsis {
 	overflow: hidden;
 	text-align: center;
 	text-overflow: ellipsis;

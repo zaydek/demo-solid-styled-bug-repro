@@ -29,7 +29,7 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 				padding: 0 8px;
 				height: var(--radio-height);
 				border-radius: var(--full);
-				background-color: whitesmoke;
+				background-color: var(--card-lightgray-color);
 
 				// Flexbox
 				flex-grow: 1; // Stretch main-axis
@@ -44,8 +44,8 @@ export function Radio(props: FlowProps<{ value: string }, string>) {
 			.radio-label-icon {
 				height: var(--radio-label-icon-height);
 				aspect-ratio: 1;
-				border-radius: var(--full);
-				background-color: gray;
+				border-radius: var(--full); // TODO: DEPRECATE
+				background-color: var(--fill-200-color);
 			}
 
 			//////////////////////////////////

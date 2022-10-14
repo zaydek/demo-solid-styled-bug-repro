@@ -20,11 +20,9 @@ export const darkMode = createRoot(() => {
 	createEffect(() => {
 		const root = document.documentElement
 		if (theme() === "dark") {
-			// Enable dark mode
-			root.classList.add("is-dark")
+			root.classList.add("is-dark") // Enable dark mode
 		} else {
-			// Enable light mode (default)
-			root.classList.remove("is-dark")
+			root.classList.remove("is-dark") // Enable light mode (default)
 			if (root.classList.length === 0) {
 				root.removeAttribute("class")
 			}

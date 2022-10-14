@@ -1,5 +1,7 @@
+import "./sidesheet.css"
+
 import { batch, createSignal, DEV, onCleanup, onMount, ParentProps } from "solid-js"
-import { createRef, css, cx } from "../../solid-utils"
+import { createRef, cx } from "../../solid-utils"
 import { only, round } from "../../utils"
 
 export type SidesheetState = "closed" | "open" | "expanded"
@@ -110,83 +112,6 @@ export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>)
 	})
 
 	return <>
-		{css`
-			.sidesheet-backdrop {
-				position: fixed;
-				z-index: 90;
-				inset: 0;
-			}
-			.sidesheet-backdrop:has(+ .sidesheet.is-closed)   { background-color: transparent; }
-			.sidesheet-backdrop:has(+ .sidesheet.is-open)     { background-color: transparent; }
-			.sidesheet-backdrop:has(+ .sidesheet.is-expanded) { background-color: hsl(0 0% 0% / 25%); }
-			.sidesheet-backdrop:has(+ .sidesheet.transition) {
-				transition: background-color 600ms cubic-bezier(0, 1, 0.25, 1);
-			}
-
-			//////////////////////////////////
-
-			:root { --sidesheet-draggable-width: 40px; }
-			.sidesheet {
-				// Runtime values
-				--sidesheet-translate-x: 0px;
-				--sidesheet-drag-translate-x: 0px;
-
-				position: fixed;
-				z-index: 100;
-				inset: 0 0 0 auto;
-				width: calc(768px + var(--sidesheet-draggable-width));
-				transform: translateX(calc(var(--sidesheet-translate-x) + var(--sidesheet-drag-translate-x)));
-				will-change: transform;
-			}
-			.sidesheet.is-closed   { --sidesheet-translate-x: 768px; }
-			.sidesheet.is-open     { --sidesheet-translate-x: 384px; }
-			.sidesheet.is-expanded { --sidesheet-translate-x: 0px; }
-			.sidesheet.transition {
-				transition: transform 600ms cubic-bezier(0, 1, 0.25, 1);
-			}
-
-			//////////////////////////////////
-
-			.sidesheet-draggable {
-				width: var(--sidesheet-draggable-width);
-
-				// CSS Grid
-				display: grid;
-				place-items: center;
-
-				cursor: grab;
-			}
-			:root:has(.sidesheet-draggable:active) {
-				cursor: grab;
-			}
-
-			//////////////////////////////////
-
-			.sidesheet-drag-indicator {
-				width: 4px;
-				aspect-ratio: 1 / 12;
-				border-radius: var(--full);
-				background-color: hsl(0 0% 50%);
-			}
-			.sidesheet-draggable:active .sidesheet-drag-indicator {
-				background-color: hsl(0 0% 25%);
-			}
-
-			//////////////////////////////////
-
-			.sidesheet-card {
-				background-color: white;
-				box-shadow: 0 0 0 1px hsl(0 0% 0% / 25%);
-			}
-
-			//////////////////////////////////
-
-			.sidesheet-content {
-				overflow-y: auto;
-			}
-			.sidesheet:is(.is-closed, .is-open) .sidesheet-content { width: 384px; }
-			.sidesheet.is-expanded .sidesheet-content { width: 768px; }
-		`}
 		<div
 			ref={setBackdrop}
 			class="sidesheet-backdrop"
