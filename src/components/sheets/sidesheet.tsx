@@ -1,14 +1,11 @@
-import { batch, createEffect, createSignal, DEV, JSX, onCleanup, onMount, ParentProps } from "solid-js"
+import { batch, createSignal, DEV, onCleanup, onMount, ParentProps } from "solid-js"
 import { createRef, css, cx } from "../../solid-utils"
+import { round } from "../../utils"
 
 export type SidesheetState = "closed" | "open" | "expanded"
 
-export function Sidesheet(props: ParentProps<{
-	style?:        JSX.CSSProperties,
-	initialState?: SidesheetState
-}>) {
+export function Sidesheet(props: ParentProps<{ initialState?: SidesheetState }>) {
 	const [backdropRef, setBackdropRef] = createRef()
-	const [ref, setRef] = createRef()
 	const [draggableRef, setDraggableRef] = createRef()
 
 	const [state, setState] = createSignal(props.initialState ?? "open")
@@ -61,14 +58,14 @@ export function Sidesheet(props: ParentProps<{
 			batch(() => {
 				const clientRect = draggableRef()!.getBoundingClientRect()
 				setPointerDown(true)
-				setPointerOffset(Math.round(clientRect.right - e.clientX))
-				setP1(Math.round(e.clientX))
+				setPointerOffset(round(clientRect.right - e.clientX, { precision: 1 }))
+				setP1(round(e.clientX, { precision: 1 }))
 				setTransition()
 			})
 		}
 		function handlePointerMove(e: PointerEvent) {
 			if (!pointerDown()) { return }
-			setP2(Math.round(e.clientX))
+			setP2(round(e.clientX, { precision: 1 }))
 		}
 		function handlePointerUp(e: PointerEvent) {
 			if (!pointerDown()) { return }
@@ -112,15 +109,6 @@ export function Sidesheet(props: ParentProps<{
 		})
 	})
 
-	createEffect(() => {
-		if (!pointerOffset() || !p1() || !p2()) {
-			ref()!.style.setProperty("--sidesheet-drag-translate-x", "0px")
-		} else {
-			const delta = (p2()! + pointerOffset()!) - (p1()! + pointerOffset()!)
-			ref()!.style.setProperty("--sidesheet-drag-translate-x", `${delta}px`)
-		}
-	})
-
 	return <>
 		{css`
 			.sidesheet-backdrop {
@@ -148,6 +136,7 @@ export function Sidesheet(props: ParentProps<{
 				inset: 0 0 0 auto;
 				width: calc(768px + var(--sidesheet-draggable-width));
 				transform: translateX(calc(var(--sidesheet-translate-x) + var(--sidesheet-drag-translate-x)));
+				will-change: transform;
 			}
 			.sidesheet.is-closed   { --sidesheet-translate-x: 768px; }
 			.sidesheet.is-open     { --sidesheet-translate-x: 384px; }
@@ -202,19 +191,24 @@ export function Sidesheet(props: ParentProps<{
 			ref={setBackdropRef}
 			class="sidesheet-backdrop"
 			onClick={forceClose}
-			// @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322)
-			inert={(state() === "closed" || state() === "open") || undefined}
+			// @ts-expect-error
+			inert={!(state() === "expanded") || undefined}
 		></div>
 		<div
-			ref={setRef}
 			class={cx(`sidesheet is-${state()} ${transition() ? "transition" : ""} flex-row`)}
+			style={{
+				"--sidesheet-drag-translate-x":
+					(!pointerOffset() || !p1() || !p2())
+						? "0px"
+						: `${(p2()! + pointerOffset()!) - (p1()! + pointerOffset()!)}px`
+			}}
 			onTransitionEnd={e => setTransition()}
 		>
 			<div ref={setDraggableRef} class="sidesheet-draggable" tabIndex={0}>
 				<div class="sidesheet-drag-indicator"></div>
 			</div>
-			{/* @ts-expect-error: Property 'inert' does not exist on type 'HTMLAttributes<HTMLDivElement>'. ts(2322) */}
-			<div class="sidesheet-card flex-grow flex-col" inert={state() === "closed" || undefined}>
+			{/* @ts-expect-error */}
+			<div class="sidesheet-card flex-grow flex-col" inert={(state() === "open" || state() === "expanded") || undefined}>
 				<div class="sidesheet-content">
 					{props.children}
 				</div>

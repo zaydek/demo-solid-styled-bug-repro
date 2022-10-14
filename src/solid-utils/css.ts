@@ -1,4 +1,4 @@
-import { createMemo, onCleanup } from "solid-js"
+import { createMemo } from "solid-js"
 import { decomment } from "../utils/format"
 
 export type CSS = ([raw]: TemplateStringsArray) => null
@@ -19,10 +19,10 @@ export function createCSS(scope?: HTMLElement, { prepend }: { prepend?: boolean 
 		cache.set(str(), true)
 		if (prepend) scope!.prepend(style)
 		else scope!.append(style)
-		onCleanup(() => {
-			cache.delete(str())
-			style.remove()
-		})
+		//// onCleanup(() => { // FIXME: Cache eviction isn’t working here
+		//// 	cache.delete(str())
+		//// 	style.remove()
+		//// })
 
 		return null
 	}

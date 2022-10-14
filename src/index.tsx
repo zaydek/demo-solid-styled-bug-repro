@@ -537,6 +537,15 @@ function Entrypoint() {
 	</>
 }
 
+function App3() {
+	return <>
+		<Bottomsheet initialState="open">
+			<div>Hello, world!</div>
+		</Bottomsheet>
+	</>
+}
+
 render(() => <>
-	<Entrypoint />
+	{/* <Entrypoint /> */}
+	<App3 />
 </>, document.getElementById("root")!)

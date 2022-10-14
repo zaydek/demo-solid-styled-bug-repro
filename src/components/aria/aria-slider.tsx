@@ -1,6 +1,6 @@
 import { Accessor, batch, createContext, createSignal, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
 import { createRef, CSSProps, omitProps, RefProps } from "../../solid-utils"
-import { bound, round } from "../../utils"
+import { clamp, round } from "../../utils"
 
 export const HorizontalSliderContext = createContext<{
 	float:         Accessor<number>
@@ -104,11 +104,10 @@ export function AriaHorizontalSlider(props: ParentProps<RefProps & CSSProps & {
 	const [trackRect, setTrackRect] = createSignal<DOMRect>()
 	const [thumbRect, setThumbRect] = createSignal<DOMRect>()
 
-	// Normalizes a value; rounds and bounds a number
+	// Normalizes a value; rounds and clamps a number
 	function normalize(value: number) {
-		const rounded = round(value)
-		const bounded = bound(rounded, { min: props.min, max: props.max })
-		props.setValue(bounded)
+		const normalized = clamp(round(value), { min: props.min, max: props.max })
+		props.setValue(normalized)
 	}
 	normalize(props.value) // Immediately normalize
 
