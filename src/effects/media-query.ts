@@ -1,16 +1,20 @@
 import { createRoot, createSignal, onCleanup, onMount } from "solid-js"
 
-export function createMediaQuery(query: string) {
-	const mq = window.matchMedia(query)
-	const [matches, setMatches] = createSignal(mq.matches)
+type MediaQuery =
+	| `(min-width: ${number}px)`
+	| `(max-width: ${number}px)`
+
+export function createMediaQuery(mediaQuery: MediaQuery) {
+	const media = window.matchMedia(mediaQuery)
+	const [matches, setMatches] = createSignal(media.matches)
 
 	createRoot(dispose => {
 		onMount(() => {
 			function handleBreakpoint(e: MediaQueryListEvent) {
 				setMatches(e.matches)
 			}
-			mq.addEventListener("change", handleBreakpoint, false)
-			onCleanup(() => mq.removeEventListener("change", handleBreakpoint, false))
+			media.addEventListener("change", handleBreakpoint, false)
+			onCleanup(() => media.removeEventListener("change", handleBreakpoint, false))
 		})
 		onCleanup(dispose)
 	})

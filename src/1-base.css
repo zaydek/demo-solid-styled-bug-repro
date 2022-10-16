@@ -1,7 +1,6 @@
 /* This is a heavy-handed CSS reset because supporting touch devices is hard.
 This CSS resets adds hi-DPI antialiasing and disables selection universally, and
 disables font-size scaling and body scrolling on touch devices. */
-
 body {
 	/* Enable hi-DPI antialiasing */
 	-webkit-font-smoothing: antialiased;
@@ -22,22 +21,28 @@ body {
 
 /**************************************/
 
-/* Use margin to create insets */
-.main-content {
-	margin-top: var(--fixed-navbar-height);
-}
 :root:has(.sidesheet:is(.is-open, .is-expanded)) .fixed-navbar { margin-right: 384px; }
 :root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
-	margin-right: calc(384px + var(--sheet-draggable-size));
+	margin:
+		var(--fixed-navbar-height)                /* T */
+		calc(384px + var(--sheet-draggable-size)) /* R */
+		0                                         /* B */
+		0;                                        /* L */
 }
 /* COMPAT/iOS: Add scrolling. Use @media
 because body scrolling works for
 non-touch devices */
 @media (hover: none) { .main-content {
-	height: var(--screen-h);
+	/* Overwrite margin for touch devices */
+	margin:
+		var(--fixed-navbar-height)  /* T */
+		0                           /* R */
+		var(--sheet-draggable-size) /* B */
+		0;                          /* L */
+	height: calc(var(--screen-h) - var(--fixed-navbar-height) - var(--sheet-draggable-size));
 	overflow-y: auto;
 } }
-/* Add scrolling (bottomsheet) */
+/* Add scrolling */
 .bottomsheet .aside-content {
 	height: calc(
 		var(--screen-h) -
@@ -47,14 +52,10 @@ non-touch devices */
 	);
 	overflow-y: auto;
 }
-/* Add scrolling (sidesheet) */
+/* Add scrolling */
 .sidesheet .aside-content {
 	height: var(--screen-h);
 	overflow-y: auto;
-
-	/* Flow */
-	display: flex;
-	flex-direction: column;
 }
 /* Prevent body scrolling when
 bottomsheet=open OR sidesheet=expanded */

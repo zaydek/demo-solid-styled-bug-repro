@@ -86,12 +86,12 @@ function App() {
 		</nav>
 		{/* @ts-expect-error */}
 		<main class="main-content" inert={only(sidesheet() === "expanded")}>
-			<For each={range(1000)}>{() => <>
-				x{" "}
+			<For each={range(4_000)}>{() => <>
+				hello{" "}
 			</>}</For>
 		</main>
 		<Sheet sidesheet={sidesheet()} setSidesheet={setSidesheet}>
-			<aside class="aside-content">
+			<aside class="aside-content [display:flex] [flex-direction:column]">
 				<Show when={!responsive()}>
 					<div class="[flex-shrink:0]">
 						<nav class="navbar">
@@ -114,7 +114,7 @@ function App() {
 				<div class="[flex-shrink:0]">
 					<hr class="line is-collapsed" />
 					<section class="[padding:16px]">
-						<div>Hello, world!</div>
+						<div>This is the last block</div>
 					</section>
 				</div>
 			</aside>
