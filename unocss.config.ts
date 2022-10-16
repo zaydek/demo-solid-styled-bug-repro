@@ -1,4 +1,3 @@
-import { variantImportant, variantVariables } from "@unocss/preset-mini/variants"
 import { Rule } from "unocss"
 import { defineConfig } from "unocss/vite"
 
@@ -165,8 +164,8 @@ export default defineConfig({
 	presets: [], // No-op UnoCSS
 
 	rules,
-	variants: [
-		variantImportant, // !key=typed(value) syntax
-		variantVariables, // [selector]:key=typed(value) syntax
-	],
+	//// variants: [
+	//// 	variantImportant, // !key=typed(value) syntax
+	//// 	variantVariables, // [selector]:key=typed(value) syntax
+	//// ],
 })

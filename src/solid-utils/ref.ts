@@ -1,6 +1,6 @@
-import { createSignal, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 
-export const createRef = <E extends HTMLElement>() => createSignal<E>()
+//// export const createRef = <E extends HTMLElement>() => createSignal<E>()
 
 // Type from splitProps:
 //

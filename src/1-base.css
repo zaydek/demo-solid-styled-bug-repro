@@ -19,6 +19,9 @@ body {
 	overflow: hidden;
 } }
 
+/* https://github.com/elad2412/the-new-css-reset/issues/25#issuecomment-1242636428 */
+:focus-visible { outline: revert; }
+
 /**************************************/
 
 :root:has(.sidesheet:is(.is-open, .is-expanded)) .fixed-navbar { margin-right: 384px; }

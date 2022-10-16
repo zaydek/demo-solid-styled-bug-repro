@@ -4,11 +4,11 @@ import "./1-base.css"
 import "./2-vars.css"
 import "./3-components.css"
 
-import { createSignal, ParentProps, Setter } from "solid-js"
+import { batch, createSignal, onMount, ParentProps, Setter } from "solid-js"
 import { For, render, Show } from "solid-js/web"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
-import { createMediaQuery } from "./effects"
-import { css } from "./solid-utils"
+import { createMediaQuery, createScreenVars } from "./effects"
+import { css, cx } from "./solid-utils"
 import { only, range } from "./utils"
 
 ////////////////////////////////////////
@@ -124,6 +124,144 @@ function App() {
 
 ////////////////////////////////////////
 
+// TODO: Add uncontrolled vs. controlled API
+function Collapsible() {
+	const [ref, setRef] = createSignal<HTMLElement>()
+
+	const [state, setState] = createSignal<"closed" | "open">("open")
+	const [h1, setH1] = createSignal<number>()
+	const [h2, setH2] = createSignal<number>()
+	const [transition, setTransition] = createSignal<true>()
+
+	onMount(() => {
+		setH1(ref()!.firstElementChild!.scrollHeight)
+		setH2(ref()!.scrollHeight)
+	})
+
+	return <>
+		{css`
+			.collapsible {
+				/* Runtime values */
+				--__height-is-closed: 32px;
+				--__height-is-open: initial;
+			}
+			.collapsible.is-closed { /* height: var(--__height-is-closed); */ overflow-y: hidden; }
+			.collapsible.is-open   { /* height: var(--__height-is-open);   */ overflow-y: hidden; }
+			/* .collapsible.is-transition { */
+			/* 	transition: height 600ms cubic-bezier(0, 1, 0.25, 1); */
+			/* } */
+
+			/********************************/
+
+			.collapsible-button:hover {
+				cursor: pointer;
+			}
+
+			/********************************/
+
+			/* .collapsible-content { */
+			/* 	transition: opacity 600ms cubic-bezier(0, 1, 0.25, 1); */
+			/* } */
+			/* .collapsible.is-closed .collapsible-content { opacity: 0; } */
+			/* .collapsible.is-open   .collapsible-content { opacity: 1; } */
+
+			.collapsible-content {
+				overflow-y: hidden;
+				transition: transform 600ms cubic-bezier(0, 1, 0.25, 1);
+			}
+			.collapsible.is-closed .collapsible-content { transform: translateY(-100px); }
+			.collapsible.is-open   .collapsible-content { transform: translateY(0px); }
+		`}
+		<div
+			ref={setRef}
+			class={cx(`collapsible is-${state()} ${transition() ? "is-transition" : ""}`)}
+			style={{
+				"--__height-is-closed": !h1()
+					? "initial"
+					: `${h1()}px`,
+				"--__height-is-open": !h2()
+					? "initial"
+					: `${h2()}px`,
+			}}
+			onTransitionEnd={e => setTransition()}
+			// COMPAT/Firefox: Use tabIndex={-1} to prevent "overflow-y: *;" from
+			// being focusable
+			tabIndex={-1}
+		>
+			<div
+				class="collapsible-button [padding:16px]"
+				onClick={e => {
+					if (state() === "open") {
+						batch(() => {
+							setState("closed")
+							setTransition(true)
+						})
+					} else {
+						batch(() => {
+							setState("open")
+							setTransition(true)
+						})
+					}
+				}}
+				onKeyDown={e => {
+					if (e.key === " ") {
+						e.preventDefault() // Prevent scrolling
+						e.currentTarget.click()
+					}
+				}}
+				role="button"
+				tabIndex={0}
+			>
+				Title
+			</div>
+			{/* @ts-expect-error */}
+			<div class="collapsible-content [padding:16px] [padding-top:0px_!important]" inert={only(state() === "closed")}>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>End</div>
+			</div>
+		</div>
+	</>
+}
+
+function App2() {
+	return <>
+		{css`
+			.container {
+				padding: 96px 0;
+
+				/* Flow */
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			.card {
+				width: 224px;
+				background-color: whitesmoke;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+			}
+			.line {
+				height: 1px;
+				background-color: red;
+			}
+		`}
+		<div class="container">
+			<div class="card">
+				<Collapsible />
+				<div class="line"></div>
+				<Collapsible />
+				<div class="line"></div>
+				<Collapsible />
+				<div class="line"></div>
+				<Collapsible />
+			</div>
+		</div>
+	</>
+}
+
 render(() => <>
-	<App />
+	<App2 />
 </>, document.getElementById("root")!)
