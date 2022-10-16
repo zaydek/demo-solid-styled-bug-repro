@@ -1,7 +1,7 @@
 import { createRoot, createSignal, onCleanup, onMount } from "solid-js"
 
-export function createMediaQuery(mediaQuery: `(min-width: ${number}px)`) {
-	const mq = window.matchMedia(mediaQuery)
+export function createMediaQuery(query: string) {
+	const mq = window.matchMedia(query)
 	const [matches, setMatches] = createSignal(mq.matches)
 
 	createRoot(dispose => {
@@ -17,5 +17,3 @@ export function createMediaQuery(mediaQuery: `(min-width: ${number}px)`) {
 
 	return matches
 }
-
-export const useMediaQuery = createMediaQuery

@@ -114,7 +114,7 @@
 @media (hover: none) { /* COMPAT/Safari (iOS) */
 .main-content {
 	padding-bottom: var(--bottomsheet-draggable-height); /* Use padding here */
-	height: calc(var(--screen-y) - 64px);
+	height: calc(var(--screen-h) - 64px);
 	overflow-y: auto;
 } }
 

@@ -1,0 +1,54 @@
+body {
+	/* Enable support for Hi-DPI anti-aliasing */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	/* Disable selection by default */
+	-webkit-user-select: none;
+	user-select: none;
+}
+/* COMPAT/iOS/Safari */
+@media (hover: none) {
+	body {
+		/* Disable scaling algorithm */
+		-webkit-text-size-adjust: 100%;
+		/* Disable toolbar resizing */
+		position: fixed;
+		inset: 0;
+		overflow: hidden;
+	}
+}
+
+/**************************************/
+
+/* COMPAT/iOS: Enable scrolling for the ".main-content" */
+@media (hover: hover) {
+	/* Prevents body scrolling when the bottomsheet is open
+	or the sidesheet is expanded */
+	:root:has(:is(.bottomsheet.is-open, .sidesheet.is-expanded)) body {
+		overflow: hidden;
+	}
+}
+@media (hover: none) {
+	.main-content {
+		height: var(--screen-h);
+		overflow-y: auto;
+	}
+}
+:root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
+	margin-right: calc(384px + var(--sheet-draggable-size));
+}
+/* Enable scrolling for the ".bottomsheet" */
+.bottomsheet .aside-content {
+	height: calc(
+		var(--screen-h) -
+		var(--sheet-draggable-size) -
+		1px -
+		var(--sheet-draggable-size)
+	);
+	overflow-y: auto;
+}
+/* Enable scrolling for the ".sidesheet" */
+.sidesheet .aside-content {
+	height: var(--screen-h);
+	overflow-y: auto;
+}

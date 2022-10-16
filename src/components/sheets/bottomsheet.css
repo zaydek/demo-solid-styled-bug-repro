@@ -14,21 +14,21 @@
 :root { --bottomsheet-draggable-height: 40px; }
 .bottomsheet {
 	/* Runtime values */
-	--bottomsheet-screen-y: var(--screen-y);
+	--bottomsheet-screen-y: var(--screen-h);
 	--bottomsheet-translate-y: 0px;
 	--bottomsheet-drag-translate-y: 0px;
 
 	position: fixed;
 	z-index: 100;
 	inset: 0 0 auto 0;
-	min-height: calc(100vh - var(--bottomsheet-draggable-height) * 2);
+	min-height: calc(var(--screen-h) - var(--bottomsheet-draggable-height) * 2);
 	border-radius: calc(var(--bottomsheet-draggable-height) / 2) calc(var(--bottomsheet-draggable-height) / 2) 0 0;
 	background-color: var(--card-color);
 	box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 	transform: translateY(calc(var(--bottomsheet-screen-y) + var(--bottomsheet-translate-y) + var(--bottomsheet-drag-translate-y)));
 }
 .bottomsheet.is-closed {
-	--bottomsheet-screen-y: var(--screen-y);
+	--bottomsheet-screen-y: var(--screen-h);
 	--bottomsheet-translate-y: -1 * var(--bottomsheet-draggable-height);
 }
 .bottomsheet.is-open   {
@@ -75,7 +75,7 @@
 .bottomsheet-content[inert] { content: ""; }
 .bottomsheet-content {
 	height: calc(
-		var(--screen-y) -
+		var(--screen-h) -
 		var(--bottomsheet-draggable-height) - /* .bottomsheet-backdrop */
 		1px -                                 /* <hr> */
 		var(--bottomsheet-draggable-height)
