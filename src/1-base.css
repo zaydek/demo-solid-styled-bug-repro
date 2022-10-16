@@ -1,43 +1,43 @@
+/* This is a heavy-handed CSS reset because supporting touch devices is hard.
+This CSS resets adds hi-DPI antialiasing and disables selection universally, and
+disables font-size scaling and body scrolling on touch devices. */
+
 body {
-	/* Enable support for Hi-DPI anti-aliasing */
+	/* Enable hi-DPI antialiasing */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	/* Disable selection by default */
+	/* Disable selection */
 	-webkit-user-select: none;
 	user-select: none;
 }
 /* COMPAT/iOS/Safari */
-@media (hover: none) {
-	body {
-		/* Disable scaling algorithm */
-		-webkit-text-size-adjust: 100%;
-		/* Disable toolbar resizing */
-		position: fixed;
-		inset: 0;
-		overflow: hidden;
-	}
-}
+@media (hover: none) { body {
+	/* Disable font-size scaling */
+	-webkit-text-size-adjust: 100%;
+	/* Disable body scrolling */
+	position: fixed;
+	inset: 0;
+	overflow: hidden;
+} }
 
 /**************************************/
 
-/* COMPAT/iOS: Enable scrolling for the ".main-content" */
-@media (hover: hover) {
-	/* Prevents body scrolling when the bottomsheet is open
-	or the sidesheet is expanded */
-	:root:has(:is(.bottomsheet.is-open, .sidesheet.is-expanded)) body {
-		overflow: hidden;
-	}
+/* Use margin to create insets */
+.main-content {
+	margin-top: var(--fixed-navbar-height);
 }
-@media (hover: none) {
-	.main-content {
-		height: var(--screen-h);
-		overflow-y: auto;
-	}
-}
+:root:has(.sidesheet:is(.is-open, .is-expanded)) .fixed-navbar { margin-right: 384px; }
 :root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
 	margin-right: calc(384px + var(--sheet-draggable-size));
 }
-/* Enable scrolling for the ".bottomsheet" */
+/* COMPAT/iOS: Add scrolling. Use @media
+because body scrolling works for
+non-touch devices */
+@media (hover: none) { .main-content {
+	height: var(--screen-h);
+	overflow-y: auto;
+} }
+/* Add scrolling (bottomsheet) */
 .bottomsheet .aside-content {
 	height: calc(
 		var(--screen-h) -
@@ -47,8 +47,17 @@ body {
 	);
 	overflow-y: auto;
 }
-/* Enable scrolling for the ".sidesheet" */
+/* Add scrolling (sidesheet) */
 .sidesheet .aside-content {
 	height: var(--screen-h);
 	overflow-y: auto;
+
+	/* Flow */
+	display: flex;
+	flex-direction: column;
 }
+/* Prevent body scrolling when
+bottomsheet=open OR sidesheet=expanded */
+@media (hover: hover) { :root:has(:is(.bottomsheet.is-open, .sidesheet.is-expanded)) body {
+	overflow-y: hidden;
+} }
