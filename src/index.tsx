@@ -4,15 +4,14 @@ import "./1-base.css"
 import "./2-vars.css"
 import "./3-components.css"
 
-//// import { useLocator } from "solid-devtools"
-//// useLocator() // https://github.com/thetarnav/solid-devtools/tree/main/packages/extension#3-import-the-script
+import "solid-devtools"
 
 import { createSignal, ParentProps, Setter } from "solid-js"
 import { For, render, Show } from "solid-js/web"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
 import { createMediaQuery } from "./effects"
 import { css } from "./solid-utils"
-import { echo, only, range } from "./utils"
+import { only, range } from "./utils"
 
 ////////////////////////////////////////
 
@@ -147,53 +146,43 @@ const initialState = [
 function Collapsible() {
 	const [transforms, setTransforms] = createSignal(initialState)
 
-	//// function toggleTab(index?: number) {
-	//// 	if (index === undefined) {
-	//// 		setTransforms(initialState)
-	//// 		return
-	//// 	}
-	//// 	const next = [...initialState]
-	//// 	const length = Object.keys(next).length
-	//// 	while (index + 1 < length) {
-	//// 		next[index + 1]++
-	//// 		index++
-	//// 	}
-	//// 	setTransforms(next)
-	//// }
-
+	// Internal
 	function _openTab(index: number) {
 		const copy = [...transforms()]
-		const length = Object.keys(copy).length
-		index++ // Advance
-		copy[index] = (index - 1 in copy) ? copy[index - 1] : 0
-		for (index++; index < length; index++) {
-			copy[index] = copy[index - 1] + 1
+		for (index++; index < copy.length; index++) {
+			if (
+				index - 1 >= 0 &&                   // Bounds check
+				copy[index] - copy[index - 1] === 0 // The current element is already equal
+			) { break }
+			copy[index]--
 		}
 		return copy
 	}
 
+	// Internal
 	function _closeTab(index: number) {
 		const copy = [...transforms()]
-		const length = Object.keys(copy).length
-		index++ // Advance
-		copy[index] = copy[index - 1] + 1
-		for (index++; index < length; index++) {
-			copy[index] = copy[index - 1] + 1
+		for (index++; index < copy.length; index++) {
+			if (
+				index - 1 >= 0 &&                   // Bounds check
+				copy[index] - copy[index - 1] === 1 // The current element is already incremented
+			) { break }
+			copy[index]++
 		}
 		return copy
 	}
 
 	function openTab(index: number) {
-		setTransforms(echo(_openTab(index)))
+		setTransforms(_openTab(index))
 	}
 
 	function closeTab(index: number) {
-		setTransforms(echo(_closeTab(index)))
+		setTransforms(_closeTab(index))
 	}
 
-	//// function closeAllTabs() {
-	//// 	setTransforms(initialState)
-	//// }
+	function isOpen(index: number) {
+		return index + 1 < transforms().length && transforms()[index + 1] === transforms()[index]
+	}
 
 	return <>
 		{css`
@@ -210,145 +199,56 @@ function Collapsible() {
 
 			.tab {
 				height: 112px;
-				transition: transform 500ms cubic-bezier(0, 1, 0.25, 1);
+				transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.15);
 
 				cursor: pointer;
 			}
-			.tab.tab-0 {
-				position: relative;
-				z-index: 0;
-				background-color: ${randColor(0.1)};
-			}
-			.tab.tab-1 {
-				position: relative;
-				z-index: 1;
-				background-color: ${randColor(0.2)};
-			}
-			.tab.tab-2 {
-				position: relative;
-				z-index: 2;
-				background-color: ${randColor(0.3)};
-			}
-			.tab.tab-3 {
-				position: relative;
-				z-index: 3;
-				background-color: ${randColor(0.4)};
-			}
-			.tab.tab-4 {
-				position: relative;
-				z-index: 4;
-				background-color: ${randColor(0.5)};
-			}
-			.tab.tab-5 {
-				position: relative;
-				z-index: 5;
-				background-color: ${randColor(0.6)};
-			}
-			.tab.tab-6 {
-				position: relative;
-				z-index: 6;
-				background-color: ${randColor(0.7)};
-			}
-			.tab.tab-7 {
-				position: relative;
-				z-index: 7;
-				background-color: ${randColor(0.8)};
-			}
-
-			/* https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */
-			input[type=number]::-webkit-outer-spin-button,
-			input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-			input[type=number] { -moz-appearance: textfield; }
+			.tab.tab-0 { background-color: hsl(  0 100% 75%); }
+			.tab.tab-1 { background-color: hsl( 45 100% 75%); }
+			.tab.tab-2 { background-color: hsl( 90 100% 75%); }
+			.tab.tab-3 { background-color: hsl(135 100% 75%); }
+			.tab.tab-4 { background-color: hsl(180 100% 75%); }
+			.tab.tab-5 { background-color: hsl(225 100% 75%); }
+			.tab.tab-6 { background-color: hsl(270 100% 75%); }
+			.tab.tab-7 { background-color: hsl(315 100% 75%); }
+			.tab.tab-8 { background-color: whitesmoke; }
 		`}
-		<div class="[flex-shrink:0]">
+		{/* <div class="[flex-shrink:0]">
 			<div class="edge-section"></div>
 			<div class="line"></div>
-		</div>
-		<div class="[position:fixed] [z-index:10] [inset:auto_auto_16px_16px] [padding:16px] [width:224px] [border-radius:16px] [background-color:white] [box-shadow:0_0_0_4px_hsl(0_0%_0%_/_25%)]">
-			<div class="[font:400_14px_/_1.25_Monaco] [white-space:pre] [display:flex] [flex-direction:column]">
-				<div>[</div>
-				<div class="[margin-left:2ch] [display:flex] [flex-direction:column]">
-					<For each={range(8)}>{index => <>
-						<div class="[display:flex] [flex-direction:row] [gap:8px]">
-							<input
-								class="[width:2ch] [text-align:end]"
-								type="number"
-								value={transforms()[index]}
-								onInput={e => {
-									setTransforms(curr => [
-										...curr.slice(0, index),
-										+e.currentTarget.value,
-										...curr.slice(index + 1),
-									])
-								}}
-							/>
-							<div class="[margin-left:-8px]">,</div>
-							<div class="[flex-grow:1]"></div>
-							<div
-								class="[width:2ch] [text-align:center]"
-								onClick={e => {
-									setTransforms(curr => [
-										...curr.slice(0, index),
-										curr[index] - 1,
-										...curr.slice(index + 1),
-									])
-								}}
-								onKeyDown={e => {
-									if (e.key === " ") {
-										e.preventDefault() // Prevent scrolling
-										e.currentTarget.click()
-									}
-								}}
-								tabIndex={0}
-							>
-								-
-							</div>
-							<div
-								class="[width:2ch] [text-align:center]"
-								onClick={e => {
-									setTransforms(curr => [
-										...curr.slice(0, index),
-										curr[index] + 1,
-										...curr.slice(index + 1),
-									])
-								}}
-								onKeyDown={e => {
-									if (e.key === " ") {
-										e.preventDefault() // Prevent scrolling
-										e.currentTarget.click()
-									}
-								}}
-								tabIndex={0}
-							>
-								+
-							</div>
-						</div>
-					</>}</For>
-				</div>
-				<div>]</div>
-			</div>
-		</div>
+		</div> */}
 		<div class="[flex-grow:1] [overflow-y:auto]">
-			<For each={range(8)}>{index => <>
+			<For each={range(9)}>{index => <>
 				<div
-					class={`tab tab-${index} [display:flex] [flex-direction:row] [gap:8px]`}
+					class={`tab tab-${index}`}
 					style={{ "transform": `translateY(${88 * (-1 * transforms()[index])}px)` }}
 				>
-					<div>Hello, world!</div>
-					<div class="[flex-grow:1]"></div>
-					<div onClick={e => openTab(index)} tabIndex={0}>
-						OPEN
-					</div>
-					<div onClick={e => closeTab(index)} tabIndex={0}>
-						CLOSE
+					<div
+						class="[height:24px]"
+						onClick={e => {
+							if (isOpen(index)) {
+								closeTab(index)
+							} else {
+								openTab(index)
+							}
+						}}
+						onKeyDown={e => {
+							if (e.key === " ") {
+								e.preventDefault() // Prevent scrolling
+								e.currentTarget.click()
+							}
+						}}
+						tabIndex={0}
+					>
+						Hello, world!
 					</div>
 				</div>
 			</>}</For>
 		</div>
-		<div class="[flex-shrink:0]">
+		{/* <div class="[flex-shrink:0]">
 			<div class="line"></div>
 			<div class="edge-section"></div>
-		</div>
+		</div> */}
 	</>
 }
 
