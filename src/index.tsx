@@ -12,7 +12,7 @@ import { For, render, Show } from "solid-js/web"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
 import { createMediaQuery } from "./effects"
 import { css } from "./solid-utils"
-import { only, range } from "./utils"
+import { echo, only, range } from "./utils"
 
 ////////////////////////////////////////
 
@@ -161,56 +161,39 @@ function Collapsible() {
 	//// 	setTransforms(next)
 	//// }
 
-	function openTab(index: number) {
-		function increment(index: number) {
-			const copy = [...transforms()]
-			const length = Object.keys(copy).length
-			index++ // We don’t care about the current index
-			copy[index] = copy[index - 1]
-			for (index++; index < length; index++) {
-				copy[index] = copy[index - 1] + 1
-			}
-			return copy
+	function _openTab(index: number) {
+		const copy = [...transforms()]
+		const length = Object.keys(copy).length
+		index++ // Advance
+		copy[index] = (index - 1 in copy) ? copy[index - 1] : 0
+		for (index++; index < length; index++) {
+			copy[index] = copy[index - 1] + 1
 		}
-
-		setTransforms(increment(index))
-
-
-		//// copy[index] = (index - 1 in copy)
-		//// 	? copy[index - 1]
-		//// 	: 0
-		//// copy[index + 1] = copy[index]
-		//// index += 2
-		//// //// index++
-		//// while (index < length) {
-		//// 	copy[index] = copy[index - 1] + 1
-		//// 	index++
-		//// }
-////
-		//// console.log(copy)
-		//// setTransforms(copy)
-
-		//// const next = [...transforms()]
-		//// const length = Object.keys(next).length
-		//// while (index + 1 < length) {
-		//// 	next[index + 1]--
-		//// 	index++
-		//// }
-		//// setTransforms(next)
+		return copy
 	}
 
-	function isOpen(index: number) {
-		return transforms()[index + 1] !== initialState[index + 1]
+	function _closeTab(index: number) {
+		const copy = [...transforms()]
+		const length = Object.keys(copy).length
+		index++ // Advance
+		copy[index] = copy[index - 1] + 1
+		for (index++; index < length; index++) {
+			copy[index] = copy[index - 1] + 1
+		}
+		return copy
 	}
 
-	// TODO
-	function closeTab() {
-		closeAllTabs()
+	function openTab(index: number) {
+		setTransforms(echo(_openTab(index)))
 	}
 
-	function closeAllTabs() {
-		setTransforms(initialState)
+	function closeTab(index: number) {
+		setTransforms(echo(_closeTab(index)))
 	}
+
+	//// function closeAllTabs() {
+	//// 	setTransforms(initialState)
+	//// }
 
 	return <>
 		{css`
@@ -271,6 +254,11 @@ function Collapsible() {
 				z-index: 7;
 				background-color: ${randColor(0.8)};
 			}
+
+			/* https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */
+			input[type=number]::-webkit-outer-spin-button,
+			input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+			input[type=number] { -moz-appearance: textfield; }
 		`}
 		<div class="[flex-shrink:0]">
 			<div class="edge-section"></div>
@@ -281,14 +269,7 @@ function Collapsible() {
 				<div>[</div>
 				<div class="[margin-left:2ch] [display:flex] [flex-direction:column]">
 					<For each={range(8)}>{index => <>
-						<div class="[display:flex] [flex-direction:row]">
-							{css`
-								/* https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */
-								input[type=number]::-webkit-outer-spin-button,
-								input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-								input[type=number] { -moz-appearance: textfield; }
-								:focus-visible { outline: none; }
-							`}
+						<div class="[display:flex] [flex-direction:row] [gap:8px]">
 							<input
 								class="[width:2ch] [text-align:end]"
 								type="number"
@@ -301,7 +282,46 @@ function Collapsible() {
 									])
 								}}
 							/>
-							<div>,</div>
+							<div class="[margin-left:-8px]">,</div>
+							<div class="[flex-grow:1]"></div>
+							<div
+								class="[width:2ch] [text-align:center]"
+								onClick={e => {
+									setTransforms(curr => [
+										...curr.slice(0, index),
+										curr[index] - 1,
+										...curr.slice(index + 1),
+									])
+								}}
+								onKeyDown={e => {
+									if (e.key === " ") {
+										e.preventDefault() // Prevent scrolling
+										e.currentTarget.click()
+									}
+								}}
+								tabIndex={0}
+							>
+								-
+							</div>
+							<div
+								class="[width:2ch] [text-align:center]"
+								onClick={e => {
+									setTransforms(curr => [
+										...curr.slice(0, index),
+										curr[index] + 1,
+										...curr.slice(index + 1),
+									])
+								}}
+								onKeyDown={e => {
+									if (e.key === " ") {
+										e.preventDefault() // Prevent scrolling
+										e.currentTarget.click()
+									}
+								}}
+								tabIndex={0}
+							>
+								+
+							</div>
 						</div>
 					</>}</For>
 				</div>
@@ -311,25 +331,17 @@ function Collapsible() {
 		<div class="[flex-grow:1] [overflow-y:auto]">
 			<For each={range(8)}>{index => <>
 				<div
-					class={`tab tab-${index}`}
+					class={`tab tab-${index} [display:flex] [flex-direction:row] [gap:8px]`}
 					style={{ "transform": `translateY(${88 * (-1 * transforms()[index])}px)` }}
-					onClick={e => {
-						//// if (!isOpen(index)) {
-						openTab(index)
-						//// } else {
-						//// 	closeAllTabs()
-						//// }
-					}}
-					//// onKeyDown={e => {
-					//// 	if (e.key === " ") {
-					//// 		e.preventDefault()
-					//// 		e.currentTarget.click()
-					//// 	}
-					//// }}
-					//// onPointerLeave={e => toggleTab()}
-					tabIndex={0}
 				>
 					<div>Hello, world!</div>
+					<div class="[flex-grow:1]"></div>
+					<div onClick={e => openTab(index)} tabIndex={0}>
+						OPEN
+					</div>
+					<div onClick={e => closeTab(index)} tabIndex={0}>
+						CLOSE
+					</div>
 				</div>
 			</>}</For>
 		</div>
