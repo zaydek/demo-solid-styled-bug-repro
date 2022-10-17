@@ -4,11 +4,14 @@ import "./1-base.css"
 import "./2-vars.css"
 import "./3-components.css"
 
-import { batch, createSignal, onMount, ParentProps, Setter } from "solid-js"
+//// import { useLocator } from "solid-devtools"
+//// useLocator() // https://github.com/thetarnav/solid-devtools/tree/main/packages/extension#3-import-the-script
+
+import { createSignal, ParentProps, Setter } from "solid-js"
 import { For, render, Show } from "solid-js/web"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
-import { createMediaQuery, createScreenVars } from "./effects"
-import { css, cx } from "./solid-utils"
+import { createMediaQuery } from "./effects"
+import { css } from "./solid-utils"
 import { only, range } from "./utils"
 
 ////////////////////////////////////////
@@ -124,105 +127,215 @@ function App() {
 
 ////////////////////////////////////////
 
-// TODO: Add uncontrolled vs. controlled API
+// https://css-tricks.com/snippets/javascript/random-hex-color/
+function randColor(floatSeed?: number) {
+	return `#${Math.floor((floatSeed ?? Math.random()) * 16777215).toString(16)}`
+}
+
+const initialState = [
+	0,
+	1,
+	2,
+	3,
+	4,
+	5,
+	6,
+	7,
+	8,
+]
+
 function Collapsible() {
-	const [ref, setRef] = createSignal<HTMLElement>()
+	const [transforms, setTransforms] = createSignal(initialState)
 
-	const [state, setState] = createSignal<"closed" | "open">("open")
-	const [h1, setH1] = createSignal<number>()
-	const [h2, setH2] = createSignal<number>()
-	const [transition, setTransition] = createSignal<true>()
+	//// function toggleTab(index?: number) {
+	//// 	if (index === undefined) {
+	//// 		setTransforms(initialState)
+	//// 		return
+	//// 	}
+	//// 	const next = [...initialState]
+	//// 	const length = Object.keys(next).length
+	//// 	while (index + 1 < length) {
+	//// 		next[index + 1]++
+	//// 		index++
+	//// 	}
+	//// 	setTransforms(next)
+	//// }
 
-	onMount(() => {
-		setH1(ref()!.firstElementChild!.scrollHeight)
-		setH2(ref()!.scrollHeight)
-	})
+	function openTab(index: number) {
+		function increment(index: number) {
+			const copy = [...transforms()]
+			const length = Object.keys(copy).length
+			index++ // We don’t care about the current index
+			copy[index] = copy[index - 1]
+			for (index++; index < length; index++) {
+				copy[index] = copy[index - 1] + 1
+			}
+			return copy
+		}
+
+		setTransforms(increment(index))
+
+
+		//// copy[index] = (index - 1 in copy)
+		//// 	? copy[index - 1]
+		//// 	: 0
+		//// copy[index + 1] = copy[index]
+		//// index += 2
+		//// //// index++
+		//// while (index < length) {
+		//// 	copy[index] = copy[index - 1] + 1
+		//// 	index++
+		//// }
+////
+		//// console.log(copy)
+		//// setTransforms(copy)
+
+		//// const next = [...transforms()]
+		//// const length = Object.keys(next).length
+		//// while (index + 1 < length) {
+		//// 	next[index + 1]--
+		//// 	index++
+		//// }
+		//// setTransforms(next)
+	}
+
+	function isOpen(index: number) {
+		return transforms()[index + 1] !== initialState[index + 1]
+	}
+
+	// TODO
+	function closeTab() {
+		closeAllTabs()
+	}
+
+	function closeAllTabs() {
+		setTransforms(initialState)
+	}
 
 	return <>
 		{css`
-			.collapsible {
-				/* Runtime values */
-				--__height-is-closed: 32px;
-				--__height-is-open: initial;
+			.edge-section {
+				height: 64px;
 			}
-			.collapsible.is-closed { /* height: var(--__height-is-closed); */ overflow-y: hidden; }
-			.collapsible.is-open   { /* height: var(--__height-is-open);   */ overflow-y: hidden; }
-			/* .collapsible.is-transition { */
-			/* 	transition: height 600ms cubic-bezier(0, 1, 0.25, 1); */
-			/* } */
+			.section {
+				height: 64px;
+			}
+			.line {
+				height: 4px;
+				background-color: hsl(0 0% 75%);
+			}
 
-			/********************************/
+			.tab {
+				height: 112px;
+				transition: transform 500ms cubic-bezier(0, 1, 0.25, 1);
 
-			.collapsible-button:hover {
 				cursor: pointer;
 			}
-
-			/********************************/
-
-			/* .collapsible-content { */
-			/* 	transition: opacity 600ms cubic-bezier(0, 1, 0.25, 1); */
-			/* } */
-			/* .collapsible.is-closed .collapsible-content { opacity: 0; } */
-			/* .collapsible.is-open   .collapsible-content { opacity: 1; } */
-
-			.collapsible-content {
-				overflow-y: hidden;
-				transition: transform 600ms cubic-bezier(0, 1, 0.25, 1);
+			.tab.tab-0 {
+				position: relative;
+				z-index: 0;
+				background-color: ${randColor(0.1)};
 			}
-			.collapsible.is-closed .collapsible-content { transform: translateY(-100px); }
-			.collapsible.is-open   .collapsible-content { transform: translateY(0px); }
+			.tab.tab-1 {
+				position: relative;
+				z-index: 1;
+				background-color: ${randColor(0.2)};
+			}
+			.tab.tab-2 {
+				position: relative;
+				z-index: 2;
+				background-color: ${randColor(0.3)};
+			}
+			.tab.tab-3 {
+				position: relative;
+				z-index: 3;
+				background-color: ${randColor(0.4)};
+			}
+			.tab.tab-4 {
+				position: relative;
+				z-index: 4;
+				background-color: ${randColor(0.5)};
+			}
+			.tab.tab-5 {
+				position: relative;
+				z-index: 5;
+				background-color: ${randColor(0.6)};
+			}
+			.tab.tab-6 {
+				position: relative;
+				z-index: 6;
+				background-color: ${randColor(0.7)};
+			}
+			.tab.tab-7 {
+				position: relative;
+				z-index: 7;
+				background-color: ${randColor(0.8)};
+			}
 		`}
-		<div
-			ref={setRef}
-			class={cx(`collapsible is-${state()} ${transition() ? "is-transition" : ""}`)}
-			style={{
-				"--__height-is-closed": !h1()
-					? "initial"
-					: `${h1()}px`,
-				"--__height-is-open": !h2()
-					? "initial"
-					: `${h2()}px`,
-			}}
-			onTransitionEnd={e => setTransition()}
-			// COMPAT/Firefox: Use tabIndex={-1} to prevent "overflow-y: *;" from
-			// being focusable
-			tabIndex={-1}
-		>
-			<div
-				class="collapsible-button [padding:16px]"
-				onClick={e => {
-					if (state() === "open") {
-						batch(() => {
-							setState("closed")
-							setTransition(true)
-						})
-					} else {
-						batch(() => {
-							setState("open")
-							setTransition(true)
-						})
-					}
-				}}
-				onKeyDown={e => {
-					if (e.key === " ") {
-						e.preventDefault() // Prevent scrolling
-						e.currentTarget.click()
-					}
-				}}
-				role="button"
-				tabIndex={0}
-			>
-				Title
+		<div class="[flex-shrink:0]">
+			<div class="edge-section"></div>
+			<div class="line"></div>
+		</div>
+		<div class="[position:fixed] [z-index:10] [inset:auto_auto_16px_16px] [padding:16px] [width:224px] [border-radius:16px] [background-color:white] [box-shadow:0_0_0_4px_hsl(0_0%_0%_/_25%)]">
+			<div class="[font:400_14px_/_1.25_Monaco] [white-space:pre] [display:flex] [flex-direction:column]">
+				<div>[</div>
+				<div class="[margin-left:2ch] [display:flex] [flex-direction:column]">
+					<For each={range(8)}>{index => <>
+						<div class="[display:flex] [flex-direction:row]">
+							{css`
+								/* https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */
+								input[type=number]::-webkit-outer-spin-button,
+								input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+								input[type=number] { -moz-appearance: textfield; }
+								:focus-visible { outline: none; }
+							`}
+							<input
+								class="[width:2ch] [text-align:end]"
+								type="number"
+								value={transforms()[index]}
+								onInput={e => {
+									setTransforms(curr => [
+										...curr.slice(0, index),
+										+e.currentTarget.value,
+										...curr.slice(index + 1),
+									])
+								}}
+							/>
+							<div>,</div>
+						</div>
+					</>}</For>
+				</div>
+				<div>]</div>
 			</div>
-			{/* @ts-expect-error */}
-			<div class="collapsible-content [padding:16px] [padding-top:0px_!important]" inert={only(state() === "closed")}>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>End</div>
-			</div>
+		</div>
+		<div class="[flex-grow:1] [overflow-y:auto]">
+			<For each={range(8)}>{index => <>
+				<div
+					class={`tab tab-${index}`}
+					style={{ "transform": `translateY(${88 * (-1 * transforms()[index])}px)` }}
+					onClick={e => {
+						//// if (!isOpen(index)) {
+						openTab(index)
+						//// } else {
+						//// 	closeAllTabs()
+						//// }
+					}}
+					//// onKeyDown={e => {
+					//// 	if (e.key === " ") {
+					//// 		e.preventDefault()
+					//// 		e.currentTarget.click()
+					//// 	}
+					//// }}
+					//// onPointerLeave={e => toggleTab()}
+					tabIndex={0}
+				>
+					<div>Hello, world!</div>
+				</div>
+			</>}</For>
+		</div>
+		<div class="[flex-shrink:0]">
+			<div class="line"></div>
+			<div class="edge-section"></div>
 		</div>
 	</>
 }
@@ -230,32 +343,20 @@ function Collapsible() {
 function App2() {
 	return <>
 		{css`
-			.container {
-				padding: 96px 0;
-
-				/* Flow */
+			.center {
 				display: flex;
-				flex-direction: column;
-				align-items: center;
+				flex-direction: row;
+				justify-content: center;
 			}
-			.card {
-				width: 224px;
+			.sidebar {
+				height: var(--screen-y);
+				width: 448px;
 				background-color: whitesmoke;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 			}
-			.line {
-				height: 1px;
-				background-color: red;
-			}
 		`}
-		<div class="container">
-			<div class="card">
-				<Collapsible />
-				<div class="line"></div>
-				<Collapsible />
-				<div class="line"></div>
-				<Collapsible />
-				<div class="line"></div>
+		<div class="center">
+			<div class="sidebar [display:flex] [flex-direction:column]">
 				<Collapsible />
 			</div>
 		</div>

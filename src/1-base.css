@@ -42,13 +42,13 @@ non-touch devices */
 		0                           /* R */
 		var(--sheet-draggable-size) /* B */
 		0;                          /* L */
-	height: calc(var(--screen-h) - var(--fixed-navbar-height) - var(--sheet-draggable-size));
+	height: calc(var(--screen-y) - var(--fixed-navbar-height) - var(--sheet-draggable-size));
 	overflow-y: auto;
 } }
 /* Add scrolling */
 .bottomsheet .aside-content {
 	height: calc(
-		var(--screen-h) -
+		var(--screen-y) -
 		var(--sheet-draggable-size) -
 		1px -
 		var(--sheet-draggable-size)
@@ -57,7 +57,7 @@ non-touch devices */
 }
 /* Add scrolling */
 .sidesheet .aside-content {
-	height: var(--screen-h);
+	height: var(--screen-y);
 	overflow-y: auto;
 }
 /* Prevent body scrolling when

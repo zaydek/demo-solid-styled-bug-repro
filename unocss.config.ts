@@ -39,6 +39,7 @@ function desugar(raw: undefined | string, { sign }: { sign?: string } = {}): und
 
 const rules: Rule[] = [
 	//// [/^\[(-)?((?:$)?[a-z]+(?:-[a-z]+)*)\]-(.+)$/, ([_, sign, key, value]) => {
+	//// [/^\[(-)?((?:$)?[a-z]+(?:-[a-z]+)*):(.+)\]$/, ([_, sign, key, value]) => {
 	[/^\[(-)?((?:$)?[a-z]+(?:-[a-z]+)*):(.+)\]$/, ([_, sign, key, value]) => {
 		return { [key]: desugar(value, { sign }) }
 	}],
