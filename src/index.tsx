@@ -1,16 +1,18 @@
 import "the-new-css-reset"
-import "virtual:uno.css"
+//// import "virtual:uno.css"
+
 import "./1-base.css"
 import "./2-vars.css"
 import "./3-components.css"
+import "./uno.generated.css"
 
-import "solid-devtools"
+//// import "solid-devtools"
 
-import { createSignal, ParentProps, Setter } from "solid-js"
+import { createContext, createSignal, onMount, ParentProps, Setter, useContext } from "solid-js"
 import { For, render, Show } from "solid-js/web"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
 import { createMediaQuery } from "./effects"
-import { css } from "./solid-utils"
+import { css, cx } from "./solid-utils"
 import { only, range } from "./utils"
 
 ////////////////////////////////////////
@@ -125,11 +127,6 @@ function App() {
 }
 
 ////////////////////////////////////////
-
-// https://css-tricks.com/snippets/javascript/random-hex-color/
-function randColor(floatSeed?: number) {
-	return `#${Math.floor((floatSeed ?? Math.random()) * 16777215).toString(16)}`
-}
 
 const initialState = [
 	0,
@@ -252,6 +249,203 @@ function Collapsible() {
 	</>
 }
 
+////////////////////////////////////////
+////////////////////////////////////////
+////////////////////////////////////////
+////////////////////////////////////////
+
+type State = {
+	registered: () => { height: number, open: boolean }[]
+	translates: () => number[]
+}
+
+type Actions = {
+	register: (_: { height: number, open: boolean }) => number
+	open:     (index: number) => void
+	close:    (index: number) => void
+}
+
+export const PanelContext = createContext<{
+	state:   State
+	actions: Actions
+}>()
+
+function PanelProvider(props: ParentProps) {
+	const [registered, setRegistered] = createSignal<{
+		height: number
+		open:   boolean
+	}[]>([])
+
+	function register({ height, open }: { height: number, open: boolean }) {
+		let index = 0
+		setRegistered(curr => {
+			index = curr.length
+			return [
+				...curr,
+				{
+					height,
+					open,
+				},
+			]
+		})
+		return index
+	}
+
+	function open(index: number) {
+		setRegistered(curr => [
+			...curr.slice(0, index),
+			{
+				...curr[index],
+				open: true,
+			},
+			...curr.slice(index + 1),
+		])
+	}
+
+	function close(index: number) {
+		setRegistered(curr => [
+			...curr.slice(0, index),
+			{
+				...curr[index],
+				open: false,
+			},
+			...curr.slice(index + 1),
+		])
+	}
+
+	const translates = () => {
+		const reg = registered()
+
+		const ret = []
+		let sum = 0
+		for (let index = 0; index < reg.length; index++) {
+			if (index === 0) {
+				ret.push(0)
+			} else {
+				if (!reg[index - 1].open) {
+					sum -= reg[index - 1].height - 24
+				}
+				ret.push(sum)
+			}
+		}
+		return ret
+	}
+
+	return <>
+		{css`
+			.debug-panel {
+				position: fixed;
+				z-index: 10;
+				inset: auto auto 16px 16px;
+				/* Layout */
+				padding: 16px;
+				width: 224px;
+				border-radius: 16px;
+				/* Styling */
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+			}
+			.debug-panel-typography {
+				font: 400 12px / 1.25 Monaco;
+				white-space: pre;
+			}
+		`}
+		{/* <div class="debug-panel">
+			<div class="debug-panel-typography">
+				{JSON.stringify({
+					registered: registered(),
+					translates: translates(),
+				}, null, 2)}
+			</div>
+		</div> */}
+		<PanelContext.Provider
+			value={{
+				state: {
+					registered,
+					translates,
+				},
+				actions: {
+					register,
+					open,
+					close,
+				},
+			}}
+		>
+			{props.children}
+			<div></div>
+		</PanelContext.Provider>
+	</>
+}
+
+function Panel(props: ParentProps<{ open?: boolean }>) {
+	const { state, actions } = useContext(PanelContext)!
+
+	const [ref, setRef] = createSignal<HTMLElement>()
+	const [index, setIndex] = createSignal<number>()
+
+	onMount(() => {
+		console.log("hello")
+	})
+
+	onMount(() => {
+		const height = ref()!.clientHeight
+		console.log(height)
+		const open = props.open ?? false
+		setIndex(actions.register({ height, open })) // Cache index
+		console.log("test", Math.random())
+	})
+
+	const [ready, setReady] = createSignal(false)
+
+	onMount(() => {
+		setTimeout(() => {
+			setReady(true)
+		})
+	})
+
+	return <>
+		{css`
+			.tab.is-ready {
+				transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
+
+				cursor: pointer;
+			}
+		`}
+		<Show when={index() !== undefined}>
+			{css`
+				.tab.tab-${index()} {
+					background-color: hsl(${index()! * 60} 100% 75%);
+				}
+			`}
+		</Show>
+		<div
+			ref={setRef}
+			class={cx(`tab tab-${index()!} ${ready() ? "is-ready" : ""}`)}
+			style={{
+				"transform": index()
+					? `translateY(${state.translates()[index()!]}px)`
+					: undefined,
+			}}
+			onClick={e => {
+				if (state.registered()[index()!].open) {
+					actions.close(index()!)
+				} else {
+					actions.open(index()!)
+				}
+			}}
+			onKeyDown={e => {
+				if (e.key === " ") {
+					e.preventDefault()
+					e.currentTarget.click()
+				}
+			}}
+			tabIndex={0}
+		>
+			{props.children}
+		</div>
+	</>
+}
+
 function App2() {
 	return <>
 		{css`
@@ -269,7 +463,57 @@ function App2() {
 		`}
 		<div class="center">
 			<div class="sidebar [display:flex] [flex-direction:column]">
-				<Collapsible />
+				<PanelProvider>
+					<Panel>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+					</Panel>
+					<Panel>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+					</Panel>
+					<Panel>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+					</Panel>
+					<Panel>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+					</Panel>
+					<Panel>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+					</Panel>
+					<Panel>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+					</Panel>
+					<Panel>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:24px]">Hello, world!</div>
+					</Panel>
+				</PanelProvider>
 			</div>
 		</div>
 	</>

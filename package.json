@@ -3,19 +3,19 @@
 	"version": "0.0.0",
 	"description": "",
 	"scripts": {
-		"start": "vite",
-		"dev": "vite",
-		"build": "vite build",
+		"dev": "npx concurrently \"npx unocss 'src/**/*.tsx' -o=src/uno.generated.css -w\" \"npx vite dev --host\"",
+		"build": "npx uno \"src/**/*.tsx\" -o=src/uno.generated.css && vite build",
 		"serve": "vite preview",
 		"dataset": "npx esbuild --bundle --format=cjs --platform=node scripts/dataset.ts | node"
 	},
 	"license": "MIT",
 	"devDependencies": {
+		"concurrently": "^7.4.0",
 		"playwright": "^1.26.1",
 		"sass": "^1.55.0",
 		"solid-devtools": "^0.19.0",
 		"typescript": "^4.8.4",
-		"unocss": "^0.45.22",
+		"unocss": "^0.45.29",
 		"vite": "^3.0.9",
 		"vite-plugin-solid": "^2.3.0",
 		"vitest": "^0.23.4"
