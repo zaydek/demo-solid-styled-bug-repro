@@ -5,7 +5,7 @@ import "./2-vars.css"
 import "./3-components.css"
 import "./uno.generated.css"
 
-import { createContext, createRoot, createSignal, onMount, ParentProps, Setter, useContext } from "solid-js"
+import { batch, createContext, createEffect, createRoot, createSignal, on, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
 import { For, render, Show } from "solid-js/web"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
 import { createMediaQuery } from "./effects"
@@ -258,18 +258,17 @@ const ready = createRoot(() => {
 })
 
 type State = {
-	closedHeight:   () => number
-	registered:     () => { height: number, open: boolean }[]
-	translates:     () => number[]
-	minBoundingBox: () => number
-	maxBoundingBox: () => number
-	isOpen:         (index: number) => boolean
+	collapsedHeight: () => number
+	registered:      () => { height: number, open: boolean }[]
+	translates:      () => number[]
+	boundingBox:     () => number
 }
 
 type Actions = {
 	register: (_: { height: number, open: boolean }) => number
 	open:     (index: number) => void
 	close:    (index: number) => void
+	toggle:   (index: number) => void
 }
 
 export const PanelContext = createContext<{
@@ -277,8 +276,8 @@ export const PanelContext = createContext<{
 	actions: Actions
 }>()
 
-function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
-	const closedHeight = () => props.closedHeight
+function PanelProvider(props: ParentProps<{ collapsedHeight: number }>) {
+	const collapsedHeight = () => props.collapsedHeight
 
 	const [registered, setRegistered] = createSignal<{
 		height: number
@@ -286,24 +285,20 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 	}[]>([])
 
 	function register({ height, open }: { height: number, open: boolean }) {
-		let index = 0
-		setRegistered(curr => {
-			index = curr.length
-			return [
-				...curr,
-				{
-					height,
-					open,
-				},
-			]
-		})
+		const index = registered().length
+		setRegistered(curr => [
+			...curr,
+			{
+				height,
+				open,
+			},
+		])
 		return index
 	}
 
 	function open(index: number) {
 		setRegistered(curr => [
-			...curr.slice(0, index),
-			{
+			...curr.slice(0, index), {
 				...curr[index],
 				open: true,
 			},
@@ -313,8 +308,7 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 
 	function close(index: number) {
 		setRegistered(curr => [
-			...curr.slice(0, index),
-			{
+			...curr.slice(0, index), {
 				...curr[index],
 				open: false,
 			},
@@ -322,35 +316,31 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 		])
 	}
 
-	const translatesAndBBoxes = () => {
-		const _closedHeight = closedHeight()
+	function toggle(index: number) {
+		if (registered()[index].open) {
+			close(index)
+		} else {
+			open(index)
+		}
+	}
+
+	const translateAndBoundingBox = () => {
+		const _closedHeight = collapsedHeight()
 		const _registered = registered()
 
 		const translates = []
-		let min = 0 // Min bounding box
-		let max = 0 // Max bounding box
+		let boundingBox = 0
 		for (const r of _registered) {
-			if (min + r.height > max) {
-				max = min + r.height
-			}
-			translates.push(min)
-			min += r.open
+			translates.push(boundingBox)
+			boundingBox += r.open
 				? r.height
 				: _closedHeight
 		}
-		return [translates, min, max] as const
+		return [translates, boundingBox] as const
 	}
 
-	const translates     = () => translatesAndBBoxes()[0]
-	const minBoundingBox = () => translatesAndBBoxes()[1]
-	const maxBoundingBox = () => translatesAndBBoxes()[2]
-
-	function isOpen(index: number) {
-		const _registered = registered()
-		return index in _registered
-			? _registered[index].open
-			: false
-	}
+	const translates  = () => translateAndBoundingBox()[0]
+	const boundingBox = () => translateAndBoundingBox()[1]
 
 	return <>
 		{css`
@@ -360,11 +350,14 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 				inset: auto auto 16px 16px;
 				/* Layout */
 				padding: 16px;
-				width: 224px;
+				height: calc(var(--screen-y) - 16px * 2);
+				width: 320px;
 				border-radius: 16px;
 				/* Decoration */
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+				/* Behavior */
+				overflow-y: auto;
 			}
 			.debug-panel-typography {
 				font: 400 12px / 1.25 Monaco;
@@ -377,12 +370,12 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 		{/* DEBUG */}
 		<div class="debug-panel">
 			<div class="debug-panel-typography">
-				{stringify({ closedHeight, registered, translates, minBoundingBox, maxBoundingBox, isOpen }, 2)}
+				{stringify({ closedHeight: collapsedHeight, registered, translates, boundingBox }, 2)}
 			</div>
 		</div>
 		<PanelContext.Provider value={{
-			state: { closedHeight, registered, translates, minBoundingBox, maxBoundingBox, isOpen },
-			actions: { register, open, close },
+			state: { collapsedHeight: collapsedHeight, registered, translates, boundingBox },
+			actions: { register, open, close, toggle },
 		}}>
 			{css`
 				/* Preamble */
@@ -426,19 +419,11 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 			<div
 				class="panel-container"
 				style={{
-					"height": `${minBoundingBox()}px`,
-					//// "overflow-y": minBoundingBox() >= 464 ? "auto" : "clip",
-					//// "overflow-y": "clip",
+					"height": `${boundingBox()}px`,
+					"overflow-y": "auto",
 				}}
 			>
 				{props.children}
-				<div
-					class={cx(`panel-end ${ready() ? "is-ready" : ""}`)}
-					style={{
-						"height": `${maxBoundingBox() - minBoundingBox()}px`,
-						"transform": `translateY(${minBoundingBox()}px)`,
-					}}
-				></div>
 			</div>
 		</PanelContext.Provider>
 	</>
@@ -449,42 +434,57 @@ function Panel(props: ParentProps<{ open?: boolean }>) {
 
 	const [ref, setRef] = createSignal<HTMLElement>()
 	const [index, setIndex] = createSignal<number>()
+	const [transition, setTransition] = createSignal(false)
 
 	onMount(() => {
 		const height = ref()!.clientHeight
 		const open = props.open ?? false
-		setIndex(actions.register({ height, open })) // Cache index
+		setIndex(actions.register({ height, open }))
+	})
+
+	// HACK: Because the current element doesn’t transition on toggle (only
+	// sibling elements transition), fake transition=false
+	let timeoutId = 0
+	createEffect(() => {
+		if (transition() === true) {
+			clearTimeout(timeoutId)
+			timeoutId = window.setTimeout(() => {
+				setTransition(false)
+			}, 300)
+		}
 	})
 
 	return <>
 		{css`
 			.panel.is-ready {
-				transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.15);
+				transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
 
 				cursor: pointer;
 			}
 		`}
 		<div
 			ref={setRef}
-			class={cx(`panel panel-${index()!} ${ready() ? "is-ready" : ""}`)}
+			class={cx(`panel ${ready() ? "is-ready" : ""} ${transition() ? "is-transition" : ""}`)}
 			style={{
-				"height": index() !== undefined
-					? (state.registered()[index()!].open ? `${state.registered()[index()!].height}px` : `${state.closedHeight()}px`)
-					: undefined,
-				"overflow-y": "clip",
-				"background-color": index() !== undefined
-					? `hsl(${index()! * 60} 100% 75%)`
-					: undefined,
-				"transform": index() !== undefined
-					? `translateY(${state.translates()[index()!]}px)`
-					: undefined,
+				...(index() !== undefined && {
+					// DEBUG
+					"background-color": `hsl(${index()! * 60} 100% 75%)`,
+
+					// Only clip the current element during non-transitions
+					...(!transition() && {
+						"height": state.registered()[index()!].open
+							? `${state.registered()[index()!].height}px`
+							: `${state.collapsedHeight()}px`,
+						"overflow-y": "clip",
+					}),
+					"transform": `translateY(${state.translates()[index()!]}px)`,
+				}),
 			}}
 			onClick={e => {
-				if (state.isOpen(index()!)) {
-					actions.close(index()!)
-				} else {
-					actions.open(index()!)
-				}
+				batch(() => {
+					actions.toggle(index()!)
+					setTransition(true)
+				})
 			}}
 			onKeyDown={e => {
 				if (e.key === " ") {
@@ -518,7 +518,7 @@ function App2() {
 		`}
 		<div class="center">
 			<div class="sidebar [display:flex] [flex-direction:column]">
-				<PanelProvider closedHeight={24}>
+				<PanelProvider collapsedHeight={24}>
 					<Panel>
 						<div class="[height:24px]">Hello, world!</div>
 						<div class="[height:24px]">Hello, world!</div>
