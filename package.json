@@ -3,7 +3,7 @@
 	"version": "0.0.0",
 	"description": "",
 	"scripts": {
-		"dev": "npx concurrently \"npx unocss 'src/**/*.tsx' -o=src/uno.generated.css -w\" \"npx vite dev --host\"",
+		"dev": "npx concurrently --raw \"npx unocss 'src/**/*.tsx' -o=src/uno.generated.css -w\" \"npx vite dev --host\"",
 		"build": "npx uno \"src/**/*.tsx\" -o=src/uno.generated.css && vite build",
 		"serve": "vite preview",
 		"dataset": "npx esbuild --bundle --format=cjs --platform=node scripts/dataset.ts | node"

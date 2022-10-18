@@ -1,19 +1,16 @@
 import "the-new-css-reset"
-//// import "virtual:uno.css"
 
 import "./1-base.css"
 import "./2-vars.css"
 import "./3-components.css"
 import "./uno.generated.css"
 
-//// import "solid-devtools"
-
-import { createContext, createSignal, onMount, ParentProps, Setter, useContext } from "solid-js"
+import { createContext, createRoot, createSignal, onMount, ParentProps, Setter, useContext } from "solid-js"
 import { For, render, Show } from "solid-js/web"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
 import { createMediaQuery } from "./effects"
 import { css, cx } from "./solid-utils"
-import { only, range } from "./utils"
+import { only, range, stringify } from "./utils"
 
 ////////////////////////////////////////
 
@@ -254,9 +251,19 @@ function Collapsible() {
 ////////////////////////////////////////
 ////////////////////////////////////////
 
+const ready = createRoot(() => {
+	const [ready, setReady] = createSignal(false)
+	onMount(() => setTimeout(() => setReady(true)))
+	return ready
+})
+
 type State = {
-	registered: () => { height: number, open: boolean }[]
-	translates: () => number[]
+	closedHeight:   () => number
+	registered:     () => { height: number, open: boolean }[]
+	translates:     () => number[]
+	minBoundingBox: () => number
+	maxBoundingBox: () => number
+	isOpen:         (index: number) => boolean
 }
 
 type Actions = {
@@ -270,7 +277,9 @@ export const PanelContext = createContext<{
 	actions: Actions
 }>()
 
-function PanelProvider(props: ParentProps) {
+function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
+	const closedHeight = () => props.closedHeight
+
 	const [registered, setRegistered] = createSignal<{
 		height: number
 		open:   boolean
@@ -313,22 +322,34 @@ function PanelProvider(props: ParentProps) {
 		])
 	}
 
-	const translates = () => {
-		const reg = registered()
+	const translatesAndBoundingBoxes = () => {
+		const _closedHeight = closedHeight()
+		const _registered = registered()
 
-		const ret = []
-		let sum = 0
-		for (let index = 0; index < reg.length; index++) {
-			if (index === 0) {
-				ret.push(0)
-			} else {
-				if (!reg[index - 1].open) {
-					sum -= reg[index - 1].height - 24
-				}
-				ret.push(sum)
+		const translates = []
+		let min = 0 // Min bounding box
+		let max = 0 // Max bounding box
+		for (const r of _registered) {
+			if (min + r.height > max) {
+				max = min + r.height
 			}
+			translates.push(min)
+			min += r.open
+				? r.height
+				: _closedHeight
 		}
-		return ret
+		return [translates, min, max] as const
+	}
+
+	const translates     = () => translatesAndBoundingBoxes()[0]
+	const minBoundingBox = () => translatesAndBoundingBoxes()[1]
+	const maxBoundingBox = () => translatesAndBoundingBoxes()[2]
+
+	function isOpen(index: number) {
+		const _registered = registered()
+		return index in _registered
+			? _registered[index].open
+			: false
 	}
 
 	return <>
@@ -341,7 +362,7 @@ function PanelProvider(props: ParentProps) {
 				padding: 16px;
 				width: 224px;
 				border-radius: 16px;
-				/* Styling */
+				/* Decoration */
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 			}
@@ -349,30 +370,76 @@ function PanelProvider(props: ParentProps) {
 				font: 400 12px / 1.25 Monaco;
 				white-space: pre;
 			}
+			.panel-content {
+				position: relative;
+			}
 		`}
-		{/* <div class="debug-panel">
+		{/* DEBUG */}
+		<div class="debug-panel">
 			<div class="debug-panel-typography">
-				{JSON.stringify({
-					registered: registered(),
-					translates: translates(),
-				}, null, 2)}
+				{stringify({ closedHeight, registered, translates, minBoundingBox, maxBoundingBox, isOpen }, 2)}
 			</div>
-		</div> */}
-		<PanelContext.Provider
-			value={{
-				state: {
-					registered,
-					translates,
-				},
-				actions: {
-					register,
-					open,
-					close,
-				},
-			}}
-		>
-			{props.children}
-			<div></div>
+		</div>
+		<PanelContext.Provider value={{
+			state: { closedHeight, registered, translates, minBoundingBox, maxBoundingBox, isOpen },
+			actions: { register, open, close },
+		}}>
+			{css`
+				/* Preamble */
+				.panel-container { position: relative; }
+				.panel-container::before { content: ""; }
+
+				.panel-container::before {
+					position: absolute;
+					z-index: 10;
+					inset: 0;
+					/* Decoration */
+					outline: 4px solid black;
+					/* Behavior */
+					pointer-events: none;
+				}
+
+				.panel {
+					position: absolute;
+					inset:
+						auto /* T */
+						0    /* R */
+						auto /* B */
+						0;   /* L */
+				}
+
+				.panel-end {
+					position: absolute;
+					inset:
+						auto /* T */
+						0    /* R */
+						auto /* B */
+						0;   /* L */
+					/* Decoration */
+					background-color: blue;
+					opacity: 0.75;
+				}
+				.panel-end.is-ready {
+					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.15);
+				}
+			`}
+			<div
+				class="panel-container"
+				style={{
+					"height": `${minBoundingBox()}px`,
+					//// "overflow-y": "clip",
+				}}
+			>
+				{props.children}
+				<div
+					class={cx(`panel-end ${ready() ? "is-ready" : ""}`)}
+					style={{
+						"height": `${maxBoundingBox() - minBoundingBox()}px`,
+						"transform": `translateY(${minBoundingBox()}px)`,
+					}}
+				>
+				</div>
+			</div>
 		</PanelContext.Provider>
 	</>
 }
@@ -384,50 +451,33 @@ function Panel(props: ParentProps<{ open?: boolean }>) {
 	const [index, setIndex] = createSignal<number>()
 
 	onMount(() => {
-		console.log("hello")
-	})
-
-	onMount(() => {
 		const height = ref()!.clientHeight
-		console.log(height)
 		const open = props.open ?? false
 		setIndex(actions.register({ height, open })) // Cache index
-		console.log("test", Math.random())
-	})
-
-	const [ready, setReady] = createSignal(false)
-
-	onMount(() => {
-		setTimeout(() => {
-			setReady(true)
-		})
 	})
 
 	return <>
 		{css`
-			.tab.is-ready {
-				transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
+			.panel.is-ready {
+				transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.15);
 
 				cursor: pointer;
 			}
 		`}
-		<Show when={index() !== undefined}>
-			{css`
-				.tab.tab-${index()} {
-					background-color: hsl(${index()! * 60} 100% 75%);
-				}
-			`}
-		</Show>
 		<div
 			ref={setRef}
-			class={cx(`tab tab-${index()!} ${ready() ? "is-ready" : ""}`)}
+			class={cx(`panel panel-${index()!} ${ready() ? "is-ready" : ""}`)}
 			style={{
-				"transform": index()
+				// TODO
+				"background-color": index() !== undefined
+					? `hsl(${index()! * 60} 100% 75%)`
+					: undefined,
+				"transform": index() !== undefined
 					? `translateY(${state.translates()[index()!]}px)`
 					: undefined,
 			}}
 			onClick={e => {
-				if (state.registered()[index()!].open) {
+				if (state.isOpen(index()!)) {
 					actions.close(index()!)
 				} else {
 					actions.open(index()!)
@@ -455,15 +505,14 @@ function App2() {
 				justify-content: center;
 			}
 			.sidebar {
-				height: var(--screen-y);
-				width: 448px;
+				width: 368px;
 				background-color: whitesmoke;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 			}
 		`}
 		<div class="center">
 			<div class="sidebar [display:flex] [flex-direction:column]">
-				<PanelProvider>
+				<PanelProvider closedHeight={24}>
 					<Panel>
 						<div class="[height:24px]">Hello, world!</div>
 						<div class="[height:24px]">Hello, world!</div>
