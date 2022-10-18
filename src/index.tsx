@@ -264,6 +264,7 @@ type Element = {
 	transition: boolean
 	computed: {
 		translateY: number
+		clipHeight: number
 	}
 }
 
@@ -302,7 +303,8 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 				open,
 				transition: false,
 				computed: {
-					translateY: 0,
+					translateY: 0, // Defer
+					clipHeight: 0, // Defer
 				},
 			},
 		])
@@ -358,19 +360,26 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					? element.height
 					: collapseHeight()
 			}
-			//// setBoundingBox(_boundingBox)
-			if (untrack(boundingBox) === undefined) { // Initialize
-				setBoundingBox(_boundingBox)
-			} else {
-				if (_boundingBox > untrack(boundingBox)!) {
-					setBoundingBox(_boundingBox) // Synchronous
-				} else {
-					createEffect(() => { // Asynchronous
-						if (someTransition()) { return }
-						setBoundingBox(_boundingBox)
-					})
-				}
+			// Now that we know bounding box, we can compute clipHeight
+			for (let index = 0; index < elements.length; index++) {
+				setElements(index, "computed", curr => ({
+					...curr,
+					clipHeight: _boundingBox - curr.translateY,
+				}))
 			}
+			setBoundingBox(_boundingBox)
+			//// if (untrack(boundingBox) === undefined) { // Initialize
+			//// 	setBoundingBox(_boundingBox)
+			//// } else {
+			//// 	if (_boundingBox > untrack(boundingBox)!) {
+			//// 		setBoundingBox(_boundingBox) // Synchronous
+			//// 	} else {
+			//// 		createEffect(() => { // Asynchronous
+			//// 			if (someTransition()) { return }
+			//// 			setBoundingBox(_boundingBox)
+			//// 		})
+			//// 	}
+			//// }
 		})
 	})
 
@@ -433,7 +442,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					background-color: purple;
 				}
 				:root:has(body.ready) .panel-end {
-					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
+					transition: transform 500ms cubic-bezier(0, 1, 0.25, 1);
 				}
 
 				/******************************/
@@ -442,7 +451,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					cursor: pointer;
 				}
 				:root:has(body.ready) .panel {
-					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
+					transition: transform 500ms cubic-bezier(0, 1, 0.25, 1);
 				}
 
 				/******************************/
@@ -454,7 +463,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 				/******************************/
 
 				:root:has(body.ready) .panel-body {
-					transition: opacity 300ms cubic-bezier(0, 1, 0.25, 1);
+					transition: opacity 500ms cubic-bezier(0, 1, 0.25, 1);
 				}
 				.panel.is-closed .panel-body { opacity: 0; }
 				.panel.is-open   .panel-body { opacity: 1; }
@@ -477,13 +486,8 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					<div
 						class="panel-end"
 						style={{
-							// Toggle display because unmounting / mounting breaks transition
-							// on transform
-							//// "display": finalTransition()
-							//// 	? "block" // No-op (undefined doesn’t work here?)
-							//// 	: "none",
 							"height": someTransition()
-								? "500px"
+								? `${boundingBox()}px` // Lazy but works
 								: "0px",
 							"transform": `translateY(${elements[elements.length - 1].computed.translateY + (
 								elements[elements.length - 1].open
@@ -516,13 +520,6 @@ function Panel(props: ParentProps<{ open?: boolean }>) {
 		setIndex(actions.createElement({ height, open }))
 	})
 
-	const safeTransition = () => {
-		if (index() === undefined) { return }
-		return index()! < state.elements.length - 1
-			? element()!.transition
-			: state.someTransition()!
-	}
-
 	return <>
 		<div
 			ref={setRef}
@@ -535,14 +532,8 @@ function Panel(props: ParentProps<{ open?: boolean }>) {
 					// DEBUG
 					"background-color": `hsl(${index()! * 60} 100% 75%)`,
 
-					// Clip the current element during non-transitions. This prevents
-					// rendering "offscreen" content.
-					...(!safeTransition() && {
-						"height": element()!.open
-							? `${element()!.height}px`
-							: `${state.collapseHeight()}px`,
-						"overflow-y": "clip",
-					}),
+					"height": `${element()!.computed.clipHeight}px`,
+					"overflow-y": "clip",
 					"transform": `translateY(${element()!.computed.translateY}px)`,
 				}),
 			}}
@@ -637,6 +628,144 @@ function App2() {
 						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
 					</Panel>
 				</PanelProvider>
+			</div>
+		</div>
+	</>
+}
+
+// TODO: Add uncontrolled vs. controlled API
+function Collapsible2() {
+	const [ref, setRef] = createSignal<HTMLElement>()
+
+	const [state, setState] = createSignal<"closed" | "open">("open")
+	const [h1, setH1] = createSignal<number>()
+	const [h2, setH2] = createSignal<number>()
+	const [transition, setTransition] = createSignal<true>()
+
+	onMount(() => {
+		setH1(ref()!.firstElementChild!.scrollHeight)
+		setH2(ref()!.scrollHeight)
+	})
+
+	return <>
+		{css`
+			.collapsible {
+				/* Runtime values */
+				--__height-is-closed: 32px;
+				--__height-is-open: initial;
+			}
+			.collapsible.is-closed { height: var(--__height-is-closed); overflow-y: clip; }
+			.collapsible.is-open   { height: var(--__height-is-open);   overflow-y: clip; }
+			.collapsible.is-transition {
+				transition: height 500ms cubic-bezier(0, 1, 0.25, 1);
+			}
+
+			/********************************/
+
+			.collapsible-button:hover {
+				cursor: pointer;
+			}
+
+			/********************************/
+
+			.collapsible-content {
+				transition: opacity 500ms cubic-bezier(0, 1, 0.25, 1);
+			}
+			.collapsible.is-closed .collapsible-content { opacity: 0; }
+			.collapsible.is-open   .collapsible-content { opacity: 1; }
+
+			/* .collapsible-content { */
+			/* 	overflow-y: hidden; */
+			/* 	transition: transform 500ms cubic-bezier(0, 1, 0.25, 1); */
+			/* } */
+			/* .collapsible.is-closed .collapsible-content { transform: translateY(-100px); } */
+			/* .collapsible.is-open   .collapsible-content { transform: translateY(0px); } */
+		`}
+		<div
+			ref={setRef}
+			class={cx(`collapsible is-${state()} ${transition() ? "is-transition" : ""}`)}
+			style={{
+				"--__height-is-closed": !h1()
+					? "initial"
+					: `${h1()}px`,
+				"--__height-is-open": !h2()
+					? "initial"
+					: `${h2()}px`,
+			}}
+			onTransitionEnd={e => setTransition()}
+			// COMPAT/Firefox: Use tabIndex={-1} to prevent "overflow-y: *;" from
+			// being focusable
+			tabIndex={-1}
+		>
+			<div
+				class="collapsible-button [padding:16px]"
+				onClick={e => {
+					if (state() === "open") {
+						batch(() => {
+							setState("closed")
+							setTransition(true)
+						})
+					} else {
+						batch(() => {
+							setState("open")
+							setTransition(true)
+						})
+					}
+				}}
+				onKeyDown={e => {
+					if (e.key === " ") {
+						e.preventDefault() // Prevent scrolling
+						e.currentTarget.click()
+					}
+				}}
+				role="button"
+				tabIndex={0}
+			>
+				Title
+			</div>
+			{/* @ts-expect-error */}
+			<div class="collapsible-content [padding:16px] [padding-top:0px_!important]" inert={only(state() === "closed")}>
+				<div>🤔🤔🤔🤔🤔🤔</div>
+				<div>🤔🤔🤔🤔🤔🤔</div>
+				<div>🤔🤔🤔🤔🤔🤔</div>
+				<div>🤔🤔🤔🤔🤔🤔</div>
+				<div>🤔🤔🤔🤔🤔🤔</div>
+				<div>End</div>
+			</div>
+		</div>
+	</>
+}
+
+function App3() {
+	return <>
+		{css`
+			.container {
+				padding: 96px 0;
+
+				/* Flow */
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			.card {
+				width: 224px;
+				background-color: whitesmoke;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+			}
+			.line {
+				height: 1px;
+				background-color: red;
+			}
+		`}
+		<div class="container">
+			<div class="card">
+				<Collapsible2 />
+				<div class="line"></div>
+				<Collapsible2 />
+				<div class="line"></div>
+				<Collapsible2 />
+				<div class="line"></div>
+				<Collapsible2 />
 			</div>
 		</div>
 	</>
