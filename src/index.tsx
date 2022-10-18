@@ -5,12 +5,12 @@ import "./2-vars.css"
 import "./3-components.css"
 import "./uno.generated.css"
 
-import { batch, createContext, createEffect, createRoot, createSignal, onMount, ParentProps, Setter, untrack, useContext } from "solid-js"
+import { Accessor, batch, createContext, createEffect, createRoot, createSignal, onMount, ParentProps, Setter, untrack, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
 import { For, render, Show } from "solid-js/web"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
 import { createMediaQuery } from "./effects"
-import { css } from "./solid-utils"
+import { css, cx } from "./solid-utils"
 import { only, range, stringify } from "./utils"
 
 ////////////////////////////////////////
@@ -259,18 +259,19 @@ createRoot(() => {
 })
 
 type Element = {
-	height: number
-	open:   boolean
+	height:     number
+	open:       boolean
+	transition: boolean
 	computed: {
 		translateY: number
 	}
 }
 
 type State = {
-	collapseHeight: () => number
+	collapseHeight: Accessor<number>
 	elements:       Element[]
-	boundingBox:    () => undefined | number
-	transition:     () => boolean
+	boundingBox:    Accessor<undefined | number>
+	someTransition: Accessor<boolean>
 }
 
 type Actions = {
@@ -278,7 +279,7 @@ type Actions = {
   open:          (index: number) => void
   close:         (index: number) => void
   toggle:        (index: number) => void
-  transitionEnd: () => void
+  transitionend: (index: number) => void
 }
 
 export const PanelContext = createContext<{
@@ -291,7 +292,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 
 	const [elements, setElements] = createStore<Element[]>([])
 	const [boundingBox, setBoundingBox] = createSignal<number>()
-	const [transition, setTransition] = createSignal(false)
+	const [someTransition, setSomeTransition] = createSignal(false)
 
 	function createElement({ height, open }: { height: number, open: boolean }) {
 		const index = elements.length
@@ -299,6 +300,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 			...curr, {
 				height,
 				open,
+				transition: false,
 				computed: {
 					translateY: 0,
 				},
@@ -309,22 +311,30 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 
 	function open(index: number) {
 		batch(() => {
+			const atEnd = index === elements.length - 1
 			setElements(index, curr => ({
 				...curr,
 				open: true,
+				transition: !atEnd,
 			}))
-			setTransition(true) // Kick off transition
+			setSomeTransition(true)
 		})
 	}
 
 	function close(index: number) {
 		batch(() => {
+			const atEnd = index === elements.length - 1
 			setElements(index, curr => ({
 				...curr,
 				open: false,
+				transition: !atEnd,
 			}))
-			setTransition(true) // Kick off transition
+			setSomeTransition(true)
 		})
+	}
+
+	function transitionend(index: number) {
+		setElements(index, "transition", false)
 	}
 
 	function toggle(index: number) {
@@ -333,10 +343,6 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 		} else {
 			open(index)
 		}
-	}
-
-	function transitionEnd() {
-		setTransition(false)
 	}
 
 	// Synchronize computed.transition and boundingBox
@@ -352,6 +358,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					? element.height
 					: collapseHeight()
 			}
+			//// setBoundingBox(_boundingBox)
 			if (untrack(boundingBox) === undefined) { // Initialize
 				setBoundingBox(_boundingBox)
 			} else {
@@ -359,7 +366,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					setBoundingBox(_boundingBox) // Synchronous
 				} else {
 					createEffect(() => { // Asynchronous
-						if (transition()) { return }
+						if (someTransition()) { return }
 						setBoundingBox(_boundingBox)
 					})
 				}
@@ -389,14 +396,16 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 			}
 		`}
 		{/* DEBUG */}
-		<div class="debug-panel">
-			<div class="debug-panel-typography">
-				{stringify({ collapseHeight, elements, boundingBox, transition }, 2)}
+		<Show when={window.innerWidth >= 500}>
+			<div class="debug-panel">
+				<div class="debug-panel-typography">
+					{stringify({ collapseHeight, elements, boundingBox, someTransition }, 2)}
+				</div>
 			</div>
-		</div>
+		</Show>
 		<PanelContext.Provider value={{
-			state: { collapseHeight, elements, boundingBox, transition },
-			actions: { createElement, open, close, toggle, transitionEnd },
+			state: { collapseHeight, elements, boundingBox, someTransition },
+			actions: { createElement, open, close, toggle, transitionend },
 		}}>
 			{css`
 				.panel-container {
@@ -424,7 +433,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					background-color: purple;
 				}
 				:root:has(body.ready) .panel-end {
-					transition: transform 1000ms cubic-bezier(0, 1, 0.25, 1);
+					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
 				}
 
 				/******************************/
@@ -433,16 +442,30 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					cursor: pointer;
 				}
 				:root:has(body.ready) .panel {
-					transition: transform 1000ms cubic-bezier(0, 1, 0.25, 1);
+					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
 				}
+
+				/******************************/
+
+				.panel-head {
+					height: 32px;
+				}
+
+				/******************************/
+
+				:root:has(body.ready) .panel-body {
+					transition: opacity 300ms cubic-bezier(0, 1, 0.25, 1);
+				}
+				.panel.is-closed .panel-body { opacity: 0; }
+				.panel.is-open   .panel-body { opacity: 1; }
 			`}
 			<div
 				class="panel-container"
 				style={{
 					...(boundingBox() && {
 						"height": `${boundingBox()!}px`,
-						"overflow-y": transition()
-							? "clip" // Disable scrolling on transition
+						"overflow-y": someTransition()
+							? "clip"
 							: "auto",
 					}),
 					// DEBUG
@@ -456,16 +479,19 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 						style={{
 							// Toggle display because unmounting / mounting breaks transition
 							// on transform
-							"display": transition()
-								? "block" // No-op (undefined doesn’t work here?)
-								: "none",
+							//// "display": finalTransition()
+							//// 	? "block" // No-op (undefined doesn’t work here?)
+							//// 	: "none",
+							"height": someTransition()
+								? "500px"
+								: "0px",
 							"transform": `translateY(${elements[elements.length - 1].computed.translateY + (
 								elements[elements.length - 1].open
 									? elements[elements.length - 1].height
 									: collapseHeight()
 							)}px)`,
 						}}
-						onTransitionEnd={transitionEnd}
+						onTransitionEnd={e => setSomeTransition(false)}
 					></div>
 				</Show>
 			</div>
@@ -490,18 +516,28 @@ function Panel(props: ParentProps<{ open?: boolean }>) {
 		setIndex(actions.createElement({ height, open }))
 	})
 
+	const safeTransition = () => {
+		if (index() === undefined) { return }
+		return index()! < state.elements.length - 1
+			? element()!.transition
+			: state.someTransition()!
+	}
+
 	return <>
 		<div
 			ref={setRef}
-			class="panel"
+			class={element() === undefined
+				? "panel"
+				: cx(`panel ${element()!.open ? "is-open" : "is-closed"}`)
+			}
 			style={{
 				...(element() && {
 					// DEBUG
 					"background-color": `hsl(${index()! * 60} 100% 75%)`,
 
-					// Only clip the current element during non-transitions. This prevents
-					// the panel from scrolling "offscreen" content.
-					...(!state.transition() && {
+					// Clip the current element during non-transitions. This prevents
+					// rendering "offscreen" content.
+					...(!safeTransition() && {
 						"height": element()!.open
 							? `${element()!.height}px`
 							: `${state.collapseHeight()}px`,
@@ -510,17 +546,24 @@ function Panel(props: ParentProps<{ open?: boolean }>) {
 					"transform": `translateY(${element()!.computed.translateY}px)`,
 				}),
 			}}
-			onClick={e => actions.toggle(index()!)}
-			onKeyDown={e => {
-				if (e.key === " ") {
-					e.preventDefault()
-					e.currentTarget.click()
-				}
-			}}
-			onTransitionEnd={actions.transitionEnd}
-			tabIndex={0}
+			onTransitionEnd={e => actions.transitionend(index()!)}
 		>
-			{props.children}
+			<div
+				class="panel-head"
+				onClick={e => actions.toggle(index()!)}
+				onKeyDown={e => {
+					if (e.key === " ") {
+						e.preventDefault()
+						e.currentTarget.click()
+					}
+				}}
+				tabIndex={0}
+			>
+				Hello, world!
+			</div>
+			<div class="panel-body">
+				{props.children}
+			</div>
 		</div>
 	</>
 }
@@ -543,55 +586,55 @@ function App2() {
 		`}
 		<div class="center">
 			<div class="sidebar [display:flex] [flex-direction:column]">
-				<PanelProvider collapseHeight={24}>
+				<PanelProvider collapseHeight={32}>
 					<Panel>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
 					</Panel>
 					<Panel>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
 					</Panel>
 					<Panel>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
 					</Panel>
 					<Panel>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
 					</Panel>
 					<Panel>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
 					</Panel>
 					<Panel>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
 					</Panel>
 					<Panel>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
-						<div class="[height:24px]">Hello, world!</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
 					</Panel>
 				</PanelProvider>
 			</div>
