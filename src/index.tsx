@@ -313,9 +313,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 				...curr,
 				open: true,
 			}))
-			//// if (index !== elements.length - 1) {
-			setTransition(true)
-			//// }
+			setTransition(true) // Kick off transition
 		})
 	}
 
@@ -325,9 +323,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 				...curr,
 				open: false,
 			}))
-			//// if (index !== elements.length - 1) {
-			setTransition(true)
-			//// }
+			setTransition(true) // Kick off transition
 		})
 	}
 
@@ -356,8 +352,7 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					? element.height
 					: collapseHeight()
 			}
-			//// setBoundingBox(_boundingBox)
-			if (untrack(boundingBox) === undefined) {
+			if (untrack(boundingBox) === undefined) { // Initialize
 				setBoundingBox(_boundingBox)
 			} else {
 				if (_boundingBox > untrack(boundingBox)!) {
@@ -394,17 +389,22 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 			}
 		`}
 		{/* DEBUG */}
-		{/* <div class="debug-panel">
+		<div class="debug-panel">
 			<div class="debug-panel-typography">
 				{stringify({ collapseHeight, elements, boundingBox, transition }, 2)}
 			</div>
-		</div> */}
+		</div>
 		<PanelContext.Provider value={{
 			state: { collapseHeight, elements, boundingBox, transition },
 			actions: { createElement, open, close, toggle, transitionEnd },
 		}}>
 			{css`
-				.panel-container { position: relative; }
+				.panel-container {
+					position: relative;
+				}
+
+				/******************************/
+
 				.panel {
 					position: absolute;
 					inset:
@@ -413,47 +413,61 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 						auto /* B */
 						0;   /* L */
 				}
+
+				/******************************/
+
+				.panel-end {
+					position: absolute;
+					z-index: 50;
+					inset: 0 0 auto 0;
+					height: 500px;
+					background-color: purple;
+				}
+				:root:has(body.ready) .panel-end {
+					transition: transform 1000ms cubic-bezier(0, 1, 0.25, 1);
+				}
+
+				/******************************/
+
+				.panel {
+					cursor: pointer;
+				}
+				:root:has(body.ready) .panel {
+					transition: transform 1000ms cubic-bezier(0, 1, 0.25, 1);
+				}
 			`}
 			<div
 				class="panel-container"
 				style={{
 					...(boundingBox() && {
 						"height": `${boundingBox()!}px`,
-						// Disable scrolling on transition
-						"overflow-y": transition() ? "clip" : "auto",
+						"overflow-y": transition()
+							? "clip" // Disable scrolling on transition
+							: "auto",
 					}),
 					// DEBUG
 					"outline": "8px solid red",
 				}}
 			>
 				{props.children}
-				{css`
-					.panel-end {
-						position: absolute;
-						z-index: 50;
-						inset: 0 0 auto 0;
-						height: 500px;
-						background-color: purple;
-					}
-					:root:has(body.ready) .panel-end {
-						transition: transform 1000ms cubic-bezier(0, 1, 0.25, 1);
-					}
-				`}
-				{/* <Show when={transition()}> */}
+				<Show when={elements.length > 0}>
 					<div
 						class="panel-end"
 						style={{
-							...(elements.length > 0 && {
-								"transform": `translateY(${elements[elements.length - 1].computed.translateY + (
-									elements[elements.length - 1].open
-										? elements[elements.length - 1].height
-										: collapseHeight()
-								)}px)`,
-							}),
+							// Toggle display because unmounting / mounting breaks transition
+							// on transform
+							"display": transition()
+								? "block" // No-op (undefined doesn’t work here?)
+								: "none",
+							"transform": `translateY(${elements[elements.length - 1].computed.translateY + (
+								elements[elements.length - 1].open
+									? elements[elements.length - 1].height
+									: collapseHeight()
+							)}px)`,
 						}}
 						onTransitionEnd={transitionEnd}
 					></div>
-				{/* </Show> */}
+				</Show>
 			</div>
 		</PanelContext.Provider>
 	</>
@@ -477,14 +491,6 @@ function Panel(props: ParentProps<{ open?: boolean }>) {
 	})
 
 	return <>
-		{css`
-			.panel {
-				cursor: pointer;
-			}
-			:root:has(body.ready) .panel {
-				transition: transform 1000ms cubic-bezier(0, 1, 0.25, 1);
-			}
-		`}
 		<div
 			ref={setRef}
 			class="panel"
