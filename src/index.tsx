@@ -322,7 +322,7 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 		])
 	}
 
-	const translatesAndBoundingBoxes = () => {
+	const translatesAndBBoxes = () => {
 		const _closedHeight = closedHeight()
 		const _registered = registered()
 
@@ -341,9 +341,9 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 		return [translates, min, max] as const
 	}
 
-	const translates     = () => translatesAndBoundingBoxes()[0]
-	const minBoundingBox = () => translatesAndBoundingBoxes()[1]
-	const maxBoundingBox = () => translatesAndBoundingBoxes()[2]
+	const translates     = () => translatesAndBBoxes()[0]
+	const minBoundingBox = () => translatesAndBBoxes()[1]
+	const maxBoundingBox = () => translatesAndBBoxes()[2]
 
 	function isOpen(index: number) {
 		const _registered = registered()
@@ -389,7 +389,7 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 				.panel-container { position: relative; }
 				.panel-container::before { content: ""; }
 
-				.panel-container::before {
+				.foo.panel-container::before {
 					position: absolute;
 					z-index: 10;
 					inset: 0;
@@ -416,8 +416,8 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 						auto /* B */
 						0;   /* L */
 					/* Decoration */
-					background-color: blue;
-					opacity: 0.75;
+					background-color: yellowgreen;
+					opacity: 0.5;
 				}
 				.panel-end.is-ready {
 					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.15);
@@ -427,6 +427,7 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 				class="panel-container"
 				style={{
 					"height": `${minBoundingBox()}px`,
+					//// "overflow-y": minBoundingBox() >= 464 ? "auto" : "clip",
 					//// "overflow-y": "clip",
 				}}
 			>
@@ -437,8 +438,7 @@ function PanelProvider(props: ParentProps<{ closedHeight: number }>) {
 						"height": `${maxBoundingBox() - minBoundingBox()}px`,
 						"transform": `translateY(${minBoundingBox()}px)`,
 					}}
-				>
-				</div>
+				></div>
 			</div>
 		</PanelContext.Provider>
 	</>
@@ -468,7 +468,10 @@ function Panel(props: ParentProps<{ open?: boolean }>) {
 			ref={setRef}
 			class={cx(`panel panel-${index()!} ${ready() ? "is-ready" : ""}`)}
 			style={{
-				// TODO
+				"height": index() !== undefined
+					? (state.registered()[index()!].open ? `${state.registered()[index()!].height}px` : `${state.closedHeight()}px`)
+					: undefined,
+				"overflow-y": "clip",
 				"background-color": index() !== undefined
 					? `hsl(${index()! * 60} 100% 75%)`
 					: undefined,
@@ -505,6 +508,9 @@ function App2() {
 				justify-content: center;
 			}
 			.sidebar {
+				height: var(--screen-y);
+				overflow-y: auto;
+
 				width: 368px;
 				background-color: whitesmoke;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
