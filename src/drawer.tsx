@@ -1,7 +1,9 @@
-import { Accessor, batch, createContext, createEffect, createSignal, JSX, onMount, ParentProps, Show, untrack, useContext } from "solid-js"
+import { Accessor, batch, createContext, createEffect, createSignal, DEV, JSX, onMount, ParentProps, Show, untrack, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
+import { Portal } from "solid-js/web"
 import { createReady } from "./effects"
 import { css, cx } from "./solid-utils"
+import { only, stringify } from "./utils"
 
 type Element = {
 	open:       boolean
@@ -108,8 +110,12 @@ export function Drawer(props: ParentProps<{
 //// 		{css`
 //// 			.drawer-debug-card {
 //// 				position: fixed;
-//// 				z-index: 10;
-//// 				inset: auto auto 16px 16px;
+//// 				z-index: 100;
+//// 				inset:
+//// 					16px  /* T */
+//// 					16px  /* R */
+//// 					16px  /* B */
+//// 					auto; /* L */
 //// 				/* LAYOUT */
 //// 				padding: 16px;
 //// 				max-height: calc(var(--screen-y) - 16px * 2);
@@ -143,10 +149,9 @@ export function Drawer(props: ParentProps<{
 createReady()
 
 export function DrawerProvider(props: ParentProps<{
-	resizeStrategy?: "immediate" | "delayed"
+	//// resizeStrategy?: "immediate" | "delayed"
 }>) {
-
-	const resizeStrategy = () => props.resizeStrategy ?? "delayed"
+	//// const resizeStrategy = () => props.resizeStrategy ?? "delayed"
 
 	const ready = () => elements.length > 0
 
@@ -221,22 +226,23 @@ export function DrawerProvider(props: ParentProps<{
 					? el.maxHeight!
 					: el.minHeight!
 			}
-			if (!untrack(boundingBox)) {
-				setBoundingBox(sum)
-			} else {
-				if (resizeStrategy() === "immediate") {
-					setBoundingBox(sum)
-				} else if (resizeStrategy() === "delayed") {
-					if (sum > untrack(boundingBox)!) {
-						setBoundingBox(sum)
-					} else {
-						createEffect(() => {
-							if (transition()) { return }
-							setBoundingBox(sum)
-						})
-					}
-				}
-			}
+			setBoundingBox(sum)
+			//// if (!untrack(boundingBox)) {
+			//// 	setBoundingBox(sum)
+			//// } else {
+			//// 	if (resizeStrategy() === "immediate") {
+			//// 		setBoundingBox(sum)
+			//// 	} else if (resizeStrategy() === "delayed") {
+			//// 		if (sum > untrack(boundingBox)!) {
+			//// 			setBoundingBox(sum)
+			//// 		} else {
+			//// 			createEffect(() => {
+			//// 				if (transition()) { return }
+			//// 				setBoundingBox(sum)
+			//// 			})
+			//// 		}
+			//// 	}
+			//// }
 		})
 	})
 
@@ -269,7 +275,7 @@ export function DrawerProvider(props: ParentProps<{
 					z-index: 50;
 					inset: 0 0 auto 0;
 					/* Defer height and overflow-y to inline styles */
-					background-color: whitesmoke;
+					background-color: white;
 				}
 				:root.ready .drawer-mask {
 					transition: transform 500ms cubic-bezier(0, 1, 0.25, 1);
@@ -302,9 +308,11 @@ export function DrawerProvider(props: ParentProps<{
 						"overflow-y": "auto",
 					}),
 				}}
+				//// // @ts-expect-error
+				//// inert={only(ready() && transition())}
 			>
 				{props.children}
-				<Show when={ready()}>
+				{/* <Show when={ready()}>
 					<div
 						class="drawer-mask"
 						style={{
@@ -320,7 +328,7 @@ export function DrawerProvider(props: ParentProps<{
 							)}px)`,
 						}}
 					></div>
-				</Show>
+				</Show> */}
 			</div>
 
 			{/* DEBUG */}
