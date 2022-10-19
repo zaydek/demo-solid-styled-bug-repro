@@ -1,27 +1,26 @@
 import { Accessor, batch, createContext, createEffect, createSignal, DEV, JSX, onMount, ParentProps, Show, untrack, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
 import { Portal } from "solid-js/web"
-import { mounted } from "./mounted"
 import { css, cx } from "./solid-utils"
 import { stringify } from "./utils"
 
 type Element = {
-	open:       boolean
-	height:     undefined | number
-	translateY: undefined | number // Computed
-	transition: undefined | boolean
+	open:           boolean
+	collapseHeight: undefined | number
+	height:         undefined | number
+	translateY:     undefined | number // Computed
+	transition:     undefined | boolean
 }
 
 type State = {
-	collapseHeight: Accessor<number>
-	elements:       Element[]
-	boundingBox:    Accessor<undefined | number> // Computed
-	transition:     Accessor<undefined |boolean> // Computed
+	elements:    Element[]
+	boundingBox: Accessor<undefined | number> // Computed
+	transition:  Accessor<undefined |boolean> // Computed
 }
 
 type Actions = {
-	createElement: (options: { open: boolean }) => [number, Element]
-	measure:       (index: number, options: { height: number }) => void
+	createElement: (data: { open: boolean }) => [number, Element]
+	measure:       (index: number, data: { collapseHeight: number, height: number }) => void
   open:          (index: number) => void
   close:         (index: number) => void
   toggle:        (index: number) => void
@@ -46,23 +45,29 @@ export function Drawer(props: ParentProps<{
 	const { state, actions } = useContext(DrawerContext)!
 
 	const [ref, setRef] = createSignal<HTMLElement>()
+	const [headRef, setHeadRef] = createSignal<HTMLElement>()
+
 	const [index, element] = actions.createElement({ open: props.open ?? false })
 
-	const isClosed = () => {
+	onMount(() => {
+		actions.measure(index, {
+			collapseHeight: headRef()!.scrollHeight,
+			height: ref()!.scrollHeight,
+		})
+	})
+
+	// Convenience accessor
+	const elementIsClosed = () => {
 		return state.elements.length > 0 &&
 			!element.open &&
 				(element.transition !== undefined && element.transition === false)
 	}
 
-	const hasTranslateY = () => {
+	// Convenience accessor
+	const elementHasTranslateY = () => {
 		return state.elements.length > 0 &&
 			element.translateY !== undefined
 	}
-
-	onMount(() => {
-		const height = ref()!.clientHeight
-		actions.measure(index, { height })
-	})
 
 	return <>
 		<div
@@ -72,17 +77,18 @@ export function Drawer(props: ParentProps<{
 				// DEBUG
 				"background-color": `hsl(${index * 60} 100% 75%)`,
 
-				...(isClosed() && {
-					"height": `${state.collapseHeight()}px`,
+				...(elementIsClosed() && {
+					"height": `${element.collapseHeight!}px`,
 					"overflow-y": "clip",
 				}),
-				...(hasTranslateY() && {
+				...(elementHasTranslateY() && {
 					"transform": `translateY(${element.translateY}px)`,
 				}),
 			}}
 			onTransitionEnd={e => actions.transitionend(index)}
 		>
 			<div
+				ref={setHeadRef}
 				class="drawer-head"
 				onClick={e => actions.toggle(index)}
 				onKeyDown={e => {
@@ -147,11 +153,8 @@ function DEBUG_VIEW() {
 ////////////////////////////////////////
 
 export function DrawerProvider(props: ParentProps<{
-	collapseHeight: number
-
 	resizeStrategy?: "immediate" | "delayed"
 }>) {
-	const collapseHeight = () => props.collapseHeight
 	const resizeStrategy = () => props.resizeStrategy ?? "delayed"
 
 	const [elements, setElements] = createStore<Element[]>([])
@@ -163,23 +166,25 @@ export function DrawerProvider(props: ParentProps<{
 	}
 
 	// Creates (registers an element)
-	function createElement(options: { open: boolean }) {
+	function createElement(data: { open: boolean }) {
 		const index = elements.length
-		setElements(curr => [
-			...curr, {
-				open:       options.open,
-				height:     undefined, // Defer initialization
-				clipHeight: undefined, // Defer initialization
-				translateY: undefined, // Defer initialization
-				transition: undefined, // Defer initialization
-			},
-		])
+		const el: Element = { // Instantiate element here for TypeScript (el: Element)
+			open:           data.open,
+			collapseHeight: undefined,
+			height:         undefined,
+			translateY:     undefined,
+			transition:     undefined,
+		}
+		setElements(curr => [...curr, el])
 		return [index, elements[index]] as [number, Element]
 	}
 
 	// Measures an element
-	function measure(index: number, options: { height: number }) {
-		setElements(index, "height", options.height)
+	function measure(index: number, data: { collapseHeight: number, height: number }) {
+		batch(() => {
+			setElements(index, "collapseHeight", data.collapseHeight)
+			setElements(index, "height", data.height)
+		})
 	}
 
 	// Opens an element
@@ -207,7 +212,7 @@ export function DrawerProvider(props: ParentProps<{
 		}
 	}
 
-	// Signals "transitionend"
+	// Signals "transitionend" for an element
 	function transitionend(index: number) {
 		setElements(index, "transition", false)
 	}
@@ -220,30 +225,35 @@ export function DrawerProvider(props: ParentProps<{
 				const el = untrack(() => elements[index])
 				setElements(index, "translateY", sum)
 				sum += el.open
-					? el.height!
-					: collapseHeight()
+					? el.height!         // TODO: Rename to minHeight
+					: el.collapseHeight! // TODO: Rename to maxHeight
 			}
 			if (untrack(boundingBox) === undefined) {
 				setBoundingBox(sum)
-			}
-			if (resizeStrategy() === "immediate") {
-				setBoundingBox(sum)
-			} else if (resizeStrategy() === "delayed") {
-				if (sum > untrack(boundingBox)!) {
+			} else {
+				if (resizeStrategy() === "immediate") {
 					setBoundingBox(sum)
-				} else {
-					createEffect(() => {
-						if (transition()) { return }
+				} else if (resizeStrategy() === "delayed") {
+					if (sum > untrack(boundingBox)!) {
 						setBoundingBox(sum)
-					})
+					} else {
+						createEffect(() => {
+							if (transition()) { return }
+							setBoundingBox(sum)
+						})
+					}
 				}
 			}
 		})
 	})
 
+	const ready = () => {
+		return elements.length > 0
+	}
+
 	return <>
 		<DrawerContext.Provider value={{
-			state: { collapseHeight, elements, boundingBox, transition },
+			state: { elements, boundingBox, transition },
 			actions: { createElement, measure, open, close, toggle, transitionend },
 		}}>
 			{css`
@@ -286,14 +296,6 @@ export function DrawerProvider(props: ParentProps<{
 
 				/******************************/
 
-				/* TODO: This should be implemented in user land or use CSS variables
-				for --collapsible-height */
-				.drawer-head {
-					height: 32px;
-				}
-
-				/******************************/
-
 				:root.ready .drawer-body {
 					transition: opacity 1000ms cubic-bezier(0, 1, 0.25, 1);
 				}
@@ -303,25 +305,24 @@ export function DrawerProvider(props: ParentProps<{
 			<div
 				class="drawer-container"
 				style={{
-					// TODO
-					...((boundingBox() !== undefined && transition() !== undefined) && {
+					...(ready() && {
 						"height": `${boundingBox()!}px`,
-						"overflow-y": transition() ? "clip" : "auto",
+						"overflow-y": transition()! ? "clip" : "auto",
 					}),
 				}}
 			>
 				{props.children}
-				<Show when={mounted()}>
+				<Show when={ready()}>
 					<div
 						class="drawer-end"
 						style={{
-							"height": transition() // Lazy but works
+							"height": transition()! // Lazy but works
 								? `${boundingBox()}px`
 								: "0px",
 							"transform": `translateY(${elements[elements.length - 1].translateY! + ( // Lazy but works
 								elements[elements.length - 1].open
 									? elements[elements.length - 1].height!
-									: collapseHeight()
+									: elements[elements.length - 1].collapseHeight!
 							)}px)`,
 						}}
 					></div>

@@ -113,53 +113,53 @@ function App() {
 					</>}</For> */}
 					<DrawerProvider collapseHeight={32}>
 						<Drawer head={<>Hello, world!</>}>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						</Drawer>
 						<Drawer head={<>Hello, world!</>}>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						</Drawer>
 						<Drawer head={<>Hello, world!</>}>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						</Drawer>
 						<Drawer head={<>Hello, world!</>}>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						</Drawer>
 						<Drawer head={<>Hello, world!</>}>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						</Drawer>
 						<Drawer head={<>Hello, world!</>}>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						</Drawer>
 						<Drawer head={<>Hello, world!</>}>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+							<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						</Drawer>
 					</DrawerProvider>
 				</div>
@@ -326,55 +326,58 @@ function App2() {
 		`}
 		<div class="center">
 			<div class="sidebar [display:flex] [flex-direction:column]">
-				<DrawerProvider collapseHeight={32} /* resizeStrategy="immediate" */>
-					<Drawer head={<>Hello, world!</>}>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+				<DrawerProvider /* resizeStrategy="immediate" */>
+					<Drawer head={<>
+						<div>Hello, world!</div>
+						<div>Hello, world!</div>
+					</>}>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
 					<Drawer head={<>Hello, world!</>}>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
 					<Drawer head={<>Hello, world!</>}>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
 					<Drawer head={<>Hello, world!</>}>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
 					<Drawer head={<>Hello, world!</>}>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
 					<Drawer head={<>Hello, world!</>}>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
 					<Drawer head={<>Hello, world!</>}>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
-						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
+						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
 				</DrawerProvider>
 			</div>
