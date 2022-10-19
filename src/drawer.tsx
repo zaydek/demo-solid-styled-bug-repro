@@ -1,7 +1,6 @@
 import { Accessor, batch, createContext, createEffect, createSignal, DEV, JSX, onMount, ParentProps, Show, untrack, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
 import { Portal } from "solid-js/web"
-import { e } from "unocss"
 import { css, cx } from "./solid-utils"
 import { stringify } from "./utils"
 
@@ -126,14 +125,14 @@ function DEBUG_VIEW() {
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 			}
-			.drawer-debug-type {
+			.drawer-debug-typography {
 				font: 400 12px / 1.25 Monaco;
 				white-space: pre;
 			}
 		`}
 		<Portal ref={el => el.className = "portal"}>
-			<div class="debug-drawer">
-				<div class="debug-drawer-type">
+			<div class="drawer-debug-card">
+				<div class="drawer-debug-typography">
 					{stringify(state, 2)}
 				</div>
 			</div>
@@ -304,8 +303,6 @@ export function DrawerProvider(props: ParentProps<{ collapseHeight: number }>) {
 							? "clip"
 							: "auto",
 					}),
-					//// // DEBUG
-					//// "outline": "8px solid red",
 				}}
 			>
 				{props.children}
