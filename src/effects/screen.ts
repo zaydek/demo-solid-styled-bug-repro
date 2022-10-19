@@ -1,6 +1,6 @@
 import { createRoot, onCleanup, onMount } from "solid-js"
 
-export function createScreenVars() {
+export function createScreenCSSVars() {
 	createRoot(dispose => {
 		onMount(() => {
 			function handleResize(e?: UIEvent) {

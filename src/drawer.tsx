@@ -1,5 +1,6 @@
 import { Accessor, batch, createContext, createEffect, createSignal, JSX, onMount, ParentProps, Show, untrack, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
+import { createReady } from "./effects"
 import { css, cx } from "./solid-utils"
 
 type Element = {
@@ -26,6 +27,7 @@ type Actions = {
   transitionend: (index: number) => void
 }
 
+// Exported for debugging purposes
 export const DrawerContext = createContext<{
 	state:   State
 	actions: Actions
@@ -138,9 +140,12 @@ export function Drawer(props: ParentProps<{
 ////////////////////////////////////////
 ////////////////////////////////////////
 
+createReady()
+
 export function DrawerProvider(props: ParentProps<{
 	resizeStrategy?: "immediate" | "delayed"
 }>) {
+
 	const resizeStrategy = () => props.resizeStrategy ?? "delayed"
 
 	const ready = () => elements.length > 0
@@ -267,7 +272,7 @@ export function DrawerProvider(props: ParentProps<{
 					background-color: whitesmoke;
 				}
 				:root.ready .drawer-mask {
-					transition: transform 750ms cubic-bezier(0, 1, 0.25, 1);
+					transition: transform 500ms cubic-bezier(0, 1, 0.25, 1);
 				}
 
 				/******************************/
@@ -277,14 +282,14 @@ export function DrawerProvider(props: ParentProps<{
 					cursor: pointer;
 				}
 				:root.ready .drawer {
-					transition: transform 750ms cubic-bezier(0, 1, 0.25, 1);
+					transition: transform 500ms cubic-bezier(0, 1, 0.25, 1);
 				}
 
 				/******************************/
 
 				/* TODO: This should be implemented in userland */
 				:root.ready .drawer-body {
-					transition: opacity 750ms cubic-bezier(0, 1, 0.25, 1);
+					transition: opacity 500ms cubic-bezier(0, 1, 0.25, 1);
 				}
 				.drawer.is-closed .drawer-body { opacity: 0; }
 				.drawer.is-open   .drawer-body { opacity: 1; }
