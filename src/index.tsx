@@ -111,7 +111,7 @@ function App() {
 						</section>
 						<hr class="line" />
 					</>}</For> */}
-					<DrawerProvider collapseHeight={32}>
+					<DrawerProvider>
 						<Drawer head={<>Hello, world!</>}>
 							<div>🤔🤔🤔🤔🤔🤔🤔</div>
 							<div>🤔🤔🤔🤔🤔🤔🤔</div>
@@ -328,15 +328,15 @@ function App2() {
 			<div class="sidebar [display:flex] [flex-direction:column]">
 				<DrawerProvider /* resizeStrategy="immediate" */>
 					<Drawer head={<>
-						<div>Hello, world!</div>
-						<div>Hello, world!</div>
+						<div>💀💀💀💀💀💀💀</div>
+						<div>💀💀💀💀💀💀💀</div>
 					</>}>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
-					<Drawer head={<>Hello, world!</>}>
+					<Drawer head={<div>💀💀💀💀💀💀💀</div>}>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
@@ -349,31 +349,40 @@ function App2() {
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
-					<Drawer head={<>Hello, world!</>}>
+					<Drawer head={<>
+						<div>💀💀💀💀💀💀💀</div>
+						<div>💀💀💀💀💀💀💀</div>
+					</>}>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
-					<Drawer head={<>Hello, world!</>}>
+					<Drawer head={<div>💀💀💀💀💀💀💀</div>}>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
-					<Drawer head={<>Hello, world!</>}>
+					<Drawer head={<>
+						<div>💀💀💀💀💀💀💀</div>
+						<div>💀💀💀💀💀💀💀</div>
+					</>}>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
-					<Drawer head={<>Hello, world!</>}>
+					<Drawer head={<div>💀💀💀💀💀💀💀</div>}>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 					</Drawer>
-					<Drawer head={<>Hello, world!</>}>
+					<Drawer head={<>
+						<div>💀💀💀💀💀💀💀</div>
+						<div>💀💀💀💀💀💀💀</div>
+					</>}>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>
 						<div>🤔🤔🤔🤔🤔🤔🤔</div>

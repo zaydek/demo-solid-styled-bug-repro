@@ -1,18 +1,17 @@
-import { Accessor, batch, createContext, createEffect, createSignal, DEV, JSX, onMount, ParentProps, Show, untrack, useContext } from "solid-js"
+import { Accessor, batch, createContext, createEffect, createSignal, JSX, onMount, ParentProps, Show, untrack, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
-import { Portal } from "solid-js/web"
 import { css, cx } from "./solid-utils"
-import { stringify } from "./utils"
 
 type Element = {
-	open:           boolean
-	collapseHeight: undefined | number
-	height:         undefined | number
-	translateY:     undefined | number // Computed
-	transition:     undefined | boolean
+	open:       boolean
+	minHeight:  undefined | number // Computed
+	maxHeight:  undefined | number // Computed
+	translate:  undefined | number // Computed
+	transition: undefined | boolean
 }
 
 type State = {
+	ready:       Accessor<boolean>
 	elements:    Element[]
 	boundingBox: Accessor<undefined | number> // Computed
 	transition:  Accessor<undefined |boolean> // Computed
@@ -20,7 +19,7 @@ type State = {
 
 type Actions = {
 	createElement: (data: { open: boolean }) => [number, Element]
-	measure:       (index: number, data: { collapseHeight: number, height: number }) => void
+	measure:       (index: number, data: { minHeight: number, maxHeight: number }) => void
   open:          (index: number) => void
   close:         (index: number) => void
   toggle:        (index: number) => void
@@ -51,23 +50,10 @@ export function Drawer(props: ParentProps<{
 
 	onMount(() => {
 		actions.measure(index, {
-			collapseHeight: headRef()!.scrollHeight,
-			height: ref()!.scrollHeight,
+			minHeight: headRef()!.scrollHeight,
+			maxHeight: ref()!.scrollHeight,
 		})
 	})
-
-	// Convenience accessor
-	const elementIsClosed = () => {
-		return state.elements.length > 0 &&
-			!element.open &&
-				(element.transition !== undefined && element.transition === false)
-	}
-
-	// Convenience accessor
-	const elementHasTranslateY = () => {
-		return state.elements.length > 0 &&
-			element.translateY !== undefined
-	}
 
 	return <>
 		<div
@@ -77,12 +63,12 @@ export function Drawer(props: ParentProps<{
 				// DEBUG
 				"background-color": `hsl(${index * 60} 100% 75%)`,
 
-				...(elementIsClosed() && {
-					"height": `${element.collapseHeight!}px`,
+				...(state.ready() && !element.open && !element.transition && {
+					"height": `${element.minHeight!}px`,
 					"overflow-y": "clip",
 				}),
-				...(elementHasTranslateY() && {
-					"transform": `translateY(${element.translateY}px)`,
+				...(state.ready() && element.translate && {
+					"transform": `translateY(${element.translate}px)`,
 				}),
 			}}
 			onTransitionEnd={e => actions.transitionend(index)}
@@ -113,39 +99,39 @@ export function Drawer(props: ParentProps<{
 ////////////////////////////////////////
 ////////////////////////////////////////
 
-function DEBUG_VIEW() {
-	const { state } = useContext(DrawerContext)!
-
-	return <>
-		{css`
-			.drawer-debug-card {
-				position: fixed;
-				z-index: 10;
-				inset: auto auto 16px 16px;
-				/* LAYOUT */
-				padding: 16px;
-				max-height: calc(var(--screen-y) - 16px * 2);
-				overflow-y: auto;
-				width: 320px;
-				border-radius: 16px;
-				/* DECORATION */
-				background-color: white;
-				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
-			}
-			.drawer-debug-typography {
-				font: 400 12px / 1.25 Monaco;
-				white-space: pre;
-			}
-		`}
-		<Portal ref={el => el.className = "portal"}>
-			<div class="drawer-debug-card">
-				<div class="drawer-debug-typography">
-					{stringify(state, 2)}
-				</div>
-			</div>
-		</Portal>
-	</>
-}
+//// function DEBUG_VIEW() {
+//// 	const { state } = useContext(DrawerContext)!
+////
+//// 	return <>
+//// 		{css`
+//// 			.drawer-debug-card {
+//// 				position: fixed;
+//// 				z-index: 10;
+//// 				inset: auto auto 16px 16px;
+//// 				/* LAYOUT */
+//// 				padding: 16px;
+//// 				max-height: calc(var(--screen-y) - 16px * 2);
+//// 				overflow-y: auto;
+//// 				width: 320px;
+//// 				border-radius: 16px;
+//// 				/* DECORATION */
+//// 				background-color: white;
+//// 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+//// 			}
+//// 			.drawer-debug-typography {
+//// 				font: 400 12px / 1.25 Monaco;
+//// 				white-space: pre;
+//// 			}
+//// 		`}
+//// 		<Portal ref={el => el.className = "portal"}>
+//// 			<div class="drawer-debug-card">
+//// 				<div class="drawer-debug-typography">
+//// 					{stringify(state, 2)}
+//// 				</div>
+//// 			</div>
+//// 		</Portal>
+//// 	</>
+//// }
 
 ////////////////////////////////////////
 ////////////////////////////////////////
@@ -156,6 +142,8 @@ export function DrawerProvider(props: ParentProps<{
 	resizeStrategy?: "immediate" | "delayed"
 }>) {
 	const resizeStrategy = () => props.resizeStrategy ?? "delayed"
+
+	const ready = () => elements.length > 0
 
 	const [elements, setElements] = createStore<Element[]>([])
 	const [boundingBox, setBoundingBox] = createSignal<number>()
@@ -169,21 +157,21 @@ export function DrawerProvider(props: ParentProps<{
 	function createElement(data: { open: boolean }) {
 		const index = elements.length
 		const el: Element = { // Instantiate element here for TypeScript (el: Element)
-			open:           data.open,
-			collapseHeight: undefined,
-			height:         undefined,
-			translateY:     undefined,
-			transition:     undefined,
+			open:       data.open,
+			minHeight:  undefined, // Defer initialization
+			maxHeight:  undefined, // Defer initialization
+			translate:  undefined, // Defer initialization
+			transition: undefined, // Defer initialization
 		}
 		setElements(curr => [...curr, el])
 		return [index, elements[index]] as [number, Element]
 	}
 
 	// Measures an element
-	function measure(index: number, data: { collapseHeight: number, height: number }) {
+	function measure(index: number, data: { minHeight: number, maxHeight: number }) {
 		batch(() => {
-			setElements(index, "collapseHeight", data.collapseHeight)
-			setElements(index, "height", data.height)
+			setElements(index, "minHeight", data.minHeight)
+			setElements(index, "maxHeight", data.maxHeight)
 		})
 	}
 
@@ -191,7 +179,7 @@ export function DrawerProvider(props: ParentProps<{
 	function open(index: number) {
 		batch(() => {
 			setElements(index, "open", true)
-			setElements(index, "transition", true)
+			setElements(index, "transition", true) // Kick off transition
 		})
 	}
 
@@ -199,7 +187,7 @@ export function DrawerProvider(props: ParentProps<{
 	function close(index: number) {
 		batch(() => {
 			setElements(index, "open", false)
-			setElements(index, "transition", true)
+			setElements(index, "transition", true) // Kick off transition
 		})
 	}
 
@@ -212,7 +200,7 @@ export function DrawerProvider(props: ParentProps<{
 		}
 	}
 
-	// Signals "transitionend" for an element
+	// Signals "transitionend"
 	function transitionend(index: number) {
 		setElements(index, "transition", false)
 	}
@@ -223,12 +211,12 @@ export function DrawerProvider(props: ParentProps<{
 			let sum = 0
 			for (let index = 0; index < elements.length; index++) {
 				const el = untrack(() => elements[index])
-				setElements(index, "translateY", sum)
+				setElements(index, "translate", sum)
 				sum += el.open
-					? el.height!         // TODO: Rename to minHeight
-					: el.collapseHeight! // TODO: Rename to maxHeight
+					? el.maxHeight!
+					: el.minHeight!
 			}
-			if (untrack(boundingBox) === undefined) {
+			if (!untrack(boundingBox)) {
 				setBoundingBox(sum)
 			} else {
 				if (resizeStrategy() === "immediate") {
@@ -247,13 +235,9 @@ export function DrawerProvider(props: ParentProps<{
 		})
 	})
 
-	const ready = () => {
-		return elements.length > 0
-	}
-
 	return <>
 		<DrawerContext.Provider value={{
-			state: { elements, boundingBox, transition },
+			state: { ready, elements, boundingBox, transition },
 			actions: { createElement, measure, open, close, toggle, transitionend },
 		}}>
 			{css`
@@ -274,30 +258,33 @@ export function DrawerProvider(props: ParentProps<{
 
 				/******************************/
 
-				.drawer-end {
+				/* TODO: This should be implemented in userland */
+				.drawer-mask {
 					position: absolute;
 					z-index: 50;
 					inset: 0 0 auto 0;
-					height: 500px;
-					background-color: purple;
+					/* Defer height and overflow-y to inline styles */
+					background-color: whitesmoke;
 				}
-				:root.ready .drawer-end {
-					transition: transform 1000ms cubic-bezier(0, 1, 0.25, 1);
+				:root.ready .drawer-mask {
+					transition: transform 750ms cubic-bezier(0, 1, 0.25, 1);
 				}
 
 				/******************************/
 
+				/* TODO: This should be implemented in userland */
 				.drawer {
 					cursor: pointer;
 				}
 				:root.ready .drawer {
-					transition: transform 1000ms cubic-bezier(0, 1, 0.25, 1);
+					transition: transform 750ms cubic-bezier(0, 1, 0.25, 1);
 				}
 
 				/******************************/
 
+				/* TODO: This should be implemented in userland */
 				:root.ready .drawer-body {
-					transition: opacity 1000ms cubic-bezier(0, 1, 0.25, 1);
+					transition: opacity 750ms cubic-bezier(0, 1, 0.25, 1);
 				}
 				.drawer.is-closed .drawer-body { opacity: 0; }
 				.drawer.is-open   .drawer-body { opacity: 1; }
@@ -306,23 +293,25 @@ export function DrawerProvider(props: ParentProps<{
 				class="drawer-container"
 				style={{
 					...(ready() && {
-						"height": `${boundingBox()!}px`,
-						"overflow-y": transition()! ? "clip" : "auto",
+						"height": `${boundingBox()}px`,
+						"overflow-y": "auto",
 					}),
 				}}
 			>
 				{props.children}
 				<Show when={ready()}>
 					<div
-						class="drawer-end"
+						class="drawer-mask"
 						style={{
-							"height": transition()! // Lazy but works
+							// Lazy but works
+							"height": transition()
 								? `${boundingBox()}px`
 								: "0px",
-							"transform": `translateY(${elements[elements.length - 1].translateY! + ( // Lazy but works
+							// Lazy but works
+							"transform": `translateY(${elements[elements.length - 1].translate! + (
 								elements[elements.length - 1].open
-									? elements[elements.length - 1].height!
-									: elements[elements.length - 1].collapseHeight!
+									? elements[elements.length - 1].maxHeight!
+									: elements[elements.length - 1].minHeight!
 							)}px)`,
 						}}
 					></div>
@@ -330,9 +319,9 @@ export function DrawerProvider(props: ParentProps<{
 			</div>
 
 			{/* DEBUG */}
-			<Show when={DEV}>
+			{/* <Show when={DEV}>
 				<DEBUG_VIEW />
-			</Show>
+			</Show> */}
 		</DrawerContext.Provider>
 	</>
 }
