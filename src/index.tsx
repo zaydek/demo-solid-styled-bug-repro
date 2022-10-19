@@ -1,13 +1,13 @@
 import "./css"
 
-import { batch, createContext, createEffect, createSignal, For, on, onCleanup, ParentProps, Setter, splitProps, useContext } from "solid-js"
+import { Accessor, batch, createContext, createEffect, createSignal, FlowProps, For, JSX, on, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
 import { render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
-import { StyleRegistry } from "solid-styled"
+import { DEBUG_component } from "./debug-component"
 import { Drawer, DrawerProvider } from "./drawer"
 import { NonResponsive, Sheet } from "./sheet"
 import { css, CSSProps, RefProps } from "./solid-utils"
-import { echo, range } from "./utils"
+import { clamp, range, round } from "./utils"
 
 ////////////////////////////////////////
 
@@ -326,9 +326,181 @@ function AriaRadiogroup(props: ParentProps<RefProps & CSSProps & {
 
 ////////////////////////////////////////
 
+type SliderState = {
+	//// float:     Accessor<undefined | { y: number, x: number }>
+	//// translate: Accessor<undefined | { y: number, x: number }>
+}
+
+type SliderActions = {
+	setThumbRect: Setter<{ h: number, w: number }>
+}
+
+const SliderContext = createContext<{
+	state:   SliderState
+	actions: SliderActions
+}>()
+
+////////////////////////////////////////
+
+function AriaSliderThumb(props: ParentProps<RefProps & CSSProps>) {
+	const { actions } = useContext(SliderContext)!
+
+	const [ref, setRef] = createSignal<HTMLElement>()
+
+	onMount(() => {
+		const clientRect = ref()!.getBoundingClientRect()
+		actions.setThumbRect({
+			h: clientRect.height,
+			w: clientRect.width,
+		})
+	})
+
+	return <>
+		<div
+			// Base props
+			ref={el => {
+				batch(() => {
+					props.ref?.(el)
+					setRef(el)
+				})
+			}}
+			class={props.class}
+			style={props.style}
+		>
+			{props.children}
+		</div>
+
+	</>
+}
+
+////////////////////////////////////////
+
+function AriaSlider(props: FlowProps<RefProps & CSSProps & {
+	value:    number
+	setValue: Setter<number>
+
+	min:  number
+	max:  number
+	step: number
+}, (translate: Accessor<number>) => JSX.Element>) {
+	const [ref, setRef] = createSignal<HTMLElement>()
+
+	const [trackRect, setTrackRect] = createSignal<{ h: number, w: number }>()
+	const [thumbRect, setThumbRect] = createSignal<{ h: number, w: number }>()
+
+	const [pointerDown, setPointerDown] = createSignal<true>()
+	const [p1, setP1] = createSignal<{ y: number, x: number }>()
+	const [p2, setP2] = createSignal<{ y: number, x: number }>()
+
+	const [value, setValue] = [() => props.value, props.setValue]
+	const min = () => props.min
+	const max = () => props.max
+	const step = () => props.step
+
+	const translate = (() => {
+		if (!(trackRect() && thumbRect())) { return }
+		const float = (value() - min()) / (max() - min())
+		if (!(p1() && p2())) {
+			return clamp(float * (trackRect()!.w - thumbRect()!.w), { min: 0, max: trackRect()!.w - thumbRect()!.w })
+		}  else {
+			return clamp(float * (trackRect()!.w - thumbRect()!.w) +
+				(p2()!.x - p1()!.x), { min: 0, max: trackRect()!.w - thumbRect()!.w })
+		}
+	}) as Accessor<number>
+
+	onMount(() => {
+		function handleResize() {
+			const clientRect = ref()!.getBoundingClientRect()
+			setTrackRect({
+				h: clientRect.height,
+				w: clientRect.width,
+			})
+		}
+		handleResize()
+		window.addEventListener("resize", handleResize, false)
+		onCleanup(() => window.addEventListener("resize", handleResize, false))
+
+		// Add observer as a fallback
+		const observer = new ResizeObserver(handleResize)
+		observer.observe(ref()!)
+		onCleanup(() => observer.disconnect)
+	})
+
+	onMount(() => {
+		function handlePointerDown(e: PointerEvent) {
+			if (!((e.button === 0 || e.buttons === 1) && e.composedPath().includes(ref()!))) { return }
+			e.preventDefault() // COMPAT/Safari: Prevent cursor from changing
+			batch(() => {
+				setPointerDown(true)
+				setP1({ y: round(e.clientY), x: round(e.clientX) })
+			})
+		}
+		function handlePointerMove(e: PointerEvent) {
+			if (!pointerDown()) { return }
+			setP2({ y: round(e.clientY), x:round( e.clientX) })
+		}
+		function handlePointerUp(e: PointerEvent) {
+			setPointerDown()
+		}
+		document.addEventListener("pointerdown", handlePointerDown, false)
+		document.addEventListener("pointermove", handlePointerMove, false)
+		document.addEventListener("pointerup",   handlePointerUp,   false)
+		onCleanup(() => {
+			document.addEventListener("pointerdown", handlePointerDown, false)
+			document.addEventListener("pointermove", handlePointerMove, false)
+			document.addEventListener("pointerup",   handlePointerUp,   false)
+		})
+	})
+
+	return <>
+		<SliderContext.Provider
+			value={{
+				state: {},
+				actions: { setThumbRect },
+			}}
+		>
+			<div
+				// Base props
+				ref={el => {
+					batch(() => {
+						props.ref?.(el)
+						setRef(el)
+					})
+				}}
+				class={props.class}
+				style={props.style}
+				// Handlers
+				//// ...
+				// Accessibility
+				role="slider"
+				//// aria-valuenow={props.value}
+				//// aria-valuemin={props.min}
+				//// aria-valuemax={props.max}
+				tabIndex={0}
+			>
+				{props.children(translate)}
+			</div>
+		</SliderContext.Provider>
+
+		<DEBUG_component
+			state={{
+				trackRect,
+				thumbRect,
+				pointerDown,
+				p1,
+				p2,
+				translate, // TODO
+			}}
+		/>
+	</>
+}
+
+////////////////////////////////////////
+
 function App2() {
 	const [checked, setChecked] = createSignal(false)
 	const [groupValue, setGroupValue] = createSignal("foo")
+	const [value, setValue] = createSignal(25)
 
 	//// createEffect(() => {
 	//// 	console.log({ groupValue: groupValue() })
@@ -359,25 +531,54 @@ function App2() {
 				border-radius: 1000px;
 				background-color: purple;
 			}
+
+			.my-slider {
+				height: 8px;
+				border-radius: 1000px;
+				background-color: blue;
+
+				/* Flow */
+				display: grid;
+				align-content: center;
+			}
+			.my-slider-thumb {
+				height: 32px;
+				aspect-ratio: 1;
+				border-radius: 1000px;
+				background-color: red;
+				opacity: 0.5;
+			}
 		`}
 		<div class="center">
-			<AriaRadiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={groupValue()} setGroupValue={setGroupValue}>
+			{/* <AriaRadiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={groupValue()} setGroupValue={setGroupValue}>
 				<For each={["foo", "bar", "baz", "qux"]}>{value => <>
 					<div class="[display:flex] [flex-direction:row] [align-items:center] [gap:8px]">
 						<div class="[flex-grow:1]">{value}</div>
 						<AriaRadio class="my-radio" value={value} />
 					</div>
 				</>}</For>
-			</AriaRadiogroup>
+			</AriaRadiogroup> */}
+			<div class="[width:224px]">
+				<AriaSlider class="my-slider" value={value()} setValue={setValue} min={0} max={100} step={1}>
+					{translate => <>
+						<AriaSliderThumb
+							class="my-slider-thumb"
+							style={{
+								...(translate() && {
+									"transform": `translateX(${translate()!}px)`,
+								}),
+							}}
+						/>
+					</>}
+				</AriaSlider>
+			</div>
 		</div>
 	</>
 }
 
+////////////////////////////////////////
+
 render(() =>
-	<>
-		<StyleRegistry>
-			<App2 />
-		</StyleRegistry>
-	</>,
+	<App2 />,
 	document.getElementById("root")!,
 )

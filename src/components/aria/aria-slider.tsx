@@ -1,5 +1,5 @@
 import { Accessor, batch, createContext, createSignal, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
-import { createRef, CSSProps, omitProps, RefProps } from "../../solid-utils"
+import { createRef, CSSProps, omitProps, Ref } from "../../solid-utils"
 import { clamp, round } from "../../utils"
 
 export const HorizontalSliderContext = createContext<{
@@ -14,7 +14,7 @@ export const HorizontalSliderContext = createContext<{
 ////////////////////////////////////////
 ////////////////////////////////////////
 
-export function AriaSliderThumb(props: ParentProps<RefProps & CSSProps>) {
+export function AriaSliderThumb(props: ParentProps<Ref & CSSProps>) {
 	const slider = useContext(HorizontalSliderContext)!
 	if (!slider) { throw new Error("Missing context: wrap <AriaHorizontalSlider>") }
 
@@ -53,7 +53,7 @@ export function AriaSliderThumb(props: ParentProps<RefProps & CSSProps>) {
 ////////////////////////////////////////
 ////////////////////////////////////////
 
-export function AriaSliderTrack(props: ParentProps<RefProps & CSSProps>) {
+export function AriaSliderTrack(props: ParentProps<Ref & CSSProps>) {
 	const slider = useContext(HorizontalSliderContext)!
 	if (!slider) { throw new Error("Missing context: wrap <AriaHorizontalSlider>") }
 
@@ -92,7 +92,7 @@ export function AriaSliderTrack(props: ParentProps<RefProps & CSSProps>) {
 ////////////////////////////////////////
 ////////////////////////////////////////
 
-export function AriaHorizontalSlider(props: ParentProps<RefProps & CSSProps & {
+export function AriaHorizontalSlider(props: ParentProps<Ref & CSSProps & {
 	value:    number
 	setValue: Setter<number>
 	min:      number

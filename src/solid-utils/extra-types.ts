@@ -1,10 +1,4 @@
-import { Component, JSX } from "solid-js"
-
-// TODO: DEPRECATE
-export type DynamicProps = {
-	as?:  keyof JSX.IntrinsicElements | Component
-	ref?: (element: HTMLElement) => void
-}
+import { JSX } from "solid-js"
 
 export type RefProps = {
 	ref?: (element: HTMLElement) => void
