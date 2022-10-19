@@ -13,8 +13,11 @@ export function createCSS(scope?: HTMLElement, { prepend }: { prepend?: boolean 
 		style.textContent = code
 		scope ??= document.head // Globally or locally-scoped
 		cache.set(code, true)
-		if (prepend) scope!.prepend(style)
-		else scope!.append(style)
+		if (prepend) {
+			scope!.prepend(style)
+		} else {
+			scope!.append(style)
+		}
 		//// onCleanup(() => { // FIXME: Cache eviction isn’t working here
 		//// 	cache.delete(code)
 		//// 	style.remove()

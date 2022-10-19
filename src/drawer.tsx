@@ -265,29 +265,28 @@ export function DrawerProvider(props: ParentProps<{
 						auto /* B */
 						0;   /* L */
 				}
-
-				/******************************/
-
 				/* TODO: This should be implemented in userland */
-				.drawer-mask {
-					position: absolute;
-					z-index: 50;
-					inset: 0 0 auto 0;
-					/* Defer height and overflow-y to inline styles */
-					background-color: white;
-				}
-				:root.ready .drawer-mask {
-					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
-				}
-
-				/******************************/
-
-				/* TODO: This should be implemented in userland */
-				.drawer {
-					cursor: pointer;
-				}
 				:root.ready .drawer {
 					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
+				}
+
+				/******************************/
+
+				/* TODO: This should be implemented in userland */
+				/* .drawer-mask { */
+				/* 	position: absolute; */
+				/* 	z-index: 50; */
+				/* 	inset: 0 0 auto 0; */
+				/* 	background-color: white; */
+				/* } */
+				/* :root.ready .drawer-mask { */
+				/* 	transition: transform 300ms cubic-bezier(0, 1, 0.25, 1); */
+				/* } */
+
+				/******************************/
+
+				.drawer-head {
+					cursor: pointer;
 				}
 
 				/******************************/
