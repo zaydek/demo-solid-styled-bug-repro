@@ -5,12 +5,12 @@ import "./2-vars.css"
 import "./3-components.css"
 import "./uno.generated.css"
 
-import { batch, createRoot, createSignal, onMount, ParentProps, Setter } from "solid-js"
+import { createRoot, createSignal, onMount, ParentProps, Setter } from "solid-js"
 import { For, render, Show } from "solid-js/web"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
 import { Drawer, DrawerProvider } from "./drawer"
 import { createMediaQuery } from "./effects"
-import { css, cx } from "./solid-utils"
+import { css } from "./solid-utils"
 import { only, range } from "./utils"
 
 ////////////////////////////////////////
@@ -304,7 +304,7 @@ function Collapsible() {
 
 createRoot(() => {
 	onMount(() => setTimeout(() => {
-		document.body.classList.add("ready")
+		document.documentElement.classList.add("ready")
 	}))
 })
 
@@ -326,7 +326,7 @@ function App2() {
 		`}
 		<div class="center">
 			<div class="sidebar [display:flex] [flex-direction:column]">
-				<DrawerProvider collapseHeight={32}>
+				<DrawerProvider collapseHeight={32} /* resizeStrategy="immediate" */>
 					<Drawer head={<>Hello, world!</>}>
 						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
 						<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
