@@ -82,7 +82,6 @@ function App() {
 		{/* @ts-expect-error */}
 		<nav class="fixed-navbar" inert={only(sidesheet() === "expanded")}>
 			<div class="nav-icon"></div>
-			<div class="nav-icon"></div>
 			<div class="[flex-grow:1]"></div>
 			<div class="nav-icon"></div>
 		</nav>
@@ -106,12 +105,63 @@ function App() {
 					</div>
 				</Show>
 				<div class="[flex-grow:1] [overflow-y:auto]">
-					<For each={range(40)}>{() => <>
+					{/* <For each={range(40)}>{() => <>
 						<section class="[padding:16px]">
 							<div>Hello, world!</div>
 						</section>
 						<hr class="line" />
-					</>}</For>
+					</>}</For> */}
+					<PanelProvider collapseHeight={32}>
+						<Panel>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						</Panel>
+						<Panel>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						</Panel>
+						<Panel>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						</Panel>
+						<Panel>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						</Panel>
+						<Panel>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						</Panel>
+						<Panel>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						</Panel>
+						<Panel>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+							<div class="[height:32px]">🤔🤔🤔🤔🤔🤔🤔</div>
+						</Panel>
+					</PanelProvider>
 				</div>
 				<div class="[flex-shrink:0]">
 					<hr class="line is-collapsed" />
@@ -313,11 +363,11 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 
 	function open(index: number) {
 		batch(() => {
-			const atEnd = index === elements.length - 1
+			//// const atEnd = index === elements.length - 1
 			setElements(index, curr => ({
 				...curr,
 				open: true,
-				transition: !atEnd,
+				transition: true, //// !atEnd,
 			}))
 			setSomeTransition(true)
 		})
@@ -325,11 +375,11 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 
 	function close(index: number) {
 		batch(() => {
-			const atEnd = index === elements.length - 1
+			//// const atEnd = index === elements.length - 1
 			setElements(index, curr => ({
 				...curr,
 				open: false,
-				transition: !atEnd,
+				transition: true, //// !atEnd,
 			}))
 			setSomeTransition(true)
 		})
@@ -367,19 +417,19 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 					clipHeight: _boundingBox - curr.translateY,
 				}))
 			}
-			setBoundingBox(_boundingBox)
-			//// if (untrack(boundingBox) === undefined) { // Initialize
-			//// 	setBoundingBox(_boundingBox)
-			//// } else {
-			//// 	if (_boundingBox > untrack(boundingBox)!) {
-			//// 		setBoundingBox(_boundingBox) // Synchronous
-			//// 	} else {
-			//// 		createEffect(() => { // Asynchronous
-			//// 			if (someTransition()) { return }
-			//// 			setBoundingBox(_boundingBox)
-			//// 		})
-			//// 	}
-			//// }
+			//// setBoundingBox(_boundingBox)
+			if (untrack(boundingBox) === undefined) { // Initialize
+				setBoundingBox(_boundingBox)
+			} else {
+				if (_boundingBox > untrack(boundingBox)!) {
+					setBoundingBox(_boundingBox) // Synchronous
+				} else {
+					createEffect(() => { // Asynchronous
+						if (someTransition()) { return }
+						setBoundingBox(_boundingBox)
+					})
+				}
+			}
 		})
 	})
 
@@ -405,13 +455,13 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 			}
 		`}
 		{/* DEBUG */}
-		<Show when={window.innerWidth >= 500}>
+		{/* <Show when={window.innerWidth >= 500}>
 			<div class="debug-panel">
 				<div class="debug-panel-typography">
 					{stringify({ collapseHeight, elements, boundingBox, someTransition }, 2)}
 				</div>
 			</div>
-		</Show>
+		</Show> */}
 		<PanelContext.Provider value={{
 			state: { collapseHeight, elements, boundingBox, someTransition },
 			actions: { createElement, open, close, toggle, transitionend },
@@ -471,14 +521,14 @@ function PanelProvider(props: ParentProps<{ collapseHeight: number }>) {
 			<div
 				class="panel-container"
 				style={{
-					...(boundingBox() && {
+					...((boundingBox() !== undefined && someTransition() !== undefined) && {
 						"height": `${boundingBox()!}px`,
 						"overflow-y": someTransition()
 							? "clip"
 							: "auto",
 					}),
-					// DEBUG
-					"outline": "8px solid red",
+					//// // DEBUG
+					//// "outline": "8px solid red",
 				}}
 			>
 				{props.children}
@@ -532,8 +582,10 @@ function Panel(props: ParentProps<{ open?: boolean }>) {
 					// DEBUG
 					"background-color": `hsl(${index()! * 60} 100% 75%)`,
 
-					"height": `${element()!.computed.clipHeight}px`,
-					"overflow-y": "clip",
+					...(!element()!.transition && {
+						"height": `${element()!.computed.clipHeight}px`,
+						"overflow-y": "clip",
+					}),
 					"transform": `translateY(${element()!.computed.translateY}px)`,
 				}),
 			}}
@@ -772,5 +824,5 @@ function App3() {
 }
 
 render(() => <>
-	<App2 />
+	<App3 />
 </>, document.getElementById("root")!)
