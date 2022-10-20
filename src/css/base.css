@@ -24,6 +24,10 @@ body {
 
 /**************************************/
 
+:root {
+	--fixed-navbar-height: calc(32px + 16px + 16px);
+}
+
 /* Only create negative-space (using margin-right) at >= 768px  */
 @media (min-width: 768px) {
 	:root:has(.sidesheet:is(.is-open, .is-expanded)) .fixed-navbar { margin-right: 384px; }

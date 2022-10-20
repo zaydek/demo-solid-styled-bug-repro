@@ -93,6 +93,8 @@ function App() {
 				align-items: center; /* Center y-axis */
 				gap: 16px;
 			}
+			.line { height: 4px; background-color: hsl(0 0% 90%); }
+			.line.is-collapsed { position: relative; z-index: 10; margin-top: -4px; }
 		`}
 		{/* @ts-expect-error */}
 		<nav class="fixed-navbar" inert={only(sidesheet() === "expanded")}>
@@ -125,8 +127,6 @@ function App() {
 								align-items: center; /* Center y-axis */
 								gap: 16px;
 							}
-							.line { height: 4px; background-color: hsl(0 0% 90%); }
-							.line.is-collapsed { margin-top: -4px; isolation: isolate; }
 						`}
 						<nav class="navbar">
 							<NavIcon />
@@ -173,7 +173,7 @@ function App() {
 								<div class="[flex-grow:1]">Hello, world!</div>
 								<div>Foo</div>
 							</div>
-						</>} open={false}>
+						</>} open>
 							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
 								<For each={["foo", "bar", "baz"]}>{value => <>
 									<Radio value={value} />
@@ -187,7 +187,7 @@ function App() {
 								<div class="[flex-grow:1]">Hello, world!</div>
 								<div>Foo</div>
 							</div>
-						</>} open={false}>
+						</>} open>
 							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
 								<For each={["foo", "bar", "baz"]}>{value => <>
 									<Radio value={value} />
@@ -201,7 +201,7 @@ function App() {
 								<div class="[flex-grow:1]">Hello, world!</div>
 								<div>Foo</div>
 							</div>
-						</>} open={false}>
+						</>} open>
 							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
 								<For each={["foo", "bar", "baz"]}>{value => <>
 									<Radio value={value} />
@@ -215,7 +215,7 @@ function App() {
 								<div class="[flex-grow:1]">Hello, world!</div>
 								<div>Foo</div>
 							</div>
-						</>} open={false}>
+						</>} open>
 							<Slider />
 						</Drawer>
 						<Drawer head={<>
@@ -225,7 +225,7 @@ function App() {
 								<div class="[flex-grow:1]">Hello, world!</div>
 								<div>Foo</div>
 							</div>
-						</>} open={false}>
+						</>} open>
 							<Slider />
 						</Drawer>
 						<Drawer head={<>
@@ -235,7 +235,7 @@ function App() {
 								<div class="[flex-grow:1]">Hello, world!</div>
 								<div>Foo</div>
 							</div>
-						</>} open={false}>
+						</>} open>
 							<Slider />
 						</Drawer>
 					</DrawerProvider>
@@ -243,9 +243,23 @@ function App() {
 				</div>
 				<div class="[flex-shrink:0]">
 					<div class="line is-collapsed"></div>
-					<section class="[padding:16px]">
+					{css`
+						.footer-content { padding: 16px; }
+					`}
+					<div class="footer-content [display:flex] [flex-direction:row] [gap:16px]">
+						<div class="[height:80px] [aspect-ratio:16_/_9] [border-radius:8px] [background-color:gray]"></div>
+						<div class="[flex-grow:1]">
+							<div>Hello, world!</div>
+							<div>Hello, world!</div>
+							<div>Hello, world!</div>
+							<div>Hello, world!</div>
+						</div>
+					</div>
+					<div class="line"></div>
+					<div class="footer-content">
 						<div>This is the last block</div>
-					</section>
+						<div>This is the last block</div>
+					</div>
 				</div>
 			</aside>
 		</Sheet>
