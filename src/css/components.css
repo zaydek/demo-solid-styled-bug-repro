@@ -86,7 +86,7 @@
 :root:has(.cp-slider:active) { cursor: grabbing; }            /* Use both */
 :root:has(.cp-slider:active) .cp-slider { cursor: grabbing; } /* Use both */
 .cp-slider-track {
-  height: 8px;
+  height: 6px;
   width: 100%;
   border-radius: 32px;
   background-color: blue;
