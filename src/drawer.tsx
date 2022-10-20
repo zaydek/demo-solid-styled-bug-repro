@@ -1,7 +1,7 @@
 import { Accessor, batch, createContext, createEffect, createSignal, JSX, onMount, ParentProps, untrack, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
-import { createReadySignal, css } from "./solid-utils"
-import { cx, round } from "./utils"
+import { createReadySignal, css } from "./utils/solid"
+import { cx, round } from "./utils/vanilla"
 
 type Element = {
 	open:       boolean

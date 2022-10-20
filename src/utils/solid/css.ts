@@ -1,4 +1,4 @@
-import { template } from "../utils"
+import { template } from "../vanilla"
 
 // Returns whether an element has a class name
 export function hasClass(element: HTMLElement, className: string) {

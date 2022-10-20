@@ -1,6 +1,6 @@
 import { Accessor, batch, createContext, createEffect, createSignal, FlowProps, JSX, on, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
-import { CSSProps, RefProps } from "./solid-utils"
-import { clamp, round } from "./utils"
+import { CSSProps, RefProps } from "./utils/solid"
+import { clamp, round } from "./utils/vanilla"
 
 ////////////////////////////////////////
 

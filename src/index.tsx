@@ -7,8 +7,8 @@ import { AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from
 import { Drawer, DrawerProvider } from "./drawer"
 import { NonResponsive, Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
-import { css, CSSProps } from "./solid-utils"
-import { only, range } from "./utils"
+import { css, CSSProps } from "./utils/solid"
+import { only, range } from "./utils/vanilla"
 
 ////////////////////////////////////////
 

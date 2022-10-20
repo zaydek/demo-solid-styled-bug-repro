@@ -1,10 +1,10 @@
 import { ParentProps, Setter, Show } from "solid-js"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
-import { createResponsiveSignal } from "./solid-utils"
+import { createResponsiveSignal } from "./utils/solid"
 
 const responsive = createResponsiveSignal("(max-width: 499px)")
 
-// Renders exclusively for "responsive" devices
+// Renders exclusively for responsive content
 export function Responsive(props: ParentProps) {
 	return <>
 		<Show when={responsive()}>
@@ -13,7 +13,7 @@ export function Responsive(props: ParentProps) {
 	</>
 }
 
-// Renders exclusively for "non-responsive" devices
+// Renders exclusively for non-responsive content
 export function NonResponsive(props: ParentProps) {
 	return <>
 		<Show when={!responsive()}>
