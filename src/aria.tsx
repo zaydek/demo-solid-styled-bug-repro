@@ -382,6 +382,8 @@ function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 //     /* Flow */
 //     display: grid;
 //     align-items: center;
+//
+//     touch-action: pan-x;
 //   }
 //   .horizontal-slider-track {
 //     height: 8px;
@@ -421,6 +423,8 @@ export function AriaSliderHorizontal(props: FlowProps<RefProps & CSSProps & {
 //     /* Flow */
 //     display: grid;
 //     justify-items: center;
+//
+//     touch-action: pan-y;
 //   }
 //   .vertical-slider-track {
 //     height: 100%;

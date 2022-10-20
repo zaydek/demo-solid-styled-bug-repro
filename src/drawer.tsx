@@ -219,7 +219,7 @@ export function DrawerProvider(props: ParentProps<{
 				}
 				/* TODO: This should be implemented in userland */
 				:root.ready .drawer {
-					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1);
+					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.1);
 				}
 
 				/******************************/
@@ -232,7 +232,7 @@ export function DrawerProvider(props: ParentProps<{
 				/* 	background-color: white; */
 				/* } */
 				/* :root.ready .drawer-mask { */
-				/* 	transition: transform 300ms cubic-bezier(0, 1, 0.25, 1); */
+				/* 	transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.1); */
 				/* } */
 
 				/******************************/
@@ -245,7 +245,7 @@ export function DrawerProvider(props: ParentProps<{
 
 				/* TODO: This should be implemented in userland */
 				:root.ready .drawer-body {
-					transition: opacity 300ms cubic-bezier(0, 1, 0.25, 1);
+					transition: opacity 300ms cubic-bezier(0, 1, 0.25, 1.1);
 				}
 				.drawer.is-closed .drawer-body { opacity: 0; }
 				.drawer.is-open   .drawer-body { opacity: 1; }

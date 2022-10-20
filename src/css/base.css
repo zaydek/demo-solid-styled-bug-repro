@@ -24,13 +24,16 @@ body {
 
 /**************************************/
 
-:root:has(.sidesheet:is(.is-open, .is-expanded)) .fixed-navbar { margin-right: 384px; }
-:root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
-	margin:
-		var(--fixed-navbar-height)                /* T */
-		calc(384px + var(--sheet-draggable-size)) /* R */
-		0                                         /* B */
-		0;                                        /* L */
+/* Only create negative-space (using margin-right) at >= 768px  */
+@media (min-width: 768px) {
+	:root:has(.sidesheet:is(.is-open, .is-expanded)) .fixed-navbar { margin-right: 384px; }
+	:root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
+		margin:
+			var(--fixed-navbar-height)                /* T */
+			calc(384px + var(--sheet-draggable-size)) /* R */
+			0                                         /* B */
+			0;                                        /* L */
+	}
 }
 /* COMPAT/iOS: Add scrolling. Use @media
 because body scrolling works for

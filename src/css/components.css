@@ -1,4 +1,11 @@
-.comp-nav-icon {
+:root {
+	--form-height: 30px;
+	--form-svg-height: 16px;
+}
+
+/**************************************/
+
+.cp-nav-icon {
 	height: 32px;
 	aspect-ratio: 1;
 	border-radius: 1000px;
@@ -8,8 +15,7 @@
 	display: grid;
 	place-items: center;
 }
-
-.comp-nav-icon-svg {
+.cp-nav-icon-svg {
 	height: 75%;
 	aspect-ratio: 1;
 	color: hsl(0 0% 25%);
@@ -17,17 +23,62 @@
 
 /**************************************/
 
+.cp-radio-container {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}
+.cp-radio-label {
+	padding: 0 8px;
+	height: var(--form-height);
+	border-radius: 1000px;
+	background-color: lightgray;
+
+	/* Flow */
+	flex-grow: 1;
+	display: flex;
+	flex-direction: row;
+	align-items: center; /* Center y-axis */
+	gap: 8px;
+}
+.cp-radio-label-svg {
+	height: var(--form-svg-height);
+	aspect-ratio: 1;
+	color: gray;
+}
+.cp-radio {
+	height: var(--form-height);
+	aspect-ratio: 1;
+	border-radius: 1000px;
+	background-color: lightgray;
+
+	/* Flow */
+	display: grid;
+	place-items: center;
+}
+.cp-radio-container[aria-checked=true] .cp-radio-check {
+	height: calc(100% / 3);
+	aspect-ratio: 1;
+	border-radius: 1000px;
+	background-color: blue;
+}
+
 /**************************************/
 
-.comp-slider {
-  height: 32px;
+.cp-slider-container {
+	padding: 0 16px; /* Use 16px to inset the x-axis */
+}
+.cp-slider {
+  height: var(--form-height);
   width: 100%;
 
   /* Flow */
   display: grid;
   align-items: center;
+
+	touch-action: pan-x;
 }
-.comp-slider-track {
+.cp-slider-track {
   height: 8px;
   width: 100%;
   border-radius: 32px;
@@ -37,8 +88,8 @@
   display: grid;
   align-content: center;
 }
-.comp-slider-thumb {
-  height: 32px;
+.cp-slider-thumb {
+  height: var(--form-height);
   aspect-ratio: 1;
   border-radius: 1000px;
   background-color: white;
