@@ -1,6 +1,10 @@
 import { createRoot, onCleanup, onMount } from "solid-js"
+import { hasStyle } from "./css"
 
-export function createScreenCSSVars() {
+export function createScreenEffect() {
+	const root = document.documentElement
+	if (hasStyle(root, "--screen-y") || hasStyle(root, "--screen-x")) { return }
+
 	createRoot(dispose => {
 		onMount(() => {
 			function handleResize(e?: UIEvent) {
@@ -21,4 +25,6 @@ export function createScreenCSSVars() {
 		})
 		onCleanup(dispose)
 	})
+
+	return void 0
 }

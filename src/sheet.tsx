@@ -1,8 +1,8 @@
 import { ParentProps, Setter, Show } from "solid-js"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
-import { createMediaQuery } from "./effects"
+import { createResponsiveSignal } from "./solid-utils"
 
-const responsive = createMediaQuery("(max-width: 499px)")
+const responsive = createResponsiveSignal("(max-width: 499px)")
 
 // Renders exclusively for "responsive" devices
 export function Responsive(props: ParentProps) {

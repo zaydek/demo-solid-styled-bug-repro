@@ -3,10 +3,10 @@ import { Portal } from "solid-js/web"
 import { css } from "./solid-utils"
 import { stringify } from "./utils"
 
-export function DEBUG_component(props: ParentProps<{ state: any }>) {
+export function DEBUG_STATE(props: ParentProps<{ state: any }>) {
 	return <>
 		{css`
-			.drawer-debug-card {
+			.debug-state-fixed-card {
 				position: fixed;
 				z-index: 100;
 				inset:
@@ -24,14 +24,14 @@ export function DEBUG_component(props: ParentProps<{ state: any }>) {
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 			}
-			.drawer-debug-typography {
+			.debug-state-typography {
 				font: 400 12px / 1.25 Monaco;
 				white-space: pre;
 			}
 		`}
 		<Portal ref={el => el.className = "portal"}>
-			<div class="drawer-debug-card">
-				<div class="drawer-debug-typography">
+			<div class="debug-state-fixed-card">
+				<div class="debug-state-typography">
 					{stringify(props.state, 2)}
 				</div>
 			</div>

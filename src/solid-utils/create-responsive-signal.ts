@@ -4,7 +4,7 @@ type MediaQuery =
 	| `(min-width: ${number}px)`
 	| `(max-width: ${number}px)`
 
-export function createMediaQuery(mediaQuery: MediaQuery) {
+export function createResponsiveSignal(mediaQuery: MediaQuery) {
 	const media = window.matchMedia(mediaQuery)
 	const [matches, setMatches] = createSignal(media.matches)
 

@@ -1,13 +1,17 @@
 import { createEffect, createRoot, createSignal, onCleanup, onMount } from "solid-js"
+import { hasClass } from "./css"
 
-export function createReady() {
+export function createReadySignal() {
+	const root = document.documentElement
+	if (hasClass(root, "ready")) { return }
+
 	const [ready, setReady] = createSignal(false)
 
 	createRoot(dispose => {
 		onMount(() => {
 			setTimeout(() => {
 				setReady(true)
-			})
+			}, 0)
 		})
 		createEffect(() => {
 			if (!ready()) { return }
@@ -16,5 +20,5 @@ export function createReady() {
 		onCleanup(dispose)
 	})
 
-	return ready
+	return void 0
 }
