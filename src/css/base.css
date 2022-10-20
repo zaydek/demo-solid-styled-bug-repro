@@ -1,3 +1,5 @@
+/* * { touch-action: pan-y; } */
+
 /* This is a heavy-handed CSS reset because supporting touch devices is hard.
 This CSS resets adds hi-DPI antialiasing and disables selection universally, and
 disables font-size scaling and body scrolling on touch devices. */
@@ -10,7 +12,6 @@ body {
 	user-select: none;
 }
 
-/* COMPAT/Touch */
 @media (hover: none) { body {
 	/* Disable font-size scaling */
 	-webkit-text-size-adjust: 100%;

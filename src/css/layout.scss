@@ -13,8 +13,11 @@
 	gap: 16px;
 }
 /* Add margin */
-:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-nav {
-	margin-right: 384px;
+@media (min-width: 768px) {
+	/* Only resize on desktop */
+	:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-nav {
+		margin-right: 384px;
+	}
 }
 
 /**************************************/
@@ -26,7 +29,12 @@
 	@media (hover: hover) { padding-right: var(--sheet-draggable-size); } /* Override */
 }
 :root:has(.bottomsheet) .layout-main { margin-bottom: var(--sheet-draggable-size); }   /* Override */
-:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-main { margin-right: 384px; } /* Override */
+@media (min-width: 768px) {
+	/* Only resize on desktop */
+	:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-main {
+		margin-right: 384px; /* Override */
+	}
+}
 
 /* Add scrolling (because body scrolling is disabled) */
 @media (hover: none) { :root:has(.bottomsheet) .layout-main {

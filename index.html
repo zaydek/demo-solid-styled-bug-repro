@@ -9,5 +9,10 @@
 	<body>
 		<div id="root"></div>
 		<script type="module" src="/src/index.tsx"></script>
+		<script>
+			document.addEventListener("touchstart",  e => window.visualViewport.scale = 1)
+			document.addEventListener("touchend",    e => window.visualViewport.scale = 1)
+			document.addEventListener("touchcancel", e => window.visualViewport.scale = 1)
+		</script>
 	</body>
 </html>
