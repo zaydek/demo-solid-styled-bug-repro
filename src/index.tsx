@@ -103,22 +103,6 @@ function App() {
 			<NavIcon />
 		</nav>
 		{css`
-			/* COMPAT/Mouse */
-			@media (hover: hover) { .layout-main {
-				padding:
-					16px                        /* T */
-					var(--sheet-draggable-size) /* R */
-					32px                        /* B */
-					16px;                       /* L */
-			} }
-			/* COMPAT/Touch */
-			@media (hover: none) { .layout-main {
-				padding: 16px;
-				padding-bottom: 32px; /* Override */
-			} }
-
-			/********************************/
-
 			:root {
 				--results-grid-cell-size: 80px;
 			}
@@ -169,7 +153,7 @@ function App() {
 		<Sheet sidesheet={sidesheet()} setSidesheet={setSidesheet}>
 			{/* Add Flexbox to enable support for "flex-shrink: 0;" and
 			"flex-grow: 1; overflow-y: auto;" */}
-			<aside class="layout-aside [display:flex] [flex-direction:column]">
+			<aside class="layout-sheet [display:flex] [flex-direction:column]">
 				<NonResponsive>
 					<div class="[flex-shrink:0]">
 						{css`

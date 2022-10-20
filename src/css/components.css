@@ -14,6 +14,8 @@
 	/* Flow */
 	display: grid;
 	place-items: center;
+
+	cursor: pointer;
 }
 .cp-nav-icon-svg {
 	height: 75%;
@@ -27,6 +29,8 @@
 	display: flex;
 	flex-direction: row;
 	gap: 8px;
+
+	cursor: pointer;
 }
 .cp-radio-label {
 	padding: 0 8px;
@@ -76,8 +80,8 @@
   display: grid;
   align-items: center;
 
-	touch-action: pan-x;
 	cursor: grab;
+	touch-action: pan-x;
 }
 :root:has(.cp-slider:active) { cursor: grabbing; }            /* Use both */
 :root:has(.cp-slider:active) .cp-slider { cursor: grabbing; } /* Use both */

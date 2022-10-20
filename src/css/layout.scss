@@ -1,0 +1,56 @@
+.layout-nav {
+	position: fixed;
+	z-index: 10;
+	inset: 0 0 auto 0;
+	padding: 16px;
+	background-color: white;
+	box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+
+	/* Flow */
+	display: flex;
+	flex-direction: row;
+	align-items: center; /* Center y-axis */
+	gap: 16px;
+}
+/* Add margin */
+:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-nav {
+	margin-right: 384px;
+}
+
+/**************************************/
+
+/* Add margin and padding */
+.layout-main {
+	margin-top: 64px;
+	padding: 16px;
+	@media (hover: hover) { padding-right: var(--sheet-draggable-size); } /* Override */
+}
+:root:has(.bottomsheet) .layout-main { margin-bottom: var(--sheet-draggable-size); }   /* Override */
+:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-main { margin-right: 384px; } /* Override */
+
+/* Add scrolling (because body scrolling is disabled) */
+@media (hover: none) { :root:has(.bottomsheet) .layout-main {
+	height: calc(var(--screen-y) - 64px - var(--sheet-draggable-size));
+	overflow-y: auto;
+} }
+@media (hover: none) { :root:has(.sidesheet) .layout-main {
+	height: calc(var(--screen-y) - 64px);
+	overflow-y: auto;
+} }
+
+/**************************************/
+
+/* Add scrolling */
+:root:has(.bottomsheet) .layout-sheet {
+	height: calc(var(--screen-y) - var(--sheet-draggable-size) - 1px - var(--sheet-draggable-size));
+	overflow-y: auto;
+}
+/* Add scrolling */
+:root:has(.sidesheet) .layout-sheet {
+	height: var(--screen-y);
+	overflow-y: auto;
+}
+/* Disable body scrolling when bottomsheet=open or sidesheet=expanded */
+:root:has(:is(.bottomsheet.is-open, .sidesheet.is-expanded)) body {
+	overflow-y: hidden;
+}
