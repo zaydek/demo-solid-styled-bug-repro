@@ -62,8 +62,9 @@ export function Drawer(props: ParentProps<{
 			ref={setRef}
 			class={cx(`drawer ${element.open ? "is-open" : "is-closed"}`)}
 			style={{
-				// DEBUG
-				"background-color": `hsl(${index * 60} 100% 75%)`,
+				//// // DEBUG
+				//// "background-color": `hsl(${index * 60} 100% 75%)`,
+				"background-color": "white",
 
 				...(state.ready() && !element.open && !element.transition && {
 					"height": `${element.minHeight!}px`,

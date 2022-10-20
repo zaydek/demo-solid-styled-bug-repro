@@ -1,17 +1,50 @@
 import "./css"
 
 import { createSignal, For } from "solid-js"
-import { render } from "solid-js/web"
+import { Dynamic, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
+import { AriaSliderHorizontal, AriaSliderThumb } from "./aria"
 import { Drawer, DrawerProvider } from "./drawer"
 import { NonResponsive, Sheet } from "./sheet"
+import { SmileySVG } from "./smiley-svg"
 import { css } from "./solid-utils"
 import { only, range } from "./utils"
 
 ////////////////////////////////////////
 
+function NavIcon() {
+	return <>
+		<div class="comp-nav-icon">
+			<Dynamic class="comp-nav-icon-svg" component={SmileySVG} />
+		</div>
+	</>
+}
+
+function Slider() {
+	const [value, setValue] = createSignal(50)
+
+	return <>
+		<AriaSliderHorizontal class="comp-slider" value={value()} setValue={setValue} min={0} max={100} step={1}>
+			{translate => <>
+				<div class="comp-slider-track">
+					<AriaSliderThumb
+						class="comp-slider-thumb"
+						style={{
+							...(translate() && {
+								"transform": `translateX(${translate()!}px)`,
+							}),
+						}}
+					/>
+				</div>
+			</>}
+		</AriaSliderHorizontal>
+	</>
+}
+
 function App() {
 	const [sidesheet, setSidesheet] = createSignal<SidesheetState>("open")
+
+	const [value, setValue] = createSignal(50)
 
 	return <>
 		{css`
@@ -42,20 +75,14 @@ function App() {
 				align-items: center; /* Center y-axis */
 				gap: 16px;
 			}
-			.nav-icon {
-				height: 32px;
-				aspect-ratio: 1;
-				border-radius: 1000px;
-				background-color: gray;
-			}
 			.line { height: 1px; background-color: hsl(0 0% 90%); }
 			.line.is-collapsed { margin-top: -1px; }
 		`}
 		{/* @ts-expect-error */}
 		<nav class="fixed-navbar" inert={only(sidesheet() === "expanded")}>
-			<div class="nav-icon"></div>
+			<NavIcon />
 			<div class="[flex-grow:1]"></div>
-			<div class="nav-icon"></div>
+			<NavIcon />
 		</nav>
 		{/* @ts-expect-error */}
 		<main class="main-content" inert={only(sidesheet() === "expanded")}>
@@ -68,66 +95,73 @@ function App() {
 				<NonResponsive>
 					<div class="[flex-shrink:0]">
 						<nav class="navbar">
-							<div class="nav-icon"></div>
+							<NavIcon />
 							<div class="[flex-grow:1]"></div>
-							<div class="nav-icon"></div>
-							<div class="nav-icon"></div>
+							<NavIcon />
+							<NavIcon />
 						</nav>
 						<hr class="line" />
 					</div>
 				</NonResponsive>
 				<div class="[flex-grow:1] [overflow-y:auto]">
 					<DrawerProvider>
-						<Drawer head={<>Hello, world!</>}>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+
+						{/************************/}
+
+						<Drawer head={<>
+							<div class="line"></div>
+							<div class="[padding:16px]">
+								Hello, world!
+							</div>
+						</>}>
+							<div class="[padding:16px] [padding-top:0_!important]">
+								<Slider />
+							</div>
 						</Drawer>
-						<Drawer head={<>Hello, world!</>}>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+
+						{/************************/}
+
+						<Drawer head={<>
+							<div class="line"></div>
+							<div class="[padding:16px]">
+								Hello, world!
+							</div>
+						</>}>
+							<div class="[padding:16px] [padding-top:0_!important]">
+								<Slider />
+							</div>
 						</Drawer>
-						<Drawer head={<>Hello, world!</>}>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+
+						{/************************/}
+
+						<Drawer head={<>
+							<div class="line"></div>
+							<div class="[padding:16px]">
+								Hello, world!
+							</div>
+						</>}>
+							<div class="[padding:16px] [padding-top:0_!important]">
+								<Slider />
+							</div>
 						</Drawer>
-						<Drawer head={<>Hello, world!</>}>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
+
+						{/************************/}
+
+						<Drawer head={<>
+							<div class="line"></div>
+							<div class="[padding:16px]">
+								Hello, world!
+							</div>
+						</>}>
+							<div class="[padding:16px] [padding-top:0_!important]">
+								<Slider />
+							</div>
 						</Drawer>
-						<Drawer head={<>Hello, world!</>}>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-						</Drawer>
-						<Drawer head={<>Hello, world!</>}>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-						</Drawer>
-						<Drawer head={<>Hello, world!</>}>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-							<div>🤔🤔🤔🤔🤔🤔🤔</div>
-						</Drawer>
+
+						{/************************/}
+
 					</DrawerProvider>
+					<div class="line"></div>
 				</div>
 				<div class="[flex-shrink:0]">
 					<hr class="line is-collapsed" />

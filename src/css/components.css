@@ -1,0 +1,46 @@
+.comp-nav-icon {
+	height: 32px;
+	aspect-ratio: 1;
+	border-radius: 1000px;
+	background-color: hsl(0 0% 75%);
+
+	/* Flow */
+	display: grid;
+	place-items: center;
+}
+
+.comp-nav-icon-svg {
+	height: 75%;
+	aspect-ratio: 1;
+	color: hsl(0 0% 25%);
+}
+
+/**************************************/
+
+/**************************************/
+
+.comp-slider {
+  height: 32px;
+  width: 100%;
+
+  /* Flow */
+  display: grid;
+  align-items: center;
+}
+.comp-slider-track {
+  height: 8px;
+  width: 100%;
+  border-radius: 32px;
+  background-color: blue;
+
+  /* Flow */
+  display: grid;
+  align-content: center;
+}
+.comp-slider-thumb {
+  height: 32px;
+  aspect-ratio: 1;
+  border-radius: 1000px;
+  background-color: white;
+  box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+}

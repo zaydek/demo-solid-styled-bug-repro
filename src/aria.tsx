@@ -1,6 +1,6 @@
 import { Accessor, batch, createContext, createEffect, createSignal, FlowProps, JSX, on, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js"
-import { CSSProps, RefProps } from "../solid-utils"
-import { clamp, round } from "../utils"
+import { CSSProps, RefProps } from "./solid-utils"
+import { clamp, round } from "./utils"
 
 ////////////////////////////////////////
 
@@ -218,7 +218,7 @@ export function AriaSliderThumb(props: ParentProps<RefProps & CSSProps>) {
 	</>
 }
 
-export function AriaSlider(props: FlowProps<RefProps & CSSProps & {
+function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 	value:    number
 	setValue: Setter<number>
 
@@ -270,21 +270,24 @@ export function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 		return f * (track()![edge()] - thumb()![edge()])
 	}
 
+	// Externalize measureDOM(); measure track and thumb onMount() *and*
+	// "pointerdown" events
+	function measureDOM() {
+		batch(() => {
+			const track = trackRef()!.getBoundingClientRect()
+			const thumb = thumbRef()!.getBoundingClientRect()
+			setTrack({ y: track.y, x: track.x, h: track.height, w: track.width })
+			setThumb({ y: thumb.y, x: thumb.x, h: thumb.height, w: thumb.width })
+		})
+	}
+
 	onMount(() => {
-		function handleResize() {
-			batch(() => {
-				const track = trackRef()!.getBoundingClientRect()
-				const thumb = thumbRef()!.getBoundingClientRect()
-				setTrack({ y: track.y, x: track.x, h: track.height, w: track.width })
-				setThumb({ y: thumb.y, x: thumb.x, h: thumb.height, w: thumb.width })
-			})
-		}
-		handleResize()
-		window.addEventListener("resize", handleResize, false)
-		onCleanup(() => window.addEventListener("resize", handleResize, false))
+		measureDOM()
+		window.addEventListener("resize", measureDOM, false)
+		onCleanup(() => window.addEventListener("resize", measureDOM, false))
 
 		// Add observer as a fallback
-		const observer = new ResizeObserver(handleResize)
+		const observer = new ResizeObserver(measureDOM)
 		observer.observe(trackRef()!)
 		onCleanup(() => observer.disconnect)
 	})
@@ -295,6 +298,7 @@ export function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 			if (!e.composedPath().includes(trackRef()!)) { return }
 			e.preventDefault() // COMPAT/Safari: Prevent cursor from changing
 			batch(() => {
+				measureDOM()
 				setPointerDown(true)
 				setPoint1({
 					y: round(track()!.y + thumb()!.h / 2), // Use round to dedupe
@@ -397,7 +401,7 @@ export function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 //     box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 //   }
 //
-export function HorizontalSlider(props: FlowProps<RefProps & CSSProps & {
+export function AriaSliderHorizontal(props: FlowProps<RefProps & CSSProps & {
 	value:    number
 	setValue: Setter<number>
 
@@ -436,7 +440,7 @@ export function HorizontalSlider(props: FlowProps<RefProps & CSSProps & {
 //     box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 //   }
 //
-export function VerticalSlider(props: FlowProps<RefProps & CSSProps & {
+export function AriaSliderVertical(props: FlowProps<RefProps & CSSProps & {
 	value:    number
 	setValue: Setter<number>
 
