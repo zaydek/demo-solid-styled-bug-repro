@@ -79,7 +79,7 @@ const [sidesheet, setSidesheet] = createSignal<SidesheetState>("open")
 function App() {
 	return <>
 		{css`
-			.fixed-navbar {
+			.layout-nav {
 				position: fixed;
 				z-index: 10;
 				inset: 0 0 auto 0;
@@ -95,7 +95,7 @@ function App() {
 			}
 		`}
 		{/* @ts-expect-error */}
-		<nav class="fixed-navbar" inert={only(sidesheet() === "expanded")}>
+		<nav class="layout-nav" inert={only(sidesheet() === "expanded")}>
 			<NavIcon />
 			<div class="[flex-grow:1]">
 				<div>Hello, world!</div>
@@ -104,7 +104,7 @@ function App() {
 		</nav>
 		{css`
 			/* COMPAT/Mouse */
-			@media (hover: hover) { .main-content {
+			@media (hover: hover) { .layout-main {
 				padding:
 					16px                        /* T */
 					var(--sheet-draggable-size) /* R */
@@ -112,7 +112,7 @@ function App() {
 					16px;                       /* L */
 			} }
 			/* COMPAT/Touch */
-			@media (hover: none) { .main-content {
+			@media (hover: none) { .layout-main {
 				padding: 16px;
 				padding-bottom: 32px; /* Override */
 			} }
@@ -156,7 +156,7 @@ function App() {
 			/* } */
 		`}
 		{/* @ts-expect-error */}
-		<main class="main-content" inert={only(sidesheet() === "expanded")}>
+		<main class="layout-main" inert={only(sidesheet() === "expanded")}>
 			<div class="results-grid">
 				<For each={range(300)}>{() => <>
 					<div class="results-grid-cell">
@@ -169,7 +169,7 @@ function App() {
 		<Sheet sidesheet={sidesheet()} setSidesheet={setSidesheet}>
 			{/* Add Flexbox to enable support for "flex-shrink: 0;" and
 			"flex-grow: 1; overflow-y: auto;" */}
-			<aside class="aside-content [display:flex] [flex-direction:column]">
+			<aside class="layout-aside [display:flex] [flex-direction:column]">
 				<NonResponsive>
 					<div class="[flex-shrink:0]">
 						{css`

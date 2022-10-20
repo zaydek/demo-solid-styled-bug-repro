@@ -1,0 +1,9 @@
+.line { height: 4px; background-color: hsl(0 0% 90%); }
+.line.is-collapsed { position: relative; z-index: 10; margin-top: -4px; }
+
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/text-overflow */
+.ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

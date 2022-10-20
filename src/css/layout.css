@@ -1,0 +1,48 @@
+/* Only create negative-space (using margin-right) at >= 768px  */
+@media (min-width: 768px) {
+	:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-nav  { margin-right: 384px; }
+	:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-main {
+		margin:
+			64px                                            /* T */
+			calc(384px /* + var(--sheet-draggable-size) */) /* R */
+			0                                               /* B */
+			0;                                              /* L */
+	}
+}
+
+/* COMPAT/Touch: Add scrolling. Use @media
+because body scrolling works for
+non-touch devices */
+@media (hover: none) { .layout-main {
+	/* Overwrite margin for touch devices */
+	margin:
+		64px                        /* T */
+		0                           /* R */
+		var(--sheet-draggable-size) /* B */
+		0;                          /* L */
+	height: calc(var(--screen-y) - 64px - var(--sheet-draggable-size));
+	overflow-y: auto;
+} }
+
+/* Add scrolling */
+.bottomsheet .layout-aside {
+	height: calc(
+		var(--screen-y) -
+		var(--sheet-draggable-size) -
+		1px -
+		var(--sheet-draggable-size)
+	);
+	overflow-y: auto;
+}
+
+/* Add scrolling */
+.sidesheet .layout-aside {
+	height: var(--screen-y);
+	overflow-y: auto;
+}
+
+/* COMPAT/Mouse: Prevent body scrolling when bottomsheet=open OR
+sidesheet=expanded */
+@media (hover: hover) { :root:has(:is(.bottomsheet.is-open, .sidesheet.is-expanded)) body {
+	overflow-y: hidden;
+} }

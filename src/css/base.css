@@ -9,6 +9,7 @@ body {
 	-webkit-user-select: none;
 	user-select: none;
 }
+
 /* COMPAT/Touch */
 @media (hover: none) { body {
 	/* Disable font-size scaling */
@@ -21,63 +22,3 @@ body {
 
 /* https://github.com/elad2412/the-new-css-reset/issues/25#issuecomment-1242636428 */
 :focus-visible { outline: revert; }
-
-/**************************************/
-
-/* Only create negative-space (using margin-right) at >= 768px  */
-@media (min-width: 768px) {
-	:root:has(.sidesheet:is(.is-open, .is-expanded)) .fixed-navbar { margin-right: 384px; }
-	:root:has(.sidesheet:is(.is-open, .is-expanded)) .main-content {
-		margin:
-			64px                                            /* T */
-			calc(384px /* + var(--sheet-draggable-size) */) /* R */
-			0                                               /* B */
-			0;                                              /* L */
-	}
-}
-/* COMPAT/Touch: Add scrolling. Use @media
-because body scrolling works for
-non-touch devices */
-@media (hover: none) { .main-content {
-	/* Overwrite margin for touch devices */
-	margin:
-		64px                        /* T */
-		0                           /* R */
-		var(--sheet-draggable-size) /* B */
-		0;                          /* L */
-	height: calc(var(--screen-y) - 64px - var(--sheet-draggable-size));
-	overflow-y: auto;
-} }
-/* Add scrolling */
-.bottomsheet .aside-content {
-	height: calc(
-		var(--screen-y) -
-		var(--sheet-draggable-size) -
-		1px -
-		var(--sheet-draggable-size)
-	);
-	overflow-y: auto;
-}
-/* Add scrolling */
-.sidesheet .aside-content {
-	height: var(--screen-y);
-	overflow-y: auto;
-}
-/* COMPAT/Mouse: Prevent body scrolling when bottomsheet=open OR
-sidesheet=expanded */
-@media (hover: hover) { :root:has(:is(.bottomsheet.is-open, .sidesheet.is-expanded)) body {
-	overflow-y: hidden;
-} }
-
-/**************************************/
-
-/* Anonymous classes */
-.line { height: 4px; background-color: hsl(0 0% 90%); }
-.line.is-collapsed { position: relative; z-index: 10; margin-top: -4px; }
-
-/* https://developer.mozilla.org/en-US/docs/Web/CSS/text-overflow */
-.ellipsis {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
