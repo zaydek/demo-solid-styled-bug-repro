@@ -370,7 +370,7 @@ function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 	max:  number
 	step: number
 
-	direction?: "horizontal" | "vertical"
+	direction: "horizontal" | "vertical"
 }, (translate: Accessor<undefined | number>) => JSX.Element>) {
 	const [trackRef, setTrackRef] = createSignal<HTMLElement>()
 	const [thumbRef, setThumbRef] = createSignal<HTMLElement>()
@@ -387,12 +387,12 @@ function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 	const max = () => props.max
 	const step = () => props.step
 
-	const axis = () => (props.direction ?? "horizontal") === "horizontal"
-		? "x" // X-axis
-		: "y" // Y-axis
+	const axis = () => props.direction === "horizontal"
+		? "x"
+		: "y"
 	const edge = () => axis() === "y"
-		? "h" // Height
-		: "w" // Width
+		? "h"
+		: "w"
 
 	// Normalize a value
 	function normalizeValue(value: number) {
@@ -444,16 +444,14 @@ function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 					y: round(track()!.y + thumb()!.h / 2),
 					x: round(track()!.x + thumb()!.w / 2),
 				})
-				// Round client measurements
-				setPoint2({ y: round(e.clientY), x: round(e.clientX) })
+				setPoint2({ y: round(e.clientY), x: round(e.clientX) }) // Use round to dedupe
 				setValue(getValueFromTranslate())
 			})
 		}
 		function handlePointerMove(e: PointerEvent) {
 			if (!pointerDown()) { return }
 			batch(() => {
-				// Round client measurements
-				setPoint2({ y: round(e.clientY), x: round(e.clientX) })
+				setPoint2({ y: round(e.clientY), x: round(e.clientX) }) // Use round to dedupe
 				setValue(getValueFromTranslate())
 			})
 		}
@@ -515,6 +513,28 @@ function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 	</>
 }
 
+function HorizontalSlider(props: FlowProps<RefProps & CSSProps & {
+	value:    number
+	setValue: Setter<number>
+
+	min:  number
+	max:  number
+	step: number
+}, (translate: Accessor<undefined | number>) => JSX.Element>) {
+	return <AriaSlider {...props} direction="horizontal" />
+}
+
+function VerticalSlider(props: FlowProps<RefProps & CSSProps & {
+	value:    number
+	setValue: Setter<number>
+
+	min:  number
+	max:  number
+	step: number
+}, (translate: Accessor<undefined | number>) => JSX.Element>) {
+	return <AriaSlider {...props} direction="vertical" />
+}
+
 ////////////////////////////////////////
 
 function App2() {
@@ -553,24 +573,55 @@ function App2() {
 				background-color: purple;
 			}
 
-			.my-slider {
-				height: 100%;
-				aspect-ratio: 1;
+			/********************************/
+
+			.my-horizontal-slider {
+				height: 32px;
+				width: 100%;
 
 				/* Flow */
 				display: grid;
-				place-items: center;
+				align-items: center;
 			}
-			.my-slider-track {
-				height: 100%;
+			.my-horizontal-slider-track {
+				height: 8px;
+				width: 100%;
 				border-radius: 32px;
 				background-color: blue;
 
 				/* Flow */
-				/* display: grid; */
-				/* justify-content: center; */
+				display: grid;
+				align-content: center;
 			}
-			.my-slider-thumb {
+			.my-horizontal-slider-thumb {
+				height: 32px;
+				aspect-ratio: 1;
+				border-radius: 1000px;
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+			}
+
+			/********************************/
+
+			.my-vertical-slider {
+				height: 100%;
+				width: 32px;
+
+				/* Flow */
+				display: grid;
+				justify-items: center;
+			}
+			.my-vertical-slider-track {
+				height: 100%;
+				width: 8px;
+				border-radius: 32px;
+				background-color: blue;
+
+				/* Flow */
+				display: grid;
+				justify-content: center;
+			}
+			.my-vertical-slider-thumb {
 				height: 32px;
 				aspect-ratio: 1;
 				border-radius: 1000px;
@@ -587,22 +638,47 @@ function App2() {
 					</div>
 				</>}</For>
 			</AriaRadiogroup> */}
-			<div class="[height:640px] [aspect-ratio:1]">
-				<AriaSlider class="my-slider" value={value()} setValue={setValue} min={0} max={100} step={1} direction="vertical">
-					{translate => <>
-						<div class="my-slider-track">
-							<AriaSliderThumb
-								class="my-slider-thumb"
-								style={{
-									...(translate() && {
-										//// "transform": `translateX(${translate()!}px)`,
-										"transform": `translateY(${translate()!}px)`,
-									}),
-								}}
-							/>
-						</div>
-					</>}
-				</AriaSlider>
+			<div class="[width:640px] [display:flex] [flex-direction:row]">
+				{/* LHS */}
+				<div class="[flex-grow:1]">
+					<div class="[display:flex] [flex-direction:column] [gap:8px]">
+						<For each={range(8)}>{() => <>
+							<HorizontalSlider class="my-horizontal-slider" value={value()} setValue={setValue} min={0} max={100} step={1}>
+								{translate => <>
+									<div class="my-horizontal-slider-track">
+										<AriaSliderThumb
+											class="my-horizontal-slider-thumb"
+											style={{
+												...(translate() && {
+													"transform": `translateX(${translate()!}px)`,
+												}),
+											}}
+										/>
+									</div>
+								</>}
+							</HorizontalSlider>
+						</>}</For>
+					</div>
+				</div>
+				{/* RHS */}
+				<div class="[display:flex] [flex-direction:row] [gap:8px]">
+					<For each={range(8)}>{() => <>
+						<VerticalSlider class="my-vertical-slider" value={value()} setValue={setValue} min={0} max={100} step={1}>
+							{translate => <>
+								<div class="my-vertical-slider-track">
+									<AriaSliderThumb
+										class="my-vertical-slider-thumb"
+										style={{
+											...(translate() && {
+												"transform": `translateY(${translate()!}px)`,
+											}),
+										}}
+									/>
+								</div>
+							</>}
+						</VerticalSlider>
+					</>}</For>
+				</div>
 			</div>
 		</div>
 	</>
