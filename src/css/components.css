@@ -77,7 +77,10 @@
   align-items: center;
 
 	touch-action: pan-x;
+	cursor: grab;
 }
+:root:has(.cp-slider:active) { cursor: grabbing; }            /* Use both */
+:root:has(.cp-slider:active) .cp-slider { cursor: grabbing; } /* Use both */
 .cp-slider-track {
   height: 8px;
   width: 100%;

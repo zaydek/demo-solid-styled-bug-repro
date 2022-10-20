@@ -20,7 +20,7 @@ type State = {
 
 type Actions = {
 	createElement: (data: { open: boolean }) => [number, Element]
-	measure:       (index: number, data: { minHeight: number, maxHeight: number }) => void
+	measureDOM:    (index: number, data: { minHeight: number, maxHeight: number }) => void
   open:          (index: number) => void
   close:         (index: number) => void
   toggle:        (index: number) => void
@@ -51,7 +51,7 @@ export function Drawer(props: ParentProps<{
 	const [index, element] = actions.createElement({ open: props.open ?? false })
 
 	onMount(() => {
-		actions.measure(index, {
+		actions.measureDOM(index, {
 			minHeight: headRef()!.scrollHeight,
 			maxHeight: ref()!.scrollHeight,
 		})
@@ -104,6 +104,7 @@ export function DrawerProvider(props: ParentProps<{
 }>) {
 	//// const resizeStrategy = () => props.resizeStrategy ?? "delayed"
 
+	// TODO: Rename to mounted?
 	const ready = () => elements.length > 0
 
 	const [elements, setElements] = createStore<Element[]>([])
@@ -128,8 +129,8 @@ export function DrawerProvider(props: ParentProps<{
 		return [index, elements[index]] as [number, Element]
 	}
 
-	// Measures an element
-	function measure(index: number, data: { minHeight: number, maxHeight: number }) {
+	// Measures DOM elements
+	function measureDOM(index: number, data: { minHeight: number, maxHeight: number }) {
 		batch(() => {
 			setElements(index, "minHeight", round(data.minHeight))
 			setElements(index, "maxHeight", round(data.maxHeight))
@@ -200,7 +201,7 @@ export function DrawerProvider(props: ParentProps<{
 	return <>
 		<DrawerContext.Provider value={{
 			state: { ready, elements, boundingBox, transition },
-			actions: { createElement, measure, open, close, toggle, transitionend },
+			actions: { createElement, measureDOM, open, close, toggle, transitionend },
 		}}>
 			{css`
 				.drawer-container {
@@ -280,11 +281,6 @@ export function DrawerProvider(props: ParentProps<{
 					></div>
 				</Show> */}
 			</div>
-
-			{/* DEBUG */}
-			{/* <Show when={DEV}>
-				<DEBUG_VIEW />
-			</Show> */}
 		</DrawerContext.Provider>
 	</>
 }

@@ -93,8 +93,6 @@ function App() {
 				align-items: center; /* Center y-axis */
 				gap: 16px;
 			}
-			.line { height: 4px; background-color: hsl(0 0% 90%); }
-			.line.is-collapsed { position: relative; z-index: 10; margin-top: -4px; }
 		`}
 		{/* @ts-expect-error */}
 		<nav class="fixed-navbar" inert={only(sidesheet() === "expanded")}>
@@ -104,11 +102,69 @@ function App() {
 			</div>
 			<NavIcon />
 		</nav>
+		{css`
+			/* COMPAT/Mouse */
+			@media (hover: hover) { .main-content {
+				padding:
+					16px                        /* T */
+					var(--sheet-draggable-size) /* R */
+					32px                        /* B */
+					16px;                       /* L */
+			} }
+			/* COMPAT/Touch */
+			@media (hover: none) { .main-content {
+				padding: 16px;
+				padding-bottom: 32px; /* Override */
+			} }
+
+			/********************************/
+
+			:root {
+				--results-grid-cell-size: 80px;
+			}
+			@media (min-width: 500px) { :root {
+				--results-grid-cell-size: 96px;
+			} }
+
+			.results-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(var(--results-grid-cell-size), 1fr));
+				place-items: center;
+			}
+			.results-grid-cell {
+				height: var(--results-grid-cell-size);
+				aspect-ratio: 1;
+
+				/* Flow */
+				display: grid;
+				grid-template-rows: 16px 1fr 32px;
+				place-items: center;
+			}
+			.results-grid-cell :nth-child(1) { grid-row: 2 / 3; }
+			.results-grid-cell :nth-child(2) {
+				grid-row: 3 / 3;
+				justify-self: stretch; /* Stretch x-axis */
+			}
+			.results-grid-icon-svg {
+				height: 32px;
+				aspect-ratio: 1;
+				border-radius: 1000px;
+				background-color:gray;
+			}
+			/* * { */
+			/* 	outline: 1px solid red; */
+			/* } */
+		`}
 		{/* @ts-expect-error */}
 		<main class="main-content" inert={only(sidesheet() === "expanded")}>
-			<For each={range(4_000)}>{() => <>
-				hello{" "}
-			</>}</For>
+			<div class="results-grid">
+				<For each={range(300)}>{() => <>
+					<div class="results-grid-cell">
+						<div class="results-grid-icon-svg"></div>
+						<div class="ellipsis [text-align:center]">Hello, world! Hello, world!</div>
+					</div>
+				</>}</For>
+			</div>
 		</main>
 		<Sheet sidesheet={sidesheet()} setSidesheet={setSidesheet}>
 			{/* Add Flexbox to enable support for "flex-shrink: 0;" and
@@ -243,10 +299,7 @@ function App() {
 				</div>
 				<div class="[flex-shrink:0]">
 					<div class="line is-collapsed"></div>
-					{css`
-						.footer-content { padding: 16px; }
-					`}
-					<div class="footer-content [display:flex] [flex-direction:row] [gap:16px]">
+					<div class="[padding:16px] [display:flex] [flex-direction:row] [gap:16px]">
 						<div class="[height:80px] [aspect-ratio:16_/_9] [border-radius:8px] [background-color:gray]"></div>
 						<div class="[flex-grow:1]">
 							<div>Hello, world!</div>
@@ -256,7 +309,7 @@ function App() {
 						</div>
 					</div>
 					<div class="line"></div>
-					<div class="footer-content">
+					<div class="[padding:16px]">
 						<div>This is the last block</div>
 						<div>This is the last block</div>
 					</div>
