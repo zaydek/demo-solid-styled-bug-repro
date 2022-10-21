@@ -32,8 +32,12 @@
 }
 :root:has(.sidesheet) .layout-main {
 	padding-right: var(--sheet-draggable-size); /* Override */
-	height: calc(var(--screen-y) - 64px);
-	overflow-y: auto;
+
+	/* Defer to body scrolling for non-touch devices */
+	@media (hover: none) {
+		height: calc(var(--screen-y) - 64px);
+		overflow-y: auto;
+	}
 }
 
 /* At >=768px use margin-right to create negative space */
