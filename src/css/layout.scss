@@ -12,9 +12,9 @@
 	align-items: center; /* Center y-axis */
 	gap: 16px;
 }
-/* Add margin */
+
+/* At >=768px use margin-right to create negative space */
 @media (min-width: 768px) {
-	/* Only resize on desktop */
 	:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-nav {
 		margin-right: 384px;
 	}
@@ -22,39 +22,38 @@
 
 /**************************************/
 
-/* Add margin and padding */
 .layout-main {
-	margin-top: 64px;
+	margin-top: 64px; /* For <nav> */
 	padding: 16px;
-	@media (hover: hover) { padding-right: var(--sheet-draggable-size); } /* Override */
 }
-:root:has(.bottomsheet) .layout-main { margin-bottom: var(--sheet-draggable-size); }   /* Override */
+:root:has(.bottomsheet) .layout-main {
+	height: calc(var(--screen-y) - 64px - var(--sheet-draggable-size));
+	overflow-y: auto;
+}
+:root:has(.sidesheet) .layout-main {
+	padding-right: var(--sheet-draggable-size); /* Override */
+	height: calc(var(--screen-y) - 64px);
+	overflow-y: auto;
+}
+
+/* At >=768px use margin-right to create negative space */
 @media (min-width: 768px) {
-	/* Only resize on desktop */
 	:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-main {
-		margin-right: 384px; /* Override */
+		margin-right: 384px;
 	}
 }
 
-/* Add scrolling (because body scrolling is disabled) */
-@media (hover: none) { :root:has(.bottomsheet) .layout-main {
-	height: calc(var(--screen-y) - 64px - var(--sheet-draggable-size));
-	overflow-y: auto;
-} }
-@media (hover: none) { :root:has(.sidesheet) .layout-main {
-	height: calc(var(--screen-y) - 64px);
-	overflow-y: auto;
-} }
-
 /**************************************/
 
-/* Add scrolling */
-:root:has(.bottomsheet) .layout-sheet {
+:is(.bottomsheet-content, .sidesheet-content) {
+	display: flex;
+	flex-direction: column;
+}
+:root:has(.bottomsheet) .bottomsheet-content {
 	height: calc(var(--screen-y) - var(--sheet-draggable-size) - 1px - var(--sheet-draggable-size));
 	overflow-y: auto;
 }
-/* Add scrolling */
-:root:has(.sidesheet) .layout-sheet {
+:root:has(.sidesheet) .sidesheet-content {
 	height: var(--screen-y);
 	overflow-y: auto;
 }

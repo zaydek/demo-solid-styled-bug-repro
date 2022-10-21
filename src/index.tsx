@@ -7,7 +7,7 @@ import { AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from
 import { Drawer, DrawerProvider } from "./drawer"
 import { NonResponsive, Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
-import { css, CSSProps } from "./utils/solid"
+import { createScreenEffect, css, CSSProps } from "./utils/solid"
 import { only, range } from "./utils/vanilla"
 
 ////////////////////////////////////////
@@ -22,16 +22,6 @@ function NavIcon() {
 
 ////////////////////////////////////////
 
-function Radiogroup(props: ParentProps<CSSProps>) {
-	const [groupValue, setGroupValue] = createSignal("foo")
-
-	return <>
-		<AriaRadiogroup class={props.class} style={props.style} groupValue={groupValue()} setGroupValue={setGroupValue}>
-			{props.children}
-		</AriaRadiogroup>
-	</>
-}
-
 function Radio(props: VoidProps<{ value: string }>) {
 	return <>
 		<AriaRadio class="cp-radio-container" value={props.value}>
@@ -44,6 +34,16 @@ function Radio(props: VoidProps<{ value: string }>) {
 				<div class="cp-radio-check"></div>
 			</div>
 		</AriaRadio>
+	</>
+}
+
+function Radiogroup(props: ParentProps<CSSProps>) {
+	const [groupValue, setGroupValue] = createSignal("foo")
+
+	return <>
+		<AriaRadiogroup class={props.class} style={props.style} groupValue={groupValue()} setGroupValue={setGroupValue}>
+			{props.children}
+		</AriaRadiogroup>
 	</>
 }
 
@@ -151,12 +151,9 @@ function App() {
 			</div>
 		</main>
 		<Sheet sidesheet={sidesheet()} setSidesheet={setSidesheet}>
-			{/* Add Flexbox to enable support for "flex-shrink: 0;" and
-			"flex-grow: 1; overflow-y: auto;" */}
-			<aside class="layout-sheet [display:flex] [flex-direction:column]">
-				<NonResponsive>
-					<div class="[flex-shrink:0]">
-						{css`
+			<NonResponsive>
+				<div class="[flex-shrink:0]">
+					{css`
 							.navbar {
 								padding: 16px;
 								/* Defer background-color and box-shadow to .*-card */
@@ -168,17 +165,17 @@ function App() {
 								gap: 16px;
 							}
 						`}
-						<nav class="navbar">
-							<NavIcon />
-							<div class="[flex-grow:1]"></div>
-							<NavIcon />
-							<NavIcon />
-						</nav>
-						<div class="line"></div>
-					</div>
-				</NonResponsive>
-				<div class="[flex-grow:1] [overflow-y:auto]">
-					{css`
+					<nav class="navbar">
+						<NavIcon />
+						<div class="[flex-grow:1]"></div>
+						<NavIcon />
+						<NavIcon />
+					</nav>
+					<div class="line"></div>
+				</div>
+			</NonResponsive>
+			<div class="[flex-grow:1] [overflow-y:auto]">
+				{css`
 						/* Use drawer-head-content because of line */
 						.drawer-head-content {
 							/* Use 24px for the x-axis padding because of <Radio> */
@@ -205,101 +202,137 @@ function App() {
 							gap: 8px;
 						}
 					`}
-					<DrawerProvider>
-						{/* Omit <div class="line"> here */}
-						<Drawer head={<>
-							<div class="drawer-head-content">
-								<Dynamic component={SmileySVG} class="drawer-head-svg" />
-								<div class="[flex-grow:1]">Hello, world!</div>
-								<div>Foo</div>
-							</div>
-						</>} open>
-							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
-								<For each={["foo", "bar", "baz"]}>{value => <>
-									<Radio value={value} />
-								</>}</For>
-							</Radiogroup>
-						</Drawer>
-						<Drawer head={<>
-							<div class="line"></div>
-							<div class="drawer-head-content">
-								<Dynamic component={SmileySVG} class="drawer-head-svg" />
-								<div class="[flex-grow:1]">Hello, world!</div>
-								<div>Foo</div>
-							</div>
-						</>} open>
-							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
-								<For each={["foo", "bar", "baz"]}>{value => <>
-									<Radio value={value} />
-								</>}</For>
-							</Radiogroup>
-						</Drawer>
-						<Drawer head={<>
-							<div class="line"></div>
-							<div class="drawer-head-content">
-								<Dynamic component={SmileySVG} class="drawer-head-svg" />
-								<div class="[flex-grow:1]">Hello, world!</div>
-								<div>Foo</div>
-							</div>
-						</>} open>
-							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
-								<For each={["foo", "bar", "baz"]}>{value => <>
-									<Radio value={value} />
-								</>}</For>
-							</Radiogroup>
-						</Drawer>
-						<Drawer head={<>
-							<div class="line"></div>
-							<div class="drawer-head-content">
-								<Dynamic component={SmileySVG} class="drawer-head-svg" />
-								<div class="[flex-grow:1]">Hello, world!</div>
-								<div>Foo</div>
-							</div>
-						</>} open>
-							<Slider />
-						</Drawer>
-						<Drawer head={<>
-							<div class="line"></div>
-							<div class="drawer-head-content">
-								<Dynamic component={SmileySVG} class="drawer-head-svg" />
-								<div class="[flex-grow:1]">Hello, world!</div>
-								<div>Foo</div>
-							</div>
-						</>} open>
-							<Slider />
-						</Drawer>
-						<Drawer head={<>
-							<div class="line"></div>
-							<div class="drawer-head-content">
-								<Dynamic component={SmileySVG} class="drawer-head-svg" />
-								<div class="[flex-grow:1]">Hello, world!</div>
-								<div>Foo</div>
-							</div>
-						</>} open>
-							<Slider />
-						</Drawer>
-					</DrawerProvider>
-					<div class="line"></div>
-				</div>
-				<div class="[flex-shrink:0]">
-					<div class="line is-collapsed"></div>
-					<div class="[padding:16px] [display:flex] [flex-direction:row] [gap:16px]">
-						<div class="[height:80px] [aspect-ratio:16_/_9] [border-radius:8px] [background-color:gray]"></div>
-						<div class="[flex-grow:1]">
-							<div>Hello, world!</div>
-							<div>Hello, world!</div>
-							<div>Hello, world!</div>
-							<div>Hello, world!</div>
+				<DrawerProvider>
+					{/* Omit <div class="line"> here */}
+					<Drawer head={<>
+						<div class="drawer-head-content">
+							<Dynamic component={SmileySVG} class="drawer-head-svg" />
+							<div class="[flex-grow:1]">Hello, world!</div>
+							<div>Foo</div>
 						</div>
-					</div>
-					<div class="line"></div>
-					<div class="[padding:16px]">
-						<div>This is the last block</div>
-						<div>This is the last block</div>
+					</>} open>
+						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
+							<For each={["foo", "bar", "baz"]}>{value => <>
+								<Radio value={value} />
+							</>}</For>
+						</Radiogroup>
+					</Drawer>
+					<Drawer head={<>
+						<div class="line"></div>
+						<div class="drawer-head-content">
+							<Dynamic component={SmileySVG} class="drawer-head-svg" />
+							<div class="[flex-grow:1]">Hello, world!</div>
+							<div>Foo</div>
+						</div>
+					</>} open>
+						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
+							<For each={["foo", "bar", "baz"]}>{value => <>
+								<Radio value={value} />
+							</>}</For>
+						</Radiogroup>
+					</Drawer>
+					<Drawer head={<>
+						<div class="line"></div>
+						<div class="drawer-head-content">
+							<Dynamic component={SmileySVG} class="drawer-head-svg" />
+							<div class="[flex-grow:1]">Hello, world!</div>
+							<div>Foo</div>
+						</div>
+					</>} open>
+						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
+							<For each={["foo", "bar", "baz"]}>{value => <>
+								<Radio value={value} />
+							</>}</For>
+						</Radiogroup>
+					</Drawer>
+					<Drawer head={<>
+						<div class="line"></div>
+						<div class="drawer-head-content">
+							<Dynamic component={SmileySVG} class="drawer-head-svg" />
+							<div class="[flex-grow:1]">Hello, world!</div>
+							<div>Foo</div>
+						</div>
+					</>} open>
+						<Slider />
+					</Drawer>
+					<Drawer head={<>
+						<div class="line"></div>
+						<div class="drawer-head-content">
+							<Dynamic component={SmileySVG} class="drawer-head-svg" />
+							<div class="[flex-grow:1]">Hello, world!</div>
+							<div>Foo</div>
+						</div>
+					</>} open>
+						<Slider />
+					</Drawer>
+					<Drawer head={<>
+						<div class="line"></div>
+						<div class="drawer-head-content">
+							<Dynamic component={SmileySVG} class="drawer-head-svg" />
+							<div class="[flex-grow:1]">Hello, world!</div>
+							<div>Foo</div>
+						</div>
+					</>} open>
+						<Slider />
+					</Drawer>
+				</DrawerProvider>
+				<div class="line"></div>
+			</div>
+			<div class="[flex-shrink:0]">
+				<div class="line is-collapsed"></div>
+				<div class="[padding:16px] [display:flex] [flex-direction:row] [gap:16px]">
+					<div class="[height:80px] [aspect-ratio:16_/_9] [border-radius:8px] [background-color:gray]"></div>
+					<div class="[flex-grow:1]">
+						<div>Hello, world!</div>
+						<div>Hello, world!</div>
+						<div>Hello, world!</div>
+						<div>Hello, world!</div>
 					</div>
 				</div>
-			</aside>
+				<div class="line"></div>
+				<div class="[padding:16px]">
+					<div>This is the last block</div>
+					<div>This is the last block</div>
+				</div>
+			</div>
 		</Sheet>
+	</>
+}
+
+function App2() {
+	createScreenEffect()
+
+	return <>
+		{css`
+			.center {
+				display: grid;
+				place-items: center;
+				height: var(--screen-y);
+			}
+			.button {
+				height: 48px;
+				aspect-ratio: 4;
+				border-radius: 1000px;
+				background-color: gray;
+
+				/* Flow */
+				display: flex;
+				flex-direction: g
+			}
+			.checkbox {
+				height: 28px;
+				aspect-ratio: 1;
+				border-radius: calc(100% / 3);
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+			}
+		`}
+		<div class="center">
+			<div class="button">
+				<div></div>
+				<div class="checkbox"></div>
+			</div>
+		</div>
 	</>
 }
 

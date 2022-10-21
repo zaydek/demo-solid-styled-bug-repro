@@ -27,8 +27,7 @@ type Actions = {
   transitionend: (index: number) => void
 }
 
-// Exported for debugging purposes
-export const DrawerContext = createContext<{
+const DrawerContext = createContext<{
 	state:   State
 	actions: Actions
 }>()
@@ -255,8 +254,8 @@ export function DrawerProvider(props: ParentProps<{
 				class="drawer-container"
 				style={{
 					...(ready() && {
-						"height": `${boundingBox()}px`,
-						"overflow-y": "auto",
+						//// "height": `${boundingBox()}px`,
+						//// "overflow-y": "auto",
 					}),
 				}}
 				//// // @ts-expect-error
