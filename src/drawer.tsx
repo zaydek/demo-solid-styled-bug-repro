@@ -254,8 +254,8 @@ export function DrawerProvider(props: ParentProps<{
 				class="drawer-container"
 				style={{
 					...(ready() && {
-						//// "height": `${boundingBox()}px`,
-						//// "overflow-y": "auto",
+						"height": `${boundingBox()}px`,
+						"overflow-y": "auto",
 					}),
 				}}
 				//// // @ts-expect-error

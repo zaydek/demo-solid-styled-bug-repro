@@ -125,19 +125,13 @@ function App() {
 				place-items: center;
 			}
 			.results-grid-cell :nth-child(1) { grid-row: 2 / 3; }
-			.results-grid-cell :nth-child(2) {
-				grid-row: 3 / 3;
-				justify-self: stretch; /* Stretch x-axis */
-			}
+			.results-grid-cell :nth-child(2) { grid-row: 3 / 3; }
 			.results-grid-icon-svg {
 				height: 32px;
 				aspect-ratio: 1;
 				border-radius: 1000px;
 				background-color:gray;
 			}
-			/* * { */
-			/* 	outline: 1px solid red; */
-			/* } */
 		`}
 		{/* @ts-expect-error */}
 		<main class="layout-main" inert={only(sidesheet() === "expanded")}>
@@ -145,7 +139,7 @@ function App() {
 				<For each={range(300)}>{() => <>
 					<div class="results-grid-cell">
 						<div class="results-grid-icon-svg"></div>
-						<div class="ellipsis [text-align:center]">Hello, world! Hello, world!</div>
+						<div class="ellipsis [justify-self:stretch] [text-align:center]">Hello, world! Hello, world!</div>
 					</div>
 				</>}</For>
 			</div>
