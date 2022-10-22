@@ -60,12 +60,11 @@ function CheckSVG(props: VoidProps<RefProps & CSSProps>) {
 }
 
 // TODO: EXTRACT
-function CheckableCheckbox(props: ParentProps<{
-	checked:    boolean
-	setChecked: Setter<boolean>
-}>) {
+function CheckableCheckbox(props: ParentProps) {
+	const [checked, setChecked] = createSignal(false)
+
 	return <>
-		<AriaCheckbox class="cp-checkable-container" checked={props.checked} setChecked={props.setChecked}>
+		<AriaCheckbox class="cp-checkable-container" checked={checked()} setChecked={setChecked}>
 			<div class="cp-checkable-label">
 				<Dynamic component={SmileySVG} class="cp-checkable-label-icon" />
 				<div class="cp-checkable-label-text">
@@ -83,7 +82,7 @@ function CheckableCheckbox(props: ParentProps<{
 function CheckableRadio(props: ParentProps<{
 	value: string
 
-	style: JSX.CSSProperties
+	style?: JSX.CSSProperties
 }>) {
 	return <>
 		<AriaRadio class="cp-checkable-container" style={props.style} value={props.value}>
@@ -141,6 +140,7 @@ function App() {
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 
 				/* Flow */
+				/* TODO: Convert to grid */
 				display: flex;
 				flex-direction: row;
 				align-items: center; /* Center y-axis */
@@ -262,7 +262,7 @@ function App() {
 					}
 				`}
 				<DrawerProvider>
-					{/* Omit <div class="line"> here */}
+					{/* <Drawer> */}
 					<Drawer head={<>
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
@@ -271,25 +271,15 @@ function App() {
 						</div>
 					</>} open>
 						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
-							<For each={["foo", "bar", "baz"]}>{value => <>
-								<Radio value={value} />
+							<For each={["foo", "bar"]}>{value => <>
+								<CheckableRadio value={value}>
+									Hello, world!
+								</CheckableRadio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
-					<Drawer head={<>
-						<div class="line"></div>
-						<div class="drawer-head-content">
-							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>Hello, world!</div>
-							<div>Foo</div>
-						</div>
-					</>} open>
-						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
-							<For each={["foo", "bar", "baz"]}>{value => <>
-								<Radio value={value} />
-							</>}</For>
-						</Radiogroup>
-					</Drawer>
+
+					{/* <Drawer> */}
 					<Drawer head={<>
 						<div class="line"></div>
 						<div class="drawer-head-content">
@@ -299,11 +289,44 @@ function App() {
 						</div>
 					</>} open>
 						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
-							<For each={["foo", "bar", "baz"]}>{value => <>
-								<Radio value={value} />
+							<For each={["foo", "bar"]}>{value => <>
+								<CheckableRadio value={value}>
+									Hello, world!
+								</CheckableRadio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
+
+					{/* <Drawer> */}
+					<Drawer head={<>
+						<div class="line"></div>
+						<div class="drawer-head-content">
+							<Dynamic component={SmileySVG} class="drawer-head-icon" />
+							<div>Hello, world!</div>
+							<div>Foo</div>
+						</div>
+					</>} open>
+						<CheckableCheckbox>
+							Hello, world!
+						</CheckableCheckbox>
+						{/* <Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]"> */}
+						<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]">
+							<For each={[
+								{ style: { "--color": "#ffb13b", "--alpha-color": "#ffb13b66" }, value: "foo" },
+								{ style: { "--color": "#61dafb", "--alpha-color": "#61dafb66" }, value: "bar" },
+								{ style: { "--color": "#4fc08d", "--alpha-color": "#4fc08d66" }, value: "baz" },
+							]}>{({ style, value }) => <>
+								{/* <Show when={index() > 0}>
+									<div class="[margin:8px_0] [border-radius:1000px] [background-color:hsl(0_0%_90%)]"></div>
+								</Show> */}
+								<CheckableRadio style={style} value={value}>
+									{value}
+								</CheckableRadio>
+							</>}</For>
+						</Radiogroup>
+					</Drawer>
+
+					{/* <Drawer> */}
 					<Drawer head={<>
 						<div class="line"></div>
 						<div class="drawer-head-content">
@@ -314,6 +337,8 @@ function App() {
 					</>} open>
 						<Slider />
 					</Drawer>
+
+					{/* <Drawer> */}
 					<Drawer head={<>
 						<div class="line"></div>
 						<div class="drawer-head-content">
@@ -324,6 +349,8 @@ function App() {
 					</>} open>
 						<Slider />
 					</Drawer>
+
+					{/* <Drawer> */}
 					<Drawer head={<>
 						<div class="line"></div>
 						<div class="drawer-head-content">
