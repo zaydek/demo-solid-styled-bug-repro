@@ -3,7 +3,7 @@ import "./css"
 import { createSignal, For, ParentProps, VoidProps } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
-import { AriaButton, AriaCheckbox, AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from "./aria"
+import { AriaCheckbox, AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from "./aria"
 import { Drawer, DrawerProvider } from "./drawer"
 import { NonResponsive, Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
@@ -296,98 +296,127 @@ function App() {
 function App2() {
 	createScreenEffect()
 
-	const [checked1, setChecked1] = createSignal(false)
-	const [checked2, setChecked2] = createSignal(false)
-	const [checked3, setChecked3] = createSignal(false)
+	const [checked, setChecked] = createSignal(false)
+	//// const [checked2, setChecked2] = createSignal(false)
+	//// const [checked3, setChecked3] = createSignal(false)
 
 	const [groupValue, setGroupValue] = createSignal("foo")
 
 	return <>
 		{css`
-			.cp-highlight-button {
-				--color: var(--color);
-				height: 40px;
-				padding: 0 20px;
+			.foo-container {
+				--color: hsl(200 100% 55%);
+
+				/* padding: 5px; */
+				/* padding-right: calc(5px + 2px); */
+				/* Defer border-radius */
+				/* Defer background-color */
+				/* Defer box-shadow */
+
+				display: grid;
+				grid-template-columns: 1fr auto;
+				align-items: center; /* foo-container and foo-checkbox have different heights */
+				gap: 10px;
+			}
+			.foo-container:has(.foo-checkbox) {
+				border-radius: 28px; /* 1000px breaks border-<tr>-radius and border-<br>-radius */
+				border-top-right-radius: 20px;
+				border-bottom-right-radius: 20px;
+			}
+			.foo-container:has(.foo-radio) {
 				border-radius: 1000px;
-				/* Defer background-color and box-shadow */
-				/* Defer background-color and box-shadow */
+			}
+			.foo-container[aria-checked=false] {
+				background-color: white;
+				/* box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%); */
+			}
+			.foo-container[aria-checked=true] {
+				background-color: var(--color);
+				/* box-shadow: none; */
+			}
+			.foo-label {
+				padding: 0 10px;
+				height: 28px;
+				border-radius: 1000px;
+				/* Defer background-color */
 
 				/* Flow */
 				display: flex;
 				flex-direction: row;
-				justify-content: center; /* Center x-axis */
-				align-items: center;     /* Center y-axis */
-				gap: 10px;
+				justify-content: center;
+				align-items: center;
+				gap: 5px;
 			}
-
-			/********************************/
-
-			.cp-highlight-button[aria-checked=false] {
-				background-color: white;
-				box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%), 0 0 0 4px hsl(0 0% 0% / 10%);
-			}
-			.cp-highlight-button[aria-checked=true] {
-				background-color: var(--color);
-				box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */ 0 0 0 4px hsl(0 0% 0% / 10%);
-			}
-
-			/********************************/
-
-			.cp-highlight-button-icon {
-				height: 20px;
+			.foo-container[aria-checked=false] .foo-label { background-color: hsl(0 0% 92.5%); }
+			.foo-container[aria-checked=true]  .foo-label { background-color: transparent; }
+			.foo-label-icon {
+				height: 60%;
 				aspect-ratio: 1;
+				/* color: hsl(0 0% calc(100% / 3)); */
 				/* Defer color */
 			}
-			.cp-highlight-button[aria-checked=false] { color: var(--color); }
-			.cp-highlight-button[aria-checked=true]  { color: white; }
-
-			/********************************/
-
-			.cp-highlight-button-label {
-				font: 600 14px / normal system-ui;
+			.foo-container[aria-checked=false] .foo-label-icon { color: var(--color); }
+			.foo-container[aria-checked=true]  .foo-label-icon { color: white; }
+			.foo-label-text {
+				font: 600 12px / normal system-ui;
 				letter-spacing: 0.05em;
 				/* Defer color */
 			}
-			.cp-highlight-button[aria-checked=false] .cp-highlight-button-label { color: hsl(0 0% 25%); }
-			.cp-highlight-button[aria-checked=true]  .cp-highlight-button-label { color: white; }
+			/* .foo-container[aria-checked=false] .foo-label-text { color: hsl(0 0% 25%); } */
+			/* .foo-container[aria-checked=true]  .foo-label-text { color: white; } */
 
 			/********************************/
 
-			.cp-highlight-button-checkbox {
-				position: relative;
-				height: 24px;
+			.foo-checkbox {
+				height: 28px;
 				aspect-ratio: 1;
 				border-radius: calc(100% / 3);
 				background-color: white;
-				box-shadow: 0 0 0 1px hsl(0 0% 0% / 25%);
+				/* Defer box-shadow */
 
 				/* Flow */
 				display: grid;
 				place-items: center;
 			}
-			.cp-highlight-button[aria-checked=false] .cp-highlight-button-checkbox-check { display: none; }
-			.cp-highlight-button[aria-checked=true]  .cp-highlight-button-checkbox-check {
-				height: 60%;
+			.foo-container[aria-checked=false] .foo-checkbox {
+				box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
+					0 0 0 4px hsl(0 0% 0% / 10%);
+			}
+			.foo-container[aria-checked=true] .foo-checkbox {
+				box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
+					0 0 0 4px hsl(0 0% 0% / 10%);
+			}
+			.foo-container[aria-checked=false] .foo-checkbox-check { display: none; }
+			.foo-container[aria-checked=true]  .foo-checkbox-check {
+				height: 50%;
 				aspect-ratio: 1;
+				/* border-radius: 1000px; */
 				color: var(--color);
 			}
 
 			/********************************/
 
-			.cp-highlight-button-radio {
-				position: relative;
-				height: 24px;
+			.foo-radio {
+				height: 28px;
 				aspect-ratio: 1;
 				border-radius: 1000px;
 				background-color: white;
-				box-shadow: 0 0 0 1px hsl(0 0% 0% / 25%);
+				/* Defer box-shadow */
 
 				/* Flow */
 				display: grid;
 				place-items: center;
 			}
-			.cp-highlight-button[aria-checked=false] .cp-highlight-button-radio-check { display: none; }
-			.cp-highlight-button[aria-checked=true]  .cp-highlight-button-radio-check {
+			.foo-container[aria-checked=false] .foo-radio {
+				box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
+					0 0 0 4px hsl(0 0% 0% / 10%);
+			}
+			.foo-container[aria-checked=true] .foo-radio {
+				box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
+					0 0 0 4px hsl(0 0% 0% / 10%);
+			}
+			.foo-container[aria-checked=false] .foo-radio-check { display: none; }
+			.foo-container[aria-checked=true]  .foo-radio-check {
 				height: calc(100% / 3);
 				aspect-ratio: 1;
 				border-radius: 1000px;
@@ -395,43 +424,33 @@ function App2() {
 			}
 		`}
 		<div class="[display:grid] [place-items:center] [height:$screen-y]">
-			<div class="[width:448px]">
-				<div class="[display:flex] [flex-direction:column] [gap:16px]">
-					<div class="[display:grid] [grid-template-columns:repeat(1,_1fr)] [gap:16px]">
-						<For each={[
-							//// { "--color": "#ffb13b", checked: checked1, setChecked: setChecked1, children: "SVG"   },
-							{ "--color": "hsl(200 100% 55%)", checked: checked2, setChecked: setChecked2, children: "INCLUDE MIT LICENSE" },
-							//// { "--color": "#4fc08d", checked: checked3, setChecked: setChecked3, children: "VUE"   },
-						]}>{props => <>
-								<AriaCheckbox class="cp-highlight-button" style={{ "--color": props["--color"] }} checked={props.checked()} setChecked={props.setChecked}>
-								<Dynamic component={SmileySVG} class="cp-highlight-button-icon" />
-								<div class="cp-highlight-button-label">{props.children}</div>
-								<div class="cp-highlight-button-checkbox">
-									<Dynamic
-										component={CheckSVG}
-										class="cp-highlight-button-checkbox-check"
-										style={{ "stroke-width": "6" }}
-									/>
-								</div>
-							</AriaCheckbox>
-						</>}</For>
+			<div class="[width:448px] [display:flex] [flex-direction:column] [gap:10px]">
+				<AriaCheckbox class="foo-container" checked={checked()} setChecked={setChecked}>
+					<div class="foo-label">
+						<Dynamic component={SmileySVG} class="foo-label-icon" />
+						<div class="foo-label-text">INCLUDE MIT LICENSE</div>
 					</div>
-					<AriaRadiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]" groupValue={groupValue()} setGroupValue={setGroupValue}>
-						<For each={[
-							{ "--color": "#ffb13b", value: "foo", children: "SVG"   },
-							{ "--color": "#61dafb", value: "bar", children: "REACT" },
-							{ "--color": "#4fc08d", value: "baz", children: "VUE"   },
-						]}>{props => <>
-							<AriaRadio class="cp-highlight-button" style={{ "--color": props["--color"] }} value={props.value}>
-								<Dynamic component={SmileySVG} class="cp-highlight-button-icon" />
-								<div class="cp-highlight-button-label">{props.children}</div>
-								<div class="cp-highlight-button-radio">
-									<div class="cp-highlight-button-radio-check"></div>
-								</div>
-							</AriaRadio>
-						</>}</For>
-					</AriaRadiogroup>
-				</div>
+					<div class="foo-checkbox">
+						<Dynamic component={CheckSVG} class="foo-checkbox-check" style={{ "stroke-width": "8" }} />
+					</div>
+				</AriaCheckbox>
+				<AriaRadiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:10px]" groupValue={groupValue()} setGroupValue={setGroupValue}>
+					<For each={[
+						{ style: { "--color": "#ffb13b" }, value: "foo", children: "SVG"   },
+						{ style: { "--color": "#61dafb" }, value: "bar", children: "REACT" },
+						{ style: { "--color": "#4fc08d" }, value: "baz", children: "VUE"   },
+					]}>{p => <>
+						<AriaRadio class="foo-container" style={p.style} value={p.value}>
+							<div class="foo-label">
+								<Dynamic component={SmileySVG} class="foo-label-icon" />
+								<div class="foo-label-text">{p.children}</div>
+							</div>
+							<div class="foo-radio">
+								<div class="foo-radio-check"></div>
+							</div>
+						</AriaRadio>
+					</>}</For>
+				</AriaRadiogroup>
 			</div>
 		</div>
 	</>
@@ -439,20 +458,7 @@ function App2() {
 
 function CheckSVG(props: VoidProps<RefProps & CSSProps>) {
 	return <>
-		<svg
-			// Base props
-			ref={el => props.ref?.(el as unknown as HTMLElement)}
-			class={props.class}
-			style={props.style}
-			// SVG props
-			fill="none"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			stroke-width="2"
-			stroke="currentColor"
-			viewBox="0 0 24 24"
-			xmlns="http://www.w3.org/2000/svg"
-		>
+		<svg ref={el => props.ref?.(el as unknown as HTMLElement)} class={props.class} style={props.style} fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 			<polyline points="20 6 9 17 4 12"></polyline>
 		</svg>
 	</>
