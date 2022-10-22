@@ -32,7 +32,7 @@
 .cp-checkable-checkbox {
 	height: 24px;
 	aspect-ratio: 1;
-	border-radius: calc(100% / 3);
+	border-radius: 40%;
 	background-color: white;
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%);
