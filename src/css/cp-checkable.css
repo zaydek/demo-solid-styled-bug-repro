@@ -41,13 +41,13 @@
 	display: grid;
 	place-items: center;
 }
-.cp-checkable-checkbox-check {
+.cp-checkable-checkbox-svg {
 	height: 50%;
 	aspect-ratio: 1;
 	color: white;
 }
 /* Overrides */
-.cp-checkable-container[aria-checked=false] .cp-checkable-checkbox-check {
+.cp-checkable-container[aria-checked=false] .cp-checkable-checkbox-svg {
 	display: none;
 }
 
@@ -65,14 +65,14 @@
 	display: grid;
 	place-items: center;
 }
-.cp-checkable-radio-check {
+.cp-checkable-radio-icon {
 	height: calc(100% / 3);
 	aspect-ratio: 1;
 	border-radius: 1000px;
 	background-color: white;
 }
 /* Overrides */
-.cp-checkable-container[aria-checked=false] .cp-checkable-radio-check {
+.cp-checkable-container[aria-checked=false] .cp-checkable-radio-icon {
 	display: none;
 }
 

@@ -11,13 +11,9 @@
 .\[flex-grow\:1\]{flex-grow:1;}
 .\[gap\:16px\]{gap:16px;}
 .\[gap\:8px\]{gap:8px;}
-.\[grid-template-columns\:1fr_2px_1fr_2px_1fr\]{grid-template-columns:1fr 2px 1fr 2px 1fr;}
 .\[grid-template-columns\:repeat\(3\,_1fr\)\]{grid-template-columns:repeat(3, 1fr);}
-.\[height\:\$screen-y\]{height:var(--screen-y);}
 .\[height\:80px\]{height:80px;}
 .\[justify-self\:stretch\]{justify-self:stretch;}
 .\[margin\:8px_0\]{margin:8px 0;}
 .\[padding\:16px\]{padding:16px;}
-.\[place-items\:center\]{place-items:center;}
 .\[text-align\:center\]{text-align:center;}
-.\[width\:416px\]{width:416px;}

@@ -1,130 +1,14 @@
 import "./css"
 
-import { createSignal, For, JSX, ParentProps, Setter, Show, VoidProps } from "solid-js"
+import { createSignal, For } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
-import { AriaCheckbox, AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from "./aria"
+import { CheckableCheckbox, CheckableRadio, NavIcon, Radiogroup, Slider } from "./components"
 import { Drawer, DrawerProvider } from "./drawer"
 import { NonResponsive, Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
-import { createScreenEffect, css, CSSProps, RefProps } from "./utils/solid"
+import { css } from "./utils/solid"
 import { only, range } from "./utils/vanilla"
-
-////////////////////////////////////////
-
-// TODO: EXTRACT
-function NavIcon() {
-	return <>
-		<div class="cp-nav-icon">
-			<Dynamic component={SmileySVG} class="cp-nav-icon-svg" />
-		</div>
-	</>
-}
-
-////////////////////////////////////////
-
-// TODO: EXTRACT
-function Radio(props: VoidProps<{ value: string }>) {
-	return <>
-		<AriaRadio class="cp-radio-container" value={props.value}>
-			<div class="cp-radio-label">
-				<Dynamic component={SmileySVG} class="cp-radio-label-svg" />
-				<div>Hello, world!</div>
-			</div>
-			<div class="cp-radio">
-				<div class="cp-radio-check"></div>
-			</div>
-		</AriaRadio>
-	</>
-}
-
-// TODO: EXTRACT
-function Radiogroup(props: ParentProps<CSSProps>) {
-	const [groupValue, setGroupValue] = createSignal("foo")
-
-	return <>
-		<AriaRadiogroup class={props.class} style={props.style} groupValue={groupValue()} setGroupValue={setGroupValue}>
-			{props.children}
-		</AriaRadiogroup>
-	</>
-}
-
-////////////////////////////////////////
-
-function CheckSVG(props: VoidProps<RefProps & CSSProps>) {
-	return <>
-		<svg ref={el => props.ref?.(el as unknown as HTMLElement)} class={props.class} style={props.style} fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-			<polyline points="20 6 9 17 4 12"></polyline>
-		</svg>
-	</>
-}
-
-// TODO: EXTRACT
-function CheckableCheckbox(props: ParentProps) {
-	const [checked, setChecked] = createSignal(false)
-
-	return <>
-		<AriaCheckbox class="cp-checkable-container" checked={checked()} setChecked={setChecked}>
-			<div class="cp-checkable-label">
-				<Dynamic component={SmileySVG} class="cp-checkable-label-icon" />
-				<div class="cp-checkable-label-text">
-					{props.children}
-				</div>
-			</div>
-			<div class="cp-checkable-checkbox">
-				<Dynamic component={CheckSVG} class="cp-checkable-checkbox-check" style={{ "stroke-width": "7" }} />
-			</div>
-		</AriaCheckbox>
-	</>
-}
-
-// TODO: EXTRACT
-function CheckableRadio(props: ParentProps<{
-	value: string
-
-	style?: JSX.CSSProperties
-}>) {
-	return <>
-		<AriaRadio class="cp-checkable-container" style={props.style} value={props.value}>
-			<div class="cp-checkable-label">
-				<Dynamic component={SmileySVG} class="cp-checkable-label-icon" />
-				<div class="cp-checkable-label-text">
-					{props.children}
-				</div>
-			</div>
-			<div class="cp-checkable-radio">
-				<div class="cp-checkable-radio-check"></div>
-			</div>
-		</AriaRadio>
-	</>
-}
-
-////////////////////////////////////////
-
-function Slider() {
-	const [value, setValue] = createSignal(50)
-
-	return <>
-		<div class="cp-slider-container">
-			<AriaSliderHorizontal class="cp-slider" value={value()} setValue={setValue} min={0} max={100} step={1}>
-				{translate => <>
-					<div class="cp-slider-track">
-						<AriaSliderThumb
-							class="cp-slider-thumb"
-							style={{
-								...(translate() && {
-									"transform": `translateX(${translate()!}px)`,
-								}),
-							}}
-						/>
-					</div>
-				</>}
-			</AriaSliderHorizontal>
-		</div>
-	</>
-}
-
-////////////////////////////////////////
 
 const [sidesheet, setSidesheet] = createSignal<SidesheetState>("open")
 
@@ -289,7 +173,7 @@ function App() {
 						</div>
 					</>} open>
 						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
-							<For each={["foo", "bar"]}>{value => <>
+							<For each={["foo", "bar", "baz"]}>{value => <>
 								<CheckableRadio value={value}>
 									Hello, world!
 								</CheckableRadio>
@@ -384,39 +268,6 @@ function App() {
 		</Sheet>
 	</>
 }
-
-//// function App2() {
-//// 	createScreenEffect()
-////
-//// 	const [checked, setChecked] = createSignal(false)
-//// 	const [groupValue, setGroupValue] = createSignal("foo")
-////
-//// 	return <>
-//// 		<div class="[display:grid] [place-items:center] [height:$screen-y]">
-//// 			<div class="[width:416px] [display:flex] [flex-direction:column] [gap:8px]">
-//// 				{/* Checkboxes */}
-//// 				<CheckableCheckbox checked={checked()} setChecked={setChecked}>
-//// 					FOO
-//// 				</CheckableCheckbox>
-//// 				{/* Radios */}
-//// 				<AriaRadiogroup class="[display:grid] [grid-template-columns:1fr_2px_1fr_2px_1fr] [gap:16px]" groupValue={groupValue()} setGroupValue={setGroupValue}>
-//// 					<For each={[
-//// 						{ style: { "--color": "#ffb13b", "--alpha-color": "#ffb13b66" }, value: "foo" },
-//// 						{ style: { "--color": "#61dafb", "--alpha-color": "#61dafb66" }, value: "bar" },
-//// 						{ style: { "--color": "#4fc08d", "--alpha-color": "#4fc08d66" }, value: "baz" },
-//// 					]}>{(p, index) => <>
-//// 						<Show when={index() > 0}>
-//// 							<div class="[margin:8px_0] [border-radius:1000px] [background-color:hsl(0_0%_90%)]"></div>
-//// 						</Show>
-//// 						<CheckableRadio style={p.style} value={p.value}>
-//// 							{p.value.toUpperCase()}
-//// 						</CheckableRadio>
-//// 					</>}</For>
-//// 				</AriaRadiogroup>
-//// 			</div>
-//// 		</div>
-//// 	</>
-//// }
 
 render(() =>
 	<App />,
