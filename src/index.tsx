@@ -305,12 +305,15 @@ function App2() {
 	return <>
 		{css`
 			.foo-container {
-				--color: hsl(200 100% 55%);
+				--color:       hsl(200 100% 55%);
+				--alpha-color: hsl(200 100% 55% / 40%);
 
 				display: grid;
 				grid-template-columns: 1fr auto;
 				align-items: center; /* foo-container and foo-checkbox have different heights */
 				gap: 8px;
+
+				cursor: pointer;
 			}
 			.foo-label {
 				padding: 0 8px;
@@ -348,16 +351,6 @@ function App2() {
 				display: grid;
 				place-items: center;
 			}
-			.foo-container[aria-checked=false] .foo-checkbox {
-				background-color: white;
-				box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
-					0 0 0 4px hsl(0 0% 0% / 10%);
-			}
-			.foo-container[aria-checked=true] .foo-checkbox {
-				background-color: var(--color);
-				box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
-					0 0 0 4px hsl(0 0% 0% / 10%);
-			}
 			.foo-container[aria-checked=false] .foo-checkbox-check { display: none; }
 			.foo-container[aria-checked=true]  .foo-checkbox-check {
 				height: 50%;
@@ -378,22 +371,35 @@ function App2() {
 				display: grid;
 				place-items: center;
 			}
-			.foo-container[aria-checked=false] .foo-radio {
-				background-color: white;
-				box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
-					0 0 0 4px hsl(0 0% 0% / 10%);
-			}
-			.foo-container[aria-checked=true] .foo-radio {
-				background-color: var(--color);
-				box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
-					0 0 0 4px hsl(0 0% 0% / 10%);
-			}
 			.foo-container[aria-checked=false] .foo-radio-check { display: none; }
 			.foo-container[aria-checked=true]  .foo-radio-check {
 				height: calc(100% / 3);
 				aspect-ratio: 1;
 				border-radius: 1000px;
 				background-color: white;
+			}
+
+			/********************************/
+
+			.foo-container[aria-checked=false] :is(.foo-checkbox, .foo-radio) {
+				background-color: white;
+				box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
+					0 0 0 4px hsl(0 0% 0% / 10%);
+			}
+			.foo-container[aria-checked=true] :is(.foo-checkbox, .foo-radio) {
+				background-color: var(--color);
+				box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
+					0 0 0 4px hsl(0 0% 0% / 10%);
+			}
+			.foo-container[aria-checked=false] :is(.foo-checkbox, .foo-radio):hover {
+				box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
+					0 0 0 4px hsl(0 0% 0% / 10%),
+					0 0 0 8px hsl(0 0% 0% / 10%);
+			}
+			.foo-container[aria-checked=true] :is(.foo-checkbox, .foo-radio):hover {
+				box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
+					0 0 0 4px hsl(0 0% 0% / 10%),
+					0 0 0 8px var(--alpha-color);
 			}
 		`}
 		<div class="[display:grid] [place-items:center] [height:$screen-y]">
@@ -409,9 +415,9 @@ function App2() {
 				</AriaCheckbox>
 				<AriaRadiogroup class="[display:grid] [grid-template-columns:1fr_2px_1fr_2px_1fr] [gap:16px]" groupValue={groupValue()} setGroupValue={setGroupValue}>
 					<For each={[
-						{ style: { "--color": "#ffb13b" }, value: "foo" },
-						{ style: { "--color": "#61dafb" }, value: "bar" },
-						{ style: { "--color": "#4fc08d" }, value: "baz" },
+						{ style: { "--color": "#ffb13b", "--alpha-color": "#ffb13b66" }, value: "foo" },
+						{ style: { "--color": "#61dafb", "--alpha-color": "#61dafb66" }, value: "bar" },
+						{ style: { "--color": "#4fc08d", "--alpha-color": "#4fc08d66" }, value: "baz" },
 					]}>{({ style, value }, index) => <>
 						<Show when={index() > 0}>
 							<div class="[margin:8px_0] [border-radius:1000px] [background-color:hsl(0_0%_90%)]"></div>
