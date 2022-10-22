@@ -1,6 +1,6 @@
 .cp-checkable-container {
-	--color:       hsl(200 100% 55%);
-	--alpha-color: hsl(200 100% 55% / 40%);
+	--color:       hsl(200 100% 50%);
+	--alpha-color: hsl(200 100% 50% / 40%);
 
 	display: grid;
 	grid-template-columns: 1fr auto;
@@ -13,7 +13,7 @@
 	padding: 0 8px;
 	height: 28px;
 	border-radius: 1000px;
-	background-color: hsl(0 0% 95%);
+	background-color: hsl(0 0% 90%);
 
 	/* Flow */
 	display: grid;
@@ -78,18 +78,29 @@
 
 /**************************************/
 
-/* OVerrides (for .cp-checkable-checkbox, .cp-checkable-radio) */
-.cp-checkable-container[aria-checked=false] :is(.cp-checkable-checkbox, .cp-checkable-radio):hover {
+/* Overrides */
+.cp-checkable-container[aria-checked=false]:is(:hover, :active) :is(
+	.cp-checkable-checkbox,
+	.cp-checkable-radio
+) {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
 		0 0 0 8px hsl(0 0% 0% / 10%);
 }
-.cp-checkable-container[aria-checked=true] :is(.cp-checkable-checkbox, .cp-checkable-radio) {
+
+.cp-checkable-container[aria-checked=true] :is(
+	.cp-checkable-checkbox,
+	.cp-checkable-radio
+) {
 	background-color: var(--color);
 	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
 		0 0 0 4px hsl(0 0% 0% / 10%);
 }
-.cp-checkable-container[aria-checked=true] :is(.cp-checkable-checkbox, .cp-checkable-radio):hover {
+
+.cp-checkable-container[aria-checked=true]:is(:hover, :active) :is(
+	.cp-checkable-checkbox,
+	.cp-checkable-radio
+) {
 	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
 		0 0 0 4px hsl(0 0% 0% / 10%),
 		0 0 0 8px var(--alpha-color);

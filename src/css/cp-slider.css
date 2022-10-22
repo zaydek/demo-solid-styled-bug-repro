@@ -18,7 +18,7 @@
   height: 6px;
   width: 100%;
   border-radius: 1000px;
-  background-color: hsl(200 100% 55%);
+  background-color: hsl(200 100% 50%);
 
   /* Flow */
   display: grid;
@@ -33,8 +33,17 @@
 		0 0 0 4px hsl(0 0% 0% / 10%);
 		/* 0 0 0 8px hsl(0 0% 0% / 10%); */
 }
-.cp-slider-thumb:hover {
+
+/**************************************/
+
+/* Overrides */
+.cp-slider:hover .cp-slider-thumb {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
 		0 0 0 8px hsl(0 0% 0% / 10%);
+}
+.cp-slider:active .cp-slider-thumb {
+	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
+		0 0 0 4px hsl(0 0% 0% / 10%),
+		0 0 0 8px hsl(200 100% 50% / 40%);
 }
