@@ -1,0 +1,45 @@
+:root {
+	--form-height: 28px;
+	--form-svg-height: 16px;
+}
+
+.cp-radio-container {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 8px;
+
+	cursor: pointer;
+}
+.cp-radio-label {
+	padding: 0 8px;
+	height: var(--form-height);
+	border-radius: 1000px;
+	background-color: lightgray;
+
+	/* Flow */
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	gap: 8px;
+}
+.cp-radio-label-svg {
+	height: var(--form-svg-height);
+	aspect-ratio: 1;
+	color: gray;
+}
+.cp-radio {
+	height: var(--form-height);
+	aspect-ratio: 1;
+	border-radius: 1000px;
+	background-color: lightgray;
+
+	/* Flow */
+	display: grid;
+	place-items: center;
+}
+.cp-radio-container[aria-checked=true] .cp-radio-check {
+	height: calc(100% / 3);
+	aspect-ratio: 1;
+	border-radius: 1000px;
+	background-color: blue;
+}

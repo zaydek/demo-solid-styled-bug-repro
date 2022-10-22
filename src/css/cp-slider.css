@@ -1,0 +1,33 @@
+.cp-slider-container {
+	padding: 0 16px;
+}
+.cp-slider {
+  height: var(--form-height);
+  width: 100%;
+
+  /* Flow */
+  display: grid;
+  align-items: center;
+
+	cursor: grab;
+	touch-action: pan-x;
+}
+:root:has(.cp-slider:active) { cursor: grabbing; }            /* Use both */
+:root:has(.cp-slider:active) .cp-slider { cursor: grabbing; } /* Use both */
+.cp-slider-track {
+  height: 6px;
+  width: 100%;
+  border-radius: 32px;
+  background-color: blue;
+
+  /* Flow */
+  display: grid;
+  align-content: center;
+}
+.cp-slider-thumb {
+  height: var(--form-height);
+  aspect-ratio: 1;
+  border-radius: 1000px;
+  background-color: white;
+  box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
+}

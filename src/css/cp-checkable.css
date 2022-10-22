@@ -1,0 +1,97 @@
+.cp-checkable-container {
+	--color:       hsl(200 100% 55%);
+	--alpha-color: hsl(200 100% 55% / 40%);
+
+	display: grid;
+	grid-template-columns: 1fr auto;
+	align-items: center; /* cp-checkable-container and cp-checkable-checkbox are 28px and 24px */
+	gap: 8px;
+
+	cursor: pointer;
+}
+.cp-checkable-label {
+	padding: 0 8px;
+	height: 28px;
+	border-radius: 1000px;
+	background-color: hsl(0 0% 95%);
+
+	/* Flow */
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	gap: 8px;
+}
+.cp-checkable-label-icon {
+	height: 60%;
+	aspect-ratio: 1;
+	color: var(--color);
+}
+/* .cp-checkable-label-text { */
+/* 	font: 600 14px / normal system-ui; */
+/* 	letter-spacing: 0.025em; */
+/* 	color: hsl(0 0% calc(100% / 3)); */
+/* } */
+
+/**************************************/
+
+.cp-checkable-checkbox {
+	height: 24px;
+	aspect-ratio: 1;
+	border-radius: calc(100% / 3);
+	/* Defer background-color */
+	/* Defer box-shadow */
+
+	/* Flow */
+	display: grid;
+	place-items: center;
+}
+.cp-checkable-container[aria-checked=false] .cp-checkable-checkbox-check { display: none; }
+.cp-checkable-container[aria-checked=true]  .cp-checkable-checkbox-check {
+	height: 50%;
+	aspect-ratio: 1;
+	color: white;
+}
+
+/**************************************/
+
+.cp-checkable-radio {
+	height: 24px;
+	aspect-ratio: 1;
+	border-radius: 1000px;
+	/* Defer background-color */
+	/* Defer box-shadow */
+
+	/* Flow */
+	display: grid;
+	place-items: center;
+}
+.cp-checkable-container[aria-checked=false] .cp-checkable-radio-check { display: none; }
+.cp-checkable-container[aria-checked=true]  .cp-checkable-radio-check {
+	height: calc(100% / 3);
+	aspect-ratio: 1;
+	border-radius: 1000px;
+	background-color: white;
+}
+
+/**************************************/
+
+.cp-checkable-container[aria-checked=false] :is(.cp-checkable-checkbox, .cp-checkable-radio) {
+	background-color: white;
+	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
+		0 0 0 4px hsl(0 0% 0% / 10%);
+}
+.cp-checkable-container[aria-checked=true] :is(.cp-checkable-checkbox, .cp-checkable-radio) {
+	background-color: var(--color);
+	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
+		0 0 0 4px hsl(0 0% 0% / 10%);
+}
+.cp-checkable-container[aria-checked=false] :is(.cp-checkable-checkbox, .cp-checkable-radio):hover {
+	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
+		0 0 0 4px hsl(0 0% 0% / 10%),
+		0 0 0 8px hsl(0 0% 0% / 10%);
+}
+.cp-checkable-container[aria-checked=true] :is(.cp-checkable-checkbox, .cp-checkable-radio):hover {
+	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
+		0 0 0 4px hsl(0 0% 0% / 10%),
+		0 0 0 8px var(--alpha-color);
+}

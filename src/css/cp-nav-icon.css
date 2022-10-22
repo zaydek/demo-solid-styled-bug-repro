@@ -1,0 +1,17 @@
+.cp-nav-icon {
+	height: 32px;
+	aspect-ratio: 1;
+	border-radius: 1000px;
+	background-color: hsl(0 0% 75%);
+
+	/* Flow */
+	display: grid;
+	place-items: center;
+
+	cursor: pointer;
+}
+.cp-nav-icon-svg {
+	height: 75%;
+	aspect-ratio: 1;
+	color: hsl(0 0% 25%);
+}
