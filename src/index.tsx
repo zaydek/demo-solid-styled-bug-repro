@@ -1,6 +1,6 @@
 import "./css"
 
-import { createSignal, For, ParentProps, VoidProps } from "solid-js"
+import { createSignal, For, ParentProps, Show, VoidProps } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
 import { AriaCheckbox, AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from "./aria"
@@ -307,82 +307,54 @@ function App2() {
 			.foo-container {
 				--color: hsl(200 100% 55%);
 
-				/* padding: 5px; */
-				/* padding-right: calc(5px + 2px); */
-				/* Defer border-radius */
-				/* Defer background-color */
-				/* Defer box-shadow */
-
 				display: grid;
 				grid-template-columns: 1fr auto;
 				align-items: center; /* foo-container and foo-checkbox have different heights */
-				gap: 10px;
-			}
-			.foo-container:has(.foo-checkbox) {
-				border-radius: 28px; /* 1000px breaks border-<tr>-radius and border-<br>-radius */
-				border-top-right-radius: 20px;
-				border-bottom-right-radius: 20px;
-			}
-			.foo-container:has(.foo-radio) {
-				border-radius: 1000px;
-			}
-			.foo-container[aria-checked=false] {
-				background-color: white;
-				/* box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%); */
-			}
-			.foo-container[aria-checked=true] {
-				background-color: var(--color);
-				/* box-shadow: none; */
+				gap: 8px;
 			}
 			.foo-label {
-				padding: 0 10px;
-				height: 28px;
+				padding: 0 8px;
+				height: 32px;
 				border-radius: 1000px;
-				/* Defer background-color */
+				background-color: hsl(0 0% 95%);
 
 				/* Flow */
-				display: flex;
-				flex-direction: row;
-				justify-content: center;
+				display: grid;
+				grid-template-columns: auto 1fr;
 				align-items: center;
-				gap: 5px;
+				gap: 8px;
 			}
-			.foo-container[aria-checked=false] .foo-label { background-color: hsl(0 0% 92.5%); }
-			.foo-container[aria-checked=true]  .foo-label { background-color: transparent; }
 			.foo-label-icon {
 				height: 60%;
 				aspect-ratio: 1;
 				/* color: hsl(0 0% calc(100% / 3)); */
-				/* Defer color */
+				color: var(--color);
 			}
-			.foo-container[aria-checked=false] .foo-label-icon { color: var(--color); }
-			.foo-container[aria-checked=true]  .foo-label-icon { color: white; }
 			.foo-label-text {
-				font: 600 12px / normal system-ui;
-				letter-spacing: 0.05em;
-				/* Defer color */
+				font: 600 14px / normal system-ui;
+				letter-spacing: 0.025em;
+				color: hsl(0 0% calc(100% / 3));
 			}
-			/* .foo-container[aria-checked=false] .foo-label-text { color: hsl(0 0% 25%); } */
-			/* .foo-container[aria-checked=true]  .foo-label-text { color: white; } */
 
 			/********************************/
 
 			.foo-checkbox {
-				height: 28px;
+				height: 24px;
 				aspect-ratio: 1;
 				border-radius: calc(100% / 3);
-				background-color: white;
-				/* Defer box-shadow */
+				/* Defer background-color and box-shadow */
 
 				/* Flow */
 				display: grid;
 				place-items: center;
 			}
 			.foo-container[aria-checked=false] .foo-checkbox {
+				background-color: white;
 				box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 					0 0 0 4px hsl(0 0% 0% / 10%);
 			}
 			.foo-container[aria-checked=true] .foo-checkbox {
+				background-color: var(--color);
 				box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
 					0 0 0 4px hsl(0 0% 0% / 10%);
 			}
@@ -391,27 +363,28 @@ function App2() {
 				height: 50%;
 				aspect-ratio: 1;
 				/* border-radius: 1000px; */
-				color: var(--color);
+				color: white;
 			}
 
 			/********************************/
 
 			.foo-radio {
-				height: 28px;
+				height: 24px;
 				aspect-ratio: 1;
 				border-radius: 1000px;
-				background-color: white;
-				/* Defer box-shadow */
+				/* Defer background-color and box-shadow */
 
 				/* Flow */
 				display: grid;
 				place-items: center;
 			}
 			.foo-container[aria-checked=false] .foo-radio {
+				background-color: white;
 				box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 					0 0 0 4px hsl(0 0% 0% / 10%);
 			}
 			.foo-container[aria-checked=true] .foo-radio {
+				background-color: var(--color);
 				box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
 					0 0 0 4px hsl(0 0% 0% / 10%);
 			}
@@ -420,30 +393,33 @@ function App2() {
 				height: calc(100% / 3);
 				aspect-ratio: 1;
 				border-radius: 1000px;
-				background-color: var(--color);
+				background-color: white;
 			}
 		`}
 		<div class="[display:grid] [place-items:center] [height:$screen-y]">
-			<div class="[width:448px] [display:flex] [flex-direction:column] [gap:10px]">
+			<div class="[width:448px] [display:flex] [flex-direction:column] [gap:8px]">
 				<AriaCheckbox class="foo-container" checked={checked()} setChecked={setChecked}>
 					<div class="foo-label">
 						<Dynamic component={SmileySVG} class="foo-label-icon" />
-						<div class="foo-label-text">INCLUDE MIT LICENSE</div>
+						<div class="foo-label-text">FOO</div>
 					</div>
 					<div class="foo-checkbox">
-						<Dynamic component={CheckSVG} class="foo-checkbox-check" style={{ "stroke-width": "8" }} />
+						<Dynamic component={CheckSVG} class="foo-checkbox-check" style={{ "stroke-width": "7" }} />
 					</div>
 				</AriaCheckbox>
-				<AriaRadiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:10px]" groupValue={groupValue()} setGroupValue={setGroupValue}>
+				<AriaRadiogroup class="[display:grid] [grid-template-columns:1fr_2px_1fr_2px_1fr] [gap:16px]" groupValue={groupValue()} setGroupValue={setGroupValue}>
 					<For each={[
-						{ style: { "--color": "#ffb13b" }, value: "foo", children: "SVG"   },
-						{ style: { "--color": "#61dafb" }, value: "bar", children: "REACT" },
-						{ style: { "--color": "#4fc08d" }, value: "baz", children: "VUE"   },
-					]}>{p => <>
-						<AriaRadio class="foo-container" style={p.style} value={p.value}>
+						{ style: { "--color": "#ffb13b" }, value: "foo" },
+						{ style: { "--color": "#61dafb" }, value: "bar" },
+						{ style: { "--color": "#4fc08d" }, value: "baz" },
+					]}>{({ style, value }, index) => <>
+						<Show when={index() > 0}>
+							<div class="[margin:8px_0] [border-radius:1000px] [background-color:hsl(0_0%_90%)]"></div>
+						</Show>
+						<AriaRadio class="foo-container" style={style} value={value}>
 							<div class="foo-label">
 								<Dynamic component={SmileySVG} class="foo-label-icon" />
-								<div class="foo-label-text">{p.children}</div>
+								<div class="foo-label-text">FOO</div>
 							</div>
 							<div class="foo-radio">
 								<div class="foo-radio-check"></div>

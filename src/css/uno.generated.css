@@ -1,6 +1,8 @@
 /* layer: default */
 .\[aspect-ratio\:16_\/_9\]{aspect-ratio:16 / 9;}
 .\[background-color\:gray\]{background-color:gray;}
+.\[background-color\:hsl\(0_0\%_90\%\)\]{background-color:hsl(0 0% 90%);}
+.\[border-radius\:1000px\]{border-radius:1000px;}
 .\[border-radius\:8px\]{border-radius:8px;}
 .\[display\:flex\]{display:flex;}
 .\[display\:grid\]{display:grid;}
@@ -8,13 +10,13 @@
 .\[flex-direction\:row\]{flex-direction:row;}
 .\[flex-grow\:1\]{flex-grow:1;}
 .\[flex-shrink\:0\]{flex-shrink:0;}
-.\[gap\:10px\]{gap:10px;}
 .\[gap\:16px\]{gap:16px;}
 .\[gap\:8px\]{gap:8px;}
-.\[grid-template-columns\:repeat\(3\,_1fr\)\]{grid-template-columns:repeat(3, 1fr);}
+.\[grid-template-columns\:1fr_2px_1fr_2px_1fr\]{grid-template-columns:1fr 2px 1fr 2px 1fr;}
 .\[height\:\$screen-y\]{height:var(--screen-y);}
 .\[height\:80px\]{height:80px;}
 .\[justify-self\:stretch\]{justify-self:stretch;}
+.\[margin\:8px_0\]{margin:8px 0;}
 .\[overflow-y\:auto\]{overflow-y:auto;}
 .\[padding\:16px\]{padding:16px;}
 .\[place-items\:center\]{place-items:center;}
