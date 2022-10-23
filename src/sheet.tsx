@@ -22,7 +22,7 @@ export function NonResponsive(props: ParentProps) {
 	</>
 }
 
-export function Sheet(props: ParentProps<{
+export function BottomsheetOrSidesheet(props: ParentProps<{
 	sidesheet:    SidesheetState
 	setSidesheet: Setter<SidesheetState>
 }>) {

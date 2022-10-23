@@ -247,8 +247,8 @@ export function DrawerProvider(props: ParentProps<{
 				:root.ready .drawer-body {
 					transition: opacity 300ms cubic-bezier(0, 1, 0.25, 1.1);
 				}
-				.drawer.is-closed .drawer-body { opacity: 0; }
-				.drawer.is-open   .drawer-body { opacity: 1; }
+				.drawer.closed .drawer-body { opacity: 0; }
+				.drawer.open   .drawer-body { opacity: 1; }
 			`}
 			<div
 				class="drawer-container"

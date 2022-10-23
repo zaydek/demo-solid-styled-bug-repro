@@ -21,7 +21,7 @@
 	},
 	"dependencies": {
 		"solid-js": "^1.5.7",
-		"solid-sheet": "^0.0.14",
+		"solid-sheet": "^0.0.15",
 		"the-new-css-reset": "^1.7.3"
 	}
 }

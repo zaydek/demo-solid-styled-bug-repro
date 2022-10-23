@@ -3,7 +3,7 @@
 
 /* At >=768px use margin-right to create negative space */
 @media (min-width: 768px) {
-	:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-nav {
+	:root:has(.sidesheet:is(.open, .expanded)) .layout-nav {
 		margin-right: 384px;
 	}
 }
@@ -31,7 +31,7 @@
 
 /* At >=768px use margin-right to create negative space */
 @media (min-width: 768px) {
-	:root:has(.sidesheet:is(.is-open, .is-expanded)) .layout-main {
+	:root:has(.sidesheet:is(.open, .expanded)) .layout-main {
 		margin-right: 384px;
 	}
 }
@@ -52,6 +52,6 @@
 	overflow-y: auto;
 }
 /* Disable body scrolling when bottomsheet=open or sidesheet=expanded */
-:root:has(:is(.bottomsheet.is-open, .sidesheet.is-expanded)) body {
+:root:has(:is(.bottomsheet.open, .sidesheet.expanded)) body {
 	overflow-y: hidden;
 }
