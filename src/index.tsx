@@ -1,18 +1,33 @@
 import "./css"
 
-import { createEffect, createSignal, For, Show } from "solid-js"
+import { createSignal, For } from "solid-js"
 import { Dynamic, Portal, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer, DrawerProvider } from "./drawer"
 import { NonResponsive, Sheet } from "./sheet"
-import { SmileySVG } from "./smiley-svg"
-import { createScreen, css } from "./utils/solid"
-import { cx, only, range } from "./utils/vanilla"
+import { SmileyOutlineSVG, SmileySVG } from "./smiley-svg"
+import { css } from "./utils/solid"
+import { cx, only, range, round } from "./utils/vanilla"
 
 const [sidesheet, setSidesheet] = createSignal<SidesheetState>("open")
 
 function App() {
+	// Checkboxes
+	const [noName, setNoName] = createSignal(false)
+
+	// Sliders
+	const [heightPercentage, setHeightPercentage] = createSignal(50)
+	const [strokeWidth, setStrokeWidth] = createSignal(1.5)
+
+	const heightPixel = () => {
+		if (noName()) {
+			return 112 * heightPercentage() / 100
+		} else {
+			return (112 - 24) * heightPercentage() / 100
+		}
+	}
+
 	return <>
 		{css`
 			.layout-nav {
@@ -41,39 +56,81 @@ function App() {
 			<NavIcon />
 		</nav>
 		{css`
-			:root { --results-grid-cell-size: 80px; }
-			@media (min-width: 500px) { :root { --results-grid-cell-size: 96px; } }
-
-			.results-grid {
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(var(--results-grid-cell-size), 1fr));
-				place-items: center;
+			.typography {
+				font: 400 14px /
+					normal system-ui;
 			}
-			.results-grid-cell {
-				height: var(--results-grid-cell-size);
-				aspect-ratio: 1;
+			.ellipsis {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			/********************************/
+
+			/* .results-grid-container *:not(svg *) { */
+			/* 	outline: 2px solid hsl(0 100% 50% / 10%); */
+			/* 	outline-offset: -1px; */
+			/* } */
+			.results-grid-container {
+				--label-height: 24px;
 
 				/* Flow */
 				display: grid;
-				grid-template-rows: 16px 1fr 32px;
+				grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+			}
+			/* @media (hover: none) { .results-grid-container { */
+			/* 	height: var(--screen-y); */
+			/* 	overflow-y: auto; */
+			/* } } */
+			.results-grid-item {
+				padding: 8px;
+				padding-top: 0; /* Override */
+			}
+			.results-grid-icon-container {
+				height: calc(112px - var(--label-height));
+
+				/* Flow */
+				display: grid;
 				place-items: center;
 			}
-			.results-grid-cell :nth-child(1) { grid-row: 2; }
-			.results-grid-cell :nth-child(2) { grid-row: 3; }
 			.results-grid-icon-svg {
-				height: 32px;
+				height: 50%;
 				aspect-ratio: 1;
-				border-radius: 1000px;
-				background-color:gray;
+				color: hsl(0 0% 25%);
 			}
+			.results-grid-icon-label {
+				padding: 4px 8px;
+				height: var(--label-height);
+				border-radius: 1000px;
+				background-color: hsl(0 0% 90%);
+			}
+			/* Overrides */
+			.results-grid-container.no-name .results-grid-item { padding: 0; }
+			.results-grid-container.no-name .results-grid-icon-label { display: none; }
+			.results-grid-container.no-name .results-grid-icon-container { height: 112px; }
 		`}
 		{/* @ts-expect-error */}
 		<main class="layout-main" inert={only(sidesheet() === "expanded")}>
-			<div class="results-grid">
-				<For each={range(300)}>{() => <>
-					<div class="results-grid-cell">
-						<div class="results-grid-icon-svg"></div>
-						<div class="ellipsis [justify-self:stretch] [text-align:center]">Hello, world! Hello, world!</div>
+			<div class={cx(`results-grid-container ${noName() ? "no-name" : ""}`)}>
+				<For each={range(200)}>{() => <>
+					<div class="results-grid-item">
+						<div class="results-grid-icon-container">
+							{/* <Dynamic component={SmileySVG} class="icon" style={{ "height": `${height()}%` }} /> */}
+							<Dynamic
+								component={SmileyOutlineSVG}
+								class="results-grid-icon-svg"
+								style={{
+									"transform": `scale(${heightPercentage() / 50})`,
+									"stroke-width": "" + strokeWidth(),
+								}}
+							/>
+						</div>
+						<div class="results-grid-icon-label">
+							<div class="typography ellipsis [text-align:center]">
+								icon-name
+							</div>
+						</div>
 					</div>
 				</>}</For>
 			</div>
@@ -262,174 +319,14 @@ function App() {
 				</div>
 			</section>
 		</Sheet>
-	</>
-}
 
-function App2() {
-	return <>
-		{css`
-			.icon-list {
-				height: var(--screen-y);
-				overflow-y: auto;
-			}
-			.icon-container {
-				position: relative;
-				padding: 16px;
-
-				/* Flow */
-				display: grid;
-				grid-template-columns: auto 1fr auto auto;
-				align-items: center;
-				gap: 16px;
-			}
-			.icon-container:not(:nth-child(1))::before { content: ""; }
-			.icon-container:not(:nth-child(1))::before {
-				position: absolute;
-				inset: 0 0 100% 16px;
-				border-top: 1px solid red;
-			}
-			.icon {
-				height: 32px;
-				aspect-ratio: 1;
-				color: gray;
-			}
-			.icon-label {
-				height: 8px;
-				aspect-ratio: 16;
-				border-radius: 1000px;
-				background-color: lightgray;
-			}
-			.icon-action-button {
-				height: 24px;
-				aspect-ratio: 1;
-				border-radius: 1000px;
-				background-color: lightgray;
-
-				/* Flow */
-				display: grid;
-				place-items: center;
-			}
-			.icon-action-button-svg {
-				height: 75%;
-				aspect-ratio: 1;
-				color: gray;
-			}
-			.icon-action-button + .icon-action-button { margin-left: -8px; }
-		`}
-		<div class="icon-list">
-			<For each={range(200)}>{() => <>
-				<div class="icon-container">
-					<Dynamic component={SmileySVG} class="icon" />
-					<div class="icon-label"></div>
-					<div class="icon-action-button">
-						<Dynamic component={SmileySVG} class="icon-action-button-svg" />
-					</div>
-					<div class="icon-action-button">
-						<Dynamic component={SmileySVG} class="icon-action-button-svg" />
-					</div>
-				</div>
-			</>}</For>
-		</div>
-	</>
-}
-
-//// // FIXME: Use suppressWarning because of bottomsheet
-//// const { screenX } = createScreen({ suppressWarning: true })
-////
-//// createEffect(() => {
-//// 	console.log(screenX() / 96)
-//// })
-
-function App3() {
-	const [ref, setRef] = createSignal<HTMLElement>()
-
-	// Checkboxes
-	const [list, setList] = createSignal(false)
-	const [noName, setNoName] = createSignal(false)
-
-	// Sliders
-	//// const [minmax, setMinmax] = createSignal(96)
-	//// const [columns, setColumns] = createSignal(8)
-	const [height, setHeight] = createSignal(50)
-
-	//// const [once, setOnce] = createSignal(false)
-	//// createEffect(() => {
-	//// 	if (!once()) {
-	//// 		setOnce(true)
-	//// 		return
-	//// 	}
-	//// 	ref()!.style.setProperty("--__columns", "" + columns())
-	//// })
-
-	return <>
-		{css`
-			/* * { */
-			/* 	outline: 2px solid hsl(0 100% 50% / 10%); */
-			/* 	outline-offset: -1px; */
-			/* } */
-			.typography {
-				font: 400 14px /
-					normal system-ui;
-			}
-			.ellipsis {
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-			}
-
-			/********************************/
-
-			.container {
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-			}
-			.item {
-				padding: 8px;
-				padding-top: 0; /* Override */
-			}
-			.icon-container {
-				/* Flow */
-				display: grid;
-				place-items: center;
-			}
-			.icon {
-				height: 50%;
-				aspect-ratio: 1;
-				color: hsl(0 0% 25%);
-			}
-			.icon-label {
-				padding: 4px 8px;
-				height: 24px;
-				border-radius: 1000px;
-				background-color: hsl(0 0% 90%);
-			}
-
-			/* Overrides */
-			.container.no-name .item { padding: 0; }
-			.container.no-name .icon-label { display: none; }
-		`}
-		<div ref={setRef} class={cx(`container ${list() ? "list" : "grid"} ${(!list() && noName()) ? "no-name" : ""}`)}>
-			<For each={range(200)}>{() => <>
-				<div class="item">
-					<div class="icon-container">
-						<Dynamic component={SmileySVG} class="icon" style={{ "height": `${height()}%` }} />
-					</div>
-					<div class="icon-label">
-						<div class="typography ellipsis [text-align:center]">
-							icon-name
-						</div>
-					</div>
-				</div>
-			</>}</For>
-		</div>
+		{/* DEBUG */}
 		{css`
 			.debug-modal {
 				position: fixed;
-				inset: auto auto 24px 24px;
+				inset: auto auto 16px 16px;
 				padding: 24px;
-				/* width: 100%; */
-				/* max-width: 1536px; */
-				width: calc(var(--screen-x) - 24px - 24px);
+				width: calc(var(--screen-x) - 16px * 2);
 				max-width: 448px;
 				border-radius: 24px;
 				background-color: white;
@@ -443,14 +340,6 @@ function App3() {
 		`}
 		<Portal ref={el => el.className = "portal"}>
 			<div class="debug-modal">
-				<Checkbox checked={list()} setChecked={setList}>
-					LIST
-				</Checkbox>
-				<Show when={!list()}>
-					<Checkbox checked={noName()} setChecked={setNoName}>
-						NO NAME
-					</Checkbox>
-				</Show>
 				{css`
 					.slider-title {
 						display: grid;
@@ -458,80 +347,86 @@ function App3() {
 					}
 					.slider-title > :nth-child(2) { font-feature-settings: "tnum"; }
 				`}
-				{/* <div class="slider-title">
-					<div>COLUMNS</div>
-					<div>{columns()}</div>
-				</div>
-				<Slider value={columns()} setValue={setColumns} min={1} max={32} step={1} /> */}
+				<Checkbox checked={noName()} setChecked={setNoName}>
+					NO NAME
+				</Checkbox>
 				<div class="slider-title">
 					<div>HEIGHT</div>
-					<div>{height()}%</div>
+					<div>{heightPercentage()}%, {round(heightPixel(), { precision: 1 }).toFixed(1)}PX</div>
 				</div>
-				<Slider value={height()} setValue={setHeight} min={25} max={75} step={1} />
+				<Slider value={heightPercentage()} setValue={setHeightPercentage} min={20} max={80} step={1} />
+				<div class="slider-title">
+					<div>THICKNESS</div>
+					<div>{strokeWidth()}</div>
+				</div>
+				<Slider value={strokeWidth()} setValue={setStrokeWidth} min={0.5} max={2.5} step={0.1} />
 			</div>
 		</Portal>
+
 	</>
 }
 
-//// function App4() {
+//// function App2() {
 //// 	return <>
 //// 		{css`
-//// 			/* * { */
-//// 			/* 	outline: 2px solid hsl(0 100% 50% / 25%); */
-//// 			/* 	outline-offset: -1px; */
-//// 			/* } */
-//// 			.typography {
-//// 				font: 400 14px /
-//// 					normal system-ui;
+//// 			.icon-list {
+//// 				height: var(--screen-y);
+//// 				overflow-y: auto;
 //// 			}
-//// 			.ellipsis {
-//// 				overflow: hidden;
-//// 				text-overflow: ellipsis;
-//// 				white-space: nowrap;
-//// 			}
-////
-//// 			.container {
-//// 				min-height: var(--screen-y);
+//// 			.icon-container {
+//// 				position: relative;
+//// 				padding: 16px;
 ////
 //// 				/* Flow */
 //// 				display: grid;
-//// 				grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-//// 				/* gap: 8px; */
+//// 				grid-template-columns: auto 1fr auto auto;
+//// 				align-items: center;
+//// 				gap: 16px;
 //// 			}
-//// 			.item {
-//// 				padding: 8px;
-//// 				padding-top: revert; /* Override */
+//// 			.icon-container:not(:nth-child(1))::before { content: ""; }
+//// 			.icon-container:not(:nth-child(1))::before {
+//// 				position: absolute;
+//// 				inset: 0 0 100% 16px;
+//// 				border-top: 1px solid red;
 //// 			}
-//// 			.icon-container {
-//// 				height: calc(112px - 24px);
+//// 			.icon {
+//// 				height: 32px;
+//// 				aspect-ratio: 1;
+//// 				color: gray;
+//// 			}
+//// 			.icon-label {
+//// 				height: 8px;
+//// 				aspect-ratio: 16;
+//// 				border-radius: 1000px;
+//// 				background-color: lightgray;
+//// 			}
+//// 			.icon-action-button {
+//// 				height: 24px;
+//// 				aspect-ratio: 1;
+//// 				border-radius: 1000px;
+//// 				background-color: lightgray;
 ////
 //// 				/* Flow */
 //// 				display: grid;
 //// 				place-items: center;
 //// 			}
-//// 			.icon {
-//// 				height: 50%;
+//// 			.icon-action-button-svg {
+//// 				height: 75%;
 //// 				aspect-ratio: 1;
-//// 				border-radius: 1000px;
-//// 				background-color: hsl(0 0% 50%);
+//// 				color: gray;
 //// 			}
-//// 			.icon-label {
-//// 				padding: 4px 8px;
-//// 				height: 24px;
-//// 				border-radius: 1000px;
-//// 				background-color: hsl(0 0% 90%);
-//// 			}
+//// 			.icon-action-button + .icon-action-button { margin-left: -8px; }
 //// 		`}
-//// 		<div class="container">
+//// 		<div class="icon-list">
 //// 			<For each={range(200)}>{() => <>
-//// 				<div class="item">
-//// 					<div class="icon-container">
-//// 						<div class="icon"></div>
+//// 				<div class="icon-container">
+//// 					<Dynamic component={SmileySVG} class="icon" />
+//// 					<div class="icon-label"></div>
+//// 					<div class="icon-action-button">
+//// 						<Dynamic component={SmileySVG} class="icon-action-button-svg" />
 //// 					</div>
-//// 					<div class="icon-label">
-//// 						<div class="typography ellipsis [text-align:center]">
-//// 							icon-name
-//// 						</div>
+//// 					<div class="icon-action-button">
+//// 						<Dynamic component={SmileySVG} class="icon-action-button-svg" />
 //// 					</div>
 //// 				</div>
 //// 			</>}</For>
@@ -539,7 +434,147 @@ function App3() {
 //// 	</>
 //// }
 
+function App3() {
+	// Checkboxes
+	const [noName, setNoName] = createSignal(false)
+
+	// Sliders
+	const [heightPercentage, setHeightPercentage] = createSignal(50)
+	const [strokeWidth, setStrokeWidth] = createSignal(1.5)
+
+	const heightPixel = () => {
+		if (noName()) {
+			return 112 * heightPercentage() / 100
+		} else {
+			return (112 - 24) * heightPercentage() / 100
+		}
+	}
+
+	return <>
+		{css`
+			.typography {
+				font: 400 14px /
+					normal system-ui;
+			}
+			.ellipsis {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			/********************************/
+
+			/* .results-grid-container *:not(svg *) { */
+			/* 	outline: 2px solid hsl(0 100% 50% / 10%); */
+			/* 	outline-offset: -1px; */
+			/* } */
+			.results-grid-container {
+				--label-height: 24px;
+
+				padding: 16px;
+
+				/* Flow */
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+			}
+			@media (hover: none) { .results-grid-container {
+				height: var(--screen-y);
+				overflow-y: auto;
+			} }
+			.results-grid-item {
+				padding: 8px;
+				padding-top: 0; /* Override */
+			}
+			.results-grid-icon-container {
+				height: calc(112px - var(--label-height));
+
+				/* Flow */
+				display: grid;
+				place-items: center;
+			}
+			.results-grid-icon-svg {
+				height: 50%;
+				aspect-ratio: 1;
+				color: hsl(0 0% 25%);
+			}
+			.results-grid-icon-label {
+				padding: 4px 8px;
+				height: var(--label-height);
+				border-radius: 1000px;
+				background-color: hsl(0 0% 90%);
+			}
+			/* Overrides */
+			.results-grid-container.no-name .results-grid-item { padding: 0; }
+			.results-grid-container.no-name .results-grid-icon-label { display: none; }
+			.results-grid-container.no-name .results-grid-icon-container { height: 112px; }
+		`}
+		<div class={cx(`results-grid-container ${noName() ? "no-name" : ""}`)}>
+			<For each={range(200)}>{() => <>
+				<div class="results-grid-item">
+					<div class="results-grid-icon-container">
+						{/* <Dynamic component={SmileySVG} class="icon" style={{ "height": `${height()}%` }} /> */}
+						<Dynamic
+							component={SmileyOutlineSVG}
+							class="results-grid-icon-svg"
+							style={{
+								"transform": `scale(${heightPercentage() / 50})`,
+								"stroke-width": "" + strokeWidth(),
+							}}
+						/>
+					</div>
+					<div class="results-grid-icon-label">
+						<div class="typography ellipsis [text-align:center]">
+							icon-name
+						</div>
+					</div>
+				</div>
+			</>}</For>
+		</div>
+		{css`
+			.debug-modal {
+				position: fixed;
+				inset: auto auto 16px 16px;
+				padding: 24px;
+				width: calc(var(--screen-x) - 16px * 2);
+				max-width: 448px;
+				border-radius: 24px;
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+
+				/* Flow */
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+			}
+		`}
+		<Portal ref={el => el.className = "portal"}>
+			<div class="debug-modal">
+				{css`
+					.slider-title {
+						display: grid;
+						grid-template-columns: 1fr auto;
+					}
+					.slider-title > :nth-child(2) { font-feature-settings: "tnum"; }
+				`}
+				<Checkbox checked={noName()} setChecked={setNoName}>
+					NO NAME
+				</Checkbox>
+				<div class="slider-title">
+					<div>HEIGHT</div>
+					<div>{heightPercentage()}%, {round(heightPixel(), { precision: 1 }).toFixed(1)}PX</div>
+				</div>
+				<Slider value={heightPercentage()} setValue={setHeightPercentage} min={20} max={80} step={1} />
+				<div class="slider-title">
+					<div>THICKNESS</div>
+					<div>{strokeWidth()}</div>
+				</div>
+				<Slider value={strokeWidth()} setValue={setStrokeWidth} min={0.5} max={2.5} step={0.1} />
+			</div>
+		</Portal>
+	</>
+}
+
 render(() =>
-	<App3 />,
+	<App />,
 	document.getElementById("root")!,
 )

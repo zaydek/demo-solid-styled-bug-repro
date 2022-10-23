@@ -28,7 +28,7 @@ export function Sheet(props: ParentProps<{
 }>) {
 	return <>
 		<Responsive>
-			<Bottomsheet initialState="open">
+			<Bottomsheet initialState="closed">
 				{props.children}
 			</Bottomsheet>
 		</Responsive>

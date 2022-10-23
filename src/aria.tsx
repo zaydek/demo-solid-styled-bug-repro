@@ -252,7 +252,13 @@ function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 
 	// Normalize a value
 	function normalizeValue(value: number) {
-		return clamp(value - value % step(), { min: min(), max: max() })
+		// NOTE: Use * 1e3 and / 1e3 because % operator doesn’t work on decimals.
+		// This assumes values are less precise than 1e3 or 1_000.
+		return clamp((
+			(value  * 1e3) -
+			(value  * 1e3) %
+			(step() * 1e3)
+		) / 1e3, { min: min(), max: max() })
 	}
 	setValue(normalizeValue(value())) // Immediately normalize
 
