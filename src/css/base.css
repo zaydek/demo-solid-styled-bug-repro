@@ -7,8 +7,10 @@ disables font-size scaling and body scrolling on touch devices. */
 	-moz-osx-font-smoothing: grayscale;
 	/* Disable selection */
 	-webkit-tap-highlight-color: transparent;
-	-webkit-user-select: none;
-	user-select: none;
+	/* -webkit-user-select: none; */
+	/* user-select: none; */
+	/* Disable overscroll-y on <html> */
+	overscroll-behavior-y: none;
 }
 
 @media (hover: none) { :root {
@@ -20,5 +22,11 @@ disables font-size scaling and body scrolling on touch devices. */
 	overflow: hidden;
 } }
 
+/* COMPAT/the-new-css-reset */
 /* https://github.com/elad2412/the-new-css-reset/issues/25#issuecomment-1242636428 */
 :focus-visible { outline: revert; }
+
+/* [data-selectable] { */
+/* 	-webkit-user-select: text; */
+/* 	user-select: text; */
+/* } */

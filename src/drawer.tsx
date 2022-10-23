@@ -1,7 +1,7 @@
 import { Accessor, batch, createContext, createEffect, createSignal, JSX, onMount, ParentProps, untrack, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
 import { createMounted, css } from "./utils/solid"
-import { cx, round } from "./utils/vanilla"
+import { cx, only, round } from "./utils/vanilla"
 
 type Element = {
 	open:       boolean
@@ -33,9 +33,6 @@ const DrawerContext = createContext<{
 }>()
 
 ////////////////////////////////////////
-////////////////////////////////////////
-////////////////////////////////////////
-////////////////////////////////////////
 
 export function Drawer(props: ParentProps<{
 	open?: boolean
@@ -59,7 +56,7 @@ export function Drawer(props: ParentProps<{
 	return <>
 		<div
 			ref={setRef}
-			class={cx(`drawer ${element.open ? "is-open" : "is-closed"}`)}
+			class={cx(`drawer ${element.open ? "open" : "closed"}`)}
 			style={{
 				//// // DEBUG
 				//// "background-color": `hsl(${index * 60} 100% 75%)`,
@@ -89,12 +86,18 @@ export function Drawer(props: ParentProps<{
 			>
 				{props.head}
 			</div>
-			<div class="drawer-body">
+			<div
+				class="drawer-body"
+				// @ts-expect-error
+				inert={only(!element.open)}
+			>
 				{props.children}
 			</div>
 		</div>
 	</>
 }
+
+////////////////////////////////////////
 
 createMounted()
 
@@ -218,22 +221,9 @@ export function DrawerProvider(props: ParentProps<{
 						0;   /* L */
 				}
 				/* TODO: This should be implemented in userland */
-				:root.ready .drawer {
+				:root.mounted .drawer {
 					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.1);
 				}
-
-				/******************************/
-
-				/* TODO: This should be implemented in userland */
-				/* .drawer-mask { */
-				/* 	position: absolute; */
-				/* 	z-index: 50; */
-				/* 	inset: 0 0 auto 0; */
-				/* 	background-color: white; */
-				/* } */
-				/* :root.ready .drawer-mask { */
-				/* 	transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.1); */
-				/* } */
 
 				/******************************/
 
@@ -244,7 +234,7 @@ export function DrawerProvider(props: ParentProps<{
 				/******************************/
 
 				/* TODO: This should be implemented in userland */
-				:root.ready .drawer-body {
+				:root.mounted .drawer-body {
 					transition: opacity 300ms cubic-bezier(0, 1, 0.25, 1.1);
 				}
 				.drawer.closed .drawer-body { opacity: 0; }
@@ -258,27 +248,8 @@ export function DrawerProvider(props: ParentProps<{
 						"overflow-y": "auto",
 					}),
 				}}
-				//// // @ts-expect-error
-				//// inert={only(ready() && transition())}
 			>
 				{props.children}
-				{/* <Show when={ready()}>
-					<div
-						class="drawer-mask"
-						style={{
-							// Lazy but works
-							"height": transition()
-								? `${boundingBox()}px`
-								: "0px",
-							// Lazy but works
-							"transform": `translateY(${elements[elements.length - 1].translate! + (
-								elements[elements.length - 1].open
-									? elements[elements.length - 1].maxHeight!
-									: elements[elements.length - 1].minHeight!
-							)}px)`,
-						}}
-					></div>
-				</Show> */}
 			</div>
 		</DrawerContext.Provider>
 	</>

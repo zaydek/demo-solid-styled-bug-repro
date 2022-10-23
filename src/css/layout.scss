@@ -1,6 +1,6 @@
-/**************************************/
-/* NAV */
-
+/*
+ * <nav>
+ */
 /* At >=768px use margin-right to create negative space */
 @media (min-width: 768px) {
 	:root:has(.sidesheet:is(.open, .expanded)) .layout-nav {
@@ -8,12 +8,11 @@
 	}
 }
 
-/**************************************/
-/* MAIN */
-
+/*
+ * <main>
+ */
 .layout-main {
 	margin-top: 64px; /* For <nav> */
-	padding: 16px;
 }
 :root:has(.bottomsheet) .layout-main {
 	height: calc(var(--screen-y) - 64px - var(--sheet-draggable-size));
@@ -36,9 +35,9 @@
 	}
 }
 
-/**************************************/
-/* SHEET */
-
+/*
+ * <aside>
+ */
 :is(.bottomsheet-content, .sidesheet-content) {
 	display: flex;
 	flex-direction: column;

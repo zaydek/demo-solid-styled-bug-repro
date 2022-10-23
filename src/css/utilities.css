@@ -2,7 +2,11 @@
 .line { height: 4px; background-color: hsl(0 0% 90%); }
 .line.collapsed { position: relative; z-index: 10; isolation: isolate; margin-top: -4px; }
 
-/* https://developer.mozilla.org/en-US/docs/Web/CSS/text-overflow */
+.typography {
+	font: 400 14px /
+		normal system-ui;
+}
+
 .ellipsis {
 	overflow: hidden;
 	text-overflow: ellipsis;

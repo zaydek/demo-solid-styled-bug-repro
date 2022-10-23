@@ -37,7 +37,11 @@ function Nav() {
 			.layout-nav {
 				position: fixed;
 				z-index: 10;
-				inset: 0 0 auto 0;
+				inset:
+					0    /* T */
+					0    /* R */
+					auto /* B */
+					0;   /* L */
 				padding: 16px;
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
@@ -63,30 +67,43 @@ function Nav() {
 
 ////////////////////////////////////////
 
+//// <div class="debug-modal">
+//// 	{css`
+//// 		.slider-title {
+//// 			display: grid;
+//// 			grid-template-columns: 1fr auto;
+//// 		}
+//// 		.slider-title > :nth-child(2) { font-feature-settings: "tnum"; }
+//// 	`}
+//// 	<Checkbox checked={noName()} setChecked={setNoName}>
+//// 		NO NAME
+//// 	</Checkbox>
+//// 	<div class="slider-title">
+//// 		<div>HEIGHT</div>
+//// 		<div>{heightPercentage()}%, {round(heightPixel(), { precision: 1 }).toFixed(1)}PX</div>
+//// 	</div>
+//// 	<Slider value={heightPercentage()} setValue={setHeightPercentage} min={20} max={80} step={1} />
+//// 	<div class="slider-title">
+//// 		<div>THICKNESS</div>
+//// 		<div>{strokeWidth()}</div>
+//// 	</div>
+//// 	<Slider value={strokeWidth()} setValue={setStrokeWidth} min={0.5} max={2.5} step={0.1} />
+//// </div>
+
 function Main() {
 	return <>
 		{css`
-			/* TODO: EXTRACT */
-			.typography {
-				font: 400 14px /
-					normal system-ui;
-			}
-			/* TODO: EXTRACT */
-			.ellipsis {
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-			}
-
-			/********************************/
-
 			.results-grid-container {
-				--label-height: 24px;
+				--label-height: 28px;
+
+				padding: 16px;
 
 				/* Flow */
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
 			}
+			/* Defer padding-right to layout-main on touch devices */
+			@media (hover: hover) { .results-grid-container { padding-right: 0px; } }
 			.results-grid-item {
 				padding: 8px;
 				padding-top: 0; /* Override */
@@ -104,10 +121,14 @@ function Main() {
 				color: hsl(0 0% 25%);
 			}
 			.results-grid-icon-label {
-				padding: 4px 8px;
+				padding: 0 8px;
 				height: var(--label-height);
 				border-radius: 1000px;
 				background-color: hsl(0 0% 90%);
+
+				/* Flow */
+				display: grid;
+				align-items: center;
 			}
 			/* Overrides */
 			.results-grid-container.no-name .results-grid-item { padding: 0; }
@@ -115,33 +136,35 @@ function Main() {
 			.results-grid-container.no-name .results-grid-icon-container { height: 112px; }
 		`}
 		{/* @ts-expect-error */}
-		<div class={cx(`layout-main results-grid-container ${noName() ? "no-name" : ""}`)} inert={only(sidesheet() === "expanded")}>
-			<For each={range(200)}>{() => <>
-				<div class="results-grid-item">
-					<div class="results-grid-icon-container">
-						{/* <Dynamic component={SmileySVG} class="icon" style={{ "height": `${height()}%` }} /> */}
-						<Dynamic
-							component={SmileyOutlineSVG}
-							class="results-grid-icon-svg"
-							style={{
-								// TODO: Change to dirty signals?
-								...(heightPercentage() !== 50 && {
-									"transform": `scale(${heightPercentage() / 50})`,
-								}),
-								...(strokeWidth() !== 1.5 && {
-									"stroke-width": "" + strokeWidth(),
-								}),
-							}}
-						/>
-					</div>
-					<div class="results-grid-icon-label">
-						<div class="typography ellipsis [text-align:center]">
-							icon-name
+		<main class="layout-main" inert={only(sidesheet() === "expanded")}>
+			<div class={cx(`results-grid-container ${noName() ? "no-name" : ""}`)}>
+				<For each={range(200)}>{() => <>
+					<div class="results-grid-item">
+						<div class="results-grid-icon-container">
+							{/* <Dynamic component={SmileySVG} class="icon" style={{ "height": `${height()}%` }} /> */}
+							<Dynamic
+								component={SmileyOutlineSVG}
+								class="results-grid-icon-svg"
+								style={{
+									// TODO: Change to dirty signals?
+									...(heightPercentage() !== 50 && {
+										"transform": `scale(${heightPercentage() / 50})`,
+									}),
+									...(strokeWidth() !== 1.5 && {
+										"stroke-width": "" + strokeWidth(),
+									}),
+								}}
+							/>
+						</div>
+						<div class="results-grid-icon-label">
+							<div class="typography ellipsis [text-align:center]">
+								icon-name
+							</div>
 						</div>
 					</div>
-				</div>
-			</>}</For>
-		</div>
+				</>}</For>
+			</div>
+		</main>
 	</>
 }
 
@@ -285,7 +308,7 @@ function Aside() {
 							<div>Foo</div>
 						</div>
 					</>} open>
-						<Slider />
+						<Slider value={heightPercentage()} setValue={setHeightPercentage} min={20} max={80} step={1} />
 					</Drawer>
 
 					{/* <Drawer> */}
@@ -297,19 +320,7 @@ function Aside() {
 							<div>Foo</div>
 						</div>
 					</>} open>
-						<Slider />
-					</Drawer>
-
-					{/* <Drawer> */}
-					<Drawer head={<>
-						<div class="line"></div>
-						<div class="drawer-head-content">
-							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>Hello, world!</div>
-							<div>Foo</div>
-						</div>
-					</>} open>
-						<Slider />
+						<Slider value={strokeWidth()} setValue={setStrokeWidth} min={0.5} max={2.5} step={0.1} />
 					</Drawer>
 				</DrawerProvider>
 				<div class="line"></div>
