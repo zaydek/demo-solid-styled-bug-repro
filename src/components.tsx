@@ -16,7 +16,7 @@ export function NavIcon() {
 
 ////////////////////////////////////////
 
-export function CheckSVG(props: VoidProps<RefProps & CSSProps>) {
+function CheckSVG(props: VoidProps<RefProps & CSSProps>) {
 	return <>
 		<svg ref={el => props.ref?.(el as unknown as HTMLElement)} class={props.class} style={props.style} fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 			<polyline points="20 6 9 17 4 12"></polyline>
@@ -24,8 +24,17 @@ export function CheckSVG(props: VoidProps<RefProps & CSSProps>) {
 	</>
 }
 
-export function CheckableCheckbox(props: ParentProps) {
-	const [checked, setChecked] = createSignal(true)
+export function Checkbox(props: ParentProps<{
+	checked?:    boolean
+	setChecked?: Setter<boolean>
+}>) {
+	const [fallback, setFallback] = createSignal(false)
+	const [checked, setChecked] = [
+		typeof props.checked === "boolean"
+			? () => props.checked! // Use ! to assert presence for TypeScript
+			: fallback,
+		props.setChecked ?? setFallback,
+	]
 
 	return <>
 		<AriaCheckbox class="cp-checkable-container" checked={checked()} setChecked={setChecked}>
@@ -42,7 +51,8 @@ export function CheckableCheckbox(props: ParentProps) {
 	</>
 }
 
-export function CheckableRadio(props: ParentProps<{
+// TODO
+export function Radio(props: ParentProps<{
 	value: string
 
 	style?: JSX.CSSProperties
@@ -62,6 +72,7 @@ export function CheckableRadio(props: ParentProps<{
 	</>
 }
 
+// TODO
 export function Radiogroup(props: ParentProps<CSSProps>) {
 	const [groupValue, setGroupValue] = createSignal("foo")
 
@@ -75,15 +86,32 @@ export function Radiogroup(props: ParentProps<CSSProps>) {
 ////////////////////////////////////////
 
 export function Slider(props: VoidProps<{
-	value:    number
-	setValue: Setter<number>
-	min:      number
-	max:      number
-	step:     number
+	value?:    number
+	setValue?: Setter<number>
+	min?:      number
+	max?:      number
+	step?:     number
 }>) {
+	const [fallback, setFallback] = createSignal(50)
+	const [value, setValue, min, max, step] = [
+		props.value
+			? () => props.value! // Use ! to assert presence for TypeScript
+			: fallback,
+		props.setValue ?? setFallback,
+		props.min
+			? () => props.min!
+			: () => 0,
+		props.max
+			? () => props.max!
+			: () => 100,
+		props.step
+			? () => props.step!
+			: () => 1,
+	]
+
 	return <>
 		<div class="cp-slider-container">
-			<AriaSliderHorizontal class="cp-slider" value={props.value} setValue={props.setValue} min={props.min} max={props.max} step={props.step}>
+			<AriaSliderHorizontal class="cp-slider" value={value()} setValue={setValue} min={min()} max={max()} step={step()}>
 				{translate => <>
 					<div class="cp-slider-track">
 						<AriaSliderThumb

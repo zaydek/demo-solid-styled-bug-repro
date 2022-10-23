@@ -1,6 +1,6 @@
 import { Accessor, batch, createContext, createEffect, createSignal, JSX, onMount, ParentProps, untrack, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
-import { createReadySignal, css } from "./utils/solid"
+import { createMounted, css } from "./utils/solid"
 import { cx, round } from "./utils/vanilla"
 
 type Element = {
@@ -96,7 +96,7 @@ export function Drawer(props: ParentProps<{
 	</>
 }
 
-createReadySignal()
+createMounted()
 
 export function DrawerProvider(props: ParentProps<{
 	//// resizeStrategy?: "immediate" | "delayed"

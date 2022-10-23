@@ -1,14 +1,14 @@
 import "./css"
 
-import { createSignal, For } from "solid-js"
+import { createEffect, createSignal, For, Show } from "solid-js"
 import { Dynamic, Portal, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
-import { CheckableCheckbox, CheckableRadio, NavIcon, Radiogroup, Slider } from "./components"
+import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer, DrawerProvider } from "./drawer"
 import { NonResponsive, Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
-import { css } from "./utils/solid"
-import { only, range } from "./utils/vanilla"
+import { createScreen, css } from "./utils/solid"
+import { cx, only, range } from "./utils/vanilla"
 
 const [sidesheet, setSidesheet] = createSignal<SidesheetState>("open")
 
@@ -152,9 +152,9 @@ function App() {
 					</>} open>
 						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
 							<For each={["foo", "bar"]}>{value => <>
-								<CheckableRadio value={value}>
+								<Radio value={value}>
 									Hello, world!
-								</CheckableRadio>
+								</Radio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -170,9 +170,9 @@ function App() {
 					</>} open>
 						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
 							<For each={["foo", "bar", "baz"]}>{value => <>
-								<CheckableRadio value={value}>
+								<Radio value={value}>
 									Hello, world!
-								</CheckableRadio>
+								</Radio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -186,9 +186,9 @@ function App() {
 							<div>Foo</div>
 						</div>
 					</>} open>
-						<CheckableCheckbox>
+						<Checkbox>
 							Hello, world!
-						</CheckableCheckbox>
+						</Checkbox>
 						{/* <Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]"> */}
 						<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]">
 							<For each={[
@@ -199,9 +199,9 @@ function App() {
 								{/* <Show when={index() > 0}>
 									<div class="[margin:8px_0] [border-radius:1000px] [background-color:hsl(0_0%_90%)]"></div>
 								</Show> */}
-								<CheckableRadio style={style} value={value}>
+								<Radio style={style} value={value}>
 									{value}
-								</CheckableRadio>
+								</Radio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -333,20 +333,44 @@ function App2() {
 	</>
 }
 
-function App3() {
-	const [type, setType] = createSignal<"list" | "grid">("grid")
-	const [size, setSize] = createSignal(40)
+//// // FIXME: Use suppressWarning because of bottomsheet
+//// const { screenX } = createScreen({ suppressWarning: true })
+////
+//// createEffect(() => {
+//// 	console.log(screenX() / 96)
+//// })
 
-	//// window.addEventListener("keydown", e => {
-	//// 	if (e.key === "-") {
-	//// 		setSize(curr => Math.max(16, curr - 2))
-	//// 	} else if (e.key === "=") {
-	//// 		setSize(curr => Math.min(64, curr + 2))
+function App3() {
+	const [ref, setRef] = createSignal<HTMLElement>()
+
+	// Checkboxes
+	const [list, setList] = createSignal(false)
+	const [noName, setNoName] = createSignal(false)
+
+	// Sliders
+	//// const [minmax, setMinmax] = createSignal(96)
+	//// const [columns, setColumns] = createSignal(8)
+	const [height, setHeight] = createSignal(50)
+
+	//// const [once, setOnce] = createSignal(false)
+	//// createEffect(() => {
+	//// 	if (!once()) {
+	//// 		setOnce(true)
+	//// 		return
 	//// 	}
+	//// 	ref()!.style.setProperty("--__columns", "" + columns())
 	//// })
 
 	return <>
 		{css`
+			/* * { */
+			/* 	outline: 2px solid hsl(0 100% 50% / 10%); */
+			/* 	outline-offset: -1px; */
+			/* } */
+			.typography {
+				font: 400 14px /
+					normal system-ui;
+			}
 			.ellipsis {
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -355,67 +379,45 @@ function App3() {
 
 			/********************************/
 
-			.container { min-height: var(--screen-y); }
-			.item-svg {
-				height: 32px;
+			.container {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+			}
+			.item {
+				padding: 8px;
+				padding-top: 0; /* Override */
+			}
+			.icon-container {
+				/* Flow */
+				display: grid;
+				place-items: center;
+			}
+			.icon {
+				height: 50%;
 				aspect-ratio: 1;
-				/* border-radius: 1000px; */
-				color: lightgray;
+				color: hsl(0 0% 25%);
+			}
+			.icon-label {
+				padding: 4px 8px;
+				height: 24px;
+				border-radius: 1000px;
+				background-color: hsl(0 0% 90%);
 			}
 
-			/********************************/
-
-			/* data-type=list */
-			.container[data-type=list] .item {
-				padding: 16px;
-
-				/* Flow */
-				display: grid;
-				grid-template-columns: auto 1fr;
-				align-items: center;
-				gap: 16px;
-			}
-
-			/* Preamble */
-			.container[data-type=list] .item { position: relative; }
-			.container[data-type=list] .item:not(:nth-child(1))::before { content: ""; }
-
-			.container[data-type=list] .item:not(:nth-child(1))::before {
-				position: absolute;
-				inset: 0 0 0 16px;
-				border-top: 1px solid hsl(0 0% 75%);
-			}
-
-			/********************************/
-
-			/* DEBUG */
-			/* .container[data-type=grid] *:not(svg *) { */
-			/* 	outline: 2px solid hsl(0 100% 50% / 25%); */
-			/* 	outline-offset: -1px; */
-			/* } */
-
-			/* data-type=grid */
-			.container[data-type=grid] {
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
-				grid-auto-rows: 128px;
-			}
-			.container[data-type=grid] .item {
-				padding: 16px;
-
-				/* Flow */
-				display: grid;
-				grid-template-rows: 1fr auto;
-			}
-			/* Center the first element */
-			.container[data-type=grid] .item > :nth-child(1) { justify-self: center; align-self: center; }
+			/* Overrides */
+			.container.no-name .item { padding: 0; }
+			.container.no-name .icon-label { display: none; }
 		`}
-		<div class="container" data-type={type()} onClick={e => setType(curr => curr === "grid" ? "list" : "grid")}>
+		<div ref={setRef} class={cx(`container ${list() ? "list" : "grid"} ${(!list() && noName()) ? "no-name" : ""}`)}>
 			<For each={range(200)}>{() => <>
 				<div class="item">
-					<Dynamic component={SmileySVG} class="item-svg" style={{ "height": `${size()}px` }} />
-					<div class="item-label ellipsis">
-						Hello, world!
+					<div class="icon-container">
+						<Dynamic component={SmileySVG} class="icon" style={{ "height": `${height()}%` }} />
+					</div>
+					<div class="icon-label">
+						<div class="typography ellipsis [text-align:center]">
+							icon-name
+						</div>
 					</div>
 				</div>
 			</>}</For>
@@ -423,23 +425,119 @@ function App3() {
 		{css`
 			.debug-modal {
 				position: fixed;
-				inset: auto auto 16px 16px;
-				padding: 16px;
-				/* height: 224px; */
-				/* aspect-ratio: 2; */
-				width: 448px;
-				border-radius: 16px;
+				inset: auto auto 24px 24px;
+				padding: 24px;
+				/* width: 100%; */
+				/* max-width: 1536px; */
+				width: calc(var(--screen-x) - 24px - 24px);
+				max-width: 448px;
+				border-radius: 24px;
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+
+				/* Flow */
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
 			}
 		`}
 		<Portal ref={el => el.className = "portal"}>
 			<div class="debug-modal">
-				<Slider value={size()} setValue={setSize} min={16} max={64} step={1} />
+				<Checkbox checked={list()} setChecked={setList}>
+					LIST
+				</Checkbox>
+				<Show when={!list()}>
+					<Checkbox checked={noName()} setChecked={setNoName}>
+						NO NAME
+					</Checkbox>
+				</Show>
+				{css`
+					.slider-title {
+						display: grid;
+						grid-template-columns: 1fr auto;
+					}
+					.slider-title > :nth-child(2) { font-feature-settings: "tnum"; }
+				`}
+				{/* <div class="slider-title">
+					<div>COLUMNS</div>
+					<div>{columns()}</div>
+				</div>
+				<Slider value={columns()} setValue={setColumns} min={1} max={32} step={1} /> */}
+				<div class="slider-title">
+					<div>HEIGHT</div>
+					<div>{height()}%</div>
+				</div>
+				<Slider value={height()} setValue={setHeight} min={25} max={75} step={1} />
 			</div>
 		</Portal>
 	</>
 }
+
+//// function App4() {
+//// 	return <>
+//// 		{css`
+//// 			/* * { */
+//// 			/* 	outline: 2px solid hsl(0 100% 50% / 25%); */
+//// 			/* 	outline-offset: -1px; */
+//// 			/* } */
+//// 			.typography {
+//// 				font: 400 14px /
+//// 					normal system-ui;
+//// 			}
+//// 			.ellipsis {
+//// 				overflow: hidden;
+//// 				text-overflow: ellipsis;
+//// 				white-space: nowrap;
+//// 			}
+////
+//// 			.container {
+//// 				min-height: var(--screen-y);
+////
+//// 				/* Flow */
+//// 				display: grid;
+//// 				grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+//// 				/* gap: 8px; */
+//// 			}
+//// 			.item {
+//// 				padding: 8px;
+//// 				padding-top: revert; /* Override */
+//// 			}
+//// 			.icon-container {
+//// 				height: calc(112px - 24px);
+////
+//// 				/* Flow */
+//// 				display: grid;
+//// 				place-items: center;
+//// 			}
+//// 			.icon {
+//// 				height: 50%;
+//// 				aspect-ratio: 1;
+//// 				border-radius: 1000px;
+//// 				background-color: hsl(0 0% 50%);
+//// 			}
+//// 			.icon-label {
+//// 				padding: 4px 8px;
+//// 				height: 24px;
+//// 				border-radius: 1000px;
+//// 				background-color: hsl(0 0% 90%);
+//// 			}
+//// 		`}
+//// 		<div class="container">
+//// 			<For each={range(200)}>{() => <>
+//// 				<div class="item">
+//// 					<div class="icon-container">
+//// 						<div class="icon"></div>
+//// 					</div>
+//// 					<div class="icon-label">
+//// 						<div class="typography ellipsis [text-align:center]">
+//// 							icon-name
+//// 						</div>
+//// 					</div>
+//// 				</div>
+//// 			</>}</For>
+//// 		</div>
+//// 	</>
+//// }
 
 render(() =>
 	<App3 />,
