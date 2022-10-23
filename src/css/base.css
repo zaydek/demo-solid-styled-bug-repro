@@ -1,16 +1,17 @@
 /* This is a heavy-handed CSS reset because supporting touch devices is hard.
 This CSS resets adds hi-DPI antialiasing and disables selection universally, and
 disables font-size scaling and body scrolling on touch devices. */
-body {
+:root {
 	/* Enable hi-DPI antialiasing */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	/* Disable selection */
+	-webkit-tap-highlight-color: transparent;
 	-webkit-user-select: none;
 	user-select: none;
 }
 
-@media (hover: none) { body {
+@media (hover: none) { :root {
 	/* Disable font-size scaling */
 	-webkit-text-size-adjust: 100%;
 	/* Disable body scrolling */

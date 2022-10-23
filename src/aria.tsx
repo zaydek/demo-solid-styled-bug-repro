@@ -260,7 +260,7 @@ function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 	const getValueFromTranslate = () => {
 		const f = (point2()![axis()] - point1()![axis()]) /
 			(track()![edge()] - thumb()![edge()])
-		return normalizeValue(f * (max() - min()))
+		return normalizeValue(f * (max() - min()) + min())
 	}
 
 	// Gets a translation from value
@@ -302,16 +302,22 @@ function AriaSlider(props: FlowProps<RefProps & CSSProps & {
 				setPointerDown(true)
 				setPoint1({
 					y: round(track()!.y + thumb()!.h / 2), // Use round to dedupe
-					x: round(track()!.x + thumb()!.w / 2), // Use round to dedupe
+					x: round(track()!.x + thumb()!.w / 2),
 				})
-				setPoint2({ y: round(e.clientY), x: round(e.clientX) }) // Use round to dedupe
+				setPoint2({
+					y: round(e.clientY), // Use round to dedupe
+					x: round(e.clientX),
+				})
 				setValue(getValueFromTranslate())
 			})
 		}
 		function handlePointerMove(e: PointerEvent) {
 			if (!pointerDown()) { return }
 			batch(() => {
-				setPoint2({ y: round(e.clientY), x: round(e.clientX) }) // Use round to dedupe
+				setPoint2({
+					y: round(e.clientY), // Use round to dedupe
+					x: round(e.clientX),
+				})
 				setValue(getValueFromTranslate())
 			})
 		}

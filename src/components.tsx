@@ -1,4 +1,4 @@
-import { createSignal, JSX, ParentProps, VoidProps } from "solid-js"
+import { createSignal, JSX, ParentProps, Setter, VoidProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { AriaCheckbox, AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from "./aria"
 import { SmileySVG } from "./smiley-svg"
@@ -74,12 +74,16 @@ export function Radiogroup(props: ParentProps<CSSProps>) {
 
 ////////////////////////////////////////
 
-export function Slider() {
-	const [value, setValue] = createSignal(50)
-
+export function Slider(props: VoidProps<{
+	value:    number
+	setValue: Setter<number>
+	min:      number
+	max:      number
+	step:     number
+}>) {
 	return <>
 		<div class="cp-slider-container">
-			<AriaSliderHorizontal class="cp-slider" value={value()} setValue={setValue} min={0} max={100} step={1}>
+			<AriaSliderHorizontal class="cp-slider" value={props.value} setValue={props.setValue} min={props.min} max={props.max} step={props.step}>
 				{translate => <>
 					<div class="cp-slider-track">
 						<AriaSliderThumb
