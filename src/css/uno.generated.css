@@ -1,8 +1,7 @@
 /* layer: default */
+.\[align-items\:center\]{align-items:center;}
 .\[aspect-ratio\:16_\/_9\]{aspect-ratio:16 / 9;}
 .\[background-color\:gray\]{background-color:gray;}
-.\[background-color\:hsl\(0_0\%_90\%\)\]{background-color:hsl(0 0% 90%);}
-.\[border-radius\:1000px\]{border-radius:1000px;}
 .\[border-radius\:8px\]{border-radius:8px;}
 .\[display\:flex\]{display:flex;}
 .\[display\:grid\]{display:grid;}
@@ -12,7 +11,7 @@
 .\[gap\:16px\]{gap:16px;}
 .\[gap\:8px\]{gap:8px;}
 .\[grid-template-columns\:repeat\(3\,_1fr\)\]{grid-template-columns:repeat(3, 1fr);}
+.\[height\:64px\]{height:64px;}
 .\[height\:80px\]{height:80px;}
-.\[margin\:8px_0\]{margin:8px 0;}
 .\[padding\:16px\]{padding:16px;}
 .\[text-align\:center\]{text-align:center;}

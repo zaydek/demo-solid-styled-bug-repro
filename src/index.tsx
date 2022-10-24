@@ -1,6 +1,6 @@
 import "./css"
 
-import { createSignal, For } from "solid-js"
+import { batch, createEffect, createMemo, createRoot, createSignal, For, onCleanup, onMount, untrack } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
@@ -8,7 +8,8 @@ import { Drawer, DrawerProvider } from "./drawer"
 import { BottomsheetOrSidesheet, NonResponsive } from "./sheet"
 import { SmileyOutlineSVG, SmileySVG } from "./smiley-svg"
 import { css } from "./utils/solid"
-import { cx, only, range } from "./utils/vanilla"
+import { cx, only, range, round } from "./utils/vanilla"
+import { ProgressIndicator } from "./progress"
 
 ////////////////////////////////////////
 
@@ -34,6 +35,7 @@ const heightPixel = () => {
 function Nav() {
 	return <>
 		{css`
+			/* Reuse layout-nav because of margin-right (see layout.css) */
 			.layout-nav {
 				position: fixed;
 				z-index: 10;
@@ -42,22 +44,21 @@ function Nav() {
 					0    /* R */
 					auto /* B */
 					0;   /* L */
-				padding: 16px;
+				padding: 0 16px;
+				height: 64px;
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
 
 				/* Flow */
-				/* TODO: Convert to grid */
-				display: flex;
-				flex-direction: row;
-				align-items: center; /* Center y-axis */
+				display: grid;
+				grid-template-columns: auto 1fr auto;
+				align-items: center;
 				gap: 16px;
 			}
 		`}
 		<nav class="layout-nav">
 			<NavIcon />
-			{/* TODO: Deprecate use of flex-grow */}
-			<div class="[flex-grow:1]">
+			<div class="[height:64px] [display:grid] [align-items:center]">
 				<div>Hello, world!</div>
 			</div>
 			<NavIcon />
@@ -103,7 +104,7 @@ function Main() {
 				grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
 			}
 			/* Defer padding-right to layout-main on touch devices */
-			@media (hover: hover) { .results-grid-container { padding-right: 0px; } }
+			@media (hover: hover) { .results-grid-container { padding-right: 0; } } /* Override */
 			.results-grid-item {
 				padding: 8px;
 				padding-top: 0; /* Override */
@@ -183,24 +184,51 @@ function Aside() {
 			}
 			.bottomsheet-content > :nth-child(1) { overflow-y: auto; }
 			.sidesheet-content   > :nth-child(2) { overflow-y: auto; }
+
+			/********************************/
+
+			.aside-navbar {
+				padding: 16px;
+
+				/* Flow */
+				display: grid;
+				grid-template-columns: auto 1fr auto auto;
+				gap: 16px;
+			}
+			.aside-navbar > :nth-child(1) { grid-column: 1; }
+			.aside-navbar > :nth-child(2) { grid-column: 3; }
+			.aside-navbar > :nth-child(3) { grid-column: 4; }
+
+			/********************************/
+
+			.drawer-head-content {
+				padding: 16px 24px; /* Add 8px to x-axis because of cp-checkable-label */
+
+				/* Flow */
+				display: grid;
+				grid-template-columns: auto 1fr auto;
+				align-items: center;
+				gap: 8px;
+			}
+			.drawer-head-icon {
+				height: 16px;
+				aspect-ratio: 1;
+				color: gray;
+			}
+			.drawer-body {
+				padding: 16px;
+				padding-top: 0; /* Override */
+
+				/* Flow */
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+			}
 		`}
 		<BottomsheetOrSidesheet sidesheet={sidesheet()} setSidesheet={setSidesheet}>
 			<NonResponsive>
 				<section>
-					{css`
-						.navbar {
-							padding: 16px;
-
-							/* Flow */
-							display: grid;
-							grid-template-columns: auto 1fr auto auto;
-							gap: 16px;
-						}
-						.navbar > :nth-child(1) { grid-column: 1; }
-						.navbar > :nth-child(2) { grid-column: 3; }
-						.navbar > :nth-child(3) { grid-column: 4; }
-					`}
-					<nav class="navbar">
+					<nav class="aside-navbar">
 						<NavIcon />
 						<NavIcon />
 						<NavIcon />
@@ -209,31 +237,6 @@ function Aside() {
 				</section>
 			</NonResponsive>
 			<section>
-				{css`
-					.drawer-head-content {
-						padding: 16px 24px; /* Add 8px to x-axis because of cp-checkable-label */
-
-						/* Flow */
-						display: grid;
-						grid-template-columns: auto 1fr auto;
-						align-items: center;
-						gap: 8px;
-					}
-					.drawer-head-icon {
-						height: 16px;
-						aspect-ratio: 1;
-						color: gray;
-					}
-					.drawer-body {
-						padding: 16px;
-						padding-top: 0; /* Override */
-
-						/* Flow */
-						display: flex;
-						flex-direction: column;
-						gap: 8px;
-					}
-				`}
 				<DrawerProvider>
 					{/* <Drawer> */}
 					<Drawer head={<>
@@ -289,9 +292,6 @@ function Aside() {
 								{ style: { "--color": "#61dafb", "--alpha-color": "#61dafb66" }, value: "bar" },
 								{ style: { "--color": "#4fc08d", "--alpha-color": "#4fc08d66" }, value: "baz" },
 							]}>{({ style, value }) => <>
-								{/* <Show when={index() > 0}>
-									<div class="[margin:8px_0] [border-radius:1000px] [background-color:hsl(0_0%_90%)]"></div>
-								</Show> */}
 								<Radio style={style} value={value}>
 									{value}
 								</Radio>
@@ -304,8 +304,8 @@ function Aside() {
 						<div class="line"></div>
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>Hello, world!</div>
-							<div>Foo</div>
+							<div>HEIGHT</div>
+							<div>{heightPercentage()}%, {round(heightPixel(), { precision: 1 }).toFixed(1)}PX</div>
 						</div>
 					</>} open>
 						<Slider value={heightPercentage()} setValue={setHeightPercentage} min={20} max={80} step={1} />
@@ -316,8 +316,8 @@ function Aside() {
 						<div class="line"></div>
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>Hello, world!</div>
-							<div>Foo</div>
+							<div>STROKE WIDTH</div>
+							<div>{strokeWidth()}</div>
 						</div>
 					</>} open>
 						<Slider value={strokeWidth()} setValue={setStrokeWidth} min={0.5} max={2.5} step={0.1} />
@@ -358,7 +358,13 @@ function App() {
 
 ////////////////////////////////////////
 
+function App2() {
+	return <>
+		<ProgressIndicator />
+	</>
+}
+
 render(() =>
-	<App />,
+	<App2 />,
 	document.getElementById("root")!,
 )
