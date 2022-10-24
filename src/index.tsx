@@ -1,15 +1,15 @@
 import "./css"
 
-import { batch, createEffect, createMemo, createRoot, createSignal, For, onCleanup, onMount, untrack } from "solid-js"
+import { createSignal, For, onMount, useContext } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer, DrawerProvider } from "./drawer"
+import { ProgressContext, ProgressProvider } from "./progress"
 import { BottomsheetOrSidesheet, NonResponsive } from "./sheet"
 import { SmileyOutlineSVG, SmileySVG } from "./smiley-svg"
 import { css } from "./utils/solid"
 import { cx, only, range, round } from "./utils/vanilla"
-import { ProgressIndicator } from "./progress"
 
 ////////////////////////////////////////
 
@@ -359,12 +359,28 @@ function App() {
 ////////////////////////////////////////
 
 function App2() {
+	const { state, actions } = useContext(ProgressContext)!
+
+	onMount(actions.start)
+
+	window.addEventListener("keydown", e => {
+		if (e.key === "d") {
+			if (state.progress() === 100) {
+				actions.start()
+			} else {
+				actions.end()
+			}
+		}
+	})
+
 	return <>
-		<ProgressIndicator />
+		<div>Hello, world!</div>
 	</>
 }
 
 render(() =>
-	<App2 />,
+	<ProgressProvider>
+		<App2 />
+	</ProgressProvider>,
 	document.getElementById("root")!,
 )
