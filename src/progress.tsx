@@ -16,6 +16,26 @@ export const ProgressContext = createContext<{
 	actions: Actions
 }>()
 
+// For example:
+//
+//   function Component() {
+//     const { state, actions } = useContext(ProgressContext)!
+//
+//     onMount(actions.start)
+//
+//     window.addEventListener("keydown", e => {
+//       if (e.key === "d") {
+//         if (state.progress() === 100) {
+//           actions.start()
+//         } else {
+//           actions.end()
+//         }
+//       }
+//     })
+//
+//     // ...
+//   }
+//
 export function ProgressProvider(props: ParentProps) {
 	createScreen({ suppressWarning: true })
 
