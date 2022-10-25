@@ -1,14 +1,14 @@
 import "./css"
 
-import { createSignal, For } from "solid-js"
+import { createSignal, For, onMount } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer, DrawerProvider } from "./drawer"
-import { ProgressProvider } from "./progress"
+import { ProgressBarProvider, useProgressBar } from "./progress-bar"
 import { BottomsheetOrSidesheet, NonResponsive } from "./sheet"
 import { SmileyOutlineSVG, SmileySVG } from "./smiley-svg"
-import { DarkModeProvider, DebugCSSProvider, useDebugCSS } from "./state"
+import { darkMode, debugCSS } from "./state"
 import { css } from "./utils/solid"
 import { cx, only, range, round } from "./utils/vanilla"
 
@@ -350,13 +350,16 @@ function Aside() {
 ////////////////////////////////////////
 
 function App() {
-	//// const darkMode = useDarkMode()
-	//// console.log(darkMode.state.theme())
-	//// darkMode.actions.toggleTheme()
+	console.log(darkMode.theme())
+	darkMode.toggle()
 
-	const debugCSS = useDebugCSS()
-	console.log(debugCSS.state.debugCSS())
-	debugCSS.actions.toggleDebugCSS()
+	console.log(debugCSS.enabled())
+	debugCSS.toggle()
+
+	const progressBar = useProgressBar()
+	onMount(() => {
+		progressBar.actions.start()
+	})
 
 	return <>
 		<Nav />
@@ -368,12 +371,8 @@ function App() {
 ////////////////////////////////////////
 
 render(() =>
-	<ProgressProvider>
-		<DarkModeProvider>
-			<DebugCSSProvider>
-				<App />
-			</DebugCSSProvider>
-		</DarkModeProvider>
-	</ProgressProvider>,
+	<ProgressBarProvider>
+		<App />
+	</ProgressBarProvider>,
 	document.getElementById("root")!,
 )

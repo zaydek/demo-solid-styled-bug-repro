@@ -15,16 +15,16 @@ type Actions = {
 
 ////////////////////////////////////////
 
-const ProgressContext = createContext<{
+const ProgressBarContext = createContext<{
 	state:   State
 	actions: Actions
 }>()
 
-export function useProgress() {
-	const ctx = useContext(ProgressContext)
+export function useProgressBar() {
+	const ctx = useContext(ProgressBarContext)
 	if (!ctx) {
 		throw new Error("Missing context. " +
-			"Wrap <ProgressProvider>.")
+			"Wrap <ProgressBarProvider>.")
 	}
 	return ctx
 }
@@ -49,7 +49,7 @@ export function useProgress() {
 //     // ...
 //   }
 //
-export function ProgressProvider(props: ParentProps) {
+export function ProgressBarProvider(props: ParentProps) {
 	const [progress, setProgress] = createSignal(0)
 	const done = () => progress() === 100
 
@@ -79,11 +79,10 @@ export function ProgressProvider(props: ParentProps) {
 
 	return <>
 		{css`
-			/* TODO: Extract stylesheet? */
 			.progress-bar {
 				--__progress: 0%;
 				position: fixed;
-				z-index: 10;
+				z-index: 200;
 				inset:
 					0    /* T */
 					0    /* R */
@@ -100,7 +99,7 @@ export function ProgressProvider(props: ParentProps) {
 				opacity: 0%;
 			}
 		`}
-		<ProgressContext.Provider
+		<ProgressBarContext.Provider
 			value={{
 				state: {
 					progress,
@@ -123,6 +122,6 @@ export function ProgressProvider(props: ParentProps) {
 				></div>
 			</Show>
 			{props.children}
-		</ProgressContext.Provider>
+		</ProgressBarContext.Provider>
 	</>
 }

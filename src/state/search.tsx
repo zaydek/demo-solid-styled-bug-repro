@@ -1,9 +1,6 @@
-import { Accessor, createContext, createEffect, createMemo, createSignal, ParentProps, Setter, useContext } from "solid-js"
-import { canonicalize } from "../utils/vanilla"
-import { params } from "./params"
+import { createMemo, createRoot, createSignal } from "solid-js"
+import { canonicalize, searchParams } from "../utils/vanilla"
 import { settings } from "./settings"
-
-////////////////////////////////////////
 
 export type IndexedResult = {
 	kebab: string
@@ -11,45 +8,21 @@ export type IndexedResult = {
 	title: string
 } & { index?: number }
 
-type State = {
-	searchValue:          Accessor<string>
-	canonicalSearchValue: Accessor<string>
-	searchResults:        Accessor<undefined | IndexedResult[]>
-}
-
-type Actions = {
-	setSearchValue: Setter<string>
-}
-
-////////////////////////////////////////
-
-const SearchContext = createContext<{
-	state:   State
-	actions: Actions
-}>()
-
-export function useSearch() {
-	const context = useContext(SearchContext)
-	if (!context) {
-		throw new Error("No context provided for `useSearch`. " +
-			"Wrap `<SearchProvider>`.")
-	}
-	return context
-}
-
-export function SearchProvider(props: ParentProps) {
-	const [searchValue, setSearchValue] = createSignal(params.get.string("search") ?? "")
-	const canonicalSearchValue = createMemo(() => canonicalize(searchValue()))
+export const search = createRoot(() => {
+	const [value, setValue] = createSignal(searchParams.string("search") ?? "")
+	const canonicalValue = createMemo(() => canonicalize(value()))
 
 	const _payload = () => settings.manifest()?.manifest.payload
+
+	// TODO: Memoize here?
 	const _payloadValues = () => {
 		if (!_payload()) { return }
 		return Object.values(_payload()!)
 	}
 
-	const searchResults = () => {
+	const results = () => {
 		if (!settings.manifest()) { return }
-		const value = canonicalSearchValue()
+		const value = canonicalValue()
 		if (!value) {
 			return _payload()
 		}
@@ -69,33 +42,13 @@ export function SearchProvider(props: ParentProps) {
 		return matches
 	}
 
-	// TODO
-	//// createEffect(() => {
-	//// 	if (!canonicalSearchValue()) {
-	//// 		document.title = "Heroicons"
-	//// 		return
-	//// 	} else if (!searchResults()) {
-	//// 		document.title = "0 results"
-	//// 		return
-	//// 	}
-	//// 	const { length } = searchResults()!
-	//// 	document.title = `‘${canonicalSearchValue()}’ ${length} Icon${length === 1 ? "" : "s"}`
-	//// })
+	return {
+		// STATE
+		value,
+		canonicalValue,
+		results,
 
-	return <>
-		<SearchContext.Provider
-			value={{
-				state: {
-					searchValue,
-					canonicalSearchValue,
-					searchResults,
-				},
-				actions: {
-					setSearchValue,
-				},
-			}}
-		>
-			{props.children}
-		</SearchContext.Provider>
-	</>
-}
+		// ACTIONS
+		setValue,
+	}
+})

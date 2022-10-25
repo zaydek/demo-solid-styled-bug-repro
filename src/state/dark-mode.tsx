@@ -1,43 +1,12 @@
-import { Accessor, createContext, createEffect, createSignal, ParentProps, Setter, useContext } from "solid-js"
+import { createEffect, createRoot, createSignal } from "solid-js"
 
-////////////////////////////////////////
+export type Theme = "light" | "dark"
 
-type Theme = "light" | "dark"
-
-type State = {
-	theme: Accessor<Theme>
-}
-
-type Actions = {
-	setTheme:    Setter<Theme>
-	toggleTheme: () => void
-}
-
-////////////////////////////////////////
-
-const DarkModeContext = createContext<{
-	state:   State
-	actions: Actions
-}>()
-
-export function useDarkMode() {
-	const context = useContext(DarkModeContext)
-	if (!context) {
-		throw new Error("No context provided for `useDarkMode`. " +
-			"Wrap `<DarkModeProvider>`.")
-	}
-	return context
-}
-
-export function DarkModeProvider(props: ParentProps) {
+export const darkMode = createRoot(() => {
 	const [theme, setTheme] = createSignal<Theme>(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
 
-	function toggleTheme() {
-		if (theme() === "light") {
-			setTheme("dark")
-		} else {
-			setTheme("light")
-		}
+	function toggle() {
+		setTheme(curr => curr === "light" ? "dark" : "light")
 	}
 
 	createEffect(() => {
@@ -52,19 +21,12 @@ export function DarkModeProvider(props: ParentProps) {
 		}
 	})
 
-	return <>
-		<DarkModeContext.Provider
-			value={{
-				state: {
-					theme,
-				},
-				actions: {
-					setTheme,
-					toggleTheme,
-				},
-			}}
-		>
-			{props.children}
-		</DarkModeContext.Provider>
-	</>
-}
+	return {
+		// STATE
+		theme,
+
+		// ACTIONS
+		setTheme,
+		toggle,
+	}
+})

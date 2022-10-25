@@ -1,42 +1,15 @@
-import { Accessor, createContext, createEffect, createSignal, ParentProps, Setter, useContext } from "solid-js"
+import { createEffect, createRoot, createSignal } from "solid-js"
 
-////////////////////////////////////////
+export const debugCSS = createRoot(() => {
+	const [enabled, setEnabled] = createSignal(false)
 
-type State = {
-	debugCSS: Accessor<boolean>
-}
-
-type Actions = {
-	setDebugCSS:    Setter<boolean>
-	toggleDebugCSS: () => void
-}
-
-////////////////////////////////////////
-
-const DebugCSSContext = createContext<{
-	state:   State
-	actions: Actions
-}>()
-
-export function useDebugCSS() {
-	const context = useContext(DebugCSSContext)
-	if (!context) {
-		throw new Error("No context provided for `useDebugCSS`. " +
-			"Wrap `<DebugCSSProvider>`.")
-	}
-	return context
-}
-
-export function DebugCSSProvider(props: ParentProps) {
-	const [debugCSS, setDebugCSS] = createSignal(false)
-
-	function toggleDebugCSS() {
-		setDebugCSS(curr => !curr)
+	function toggle() {
+		setEnabled(curr => !curr)
 	}
 
 	createEffect(() => {
 		const root = document.documentElement
-		if (debugCSS()) {
+		if (enabled()) {
 			root.classList.add("debug-css")
 		} else {
 			root.classList.remove("debug-css")
@@ -46,19 +19,12 @@ export function DebugCSSProvider(props: ParentProps) {
 		}
 	})
 
-	return <>
-		<DebugCSSContext.Provider
-			value={{
-				state: {
-					debugCSS,
-				},
-				actions: {
-					setDebugCSS,
-					toggleDebugCSS,
-				},
-			}}
-		>
-			{props.children}
-		</DebugCSSContext.Provider>
-	</>
-}
+	return {
+		// STATE
+		enabled,
+
+		// ACTIONS
+		setEnabled,
+		toggle,
+	}
+})

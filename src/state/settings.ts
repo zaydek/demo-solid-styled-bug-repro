@@ -1,6 +1,6 @@
 import { createResource, createRoot, createSignal, DEV } from "solid-js"
 import { createDirtySignal } from "../utils/solid"
-import { params } from "./params"
+import { searchParams } from "../utils/vanilla"
 
 ////////////////////////////////////////
 
@@ -26,22 +26,22 @@ export type Framework = "svg" | "react" | "vue"
 
 export const settings = createRoot(() => {
 	// Version
-	const [versionOpen, setVersionOpen] = createDirtySignal(params.get.boolean("version-open"), false)
+	const [versionOpen, setVersionOpen] = createDirtySignal(searchParams.boolean("version-open"), false)
 	const [version, setVersion] = createDirtySignal<Version>((() => {
-		const value = params.get.string("version")
+		const value = searchParams.string("version")
 		if (!(value === "v1" || value === "v2")) { return }
 		return value
 	})(), "v2")
 
 	// Variant
-	const [variantOpen, setVariantOpen] = createDirtySignal(params.get.boolean("variant-open"), true)
+	const [variantOpen, setVariantOpen] = createDirtySignal(searchParams.boolean("variant-open"), true)
 	const [variantV1, setVariantV1] = createDirtySignal<VariantV1>((() => {
-		const value = params.get.string("variant")
+		const value = searchParams.string("variant")
 		if (!(value === "solid" || value === "outline")) { return }
 		return value
 	})(), "solid")
 	const [variantV2, setVariantV2] = createDirtySignal<VariantV2>((() => {
-		const value = params.get.string("variant")
+		const value = searchParams.string("variant")
 		if (!(value === "20-solid" || value === "24-outline" || value === "24-solid")) { return }
 		return value.replace("-", "/") as VariantV2
 	})(), "20/solid")
@@ -50,26 +50,26 @@ export const settings = createRoot(() => {
 	// Clipboard
 	//
 	// TODO: Add selected?
-	const [clipboardOpen, setClipboardOpen] = createDirtySignal(params.get.boolean("clipboard-open"), true)
+	const [clipboardOpen, setClipboardOpen] = createDirtySignal(searchParams.boolean("clipboard-open"), true)
 	const [textarea, setTextarea] = createSignal("")
-	const [license, setLicense] = createDirtySignal(params.get.boolean("license"), true)
+	const [license, setLicense] = createDirtySignal(searchParams.boolean("license"), true)
 	const [framework, setFramework] = createDirtySignal<Framework>((() => {
-		const value = params.get.string("framework")
+		const value = searchParams.string("framework")
 		if (!(value === "svg" || value === "react" || value === "vue")) { return }
 		return value
 	})(), "svg")
 
 	// Grid density
-	const [densityOpen, setDensityOpen] = createDirtySignal(params.get.boolean("density-open"), false)
-	const [density, setDensity] = createDirtySignal(params.get.number("density"), 96)
+	const [densityOpen, setDensityOpen] = createDirtySignal(searchParams.boolean("density-open"), false)
+	const [density, setDensity] = createDirtySignal(searchParams.number("density"), 96)
 
 	// Size
-	const [sizeOpen, setSizeOpen] = createDirtySignal(params.get.boolean("size-open"), false)
-	const [size, setSize] = createDirtySignal(params.get.number("size"), 28)
+	const [sizeOpen, setSizeOpen] = createDirtySignal(searchParams.boolean("size-open"), false)
+	const [size, setSize] = createDirtySignal(searchParams.number("size"), 28)
 
 	// Stroke width
-	const [strokeOpen, setStrokeOpen] = createDirtySignal(params.get.boolean("stroke-open"), false)
-	const [stroke, setStroke] = createDirtySignal(params.get.number("stroke") || 1.5, 1.5) // TODO: Depends on version
+	const [strokeOpen, setStrokeOpen] = createDirtySignal(searchParams.boolean("stroke-open"), false)
+	const [stroke, setStroke] = createDirtySignal(searchParams.number("stroke") || 1.5, 1.5) // TODO: Depends on version
 
 	// Resources
 	const [manifest] = createResource(version, async version => {
@@ -94,13 +94,13 @@ export const settings = createRoot(() => {
 	})
 
 	return {
-		// State
+		// STATE
 		versionOpen,
 		version,
 		variantOpen,
 		variantV1,
 		variantV2,
-		variant, // Derived
+		variant,
 		clipboardOpen,
 		textarea,
 		license,
@@ -111,10 +111,10 @@ export const settings = createRoot(() => {
 		size,
 		strokeOpen,
 		stroke,
-		manifest, // Derived (resources)
-		icons,    // Derived (resources)
+		manifest,
+		icons,
 
-		// Actions
+		// ACTIONS
 		setVersionOpen,
 		setVersion,
 		setVariantOpen,
@@ -133,6 +133,7 @@ export const settings = createRoot(() => {
 	}
 })
 
+// TODO: Do we need this?
 export const ready = () => (
 	settings.manifest.state === "ready" &&
 	settings.icons.state === "ready"
