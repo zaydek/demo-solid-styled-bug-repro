@@ -8,8 +8,8 @@ import { Drawer, DrawerProvider } from "./drawer"
 import { ProgressBarProvider, useProgressBar } from "./progress-bar"
 import { BottomsheetOrSidesheet, NonResponsive } from "./sheet"
 import { SmileyOutlineSVG, SmileySVG } from "./smiley-svg"
-import { darkMode, debugCSS } from "./state"
-import { css } from "./utils/solid"
+import { darkMode, debugCSS, search } from "./state"
+import { createScreen, css } from "./utils/solid"
 import { cx, only, range, round } from "./utils/vanilla"
 
 ////////////////////////////////////////
@@ -111,6 +111,7 @@ function Main() {
 				padding-top: 0; /* Override */
 			}
 			.results-grid-icon-container {
+				/* TODO: Change to aspect-ratio: 1? */
 				height: calc(112px - var(--label-height));
 
 				/* Flow */
@@ -130,7 +131,7 @@ function Main() {
 
 				/* Flow */
 				display: grid;
-				align-items: center;
+				align-items: center; /* Use align-items because of ellipsis */
 			}
 			/* Overrides */
 			.results-grid-container.no-name .results-grid-item { padding: 0; }
@@ -370,9 +371,94 @@ function App() {
 
 ////////////////////////////////////////
 
+function Demo() {
+	createScreen({ suppressWarning: true })
+
+	return <>
+		{css`
+			* {
+				outline: 2px solid hsl(0 100% 50% / 10%);
+				outline-offset: -1px;
+			}
+			.search-bar {
+				position: sticky;
+				z-index: 10;
+				inset:
+					0     /* T */
+					auto  /* R */
+					auto  /* B */
+					auto; /* L */
+				height: 64px;
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+			}
+			.search-bar-text-field {
+				height: 100%; /* CSS reset */
+				width: 100%;  /* CSS reset */
+
+				padding:
+					0     /* Y */
+					32px; /* X */
+			}
+			.main {
+				min-height: var(--screen-y);
+
+				/* Flow */
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+				grid-auto-rows: 128px;
+			}
+			.grid-icon-container {
+				padding:
+					0    /* T */
+					8px  /* R */
+					8px  /* B */
+					8px; /* L */
+				aspect-ratio: 1;
+
+				/* Flow */
+				display: grid;
+				grid-template-rows: 1fr auto;
+				place-items: center;
+			}
+			.grid-icon {
+				height: 32px;
+				aspect-ratio: 1;
+				border-radius: 1000px;
+				background-color: gray;
+			}
+			.grid-icon-label {
+				display: grid;
+				align-items: center; /* Use align-items because of ellipsis */
+			}
+		`}
+		<div class="search-bar">
+			<input
+				class="search-bar-text-field"
+				type="text"
+				value={search.value()}
+				onInput={e => search.setValue(e.currentTarget.value)}
+			/>
+		</div>
+		<div class="main">
+			<For each={search.results()}>{result => <>
+				<div class="grid-icon-container">
+					<div class="grid-icon"></div>
+					<div class="grid-icon-label">
+						<div class="typography ellipsis">
+							{/* TODO: Add highlight here */}
+							{result.kebab}
+						</div>
+					</div>
+				</div>
+			</>}</For>
+		</div>
+	</>
+}
+
 render(() =>
 	<ProgressBarProvider>
-		<App />
+		<Demo />
 	</ProgressBarProvider>,
 	document.getElementById("root")!,
 )
