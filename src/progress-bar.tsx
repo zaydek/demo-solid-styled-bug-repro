@@ -21,12 +21,12 @@ const ProgressBarContext = createContext<{
 }>()
 
 export function useProgressBar() {
-	const ctx = useContext(ProgressBarContext)
-	if (!ctx) {
-		throw new Error("Missing context. " +
+	const context = useContext(ProgressBarContext)
+	if (!context) {
+		throw new Error("No context provided for `useProgressBar`. " +
 			"Wrap <ProgressBarProvider>.")
 	}
-	return ctx
+	return context
 }
 
 // For example:
@@ -49,6 +49,8 @@ export function useProgressBar() {
 //     // ...
 //   }
 //
+// TODO: In theory we can separate the state from the UI; add progress-bar.ts
+// to state
 export function ProgressBarProvider(props: ParentProps) {
 	const [progress, setProgress] = createSignal(0)
 	const done = () => progress() === 100

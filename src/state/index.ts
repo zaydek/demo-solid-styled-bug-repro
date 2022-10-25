@@ -1,6 +1,5 @@
 export * from "./dark-mode"
 export * from "./debug-css"
+export * from "./effects"
 export * from "./search"
-//// export * from "./params-effect"
-//// export * from "./search"
-//// export * from "./settings"
+export * from "./settings"
