@@ -1,4 +1,4 @@
-import { Accessor, createContext, createEffect, createSignal, ParentProps, Setter } from "solid-js"
+import { Accessor, createContext, createEffect, createSignal, ParentProps, Setter, useContext } from "solid-js"
 
 ////////////////////////////////////////
 
@@ -18,7 +18,16 @@ const DebugCSSContext = createContext<{
 	actions: Actions
 }>()
 
-export function DebugCSS(props: ParentProps) {
+export function useDebugCSS() {
+	const context = useContext(DebugCSSContext)
+	if (!context) {
+		throw new Error("No context provided for `useDebugCSS`. " +
+			"Wrap `<DebugCSSProvider>`.")
+	}
+	return context
+}
+
+export function DebugCSSProvider(props: ParentProps) {
 	const [debugCSS, setDebugCSS] = createSignal(false)
 
 	function toggleDebugCSS() {

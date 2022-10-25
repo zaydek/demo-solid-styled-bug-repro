@@ -1,7 +1,7 @@
 import { ParentProps } from "solid-js"
 import { Portal } from "solid-js/web"
-import { css } from "./solid-utils"
-import { stringify } from "./utils"
+import { css } from "./utils/solid"
+import { stringify } from "./utils/vanilla"
 
 export function DEBUG_STATE(props: ParentProps<{ state: any }>) {
 	return <>

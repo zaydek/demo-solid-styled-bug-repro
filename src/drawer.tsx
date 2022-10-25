@@ -27,12 +27,12 @@ type Actions = {
   transitionend: (index: number) => void
 }
 
+////////////////////////////////////////
+
 const DrawerContext = createContext<{
 	state:   State
 	actions: Actions
 }>()
-
-////////////////////////////////////////
 
 export function Drawer(props: ParentProps<{
 	open?: boolean

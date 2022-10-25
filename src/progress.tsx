@@ -1,6 +1,8 @@
-import { Accessor, batch, createContext, createSignal, ParentProps, Show, untrack } from "solid-js"
-import { createScreen, css } from "./utils/solid"
+import { Accessor, batch, createContext, createSignal, ParentProps, Show, untrack, useContext } from "solid-js"
+import { css } from "./utils/solid"
 import { cx, round } from "./utils/vanilla"
+
+////////////////////////////////////////
 
 type State = {
 	progress: Accessor<number>
@@ -11,10 +13,21 @@ type Actions = {
 	end:   () => void
 }
 
-export const ProgressContext = createContext<{
+////////////////////////////////////////
+
+const ProgressContext = createContext<{
 	state:   State
 	actions: Actions
 }>()
+
+export function useProgress() {
+	const ctx = useContext(ProgressContext)
+	if (!ctx) {
+		throw new Error("Missing context. " +
+			"Wrap <ProgressProvider>.")
+	}
+	return ctx
+}
 
 // For example:
 //
@@ -37,8 +50,6 @@ export const ProgressContext = createContext<{
 //   }
 //
 export function ProgressProvider(props: ParentProps) {
-	createScreen({ suppressWarning: true })
-
 	const [progress, setProgress] = createSignal(0)
 	const done = () => progress() === 100
 
@@ -53,7 +64,6 @@ export function ProgressProvider(props: ParentProps) {
 		setTimeout(() => {
 			setProgress(75)
 			const id = window.setInterval(() => {
-				// Technically we don’t need untrack because of setInterval
 				if (untrack(progress) === 100) {
 					clearInterval(id)
 					return

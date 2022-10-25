@@ -1,4 +1,4 @@
-import { Accessor, createContext, createEffect, createSignal, ParentProps, Setter } from "solid-js"
+import { Accessor, createContext, createEffect, createSignal, ParentProps, Setter, useContext } from "solid-js"
 
 ////////////////////////////////////////
 
@@ -15,10 +15,19 @@ type Actions = {
 
 ////////////////////////////////////////
 
-export const DarkModeContext = createContext<{
+const DarkModeContext = createContext<{
 	state:   State
 	actions: Actions
 }>()
+
+export function useDarkMode() {
+	const context = useContext(DarkModeContext)
+	if (!context) {
+		throw new Error("No context provided for `useDarkMode`. " +
+			"Wrap `<DarkModeProvider>`.")
+	}
+	return context
+}
 
 export function DarkModeProvider(props: ParentProps) {
 	const [theme, setTheme] = createSignal<Theme>(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
@@ -34,9 +43,9 @@ export function DarkModeProvider(props: ParentProps) {
 	createEffect(() => {
 		const root = document.documentElement
 		if (theme() === "dark") {
-			root.classList.add("dark") // Enable dark mode
+			root.classList.add("dark-mode") // Enable dark mode
 		} else {
-			root.classList.remove("dark") // Enable light mode (default)
+			root.classList.remove("dark-mode") // Enable light mode (default)
 			if (root.classList.length === 0) {
 				root.removeAttribute("class")
 			}

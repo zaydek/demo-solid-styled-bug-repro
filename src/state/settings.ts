@@ -1,5 +1,5 @@
 import { createResource, createRoot, createSignal, DEV } from "solid-js"
-import { createDirtySignal } from "../solid-utils"
+import { createDirtySignal } from "../utils/solid"
 import { params } from "./params"
 
 ////////////////////////////////////////
