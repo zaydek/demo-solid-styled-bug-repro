@@ -10,7 +10,9 @@
 	cursor: pointer;
 }
 .cp-checkable-label {
-	padding: 0 8px;
+	padding:
+		0    /* Y */
+		8px; /* X */
 	height: 28px;
 	border-radius: 1000px;
 	background-color: hsl(0 0% 90%);

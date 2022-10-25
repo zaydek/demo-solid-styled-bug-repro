@@ -124,7 +124,9 @@ function Main() {
 				color: hsl(0 0% 25%);
 			}
 			.results-grid-icon-label {
-				padding: 0 8px;
+				padding:
+					0    /* Y */
+					8px; /* X */
 				height: var(--label-height);
 				border-radius: 1000px;
 				background-color: hsl(0 0% 90%);

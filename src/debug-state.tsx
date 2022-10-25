@@ -25,7 +25,8 @@ export function DEBUG_STATE(props: ParentProps<{ state: any }>) {
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%);
 			}
 			.debug-state-typography {
-				font: 400 12px / 1.25 Monaco;
+				font: 400 12px /
+					1.25 Monaco;
 				white-space: pre;
 			}
 		`}
