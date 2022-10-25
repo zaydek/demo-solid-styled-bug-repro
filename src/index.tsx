@@ -1,15 +1,15 @@
 import "./css"
 
-import { createSignal, For, onMount } from "solid-js"
+import { createResource, createSignal, For, Index, onMount, Resource, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { SidesheetState } from "solid-sheet"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer, DrawerProvider } from "./drawer"
 import { ProgressBarProvider, useProgressBar } from "./progress-bar"
-import { BottomsheetOrSidesheet, NonResponsive } from "./sheet"
+import { BottomsheetOrSidesheet, NonResponsive, Responsive } from "./sheet"
 import { SmileyOutlineSVG, SmileySVG } from "./smiley-svg"
-import { darkMode, debugCSS, search } from "./state"
-import { createScreen, css } from "./utils/solid"
+import { darkMode, debugCSS, search, settings } from "./state"
+import { createMediaSignal, createScreen, css } from "./utils/solid"
 import { cx, only, range, round } from "./utils/vanilla"
 
 ////////////////////////////////////////
@@ -111,7 +111,6 @@ function Main() {
 				padding-top: 0; /* Override */
 			}
 			.results-grid-icon-container {
-				/* TODO: Change to aspect-ratio: 1? */
 				height: calc(112px - var(--label-height));
 
 				/* Flow */
@@ -373,15 +372,16 @@ function App() {
 
 ////////////////////////////////////////
 
+const desktop = window.matchMedia("(hover: hover)").matches
+
 function Demo() {
 	createScreen({ suppressWarning: true })
 
 	return <>
 		{css`
-			* {
-				outline: 2px solid hsl(0 100% 50% / 10%);
-				outline-offset: -1px;
-			}
+			/********************************/
+			/* search-bar */
+
 			.search-bar {
 				position: sticky;
 				z-index: 10;
@@ -390,51 +390,87 @@ function Demo() {
 					auto  /* R */
 					auto  /* B */
 					auto; /* L */
-				height: 64px;
-				background-color: white;
-				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
-			}
-			.search-bar-text-field {
-				height: 100%; /* CSS reset */
-				width: 100%;  /* CSS reset */
-
 				padding:
 					0     /* Y */
 					32px; /* X */
-			}
-			.main {
-				min-height: var(--screen-y);
+				height: 96px;
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
 
 				/* Flow */
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
-				grid-auto-rows: 128px;
+				grid-template-columns: auto 1fr;
+				align-items: center;
+				/* gap: 24px; */
 			}
-			.grid-icon-container {
-				padding:
-					0    /* T */
-					8px  /* R */
-					8px  /* B */
-					8px; /* L */
-				aspect-ratio: 1;
-
-				/* Flow */
-				display: grid;
-				grid-template-rows: 1fr auto;
-				place-items: center;
-			}
-			.grid-icon {
+			.search-bar-icon {
 				height: 32px;
 				aspect-ratio: 1;
 				border-radius: 1000px;
-				background-color: gray;
+				background-color: lightgray;
 			}
-			.grid-icon-label {
+			.search-bar-text-field { height: 100%; }                /* CSS reset */
+			.search-bar-text-field:focus-visible { outline: none; } /* CSS reset */
+			.search-bar-text-field {
+				padding:
+					0     /* Y */
+					24px; /* X */
+			}
+
+			/********************************/
+			/* results */
+
+			.results {
+				padding: 16px;
+
+				/* Flow */
 				display: grid;
-				align-items: center; /* Use align-items because of ellipsis */
+				grid-template-columns: repeat(auto-fill, minmax(var(--grid-size), 1fr));
+			}
+			.results-item {
+				padding:
+					0    /* Y */
+					8px; /* X */
+			}
+			.results-item-icon-container {
+				height: calc(var(--grid-size) - 24px);
+
+				/* Flow */
+				display: grid;
+				place-items: center;
+			}
+			.results-item-icon {
+				height: 32px;
+				aspect-ratio: 1;
+				/* border-radius: 1000px; */
+				color: hsl(0 0% 25%);
+			}
+			/* This is a trick to create a
+			bounding box and center from the
+			top */
+			.results-item-typography-container {
+				height: 24px;
+
+				/* Flow */
+				display: grid;
+				align-content: start; /* Center children on the y-axis from the start */
+			}
+			.results-item-typography {
+				font: 400 12px /
+					normal system-ui;
+				text-align: center; /* Center x-axis */
+			}
+			.results-item-typography-icon { display: inline-block; }
+			.results-item-typography-icon {
+				margin-right: 6px;
+ 				height: 1.125em;
+				aspect-ratio: 1;
+				color: hsl(0 0% calc(100% * 2 / 3));
+				vertical-align: middle; /* Center y-axis */
 			}
 		`}
 		<div class="search-bar">
+			<div class="search-bar-icon"></div>
 			<input
 				class="search-bar-text-field"
 				type="text"
@@ -442,13 +478,20 @@ function Demo() {
 				onInput={e => search.setValue(e.currentTarget.value)}
 			/>
 		</div>
-		<div class="main">
+		<div class="results">
 			<For each={search.results()}>{result => <>
-				<div class="grid-icon-container">
-					<div class="grid-icon"></div>
-					<div class="grid-icon-label">
-						<div class="typography ellipsis">
-							{/* TODO: Add highlight here */}
+				<div class="results-item">
+					<div class="results-item-icon-container">
+						{/* NOTE: Use ?. syntax here because of <Suspense> */}
+						{/* @ts-expect-error */}
+						<Dynamic component={settings.icons()?.[result.title]} class="results-item-icon" />
+					</div>
+					<div class="results-item-typography-container">
+						<div class="results-item-typography">
+							{/* <Show when={desktop}> */}
+								{/* @ts-expect-error */}
+								<Dynamic component={settings.icons()?.[result.title]} class="results-item-typography-icon" />
+							{/* </Show> */}
 							{result.kebab}
 						</div>
 					</div>
@@ -458,9 +501,143 @@ function Demo() {
 	</>
 }
 
-render(() =>
-	<ProgressBarProvider>
-		<Demo />
-	</ProgressBarProvider>,
+function Skeleton() {
+	return <>
+		{css`
+			/********************************/
+			/* sk-nav */
+
+			.sk-search-bar {
+				position: sticky;
+				z-index: 10;
+				inset:
+					0     /* T */
+					auto  /* R */
+					auto  /* B */
+					auto; /* L */
+				padding:
+					0     /* Y */
+					32px; /* X */
+				height: 96px;
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+
+				/* Flow */
+				display: grid;
+				grid-template-columns: auto 1fr;
+				align-items: center;
+				gap: 24px;
+			}
+			.sk-search-bar-icon {
+				height: 32px;
+				aspect-ratio: 1;
+				border-radius: 1000px;
+				background-color: lightgray;
+			}
+			.sk-search-bar-text-field {
+				height: 8px;
+				aspect-ratio: 16;
+				border-radius: 1000px;
+				background-color: lightgray;
+			}
+
+			/********************************/
+			/* .sk-results */
+
+			.sk-results {
+				padding: 16px;
+
+				/* Flow */
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(var(--grid-size), 1fr));
+			}
+			.sk-results-item {
+				padding:
+					0    /* Y */
+					8px; /* X */
+			}
+			.sk-results-item-icon-container {
+				height: calc(var(--grid-size) - 24px);
+
+				/* Flow */
+				display: grid;
+				place-items: center;
+			}
+			.sk-results-item-icon {
+				height: 32px;
+				aspect-ratio: 1;
+				border-radius: 1000px;
+				background-color: lightgray;
+			}
+			.sk-results-item-typography-container {
+				padding:
+					4px /* Y */
+					0;  /* X */
+				height: 24px;
+
+				/* Flow */
+				display: grid;
+				justify-items: center; /* Center children on the x-axis */
+			}
+			.sk-results-item-typography {
+				height: 10px;
+				aspect-ratio: 8;
+				border-radius: 1000px;
+				background-color: lightgray;
+			}
+		`}
+		<div class="sk-search-bar">
+			<div class="sk-search-bar-icon"></div>
+			<div class="sk-search-bar-text-field"></div>
+		</div>
+		<div class="sk-results">
+			<For each={range(32)}>{() => <>
+				<div class="sk-results-item">
+					<div class="sk-results-item-icon-container">
+						<div class="sk-results-item-icon"></div>
+					</div>
+					<div class="sk-results-item-typography-container">
+						<div class="sk-results-item-typography"></div>
+					</div>
+				</div>
+			</>}</For>
+		</div>
+	</>
+}
+
+function Controller() {
+	return <>
+		<Suspense fallback={Skeleton}>
+			<Demo />
+		</Suspense>
+	</>
+}
+
+render(
+	function Root() {
+		onMount(() => {
+			window.addEventListener("keydown", e => {
+				if (e.key === "`") {
+					debugCSS.toggle()
+				}
+			})
+		})
+
+		return <>
+			{css`
+				:root.debug-css *:not(svg *) {
+					outline: 2px solid hsl(0 100% 50% / 10%);
+					outline-offset: -1px;
+				}
+
+				:root {
+					--grid-size: 128px;
+				}
+			`}
+			<ProgressBarProvider>
+				<Controller />
+			</ProgressBarProvider>
+		</>
+	},
 	document.getElementById("root")!,
 )

@@ -1,8 +1,8 @@
 import { ParentProps, Setter, Show } from "solid-js"
 import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
-import { createResponsiveSignal } from "./utils/solid"
+import { createMediaSignal } from "./utils/solid"
 
-const responsive = createResponsiveSignal("(max-width: 499px)")
+const responsive = createMediaSignal("(max-width: 499px)")
 
 // Renders exclusively for responsive content
 export function Responsive(props: ParentProps) {

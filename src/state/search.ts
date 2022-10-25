@@ -2,7 +2,7 @@ import { createMemo, createRoot, createSignal } from "solid-js"
 import { canonicalize, searchParams } from "../utils/vanilla"
 import { settings } from "./settings"
 
-export type IndexedResult = {
+export type SearchResult = {
 	kebab: string
 	camel: string
 	title: string
@@ -12,34 +12,34 @@ export const search = createRoot(() => {
 	const [value, setValue] = createSignal(searchParams.string("search") ?? "")
 	const canonicalValue = createMemo(() => canonicalize(value()))
 
-	const _payload = () => settings.manifest()?.manifest.payload
+	const payload = () => settings.manifest()?.manifest.payload
 
-	// TODO: Memoize here?
-	const _payloadValues = () => {
-		if (!_payload()) { return }
-		return Object.values(_payload()!)
+	// TODO: Memoize?
+	const payloadValues = () => {
+		if (!payload()) { return }
+		return Object.values(payload()!)
 	}
 
 	const results = () => {
-		if (!settings.manifest()) { return }
+		if (!payload()) { return } // Defer to fallback
 		const value = canonicalValue()
 		if (!value) {
-			return _payload()
+			return payload()
 		}
-		const matches: IndexedResult[] = []
-		for (const info of _payloadValues()!) {
+		const _results: SearchResult[] = []
+		for (const info of payloadValues()!) {
 			const key = info.kebab
 			const index = key.indexOf(value)
 			if (index !== -1) {
-				matches.push({
+				_results.push({
 					...info,
 					index,
 				})
 			}
 		}
-		if (!matches.length) { return }
-		matches.sort((a, b) => a.index! - b.index!)
-		return matches
+		if (!_results.length) { return } // Defer to fallback
+		_results.sort((a, b) => a.index! - b.index!)
+		return _results
 	}
 
 	return {

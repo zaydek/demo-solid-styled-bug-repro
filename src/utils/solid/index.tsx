@@ -1,6 +1,6 @@
 export * from "./css"
 export * from "./dirty"
 export * from "./extra-types"
+export * from "./media"
 export * from "./mounted"
-export * from "./responsive"
 export * from "./screen"
