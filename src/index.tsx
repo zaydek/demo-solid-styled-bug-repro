@@ -8,7 +8,7 @@ import { Drawer, DrawerProvider } from "./drawer"
 import { ProgressProvider } from "./progress"
 import { BottomsheetOrSidesheet, NonResponsive } from "./sheet"
 import { SmileyOutlineSVG, SmileySVG } from "./smiley-svg"
-import { DarkModeProvider, useDarkMode } from "./state"
+import { DarkModeProvider, DebugCSSProvider, useDebugCSS } from "./state"
 import { css } from "./utils/solid"
 import { cx, only, range, round } from "./utils/vanilla"
 
@@ -350,9 +350,13 @@ function Aside() {
 ////////////////////////////////////////
 
 function App() {
-	const darkMode = useDarkMode()
-	console.log(darkMode.state.theme())
-	darkMode.actions.toggleTheme()
+	//// const darkMode = useDarkMode()
+	//// console.log(darkMode.state.theme())
+	//// darkMode.actions.toggleTheme()
+
+	const debugCSS = useDebugCSS()
+	console.log(debugCSS.state.debugCSS())
+	debugCSS.actions.toggleDebugCSS()
 
 	return <>
 		<Nav />
@@ -366,7 +370,9 @@ function App() {
 render(() =>
 	<ProgressProvider>
 		<DarkModeProvider>
-			<App />
+			<DebugCSSProvider>
+				<App />
+			</DebugCSSProvider>
 		</DarkModeProvider>
 	</ProgressProvider>,
 	document.getElementById("root")!,
