@@ -220,9 +220,9 @@ export function DrawerContainer(props: ParentProps<{
 						auto /* B */
 						0;   /* L */
 				}
-				/* TODO: This should be implemented in userland */
-				/* :root.loaded */ .drawer {
-					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.05);
+				.drawer {
+					transition: 500ms cubic-bezier(0, 1, 0.25, 1.05);
+					transition-property: transform;
 				}
 
 				/******************************/
@@ -234,11 +234,18 @@ export function DrawerContainer(props: ParentProps<{
 				/******************************/
 
 				/* TODO: This should be implemented in userland */
-				/* :root.loaded */ .drawer-body {
-					transition: opacity 300ms cubic-bezier(0, 1, 0.25, 1.05);
+				.drawer-body {
+					transition: 500ms cubic-bezier(0, 1, 0.25, 1.05);
+					transition-property: transform, opacity;
 				}
-				.drawer.closed .drawer-body { opacity: 0; }
-				.drawer.open   .drawer-body { opacity: 1; }
+				.drawer.closed .drawer-body {
+					transform: scale(0.9);
+					opacity: 0;
+				}
+				.drawer.open .drawer-body {
+					transform: scale(1);
+					opacity: 1;
+				}
 			`}
 			<div
 				class="drawer-container"

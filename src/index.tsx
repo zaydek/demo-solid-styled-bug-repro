@@ -444,7 +444,6 @@ function Skeleton() {
 	const progressBar = useProgressBar()
 
 	onMount(() => progressBar.actions.start())
-	//// onCleanup(() => document.documentElement.classList.add("loaded"))
 
 	return <>
 		{css`
