@@ -3,19 +3,21 @@ import { createStore } from "solid-js/store"
 import { createMounted, css } from "./utils/solid"
 import { cx, only, round } from "./utils/vanilla"
 
+////////////////////////////////////////
+
 type Element = {
 	open:       boolean
-	minHeight:  undefined | number // Computed
-	maxHeight:  undefined | number // Computed
-	translate:  undefined | number // Computed
+	minHeight:  undefined | number
+	maxHeight:  undefined | number
+	translate:  undefined | number
 	transition: undefined | boolean
 }
 
 type State = {
-	ready:       Accessor<boolean>
+	mounted:     Accessor<boolean>
 	elements:    Element[]
-	boundingBox: Accessor<undefined | number> // Computed
-	transition:  Accessor<undefined |boolean> // Computed
+	boundingBox: Accessor<undefined | number>
+	transition:  Accessor<undefined |boolean>
 }
 
 type Actions = {
@@ -58,15 +60,11 @@ export function Drawer(props: ParentProps<{
 			ref={setRef}
 			class={cx(`drawer ${element.open ? "open" : "closed"}`)}
 			style={{
-				//// // DEBUG
-				//// "background-color": `hsl(${index * 60} 100% 75%)`,
-				"background-color": "white",
-
-				...(state.ready() && !element.open && !element.transition && {
+				...(state.mounted() && !element.open && !element.transition && {
 					"height": `${element.minHeight!}px`,
 					"overflow-y": "clip",
 				}),
-				...(state.ready() && element.translate && {
+				...(state.mounted() && element.translate && {
 					"transform": `translateY(${element.translate}px)`,
 				}),
 			}}
@@ -86,11 +84,8 @@ export function Drawer(props: ParentProps<{
 			>
 				{props.head}
 			</div>
-			<div
-				class="drawer-body"
-				// @ts-expect-error
-				inert={only(!element.open)}
-			>
+			{/* @ts-expect-error */}
+			<div class="drawer-body" inert={only(!element.open)}>
 				{props.children}
 			</div>
 		</div>
@@ -101,13 +96,8 @@ export function Drawer(props: ParentProps<{
 
 createMounted()
 
-export function DrawerContainer(props: ParentProps<{
-	//// resizeStrategy?: "immediate" | "delayed"
-}>) {
-	//// const resizeStrategy = () => props.resizeStrategy ?? "delayed"
-
-	// TODO: Rename to mounted?
-	const ready = () => elements.length > 0
+export function DrawerContainer(props: ParentProps) {
+	const mounted = () => elements.length > 0
 
 	const [elements, setElements] = createStore<Element[]>([])
 	const [boundingBox, setBoundingBox] = createSignal<number>()
@@ -181,28 +171,12 @@ export function DrawerContainer(props: ParentProps<{
 					: el.minHeight!
 			}
 			setBoundingBox(sum)
-			//// if (!untrack(boundingBox)) {
-			//// 	setBoundingBox(sum)
-			//// } else {
-			//// 	if (resizeStrategy() === "immediate") {
-			//// 		setBoundingBox(sum)
-			//// 	} else if (resizeStrategy() === "delayed") {
-			//// 		if (sum > untrack(boundingBox)!) {
-			//// 			setBoundingBox(sum)
-			//// 		} else {
-			//// 			createEffect(() => {
-			//// 				if (transition()) { return }
-			//// 				setBoundingBox(sum)
-			//// 			})
-			//// 		}
-			//// 	}
-			//// }
 		})
 	})
 
 	return <>
 		<DrawerContext.Provider value={{
-			state: { ready, elements, boundingBox, transition },
+			state: { mounted, elements, boundingBox, transition },
 			actions: { createElement, measureDOM, open, close, toggle, transitionend },
 		}}>
 			{css`
@@ -219,6 +193,7 @@ export function DrawerContainer(props: ParentProps<{
 						0    /* R */
 						auto /* B */
 						0;   /* L */
+					background-color: white;
 				}
 				.drawer {
 					transition: 400ms cubic-bezier(0, 1, 0.25, 1);
@@ -229,6 +204,8 @@ export function DrawerContainer(props: ParentProps<{
 
 				.drawer-head {
 					cursor: pointer;
+					-webkit-user-select: none;
+					user-select: none;
 				}
 
 				/******************************/
@@ -258,7 +235,7 @@ export function DrawerContainer(props: ParentProps<{
 			<div
 				class="drawer-container"
 				style={{
-					...(ready() && {
+					...(mounted() && {
 						"height": `${boundingBox()}px`,
 						"overflow-y": "auto",
 					}),

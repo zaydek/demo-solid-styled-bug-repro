@@ -10,6 +10,8 @@
   align-items: center;
 
 	cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
 	touch-action: pan-x;
 }
 :root:has(.component-slider:active) { cursor: grabbing; }                   /* Use both */

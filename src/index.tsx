@@ -566,7 +566,7 @@ function Skeleton() {
 		</div>
 		<div class="sk-sidebar"></div>
 		<div class="sk-results">
-			<For each={range(40)}>{() => <>
+			<For each={range(256)}>{() => <>
 				<div class="sk-results-item">
 					<div class="sk-results-item-icon-container">
 						<div class="sk-results-item-icon"></div>

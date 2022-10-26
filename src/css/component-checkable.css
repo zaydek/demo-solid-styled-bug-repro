@@ -8,6 +8,8 @@
 	gap: 8px;
 
 	cursor: pointer;
+	-webkit-user-select: none;
+	user-select: none;
 }
 .component-checkable-label {
 	padding:

@@ -9,6 +9,8 @@
 	place-items: center;
 
 	cursor: pointer;
+	-webkit-user-select: none;
+	user-select: none;
 }
 .component-nav-icon-icon {
 	height: 75%;
