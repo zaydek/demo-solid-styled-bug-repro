@@ -221,7 +221,7 @@ export function DrawerContainer(props: ParentProps<{
 						0;   /* L */
 				}
 				.drawer {
-					transition: 500ms cubic-bezier(0, 1, 0.25, 1.05);
+					transition: 400ms cubic-bezier(0, 1, 0.25, 1);
 					transition-property: transform;
 				}
 
@@ -233,16 +233,24 @@ export function DrawerContainer(props: ParentProps<{
 
 				/******************************/
 
-				/* TODO: This should be implemented in userland */
-				.drawer-body {
-					transition: 500ms cubic-bezier(0, 1, 0.25, 1.05);
+				/* Bottomsheet-only */
+				:root:has(.bottomsheet) .drawer-body {
+					transition: 400ms cubic-bezier(0, 1, 0.25, 1);
+					transition-property: opacity;
+				}
+				:root:has(.bottomsheet) .drawer.closed .drawer-body { opacity: 0; }
+				:root:has(.bottomsheet) .drawer.open   .drawer-body { opacity: 1; }
+
+				/* Sidesheet-only */
+				:root:has(.sidesheet) .drawer-body {
+					transition: 400ms cubic-bezier(0, 1, 0.25, 1);
 					transition-property: transform, opacity;
 				}
-				.drawer.closed .drawer-body {
+				:root:has(.sidesheet) .drawer.closed .drawer-body {
 					transform: scale(0.9);
 					opacity: 0;
 				}
-				.drawer.open .drawer-body {
+				:root:has(.sidesheet) .drawer.open .drawer-body {
 					transform: scale(1);
 					opacity: 1;
 				}

@@ -376,14 +376,14 @@ function Demo() {
 					normal system-ui;
 				/* letter-spacing: -0.0125em; */
 				text-align: center; /* Center x-axis */
-				color: hsl(0 0% 25%);
+				color: hsl(0 0% 40%);
 			}
 			/* .results-item-typography-icon { display: inline-block; } */
 			/* .results-item-typography-icon { */
 			/* 	margin-right: 6px; */
  			/* 	height: 1.125em; */
 			/* 	aspect-ratio: 1; */
-			/* 	color: hsl(0 0% 40%); */
+			/* 	color: hsl(0 0% 25%); */
 			/* 	vertical-align: middle; /* Center y-axis *!/ */
 			/* } */
 			/* .results-item-typography.match .results-item-typography-icon { color: hsl(25 100% 25%); } /* Override *!/ */
@@ -566,7 +566,7 @@ function Skeleton() {
 		</div>
 		<div class="sk-sidebar"></div>
 		<div class="sk-results">
-			<For each={range(32)}>{() => <>
+			<For each={range(40)}>{() => <>
 				<div class="sk-results-item">
 					<div class="sk-results-item-icon-container">
 						<div class="sk-results-item-icon"></div>
@@ -653,7 +653,7 @@ render(
 				:root {
 					--search-bar-height: 64px;
 					--sidebar-width: 384px;
-					--results-item-height: 104px;
+					--results-item-height: 80px;
 					--line-thickness: 4px;
 				}
 
