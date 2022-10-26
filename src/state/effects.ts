@@ -1,4 +1,4 @@
-import { createEffect, createRoot } from "solid-js"
+import { createEffect, createRoot, onCleanup } from "solid-js"
 import { search } from "./search"
 import { settings } from "./settings"
 
@@ -34,16 +34,26 @@ createRoot(() => {
 		}
 	})
 
-	// <title>...</title>
-	createEffect(() => {
+	// Gets the next document.title
+	const title = ({ visible }: { visible?: boolean } = {}) => {
+		visible ??= true
+		if (!visible) { return "Heroicons" }
 		if (!search.canonicalValue()) {
-			document.title = "Heroicons"
-			return
+			return "Heroicons"
 		} else if (!search.results()) {
-			document.title = "0 results"
-			return
+			return "0 results"
 		}
 		const { length } = search.results()!
-		document.title = `‘${search.canonicalValue()}’ ${length} Icon${length === 1 ? "" : "s"}`
+		return `${search.canonicalValue()} — ${length} Icon${length === 1 ? "" : "s"}`
+	}
+
+	// <title>...</title>
+	createEffect(() => {
+		function handleVisibilityChange(e: Event) {
+			document.title = title({ visible: !document.hidden })
+		}
+		document.title = title()
+		window.addEventListener("visibilitychange", handleVisibilityChange, false)
+		onCleanup(() => window.removeEventListener("visibilitychange", handleVisibilityChange, false))
 	})
 })

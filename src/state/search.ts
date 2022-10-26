@@ -6,7 +6,10 @@ export type SearchResult = {
 	kebab: string
 	camel: string
 	title: string
-} & { index?: number }
+
+	// canonicalValue index
+	index?: number
+}
 
 export const search = createRoot(() => {
 	const [value, setValue] = createSignal(searchParams.string("search") ?? "")
@@ -24,12 +27,11 @@ export const search = createRoot(() => {
 		if (!payload()) { return } // Defer to fallback
 		const value = canonicalValue()
 		if (!value) {
-			return payload()
+			return payload() as SearchResult[]
 		}
 		const _results: SearchResult[] = []
 		for (const info of payloadValues()!) {
-			const key = info.kebab
-			const index = key.indexOf(value)
+			const index = info.kebab.indexOf(value)
 			if (index !== -1) {
 				_results.push({
 					...info,

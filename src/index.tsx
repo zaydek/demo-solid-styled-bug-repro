@@ -105,7 +105,7 @@ function Main() {
 				grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
 			}
 			/* Defer padding-right to layout-main on touch devices */
-			@media (hover: hover) { .results-grid-container { padding-right: 0; } } /* Override */
+			@media (hover: none) { .results-grid-container { padding-right: 0; } } /* Override */
 			.results-grid-item {
 				padding: 8px;
 				padding-top: 0; /* Override */
@@ -383,17 +383,22 @@ function Demo() {
 			/* search-bar */
 
 			.search-bar {
-				position: sticky;
+				position: fixed;
 				z-index: 10;
 				inset:
-					0     /* T */
-					auto  /* R */
-					auto  /* B */
-					auto; /* L */
+					0    /* T */
+					0    /* R */
+					auto /* B */
+					0;   /* L */
+				margin:
+					0                    /* T */
+					var(--sidebar-width) /* R */
+					0                    /* B */
+					0;                   /* L */
 				padding:
-					0     /* Y */
-					32px; /* X */
-				height: 96px;
+					0                                   /* Y */
+					calc(var(--search-bar-height) / 4); /* X */
+				height: var(--search-bar-height);
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
 
@@ -401,8 +406,9 @@ function Demo() {
 				display: grid;
 				grid-template-columns: auto 1fr;
 				align-items: center;
-				/* gap: 24px; */
+				/* Defer to search-bar-text-field for padding */
 			}
+			@media (hover: none) { .search-bar { margin-right: 0; } } /* Override */
 			.search-bar-icon {
 				height: 32px;
 				aspect-ratio: 1;
@@ -413,27 +419,50 @@ function Demo() {
 			.search-bar-text-field:focus-visible { outline: none; } /* CSS reset */
 			.search-bar-text-field {
 				padding:
-					0     /* Y */
-					24px; /* X */
+					0                                   /* Y */
+					calc(var(--search-bar-height) / 4); /* X */
 			}
+
+			/********************************/
+			/* sidebar */
+
+			.sidebar {
+				position: fixed;
+				z-index: 10;
+				inset:
+					0     /* T */
+					0     /* R */
+					0     /* B */
+					auto; /* L */
+				width: var(--sidebar-width);
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+			}
+			@media (hover: none) { .sidebar { display: none; } }
 
 			/********************************/
 			/* results */
 
 			.results {
+				margin:
+					var(--search-bar-height) /* T */
+					var(--sidebar-width)     /* R */
+					0                        /* B */
+					0;                       /* L */
 				padding: 16px;
 
 				/* Flow */
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(var(--grid-size), 1fr));
+				grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
 			}
+			@media (hover: none) { .results { margin-right: 0; } } /* Override */
 			.results-item {
 				padding:
 					0    /* Y */
 					8px; /* X */
 			}
 			.results-item-icon-container {
-				height: calc(var(--grid-size) - 24px);
+				height: calc(var(--results-item-height) - 24px);
 
 				/* Flow */
 				display: grid;
@@ -445,9 +474,7 @@ function Demo() {
 				/* border-radius: 1000px; */
 				color: hsl(0 0% 25%);
 			}
-			/* This is a trick to create a
-			bounding box and center from the
-			top */
+			/* This is a trick to create a bounding box and center from the top */
 			.results-item-typography-container {
 				height: 24px;
 
@@ -465,8 +492,19 @@ function Demo() {
 				margin-right: 6px;
  				height: 1.125em;
 				aspect-ratio: 1;
-				color: hsl(0 0% calc(100% * 2 / 3));
+				color: hsl(0 0% 40%);
 				vertical-align: middle; /* Center y-axis */
+			}
+			/* .results-item-typography.match .results-item-typography-icon { color: hsl(25 100% 25%); } /* Override *!/ */
+			.results-item-typography-highlight { display: inline-block; } /* CSS reset */
+			.results-item-typography-highlight {
+				/* padding:
+					1px /* Y *!/
+					0;  /* X *!/
+				*/
+				border-radius: 1px;
+				color:            hsl(25 100% 10%);
+				background-color: hsl(50 100% 90%);
 			}
 		`}
 		<div class="search-bar">
@@ -478,6 +516,7 @@ function Demo() {
 				onInput={e => search.setValue(e.currentTarget.value)}
 			/>
 		</div>
+		<div class="sidebar"></div>
 		<div class="results">
 			<For each={search.results()}>{result => <>
 				<div class="results-item">
@@ -487,12 +526,16 @@ function Demo() {
 						<Dynamic component={settings.icons()?.[result.title]} class="results-item-icon" />
 					</div>
 					<div class="results-item-typography-container">
-						<div class="results-item-typography">
-							{/* <Show when={desktop}> */}
-								{/* @ts-expect-error */}
-								<Dynamic component={settings.icons()?.[result.title]} class="results-item-typography-icon" />
-							{/* </Show> */}
-							{result.kebab}
+						<div class={cx(`results-item-typography ${"index" in result ? "match" : ""}`)}>
+							{/* @ts-expect-error */}
+							<Dynamic component={settings.icons()?.[result.title]} class="results-item-typography-icon" />
+							<Show when={"index" in result} fallback={result.kebab}>
+								{result.kebab.slice(0, result.index!)}
+								<span class="results-item-typography-highlight">
+									{result.kebab.slice(result.index!, result.index! + search.canonicalValue().length)}
+								</span>
+								{result.kebab.slice(result.index! + search.canonicalValue().length)}
+							</Show>
 						</div>
 					</div>
 				</div>
@@ -508,17 +551,22 @@ function Skeleton() {
 			/* sk-nav */
 
 			.sk-search-bar {
-				position: sticky;
+				position: fixed;
 				z-index: 10;
 				inset:
-					0     /* T */
-					auto  /* R */
-					auto  /* B */
-					auto; /* L */
+					0    /* T */
+					0    /* R */
+					auto /* B */
+					0;   /* L */
+				margin:
+					0                    /* T */
+					var(--sidebar-width) /* R */
+					0                    /* B */
+					0;                   /* L */
 				padding:
-					0     /* Y */
-					32px; /* X */
-				height: 96px;
+					0                                   /* Y */
+					calc(var(--search-bar-height) / 4); /* X */
+				height: var(--search-bar-height);
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
 
@@ -526,8 +574,9 @@ function Skeleton() {
 				display: grid;
 				grid-template-columns: auto 1fr;
 				align-items: center;
-				gap: 24px;
+				gap: calc(var(--search-bar-height) / 4);
 			}
+			@media (hover: none) { .sk-search-bar { margin-right: 0; } } /* Override */
 			.sk-search-bar-icon {
 				height: 32px;
 				aspect-ratio: 1;
@@ -542,22 +591,45 @@ function Skeleton() {
 			}
 
 			/********************************/
-			/* .sk-results */
+			/* sk-sidebar */
+
+			.sk-sidebar {
+				position: fixed;
+				z-index: 10;
+				inset:
+					0     /* T */
+					0     /* R */
+					0     /* B */
+					auto; /* L */
+				width: var(--sidebar-width);
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+			}
+			@media (hover: none) { .sk-sidebar { display: none; } }
+
+			/********************************/
+			/* sk-results */
 
 			.sk-results {
+				margin:
+					var(--search-bar-height) /* T */
+					var(--sidebar-width)     /* R */
+					0                        /* B */
+					0;                       /* L */
 				padding: 16px;
 
 				/* Flow */
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(var(--grid-size), 1fr));
+				grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
 			}
+			@media (hover: none) { .sk-results { margin-right: 0; } } /* Override */
 			.sk-results-item {
 				padding:
 					0    /* Y */
 					8px; /* X */
 			}
 			.sk-results-item-icon-container {
-				height: calc(var(--grid-size) - 24px);
+				height: calc(var(--results-item-height) - 24px);
 
 				/* Flow */
 				display: grid;
@@ -580,7 +652,7 @@ function Skeleton() {
 				justify-items: center; /* Center children on the x-axis */
 			}
 			.sk-results-item-typography {
-				height: 10px;
+				height: 8px;
 				aspect-ratio: 8;
 				border-radius: 1000px;
 				background-color: lightgray;
@@ -588,8 +660,9 @@ function Skeleton() {
 		`}
 		<div class="sk-search-bar">
 			<div class="sk-search-bar-icon"></div>
-			<div class="sk-search-bar-text-field"></div>
+			{/* <div class="sk-search-bar-text-field"></div> */}
 		</div>
+		<div class="sk-sidebar"></div>
 		<div class="sk-results">
 			<For each={range(32)}>{() => <>
 				<div class="sk-results-item">
@@ -606,8 +679,14 @@ function Skeleton() {
 }
 
 function Controller() {
+	const [foo] = createResource(async () => {
+		await new Promise(r => setTimeout(r, 1_000))
+		return "foo"
+	})
+
 	return <>
 		<Suspense fallback={Skeleton}>
+			{void foo()}
 			<Demo />
 		</Suspense>
 	</>
@@ -631,7 +710,9 @@ render(
 				}
 
 				:root {
-					--grid-size: 128px;
+					--search-bar-height: 72px;
+					--sidebar-width: 448px;
+					--results-item-height: 112px;
 				}
 			`}
 			<ProgressBarProvider>
