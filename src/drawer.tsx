@@ -221,8 +221,8 @@ export function DrawerContainer(props: ParentProps<{
 						0;   /* L */
 				}
 				/* TODO: This should be implemented in userland */
-				:root.mounted .drawer {
-					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.1);
+				/* :root.loaded */ .drawer {
+					transition: transform 300ms cubic-bezier(0, 1, 0.25, 1.05);
 				}
 
 				/******************************/
@@ -234,8 +234,8 @@ export function DrawerContainer(props: ParentProps<{
 				/******************************/
 
 				/* TODO: This should be implemented in userland */
-				:root.mounted .drawer-body {
-					transition: opacity 300ms cubic-bezier(0, 1, 0.25, 1.1);
+				/* :root.loaded */ .drawer-body {
+					transition: opacity 300ms cubic-bezier(0, 1, 0.25, 1.05);
 				}
 				.drawer.closed .drawer-body { opacity: 0; }
 				.drawer.open   .drawer-body { opacity: 1; }

@@ -1,6 +1,6 @@
 import "./css"
 
-import { createEffect, createResource, createSignal, For, onMount, Show, Suspense } from "solid-js"
+import { createEffect, createResource, createSignal, For, onCleanup, onMount, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { Sidesheet, SidesheetState } from "solid-sheet"
 import { AriaButton } from "./aria"
@@ -651,6 +651,7 @@ function Sidebar() {
 
 function Demo() {
 	const progressBar = useProgressBar()
+
 	onMount(progressBar.actions.end)
 
 	//// const [show, setShow] = createSignal(false)
@@ -835,7 +836,9 @@ function Demo() {
 
 function Skeleton() {
 	const progressBar = useProgressBar()
+
 	onMount(() => progressBar.actions.start())
+	//// onCleanup(() => document.documentElement.classList.add("loaded"))
 
 	return <>
 		{css`
