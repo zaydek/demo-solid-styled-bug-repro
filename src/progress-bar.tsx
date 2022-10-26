@@ -85,6 +85,7 @@ export function ProgressBarProvider(props: ParentProps) {
 				--__progress: 0%;
 				position: fixed;
 				z-index: 200;
+				inset: 0;
 				inset:
 					0    /* T */
 					0    /* R */
@@ -93,7 +94,7 @@ export function ProgressBarProvider(props: ParentProps) {
 				height: 4px;
 				width: var(--__progress);
 				background-color: hsl(200 100% 50%);
-				box-shadow: 0 0 8px 0 hsl(200 100% 50%);
+				/* box-shadow: 0 0 8px 0 hsl(200 100% 50%); */
 				transition: width 300ms ease;
 			}
 			.progress-bar.done {

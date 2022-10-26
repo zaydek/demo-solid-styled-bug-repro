@@ -1,16 +1,16 @@
 import "./css"
 
-import { createResource, createSignal, For, Index, onMount, Resource, Show, Suspense } from "solid-js"
+import { createEffect, createResource, createSignal, For, onMount, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { Sidesheet, SidesheetState } from "solid-sheet"
+import { AriaButton } from "./aria"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer, DrawerContainer } from "./drawer"
 import { ProgressBarProvider, useProgressBar } from "./progress-bar"
-import { BottomsheetOrSidesheet, NonResponsive, Responsive } from "./sheet"
-import { SmileyOutlineSVG, SmileySVG } from "./smiley-svg"
-import { darkMode, debugCSS, search, settings } from "./state"
-import { createMediaSignal, createScreen, css } from "./utils/solid"
-import { cx, only, range, round } from "./utils/vanilla"
+import { SmileySVG } from "./smiley-svg"
+import { debugCSS, search, settings } from "./state"
+import { css } from "./utils/solid"
+import { cx, range, round } from "./utils/vanilla"
 
 ////////////////////////////////////////
 
@@ -47,8 +47,8 @@ const heightPixels = () => {
 //// 					auto /* B */
 //// 					0;   /* L */
 //// 				padding:
-//// 					0                                   /* Y */
-//// 					calc(var(--search-bar-height) / 4); /* X */
+//// 					0     /* Y */
+//// 					24px; /* X */
 //// 				height: var(--search-bar-height);
 //// 				background-color: white;
 //// 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
@@ -621,7 +621,7 @@ function Sidebar() {
 						<div class="drawer-body-content">
 							<Slider value={strokeWidth()} setValue={setStrokeWidth} min={0.5} max={2.5} step={0.1} />
 						</div>
-						<div class="line-x"></div>
+						{/* <div class="line-x"></div> */}
 					</Drawer>
 
 					{/**************************/}
@@ -650,6 +650,15 @@ function Sidebar() {
 }
 
 function Demo() {
+	const progressBar = useProgressBar()
+	onMount(progressBar.actions.end)
+
+	//// const [show, setShow] = createSignal(false)
+	////
+	//// setInterval(() => {
+	//// 	setShow(curr => !curr)
+	//// }, 5_000)
+
 	return <>
 		{css`
 			/********************************/
@@ -665,8 +674,8 @@ function Demo() {
 					0;   /* L */
 				margin-right: var(--sidebar-width);
 				padding:
-					0                                   /* Y */
-					calc(var(--search-bar-height) / 4); /* X */
+					0     /* Y */
+					24px; /* X */
 				height: var(--search-bar-height);
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
@@ -689,8 +698,8 @@ function Demo() {
 			.search-bar-text-field:focus-visible { outline: none; } /* CSS reset */
 			.search-bar-text-field {
 				padding:
-					0                                   /* Y */
-					calc(var(--search-bar-height) / 4); /* X */
+					0     /* Y */
+					24px; /* X */
 				font: 400 16px /
 					normal system-ui;
 			}
@@ -718,8 +727,11 @@ function Demo() {
 					var(--sidebar-width)     /* R */
 					0                        /* B */
 					0;                       /* L */
-				padding: 16px;
-				padding-right: var(--sheet-draggable-size); /* Override */
+				padding:
+					16px                        /* T */
+					var(--sheet-draggable-size) /* R */
+					calc(16px * 3)              /* B */
+					16px;                       /* L */
 
 				/* Flow */
 				display: grid;
@@ -788,8 +800,8 @@ function Demo() {
 		<Sidebar />
 		<main class="results">
 			<For each={search.results()}>{result => <>
-				<div class="results-item">
-					<div class="results-item-icon-container">
+				<article class="results-item">
+					<AriaButton class="results-item-icon-container">
 						<Dynamic
 							// @ts-expect-error
 							component={settings.icons()?.[result.title]}
@@ -800,8 +812,9 @@ function Demo() {
 								...(strokeWidth() !== 1.5 && { "stroke-width": strokeWidth() }),
 							}}
 						/>
-					</div>
+					</AriaButton>
 					<div class="results-item-typography-container">
+						{/* <Show when={show()}> */}
 						<div class={cx(`results-item-typography ${"index" in result ? "match" : ""}`)}>
 							{/* <Dynamic component={settings.icons()?.[result.title]} class="results-item-typography-icon" /> */}
 							<Show when={"index" in result} fallback={result.kebab}>
@@ -812,14 +825,18 @@ function Demo() {
 								{result.kebab.slice(result.index! + search.canonicalValue().length)}
 							</Show>
 						</div>
+						{/* </Show> */}
 					</div>
-				</div>
+				</article>
 			</>}</For>
 		</main>
 	</>
 }
 
 function Skeleton() {
+	const progressBar = useProgressBar()
+	onMount(() => progressBar.actions.start())
+
 	return <>
 		{css`
 			/********************************/
@@ -839,8 +856,8 @@ function Skeleton() {
 					0                    /* B */
 					0;                   /* L */
 				padding:
-					0                                   /* Y */
-					calc(var(--search-bar-height) / 4); /* X */
+					0     /* Y */
+					24px; /* X */
 				height: var(--search-bar-height);
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
@@ -961,7 +978,7 @@ function Controller() {
 	})
 
 	return <>
-		<Suspense fallback={Skeleton}>
+		<Suspense fallback={<Skeleton />}>
 			{void foo()}
 			<Demo />
 		</Suspense>
@@ -983,11 +1000,6 @@ render(
 		////
 		//// console.log(debugCSS.enabled())
 		//// debugCSS.toggle()
-		////
-		//// const progressBar = useProgressBar()
-		//// onMount(() => {
-		//// 	progressBar.actions.start()
-		//// })
 
 		return <>
 			{css`
@@ -1029,9 +1041,9 @@ render(
 				.line-y.collapsed { position: relative; z-index: 10; isolation: isolate; margin-left: calc(-1 * var(--line-thickness)); }
 				.line-x.collapsed { position: relative; z-index: 10; isolation: isolate; margin-top:  calc(-1 * var(--line-thickness)); }
 			`}
-			{/* <ProgressBarProvider> */}
-			<Controller />
-			{/* </ProgressBarProvider> */}
+			<ProgressBarProvider>
+				<Controller />
+			</ProgressBarProvider>
 		</>
 	},
 	document.getElementById("root")!,
