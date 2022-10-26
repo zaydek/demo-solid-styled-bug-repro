@@ -2,7 +2,6 @@ import "./css"
 
 import { createResource, createSignal, For, onMount, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
-import { SidesheetState } from "solid-sheet"
 import { AriaButton } from "./aria"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer, DrawerContainer } from "./drawer"
@@ -14,8 +13,6 @@ import { css } from "./utils/solid"
 import { cx, range, round } from "./utils/vanilla"
 
 ////////////////////////////////////////
-
-const [sidesheet, setSidesheet] = createSignal<SidesheetState>("open")
 
 // Checkboxes
 const [noName, setNoName] = createSignal(false)
@@ -226,7 +223,7 @@ function Sidebar() {
 						<div class="drawer-body-content">
 							<Slider value={strokeWidth()} setValue={setStrokeWidth} min={0.5} max={2.5} step={0.1} />
 						</div>
-						{/* <div class="line-x"></div> */}
+						<div class="line-x"></div>
 					</Drawer>
 
 					{/**************************/}
@@ -401,6 +398,7 @@ function Demo() {
 				type="text"
 				value={search.value()}
 				onInput={e => search.setValue(e.currentTarget.value)}
+				autocapitalize="off"
 			/>
 			<NavIcon />
 		</nav>
