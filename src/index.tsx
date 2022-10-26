@@ -292,8 +292,8 @@ function Demo() {
 				align-items: center;
 				/* Defer to search-bar-text-field for padding */
 			}
-			:root:has(.sidesheet.closed)               .search-bar { margin-right: 0; }   /* Override */
-			@media (hover: none), (max-width: 767px) { .search-bar { margin-right: 0; } } /* Override */
+			:root:has(.sidesheet.closed)                   .search-bar { margin-right: 0; }   /* Override */
+			@media (hover: none), not (min-width: 500px) { .search-bar { margin-right: 0; } } /* Override */
 			.search-bar-icon {
 				height: 32px;
 				aspect-ratio: 1;
@@ -343,8 +343,8 @@ function Demo() {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
 			}
-			:root:has(.sidesheet.closed)               .results { margin-right: 0; }   /* Override */
-			@media (hover: none), (max-width: 767px) { .results { margin-right: 0; } } /* Override */
+			:root:has(.sidesheet.closed)                   .results { margin-right: 0; }                        /* Override */
+			@media (hover: none), not (min-width: 500px) { .results { margin-right: 0; padding-right: 16px; } } /* Override */
 			.results-item {
 				padding:
 					0    /* Y */
@@ -476,7 +476,7 @@ function Skeleton() {
 				align-items: center;
 				gap: calc(var(--search-bar-height) / 4);
 			}
-			@media (hover: none) { .sk-search-bar { margin-right: 0; } } /* Override */
+			@media (hover: none), not (min-width: 500px) { .sk-search-bar { margin-right: 0; } } /* Override */
 			.sk-search-bar-icon {
 				height: 32px;
 				aspect-ratio: 1;
@@ -505,7 +505,7 @@ function Skeleton() {
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
 			}
-			@media (hover: none) { .sk-sidebar { display: none; } }
+			@media (hover: none), not (min-width: 500px) { .sk-sidebar { display: none; } }
 
 			/********************************/
 			/* sk-results */
@@ -523,7 +523,7 @@ function Skeleton() {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
 			}
-			@media (hover: none) { .sk-results { margin-right: 0; } } /* Override */
+			@media (hover: none), not (min-width: 500px) { .sk-results { margin-right: 0; padding-right: 16px; } } /* Override */
 			.sk-results-item {
 				padding:
 					0    /* Y */
