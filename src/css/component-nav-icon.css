@@ -1,4 +1,4 @@
-.cp-nav-icon {
+.component-nav-icon {
 	height: 32px;
 	aspect-ratio: 1;
 	border-radius: 1000px;
@@ -10,7 +10,7 @@
 
 	cursor: pointer;
 }
-.cp-nav-icon-svg {
+.component-nav-icon-icon {
 	height: 75%;
 	aspect-ratio: 1;
 	color: hsl(0 0% 25%);

@@ -101,7 +101,7 @@ export function Drawer(props: ParentProps<{
 
 createMounted()
 
-export function DrawerProvider(props: ParentProps<{
+export function DrawerContainer(props: ParentProps<{
 	//// resizeStrategy?: "immediate" | "delayed"
 }>) {
 	//// const resizeStrategy = () => props.resizeStrategy ?? "delayed"

@@ -1,3 +1,5 @@
+/* TODO: DEPRECATE */
+
 /* NOTE: It’s not clear "isolation: isolate;" helps (iOS / Safari) */
 .line { height: 4px; background-color: hsl(0 0% 90%); }
 .line.collapsed { position: relative; z-index: 10; isolation: isolate; margin-top: -4px; }

@@ -3,6 +3,19 @@ import { search } from "./search"
 import { settings } from "./settings"
 
 createRoot(() => {
+	// Gets the next document.title
+	const title = ({ visible }: { visible?: boolean } = {}) => {
+		visible ??= true
+		if (!visible) { return "Heroicons" }
+		if (!search.canonicalValue()) {
+			return "Heroicons"
+		} else if (!search.results()) {
+			return "0 results"
+		}
+		const { length } = search.results()!
+		return `${search.canonicalValue()} — ${length} Icon${length === 1 ? "" : "s"}`
+	}
+
 	// https://.../?foo=bar
 	createEffect(() => {
 		const encoded: Record<string, string> = {}
@@ -33,19 +46,6 @@ createRoot(() => {
 			window.history.replaceState({}, "", `/?${params.toString()}`)
 		}
 	})
-
-	// Gets the next document.title
-	const title = ({ visible }: { visible?: boolean } = {}) => {
-		visible ??= true
-		if (!visible) { return "Heroicons" }
-		if (!search.canonicalValue()) {
-			return "Heroicons"
-		} else if (!search.results()) {
-			return "0 results"
-		}
-		const { length } = search.results()!
-		return `${search.canonicalValue()} — ${length} Icon${length === 1 ? "" : "s"}`
-	}
 
 	// <title>...</title>
 	createEffect(() => {

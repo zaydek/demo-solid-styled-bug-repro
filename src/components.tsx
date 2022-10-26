@@ -8,8 +8,8 @@ import { CSSProps, RefProps } from "./utils/solid"
 
 export function NavIcon() {
 	return <>
-		<div class="cp-nav-icon">
-			<Dynamic component={SmileySVG} class="cp-nav-icon-svg" />
+		<div class="component-nav-icon">
+			<Dynamic component={SmileySVG} class="component-nav-icon-icon" />
 		</div>
 	</>
 }
@@ -37,15 +37,15 @@ export function Checkbox(props: ParentProps<{
 	]
 
 	return <>
-		<AriaCheckbox class="cp-checkable-container" checked={checked()} setChecked={setChecked}>
-			<div class="cp-checkable-label">
-				<Dynamic component={SmileySVG} class="cp-checkable-label-icon" />
-				<div class="cp-checkable-label-text">
+		<AriaCheckbox class="component-checkable-container" checked={checked()} setChecked={setChecked}>
+			<div class="component-checkable-label">
+				<Dynamic component={SmileySVG} class="component-checkable-label-icon" />
+				<div class="component-checkable-label-text">
 					{props.children}
 				</div>
 			</div>
-			<div class="cp-checkable-checkbox">
-				<Dynamic component={CheckSVG} class="cp-checkable-checkbox-svg" style={{ "stroke-width": "7" }} />
+			<div class="component-checkable-checkbox">
+				<Dynamic component={CheckSVG} class="component-checkable-checkbox-svg" style={{ "stroke-width": "7" }} />
 			</div>
 		</AriaCheckbox>
 	</>
@@ -58,15 +58,15 @@ export function Radio(props: ParentProps<{
 	style?: JSX.CSSProperties
 }>) {
 	return <>
-		<AriaRadio class="cp-checkable-container" style={props.style} value={props.value}>
-			<div class="cp-checkable-label">
-				<Dynamic component={SmileySVG} class="cp-checkable-label-icon" />
-				<div class="cp-checkable-label-text">
+		<AriaRadio class="component-checkable-container" style={props.style} value={props.value}>
+			<div class="component-checkable-label">
+				<Dynamic component={SmileySVG} class="component-checkable-label-icon" />
+				<div class="component-checkable-label-text">
 					{props.children}
 				</div>
 			</div>
-			<div class="cp-checkable-radio">
-				<div class="cp-checkable-radio-icon"></div>
+			<div class="component-checkable-radio">
+				<div class="component-checkable-radio-icon"></div>
 			</div>
 		</AriaRadio>
 	</>
@@ -110,12 +110,12 @@ export function Slider(props: VoidProps<{
 	]
 
 	return <>
-		<div class="cp-slider-container">
-			<AriaSliderHorizontal class="cp-slider" value={value()} setValue={setValue} min={min()} max={max()} step={step()}>
+		<div class="component-slider-container">
+			<AriaSliderHorizontal class="component-slider" value={value()} setValue={setValue} min={min()} max={max()} step={step()}>
 				{translate => <>
-					<div class="cp-slider-track">
+					<div class="component-slider-track">
 						<AriaSliderThumb
-							class="cp-slider-thumb"
+							class="component-slider-thumb"
 							style={{
 								...(translate() && {
 									"transform": `translateX(${translate()!}px)`,

@@ -1,15 +1,15 @@
-.cp-checkable-container {
+.component-checkable-container {
 	--color:       hsl(200 100% 50%);
 	--alpha-color: hsl(200 100% 50% / 40%);
 
 	display: grid;
 	grid-template-columns: 1fr auto;
-	align-items: center; /* cp-checkable-container and cp-checkable-checkbox are 28px and 24px */
+	align-items: center; /* component-checkable-container and component-checkable-checkbox are 28px and 24px */
 	gap: 8px;
 
 	cursor: pointer;
 }
-.cp-checkable-label {
+.component-checkable-label {
 	padding:
 		0    /* Y */
 		8px; /* X */
@@ -23,7 +23,7 @@
 	align-items: center;
 	gap: 8px;
 }
-.cp-checkable-label-icon {
+.component-checkable-label-icon {
 	height: 60%;
 	aspect-ratio: 1;
 	color: var(--color);
@@ -31,7 +31,7 @@
 
 /**************************************/
 
-.cp-checkable-checkbox {
+.component-checkable-checkbox {
 	height: 24px;
 	aspect-ratio: 1;
 	border-radius: 40%;
@@ -43,19 +43,19 @@
 	display: grid;
 	place-items: center;
 }
-.cp-checkable-checkbox-svg {
+.component-checkable-checkbox-svg {
 	height: 50%;
 	aspect-ratio: 1;
 	color: white;
 }
 /* Overrides */
-.cp-checkable-container[aria-checked=false] .cp-checkable-checkbox-svg {
+.component-checkable-container[aria-checked=false] .component-checkable-checkbox-svg {
 	display: none;
 }
 
 /**************************************/
 
-.cp-checkable-radio {
+.component-checkable-radio {
 	height: 24px;
 	aspect-ratio: 1;
 	border-radius: 1000px;
@@ -67,41 +67,41 @@
 	display: grid;
 	place-items: center;
 }
-.cp-checkable-radio-icon {
+.component-checkable-radio-icon {
 	height: calc(100% / 3);
 	aspect-ratio: 1;
 	border-radius: 1000px;
 	background-color: white;
 }
 /* Overrides */
-.cp-checkable-container[aria-checked=false] .cp-checkable-radio-icon {
+.component-checkable-container[aria-checked=false] .component-checkable-radio-icon {
 	display: none;
 }
 
 /**************************************/
 
 /* Overrides */
-.cp-checkable-container[aria-checked=false]:is(:hover, :active) :is(
-	.cp-checkable-checkbox,
-	.cp-checkable-radio
+.component-checkable-container[aria-checked=false]:is(:hover, :active) :is(
+	.component-checkable-checkbox,
+	.component-checkable-radio
 ) {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
 		0 0 0 8px hsl(0 0% 0% / 10%);
 }
 
-.cp-checkable-container[aria-checked=true] :is(
-	.cp-checkable-checkbox,
-	.cp-checkable-radio
+.component-checkable-container[aria-checked=true] :is(
+	.component-checkable-checkbox,
+	.component-checkable-radio
 ) {
 	background-color: var(--color);
 	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
 		0 0 0 4px hsl(0 0% 0% / 10%);
 }
 
-.cp-checkable-container[aria-checked=true]:is(:hover, :active) :is(
-	.cp-checkable-checkbox,
-	.cp-checkable-radio
+.component-checkable-container[aria-checked=true]:is(:hover, :active) :is(
+	.component-checkable-checkbox,
+	.component-checkable-radio
 ) {
 	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
 		0 0 0 4px hsl(0 0% 0% / 10%),

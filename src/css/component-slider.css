@@ -1,7 +1,7 @@
-.cp-slider-container {
+.component-slider-container {
 	padding: 0 calc(28px / 2);
 }
-.cp-slider {
+.component-slider {
   height: 28px;
   width: 100%;
 
@@ -12,9 +12,9 @@
 	cursor: grab;
 	touch-action: pan-x;
 }
-:root:has(.cp-slider:active) { cursor: grabbing; }            /* Use both */
-:root:has(.cp-slider:active) .cp-slider { cursor: grabbing; } /* Use both */
-.cp-slider-track {
+:root:has(.component-slider:active) { cursor: grabbing; }                   /* Use both */
+:root:has(.component-slider:active) .component-slider { cursor: grabbing; } /* Use both */
+.component-slider-track {
   height: 6px;
   width: 100%;
   border-radius: 1000px;
@@ -24,7 +24,7 @@
   display: grid;
   align-content: center;
 }
-.cp-slider-thumb {
+.component-slider-thumb {
   height: 28px;
   aspect-ratio: 1;
   border-radius: 1000px;
@@ -37,12 +37,12 @@
 /**************************************/
 
 /* Overrides */
-.cp-slider:hover .cp-slider-thumb {
+.component-slider:hover .component-slider-thumb {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
 		0 0 0 8px hsl(0 0% 0% / 10%);
 }
-.cp-slider:active .cp-slider-thumb {
+.component-slider:active .component-slider-thumb {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
 		0 0 0 8px hsl(200 100% 50% / 40%);
