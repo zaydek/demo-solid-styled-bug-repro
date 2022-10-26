@@ -1,41 +1,25 @@
-import { ParentProps, Setter, Show } from "solid-js"
-import { Bottomsheet, Sidesheet, SidesheetState } from "solid-sheet"
+import { ParentProps, Show } from "solid-js"
+import { Bottomsheet, Sidesheet } from "solid-sheet"
 import { createMediaSignal } from "./utils/solid"
 
-const responsive = createMediaSignal("(max-width: 499px)")
+const responsive = createMediaSignal(`
+	(hover: none),         /* E.g. touch devices */
+	not (min-width: 500px) /* E.g. width < 500px */
+`)
 
-// Renders exclusively for responsive content
-export function Responsive(props: ParentProps) {
+export function Sheet(props: ParentProps) {
 	return <>
+		{/* Use <Show> so we can use :root:has(.sidesheet) and
+		:root:has(.bottomsheet) */}
 		<Show when={responsive()}>
-			{props.children}
-		</Show>
-	</>
-}
-
-// Renders exclusively for non-responsive content
-export function NonResponsive(props: ParentProps) {
-	return <>
-		<Show when={!responsive()}>
-			{props.children}
-		</Show>
-	</>
-}
-
-export function BottomsheetOrSidesheet(props: ParentProps<{
-	sidesheet:    SidesheetState
-	setSidesheet: Setter<SidesheetState>
-}>) {
-	return <>
-		<Responsive>
 			<Bottomsheet initialState="closed">
 				{props.children}
 			</Bottomsheet>
-		</Responsive>
-		<NonResponsive>
-			<Sidesheet state={props.sidesheet} setState={props.setSidesheet}>
+		</Show>
+		<Show when={!responsive()}>
+			<Sidesheet initialState="open">
 				{props.children}
 			</Sidesheet>
-		</NonResponsive>
+		</Show>
 	</>
 }

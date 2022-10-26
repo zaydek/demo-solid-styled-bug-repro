@@ -1,6 +1,6 @@
 import { createRoot, createSignal, onCleanup, onMount } from "solid-js"
 
-export function createMediaSignal(media: `(${string})`) {
+export function createMediaSignal(media: string) {
 	const mq = window.matchMedia(media)
 	const [matches, setMatches] = createSignal(mq.matches)
 
