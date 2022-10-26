@@ -342,6 +342,7 @@ function Demo() {
 				/* Flow */
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
+				grid-auto-rows: calc(var(--results-item-height) + 24px); /* COMPAT/Safari */
 			}
 			:root:has(.sidesheet.closed)                   .results { margin-right: 0; }                        /* Override */
 			@media (hover: none), not (min-width: 500px) { .results { margin-right: 0; padding-right: 16px; } } /* Override */
@@ -522,6 +523,7 @@ function Skeleton() {
 				/* Flow */
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
+				grid-auto-rows: calc(var(--results-item-height) + 24px); /* COMPAT/Safari */
 			}
 			@media (hover: none), not (min-width: 500px) { .sk-results { margin-right: 0; padding-right: 16px; } } /* Override */
 			.sk-results-item {
