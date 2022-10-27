@@ -1,10 +1,10 @@
 import "./css"
 
-import { createEffect, createResource, createSignal, DEV, For, JSX, on, onCleanup, onMount, ParentProps, Show, Suspense } from "solid-js"
+import { createResource, createSignal, DEV, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
-import { Drawer, DrawerContainer } from "./drawer"
+import { Drawer } from "./drawer"
 import { ProgressBarProvider, useProgressBar } from "./progress-bar"
 import { Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
@@ -32,6 +32,7 @@ function Sidebar() {
 				display: grid;
 				grid-template-rows: 1fr auto;
 			}
+			/* TODO */
 			.bottomsheet-content > :is(:nth-child(1), :nth-child(3)) { display: none; }
 			.bottomsheet-content > :nth-child(2) { overflow-y: auto; }
 
@@ -41,11 +42,12 @@ function Sidebar() {
 			.sidesheet-content {
 				height: var(--screen-y);
 
-				/* Flow */
-				display: grid;
-				grid-template-rows: auto 1fr auto;
+				/* FLEX */
+				display: flex;
+				flex-direction: column;
 			}
-			.sidesheet-content > :nth-child(2) { overflow-y: auto; }
+			.sidesheet-content > :is(:nth-child(1), :nth-child(3)) { flex-shrink: 0; }
+			.sidesheet-content > :nth-child(2) { flex-grow: 1; overflow-y: auto; }
 
 			/********************************/
 			/* sidebar-nav */
@@ -56,49 +58,39 @@ function Sidebar() {
 					24px; /* X */
 				height: var(--search-bar-height);
 
-				/* Flow */
-				display: grid;
-				grid-template-columns: auto 1fr auto auto;
+				/* FLEX */
+				display: flex;
+				flex-direction: row;
 				align-items: center;
 				gap: 16px;
 			}
-			.sidebar-nav > :nth-child(1) { grid-column: 1; }
-			.sidebar-nav > :nth-child(2) { grid-column: 3; }
-			.sidebar-nav > :nth-child(3) { grid-column: 4; }
+			.sidebar-nav > :nth-child(2) { flex-grow: 1; }
 
 			/********************************/
 			/* drawer */
 
-			/* Use drawer-head-content and drawer-body-content because of leading and
-			trailing line-x */
-			.drawer-head-content {
+			.drawer-head {
 				padding:
-					16px  /* Y */
-					24px; /* X */
+					16px
+					24px;
 
-				/* Flow */
-				/* COMPAT/Safari: Use Flexbox here because of a pathological edge case
-				for Safari; can break when using CSS Grid and dragging <Slider> */
-				/* display: grid; */
-				/* grid-template-columns: auto 1fr auto; */
-				/* align-items: center; */
-				/* gap: 8px; */
+				/* FLEX */
 				display: flex;
+				flex-direction: row;
 				align-items: center;
 				gap: 8px;
 			}
-			.drawer-head-content > :nth-child(2) { flex-grow: 1; }
+			.drawer-head > :nth-child(2) { flex-grow: 1; }
 			.drawer-head-icon {
 				height: 16px;
 				aspect-ratio: 1;
 				color: gray;
 			}
-			.drawer-body-content {
+			.drawer-body {
 				padding: 16px;
 				padding-top: 0; /* Override */
 
-				/* Flow */
-				/* TODO: Can we use grid here? */
+				/* FLEX */
 				display: flex;
 				flex-direction: column;
 				gap: 8px;
@@ -108,167 +100,144 @@ function Sidebar() {
 			<div>
 				<nav class="sidebar-nav">
 					<NavIcon />
+					<div></div>
 					<NavIcon />
 					<NavIcon />
 				</nav>
 				<div class="line-x"></div>
 			</div>
 			<div>
-				<DrawerContainer>
 
-					{/**************************/}
+				{/****************************/}
 
+				<Drawer head={<>
+					<Dynamic component={SmileySVG} class="drawer-head-icon" />
+					<div>
+						VERSION
+					</div>
+					<div>
+						{settings.version().toUpperCase()}
+					</div>
+				</>} open>
+					<div class="drawer-body-content">
+						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.version()} setGroupValue={settings.setVersion}>
+							<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
+								<Radio value={value}>
+									{value.toUpperCase()}
+								</Radio>
+							</>}</For>
+						</Radiogroup>
+					</div>
+				</Drawer>
+
+				{/****************************/}
+
+				<Show when={settings.version() === "v1"}>
+					<div class="line-x"></div>
 					<Drawer head={<>
-						<div class="drawer-head-content">
-							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>
-								VERSION
-							</div>
-							<div>
-								{settings.version().toUpperCase()}
-							</div>
+						<Dynamic component={SmileySVG} class="drawer-head-icon" />
+						<div>
+							VARIANT (V1)
+						</div>
+						<div>
+							{settings.variantV1().toUpperCase()}
 						</div>
 					</>} open>
-						<div class="drawer-body-content">
-							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.version()} setGroupValue={settings.setVersion}>
-								<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
-									<Radio value={value}>
-										{value.toUpperCase()}
-									</Radio>
-								</>}</For>
-							</Radiogroup>
-						</div>
+						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
+							<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
+								<Radio value={value}>
+									{value.toUpperCase()}
+								</Radio>
+							</>}</For>
+						</Radiogroup>
 					</Drawer>
-					<Show when={settings.version() === "v1"}>
+				</Show>
 
-					{/**************************/}
+				{/****************************/}
 
-						<Drawer head={<>
-							<div class="line-x"></div>
-							<div class="drawer-head-content">
-								<Dynamic component={SmileySVG} class="drawer-head-icon" />
-								<div>
-									VARIANT (V1)
-								</div>
-								<div>
-									{settings.variantV1().toUpperCase()}
-								</div>
-							</div>
-						</>} open>
-							<div class="drawer-body-content">
-								<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
-									<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
-										<Radio value={value}>
-											{value.toUpperCase()}
-										</Radio>
-									</>}</For>
-								</Radiogroup>
-							</div>
-						</Drawer>
-					</Show>
-					<Show when={settings.version() === "v2"}>
-
-					{/**************************/}
-
-						<Drawer head={<>
-							<div class="line-x"></div>
-							<div class="drawer-head-content">
-								<Dynamic component={SmileySVG} class="drawer-head-icon" />
-								<div>
-									VARIANT (V2)
-								</div>
-								<div>
-									{settings.variantV2().toUpperCase()}
-								</div>
-							</div>
-						</>} open>
-							<div class="drawer-body-content">
-								<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
-									<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
-										<Radio value={value}>
-											{value.toUpperCase()}
-										</Radio>
-									</>}</For>
-								</Radiogroup>
-							</div>
-						</Drawer>
-					</Show>
-
-					{/**************************/}
-
+				<Show when={settings.version() === "v2"}>
+					<div class="line-x"></div>
 					<Drawer head={<>
-						<div class="line-x"></div>
-						<div class="drawer-head-content">
-							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>
-								COPY TO CLIPBOARD
-							</div>
-							<div>
-								{settings.framework().toUpperCase()}
-							</div>
+						<Dynamic component={SmileySVG} class="drawer-head-icon" />
+						<div>
+							VARIANT (V2)
+						</div>
+						<div>
+							{settings.variantV2().toUpperCase()}
 						</div>
 					</>} open>
-						<div class="drawer-body-content">
-							<Checkbox checked={settings.license()} setChecked={settings.setLicense}>
-								INCLUDE MIT LICENSE
-							</Checkbox>
-							<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
-								<For<{ style: JSX.CSSProperties, value: Framework }, JSX.Element> each={[
-									{ style: { "--color": "#ffb13b", "--alpha-color": "#ffb13b66" }, value: "svg"   },
-									{ style: { "--color": "#61dafb", "--alpha-color": "#61dafb66" }, value: "react" },
-									{ style: { "--color": "#4fc08d", "--alpha-color": "#4fc08d66" }, value: "vue"   },
-								]}>{({ style, value }) => <>
-									<Radio style={style} value={value}>
-										{value.toUpperCase()}
-									</Radio>
-								</>}</For>
-							</Radiogroup>
-						</div>
+						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
+							<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
+								<Radio value={value}>
+									{value.toUpperCase()}
+								</Radio>
+							</>}</For>
+						</Radiogroup>
 					</Drawer>
+				</Show>
 
-					{/**************************/}
+				{/****************************/}
 
-					<Drawer head={<>
-						<div class="line-x"></div>
-						<div class="drawer-head-content">
-							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>
-								SIZE
-							</div>
-							<div>
-								{round(settings.scale() * 100)}%,{" "}
-								{round(settings.scale() * 32, { precision: 1 }).toFixed(1)}PX
-							</div>
-						</div>
-					</>} open>
-						<div class="drawer-body-content">
-							<Slider value={settings.scale()} setValue={settings.setScale} min={0.5} max={1.5} step={0.01} />
-						</div>
-					</Drawer>
+				<div class="line-x"></div>
+				<Drawer head={<>
+					<Dynamic component={SmileySVG} class="drawer-head-icon" />
+					<div>
+						COPY TO CLIPBOARD
+					</div>
+					<div>
+						{settings.framework().toUpperCase()}
+					</div>
+				</>} open>
+					<Checkbox checked={settings.license()} setChecked={settings.setLicense}>
+						INCLUDE MIT LICENSE
+					</Checkbox>
+					<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
+						<For<{ style: JSX.CSSProperties, value: Framework }, JSX.Element> each={[
+							{ style: { "--color": "#ffb13b", "--alpha-color": "#ffb13b66" }, value: "svg" },
+							{ style: { "--color": "#61dafb", "--alpha-color": "#61dafb66" }, value: "react" },
+							{ style: { "--color": "#4fc08d", "--alpha-color": "#4fc08d66" }, value: "vue" },
+						]}>{({ style, value }) => <>
+							<Radio style={style} value={value}>
+								{value.toUpperCase()}
+							</Radio>
+						</>}</For>
+					</Radiogroup>
+				</Drawer>
 
-					{/**************************/}
+				{/****************************/}
 
-					<Drawer head={<>
-						<div class="line-x"></div>
-						<div class="drawer-head-content">
-							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>
-								STROKE
-							</div>
-							<div>
-								{settings.stroke()}
-							</div>
-						</div>
-					</>} open>
-						<div class="drawer-body-content">
-							<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={settings.version() === "v1" ? 3.5 : 2.5} step={0.01} />
-						</div>
-						<div class="line-x"></div>
-					</Drawer>
+				<div class="line-x"></div>
+				<Drawer head={<>
+					<Dynamic component={SmileySVG} class="drawer-head-icon" />
+					<div>
+						SIZE
+					</div>
+					<div>
+						{round(settings.scale() * 100)}%,{" "}
+						{round(settings.scale() * 32, { precision: 1 }).toFixed(1)}PX
+					</div>
+				</>} open>
+					<Slider value={settings.scale()} setValue={settings.setScale} min={0.5} max={1.5} step={0.01} />
+				</Drawer>
 
-					{/**************************/}
+				{/****************************/}
 
-				</DrawerContainer>
+				<div class="line-x"></div>
+				<Drawer head={<>
+					<Dynamic component={SmileySVG} class="drawer-head-icon" />
+					<div>
+						STROKE
+					</div>
+					<div>
+						{settings.stroke()}
+					</div>
+				</>} open>
+					<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={settings.version() === "v1" ? 3.5 : 2.5} step={0.01} />
+				</Drawer>
+				<div class="line-x"></div>
+
+				{/****************************/}
+
 			</div>
 			<div>
 				<div class="line-x collapsed"></div>
@@ -711,8 +680,8 @@ function App() {
 			.line-y { width:  var(--line-thickness); background-color: hsl(0 0% 90%); }
 			.line-x { height: var(--line-thickness); background-color: hsl(0 0% 90%); }
 
-			.line-y.collapsed { position: relative; z-index: 10; isolation: isolate; margin-left: calc(-1 * var(--line-thickness)); }
-			.line-x.collapsed { position: relative; z-index: 10; isolation: isolate; margin-top:  calc(-1 * var(--line-thickness)); }
+			.line-y.collapsed { margin-left: calc(-1 * var(--line-thickness)); }
+			.line-x.collapsed { margin-top:  calc(-1 * var(--line-thickness)); }
 		`}
 		<ProgressBarProvider>
 			<LoadController />
@@ -720,169 +689,92 @@ function App() {
 	</>
 }
 
-function App2(props: ParentProps<{
-	head: JSX.Element
-
-	open?: boolean
-}>) {
-	const [ref, setRef] = createSignal<HTMLElement>()
-	const [headRef, setHeadRef] = createSignal<HTMLElement>()
-
-	const [open, setOpen] = createSignal(props.open ?? true)
-	//// const [transition, setTransition] = createSignal(false)
-
-	//// // Synchronize transition
-	//// createEffect(on(open, () => {
-	//// 	setTransition(true)
-	//// }, { defer: true }))
-
-	// DEBUG
-	window.addEventListener("keydown", e => {
-		if (e.key === "d") {
-			setOpen(curr => !curr)
-		}
-	})
-
-	onMount(() => {
-		ref()!.style.setProperty("--__min-height", `${headRef()!.scrollHeight}px`)
-		ref()!.style.setProperty("--__max-height", `${ref()!.scrollHeight}px`)
-	})
-
-	return <>
-		{css`
-			.drawer {
-				--__min-height: auto;
-				--__max-height: auto;
-			}
-			.drawer {
-				transition: 1000ms cubic-bezier(0, 1, 0.25, 1);
-				transition-property: height;
-
-				cursor: pointer;
-				-webkit-user-select: none;
-				user-select: none;
-			}
-			.drawer.closed {
-				height: var(--__min-height);
-				overflow-y: clip;
-			}
-			.drawer.open {
-				height: var(--__max-height);
-				overflow-y: clip;
-			}
-
-			/********************************/
-
-			.drawer .drawer-body {
-				transition: 1000ms cubic-bezier(0, 1, 0.25, 1);
-				transition-property: transform, opacity;
-			}
-			.drawer.open .drawer-body {
-				transform: scale(1);
-				opacity: 1;
-			}
-			.drawer.closed .drawer-body {
-				transform: scale(0.9);
-				opacity: 0;
-			}
-		`}
-		<div ref={setRef} class={cx(`drawer ${open() ? "open" : "closed"}`)}>
-			<AriaButton ref={setHeadRef} class="drawer-head" onClick={e => setOpen(curr => !curr)}>
-				{props.head}
-			</AriaButton>
-			<div class="drawer-body">
-				{props.children}
-			</div>
-		</div>
-	</>
-}
-
-function DrawerDemo() {
-	return <>
-		{css`
-			.container {
-				margin:
-					64px
-					auto;
-				width: 448px;
-				/* background-color: whitesmoke; */
-			}
-			.line {
-				height: 4px;
-				background-color: hsl(0 0% 90%);
-			}
-			:focus-visible { outline: revert; }
-
-			.drawer-head {
-				padding:
-					16px
-					24px;
-
-				/* Flex */
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				gap: 8px;
-			}
-			.drawer-head > :nth-child(2) { flex-grow: 1; }
-			.drawer-body {
-				padding:
-					16px
-					24px;
-				padding-top: 0; /* Override */
-			}
-		`}
-		<div class="container">
-			<div class="line"></div>
-			<App2 head={<>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-			</>} open>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-			</App2>
-			<div class="line"></div>
-			<App2 head={<>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-			</>} open>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-			</App2>
-			<div class="line"></div>
-			<App2 head={<>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-			</>} open>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-			</App2>
-			<div class="line"></div>
-			<App2 head={<>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-			</>} open>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-				<div>Hello, world!</div>
-			</App2>
-			<div class="line"></div>
-		</div>
-	</>
-}
+//// function DrawerDemo() {
+//// 	return <>
+//// 		{css`
+//// 			.container {
+//// 				margin:
+//// 					64px
+//// 					auto;
+//// 				width: 448px;
+//// 				/* background-color: whitesmoke; */
+//// 			}
+//// 			.line {
+//// 				height: 4px;
+//// 				background-color: hsl(0 0% 90%);
+//// 			}
+//// 			:focus-visible { outline: revert; }
+////
+//// 			.drawer-head {
+//// 				padding:
+//// 					16px
+//// 					24px;
+////
+//// 				/* Flex */
+//// 				display: flex;
+//// 				flex-direction: row;
+//// 				align-items: center;
+//// 				gap: 8px;
+//// 			}
+//// 			.drawer-head > :nth-child(2) { flex-grow: 1; }
+//// 			.drawer-body {
+//// 				padding:
+//// 					16px
+//// 					24px;
+//// 				padding-top: 0; /* Override */
+//// 			}
+//// 		`}
+//// 		<div class="container">
+//// 			<div class="line"></div>
+//// 			<Drawer head={<>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 			</>} open>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 			</Drawer>
+//// 			<div class="line"></div>
+//// 			<Drawer head={<>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 			</>} open>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 			</Drawer>
+//// 			<div class="line"></div>
+//// 			<Drawer head={<>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 			</>} open>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 			</Drawer>
+//// 			<div class="line"></div>
+//// 			<Drawer head={<>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 			</>} open>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 				<div>Hello, world!</div>
+//// 			</Drawer>
+//// 			<div class="line"></div>
+//// 		</div>
+//// 	</>
+//// }
 
 render(
-	() => <DrawerDemo />,
+	() => <App />,
 	document.getElementById("root")!,
 )
