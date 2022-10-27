@@ -1,6 +1,6 @@
 import "./css"
 
-import { createEffect, createResource, createSignal, DEV, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
+import { createEffect, createResource, createSignal, DEV, For, JSX, onCleanup, onMount, Show, startTransition, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
@@ -604,7 +604,7 @@ function LoadController() {
 	let slow
 	if (DEV) {
 		[slow] = createResource(async () => {
-			await new Promise(r => setTimeout(r, 500))
+			await new Promise(r => setTimeout(r, 1_000))
 			return "foo"
 		})
 	}
@@ -692,37 +692,48 @@ function App() {
 	</>
 }
 
-function Nested() {
-	const [foo, { refetch }] = createResource(async () => {
-		await new Promise(r => setTimeout(r, 500))
-		return "This is nested"
-	})
-
-	createEffect(() => {
-		if (foo.loading) { return }
-		onMount(loadingBar.end)
-	})
-
-	return <>
-		<div class="nested" onClick={e => {
-			e.stopPropagation()
-			refetch()
-		}}>
-			<Suspense fallback={<>
-				{/* Start the loading bar */}
-				{loadingBar.start()}
-				<div>Loading</div>
-			</>}>
-				<div>{foo()}</div>
-			</Suspense>
-		</div>
-	</>
-}
+//// function Nested() {
+//// 	const [foo, { refetch }] = createResource(async () => {
+//// 		await new Promise(r => setTimeout(r, 500))
+//// 		return "This is nested"
+//// 	})
+////
+//// 	let once = false
+//// 	createEffect(() => {
+//// 		if (foo.loading) {
+//// 			if (!once) {
+//// 				once = true
+//// 				return
+//// 			}
+//// 			loadingBar.start()
+//// 		} else {
+//// 			loadingBar.end()
+//// 		}
+//// 	})
+////
+//// 	return <>
+//// 		<div class="nested" onClick={e => {
+//// 			e.stopPropagation()
+//// 			refetch()
+//// 		}}>
+//// 			<Suspense fallback={<>
+//// 				<div>Loading</div>
+//// 			</>}>
+//// 				<div>{foo()}</div>
+//// 			</Suspense>
+//// 		</div>
+//// 	</>
+//// }
 
 function SuspenseExample() {
 	const [foo, { refetch }] = createResource(async () => {
 		await new Promise(r => setTimeout(r, 500))
-		return "This is top-level"
+		return Date.now()
+	})
+
+	createEffect(() => {
+		if (foo.loading) { return }
+		loadingBar.end()
 	})
 
 	return <>
@@ -745,12 +756,18 @@ function SuspenseExample() {
 		`}
 		<div class="top" onClick={refetch}>
 			<Suspense fallback={<>
-				{/* Start the loading bar */}
-				{loadingBar.start()}
 				<div>Loading</div>
 			</>}>
-				<div>{foo()}</div>
-				<Nested />
+				Hello
+				<div
+					onClick={e => {
+						e.stopPropagation()
+						loadingBar.start()
+						startTransition(() => {
+							refetch()
+						})
+					}}
+				>{foo()}</div>
 			</Suspense>
 		</div>
 	</>

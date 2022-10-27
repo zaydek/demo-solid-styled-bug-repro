@@ -1,8 +1,23 @@
 import { createEffect, createRoot, onCleanup } from "solid-js"
+import { loadingBar } from "../loading-bar"
 import { search } from "./search"
 import { settings } from "./settings"
 
 createRoot(() => {
+	// Loading bar
+	let once = false
+	createEffect(() => {
+		if (!settings.manifest()) {
+			if (!once) {
+				once = true
+				return
+			}
+			loadingBar.start()
+		} else {
+			loadingBar.end()
+		}
+	})
+
 	// Gets the next document.title
 	const title = ({ visible }: { visible?: boolean } = {}) => {
 		visible ??= true
