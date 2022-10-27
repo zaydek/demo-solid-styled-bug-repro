@@ -303,7 +303,7 @@ function Demo() {
 				/* Defer to search-bar-text-field for padding */
 			}
 			:root:has(.sidesheet.closed)                   .search-bar { margin-right: 0; }   /* Override */
-			@media (hover: none), not (min-width: 500px) { .search-bar { margin-right: 0; } } /* Override */
+			@media (hover: none), not (min-width: 800px) { .search-bar { margin-right: 0; } } /* Override */
 			.search-bar-icon {
 				height: 32px;
 				aspect-ratio: 1;
@@ -355,7 +355,7 @@ function Demo() {
 				grid-auto-rows: var(--results-item-height); /* COMPAT/Safari */
 			}
 			:root:has(.sidesheet.closed)                   .results { margin-right: 0; }                        /* Override */
-			@media (hover: none), not (min-width: 500px) { .results { margin-right: 0; padding-right: 16px; } } /* Override */
+			@media (hover: none), not (min-width: 800px) { .results { margin-right: 0; padding-right: 16px; } } /* Override */
 			.results-item {
 				padding:
 					0    /* Y */
@@ -387,6 +387,7 @@ function Demo() {
 				/* letter-spacing: -0.0125em; */
 				text-align: center; /* Center x-axis */
 				color: hsl(0 0% 40%);
+				/* opacity: 0; */ /* TODO */
 			}
 			/* .results-item-typography-icon { display: inline-block; } */
 			/* .results-item-typography-icon { */
@@ -489,7 +490,7 @@ function Skeleton() {
 				align-items: center;
 				gap: calc(var(--search-bar-height) / 4);
 			}
-			@media (hover: none), not (min-width: 500px) { .sk-search-bar { margin-right: 0; } } /* Override */
+			@media (hover: none), not (min-width: 800px) { .sk-search-bar { margin-right: 0; } } /* Override */
 			.sk-search-bar-icon {
 				height: 32px;
 				aspect-ratio: 1;
@@ -518,7 +519,7 @@ function Skeleton() {
 				background-color: white;
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
 			}
-			@media (hover: none), not (min-width: 500px) { .sk-sidebar { display: none; } }
+			@media (hover: none), not (min-width: 800px) { .sk-sidebar { display: none; } }
 
 			/********************************/
 			/* sk-results */
@@ -537,7 +538,7 @@ function Skeleton() {
 				grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
 				grid-auto-rows: var(--results-item-height); /* COMPAT/Safari */
 			}
-			@media (hover: none), not (min-width: 500px) { .sk-results { margin-right: 0; padding-right: 16px; } } /* Override */
+			@media (hover: none), not (min-width: 800px) { .sk-results { margin-right: 0; padding-right: 16px; } } /* Override */
 			.sk-results-item {
 				padding:
 					0    /* Y */
@@ -582,7 +583,14 @@ function Skeleton() {
 			<For each={range(256)}>{() => <>
 				<div class="sk-results-item">
 					<div class="sk-results-item-icon-container">
-						<div class="sk-results-item-icon"></div>
+						<div
+							class="sk-results-item-icon"
+							style={{
+								...(settings.scale() !== 1 && {
+									"transform": `scale(${settings.scale()})`
+								}),
+							}}
+						></div>
 					</div>
 					<div class="sk-results-item-typography-container">
 						<div class="sk-results-item-typography"></div>
