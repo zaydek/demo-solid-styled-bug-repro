@@ -7,7 +7,7 @@ export type SearchResult = {
 	camel: string
 	title: string
 
-	// canonicalValue index
+	// TODO: DEPRECATE
 	index?: number
 	parts: undefined | [string, string, string]
 }

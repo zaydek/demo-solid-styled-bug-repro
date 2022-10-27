@@ -10,7 +10,7 @@ async function cache<T>(key: string, value: T): Promise<T> {
 		return _cache.get(key) as T
 	} else {
 		if (DEV) {
-			await new Promise(resolve => setTimeout(resolve, 1_000))
+			await new Promise(resolve => setTimeout(resolve, 500))
 		}
 		_cache.set(key, value)
 		return value

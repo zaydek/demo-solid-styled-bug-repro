@@ -515,6 +515,11 @@ function Skeleton() {
 				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
 			}
 			@media (hover: none), not (min-width: 800px) { .sk-sidebar { display: none; } }
+			.sk-sidebar-nav {
+				height: var(--search-bar-height);
+				background-color: white;
+				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+			}
 
 			/********************************/
 			/* sk-results */
@@ -577,7 +582,9 @@ function Skeleton() {
 				</div>
 			</Show>
 		</div>
-		<div class="sk-sidebar"></div>
+		<div class="sk-sidebar">
+			<div class="sk-sidebar-nav"></div>
+		</div>
 		<div class="sk-results">
 			<For each={range(256)}>{() => <>
 				<div class="sk-results-item">
@@ -604,7 +611,7 @@ function LoadController() {
 	let slow
 	if (DEV) {
 		[slow] = createResource(async () => {
-			await new Promise(r => setTimeout(r, 1_000))
+			await new Promise(r => setTimeout(r, 500))
 			return "foo"
 		})
 	}
@@ -655,6 +662,11 @@ function App() {
 				overflow-y: auto;
 			}
 
+			/* Disable body scrolling when bottomsheet=open or sidesheet=expanded */
+			:root:has(:is(.bottomsheet.open, .sidesheet.expanded)) body {
+				overflow-y: hidden;
+			}
+
 			/* COMPAT/the-new-css-reset */
 			:focus-visible { outline: revert; }
 
@@ -688,91 +700,6 @@ function App() {
 		</ProgressBarProvider>
 	</>
 }
-
-//// function DrawerDemo() {
-//// 	return <>
-//// 		{css`
-//// 			.container {
-//// 				margin:
-//// 					64px
-//// 					auto;
-//// 				width: 448px;
-//// 				/* background-color: whitesmoke; */
-//// 			}
-//// 			.line {
-//// 				height: 4px;
-//// 				background-color: hsl(0 0% 90%);
-//// 			}
-//// 			:focus-visible { outline: revert; }
-////
-//// 			.drawer-head {
-//// 				padding:
-//// 					16px
-//// 					24px;
-////
-//// 				/* Flex */
-//// 				display: flex;
-//// 				flex-direction: row;
-//// 				align-items: center;
-//// 				gap: 8px;
-//// 			}
-//// 			.drawer-head > :nth-child(2) { flex-grow: 1; }
-//// 			.drawer-body {
-//// 				padding:
-//// 					16px
-//// 					24px;
-//// 				padding-top: 0; /* Override */
-//// 			}
-//// 		`}
-//// 		<div class="container">
-//// 			<div class="line"></div>
-//// 			<Drawer head={<>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 			</>} open>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 			</Drawer>
-//// 			<div class="line"></div>
-//// 			<Drawer head={<>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 			</>} open>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 			</Drawer>
-//// 			<div class="line"></div>
-//// 			<Drawer head={<>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 			</>} open>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 			</Drawer>
-//// 			<div class="line"></div>
-//// 			<Drawer head={<>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 			</>} open>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 				<div>Hello, world!</div>
-//// 			</Drawer>
-//// 			<div class="line"></div>
-//// 		</div>
-//// 	</>
-//// }
 
 render(
 	() => <App />,
