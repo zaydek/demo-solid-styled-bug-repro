@@ -9,21 +9,25 @@ export type SearchResult = {
 
 	// canonicalValue index
 	index?: number
+	parts: undefined | [string, string, string]
 }
 
 export const search = createRoot(() => {
 	const [value, setValue] = createSignal(searchParams.string("search") ?? "")
 	const canonicalValue = createMemo(() => canonicalize(value()))
 
-	const payload = () => settings.manifest()?.manifest.payload
+	const payload = createMemo(() => {
+		if (!settings.manifest()) { return }
+		return settings.manifest()!.manifest.payload
+	})
 
 	// TODO: Memoize?
-	const payloadValues = () => {
+	const payloadValues = createMemo(() => {
 		if (!payload()) { return }
 		return Object.values(payload()!)
-	}
+	})
 
-	const results = () => {
+	const results = createMemo(() => {
 		if (!payload()) { return } // Defer to fallback
 		const value = canonicalValue()
 		if (!value) {
@@ -33,16 +37,26 @@ export const search = createRoot(() => {
 		for (const info of payloadValues()!) {
 			const index = info.kebab.indexOf(value)
 			if (index !== -1) {
+				const s1 = index
+				const s2 = index + canonicalValue().length
 				_results.push({
 					...info,
-					index,
+					index, // TODO: DEPRECATE
+					parts: [
+						info.kebab.slice(0, s1),
+						info.kebab.slice(s1, s2),
+						info.kebab.slice(s2),
+					],
 				})
 			}
 		}
+		// Assumes all results have parts
 		if (!_results.length) { return } // Defer to fallback
-		_results.sort((a, b) => a.index! - b.index!)
+		//// _results.sort((a, b) => a.index! - b.index!)
+		_results.sort((a, b) => a.parts![0].length -
+			b.parts![0].length)
 		return _results
-	}
+	})
 
 	return {
 		// STATE

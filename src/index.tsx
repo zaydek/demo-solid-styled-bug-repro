@@ -388,7 +388,6 @@ function Demo() {
 				color: hsl(0 0% 40%);
 				/* opacity: 0; */ /* TODO */
 			}
-			/* .results-item-typography-icon { display: inline-block; } */
 			/* .results-item-typography-icon { */
 			/* 	margin-right: 6px; */
  			/* 	height: 1.125em; */
@@ -424,25 +423,22 @@ function Demo() {
 							component={settings.icons()?.[result.title]}
 							class="results-item-icon"
 							style={{
-								// TODO: Use dirty signals here?
-								...(settings.scale() !== 1 && { "transform": `scale(${settings.scale()})` }),
-								...(settings.stroke() !== 1.5 && { "stroke-width": settings.stroke() }),
+								...(settings.scale.dirty() && { "transform": `scale(${settings.scale()})` }),
+								...(settings.stroke.dirty() && { "stroke-width": settings.stroke() }),
 							}}
 						/>
 					</AriaButton>
 					<div class="results-item-typography-container">
-						{/* <Show when={show()}> */}
 						<div class={cx(`results-item-typography ${"index" in result ? "match" : ""}`)}>
 							{/* <Dynamic component={settings.icons()?.[result.title]} class="results-item-typography-icon" /> */}
-							<Show when={"index" in result} fallback={result.kebab}>
-								{result.kebab.slice(0, result.index!)}
+							<Show when={"parts" in result} fallback={result.kebab}>
+								{result.parts![0]}
 								<span class="results-item-typography-highlight">
-									{result.kebab.slice(result.index!, result.index! + search.canonicalValue().length)}
+									{result.parts![1]}
 								</span>
-								{result.kebab.slice(result.index! + search.canonicalValue().length)}
+								{result.parts![2]}
 							</Show>
 						</div>
-						{/* </Show> */}
 					</div>
 				</article>
 			</>}</For>
@@ -592,7 +588,7 @@ function Skeleton() {
 						<div
 							class="sk-results-item-icon"
 							style={{
-								...(settings.scale() !== 1 && {
+								...(settings.scale.dirty() && {
 									"transform": `scale(${settings.scale()})`
 								}),
 							}}

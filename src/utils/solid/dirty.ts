@@ -1,7 +1,8 @@
 import { Accessor, createEffect, createSignal } from "solid-js"
 
 // Dirty describes whether a signal is initial=false OR dirty=true
-export type DirtyAccessor<T> = Accessor<T> & { dirty(): Accessor<boolean> }
+export type DirtyAccessor<T> = Accessor<T> &
+  { dirty(): Accessor<boolean> }
 
 export function createDirtySignal<T>(restoreValue: undefined | T, initialValue: T) {
   const [dirty, setDirty] = createSignal(false)
