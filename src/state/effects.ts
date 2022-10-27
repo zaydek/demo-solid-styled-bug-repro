@@ -34,8 +34,8 @@ createRoot(() => {
 		if (settings.framework.dirty())     { encoded["framework"]      = "" + settings.framework() }
 		if (settings.densityOpen.dirty())   { encoded["density-open"]   = "" + settings.densityOpen() }
 		if (settings.density.dirty())       { encoded["density"]        = "" + settings.density() }
-		if (settings.sizeOpen.dirty())      { encoded["size-open"]      = "" + settings.sizeOpen() }
-		if (settings.size.dirty())          { encoded["size"]           = "" + settings.size() }
+		if (settings.scaleOpen.dirty())     { encoded["scale-open"]     = "" + settings.scaleOpen() }
+		if (settings.scale.dirty())         { encoded["scale"]          = "" + settings.scale() }
 		if (settings.strokeOpen.dirty())    { encoded["stroke-open"]    = "" + settings.strokeOpen() }
 		if (settings.stroke.dirty())        { encoded["stroke"]         = "" + settings.stroke() }
 

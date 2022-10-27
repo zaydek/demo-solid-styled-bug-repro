@@ -17,19 +17,6 @@ import { cx, range, round } from "./utils/vanilla"
 // Checkboxes
 const [noName, setNoName] = createSignal(false)
 
-// Sliders
-const [scale, setScale] = createSignal(1)
-const [strokeWidth, setStrokeWidth] = createSignal(1.5)
-
-const heightPixels = () => {
-	//// if (noName()) {
-	//// 	return 112 * scale() / 100
-	//// } else {
-	//// 	return (112 - 24) * scale() / 100
-	//// }
-	return scale() * 32
-}
-
 ////////////////////////////////////////
 
 function Sidebar() {
@@ -202,11 +189,11 @@ function Sidebar() {
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
 							<div>SIZE</div>
-							<div>{round(scale() * 100)}%, {round(heightPixels(), { precision: 1 }).toFixed(1)}PX</div>
+							<div>{round(settings.scale() * 100)}%, {round(settings.scale() * 32, { precision: 1 }).toFixed(1)}PX</div>
 						</div>
 					</>} open>
 						<div class="drawer-body-content">
-							<Slider value={scale()} setValue={setScale} min={0.5} max={1.5} step={0.01} />
+							<Slider value={settings.scale()} setValue={settings.setScale} min={0.5} max={1.5} step={0.01} />
 						</div>
 					</Drawer>
 
@@ -217,11 +204,11 @@ function Sidebar() {
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
 							<div>STROKE WIDTH</div>
-							<div>{strokeWidth()}</div>
+							<div>{settings.stroke()}</div>
 						</div>
 					</>} open>
 						<div class="drawer-body-content">
-							<Slider value={strokeWidth()} setValue={setStrokeWidth} min={0.5} max={2.5} step={0.1} />
+							<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={2.5} step={0.01} />
 						</div>
 						<div class="line-x"></div>
 					</Drawer>
@@ -413,8 +400,8 @@ function Demo() {
 							class="results-item-icon"
 							style={{
 								// TODO: Use dirty signals here?
-								...(scale() !== 1 && { "transform": `scale(${scale()})` }),
-								...(strokeWidth() !== 1.5 && { "stroke-width": strokeWidth() }),
+								...(settings.scale() !== 1 && { "transform": `scale(${settings.scale()})` }),
+								...(settings.stroke() !== 1.5 && { "stroke-width": settings.stroke() }),
 							}}
 						/>
 					</AriaButton>

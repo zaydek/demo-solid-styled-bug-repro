@@ -224,7 +224,7 @@ export function DrawerContainer(props: ParentProps) {
 					transition-property: transform, opacity;
 				}
 				:root:has(.sidesheet) .drawer.closed .drawer-body {
-					transform: scale(0.9);
+					transform: scale(0.95);
 					opacity: 0;
 				}
 				:root:has(.sidesheet) .drawer.open .drawer-body {

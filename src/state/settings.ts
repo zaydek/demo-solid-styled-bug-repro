@@ -63,9 +63,9 @@ export const settings = createRoot(() => {
 	const [densityOpen, setDensityOpen] = createDirtySignal(searchParams.boolean("density-open"), false)
 	const [density, setDensity] = createDirtySignal(searchParams.number("density"), 96)
 
-	// Size
-	const [sizeOpen, setSizeOpen] = createDirtySignal(searchParams.boolean("size-open"), false)
-	const [size, setSize] = createDirtySignal(searchParams.number("size"), 28)
+	// Scale
+	const [scaleOpen, setScaleOpen] = createDirtySignal(searchParams.boolean("scale-open"), false)
+	const [scale, setScale] = createDirtySignal(searchParams.number("scale"), 1)
 
 	// Stroke width
 	const [strokeOpen, setStrokeOpen] = createDirtySignal(searchParams.boolean("stroke-open"), false)
@@ -107,8 +107,8 @@ export const settings = createRoot(() => {
 		framework,
 		densityOpen,
 		density,
-		sizeOpen,
-		size,
+		scaleOpen,
+		scale,
 		strokeOpen,
 		stroke,
 		manifest,
@@ -126,8 +126,8 @@ export const settings = createRoot(() => {
 		setFramework,
 		setDensityOpen,
 		setDensity,
-		setSizeOpen,
-		setSize,
+		setScaleOpen,
+		setScale,
 		setStrokeOpen,
 		setStroke,
 	}
