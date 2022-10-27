@@ -17,16 +17,15 @@ export function createScreen({ suppressWarning }: { suppressWarning?: boolean } 
 	const [screenY, setScreenY] = createSignal(_screenY)
 	const [screenX, setScreenX] = createSignal(_screenX)
 
-	function handleResize() {
-		const {
-			innerHeight: _screenY,
-			innerWidth:  _screenX,
-		} = window
-		setScreenY(_screenY)
-		setScreenX(_screenX)
-	}
-
-	createRoot(dispose => {
+	const dispose = createRoot(dispose => {
+		function handleResize() {
+			const {
+				innerHeight: _screenY,
+				innerWidth:  _screenX,
+			} = window
+			setScreenY(_screenY)
+			setScreenX(_screenX)
+		}
 		window.addEventListener("resize", handleResize, false)
 		onCleanup(() => window.removeEventListener("resize", handleResize, false))
 		createEffect(() => {
@@ -40,8 +39,8 @@ export function createScreen({ suppressWarning }: { suppressWarning?: boolean } 
 				}
 			})
 		})
-		onCleanup(dispose)
+		return dispose
 	})
 
-	return { screenY, screenX }
+	return [{ screenY, screenX }, dispose] as const
 }

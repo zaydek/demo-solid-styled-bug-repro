@@ -2,7 +2,7 @@ import { ParentProps, Show } from "solid-js"
 import { Bottomsheet, Sidesheet } from "solid-sheet"
 import { createMediaSignal } from "./utils/solid"
 
-const mobile = createMediaSignal(`
+const [mobile] = createMediaSignal(`
 	(hover: none),         /* E.g. touch devices */
 	not (min-width: 500px) /* E.g. width < 500px */
 `)

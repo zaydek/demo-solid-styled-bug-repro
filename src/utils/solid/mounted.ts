@@ -12,7 +12,7 @@ export function createMounted({ suppressWarning }: { suppressWarning?: boolean }
 
 	const [mounted, setMounted] = createSignal(false)
 
-	createRoot(dispose => {
+	const dispose = createRoot(dispose => {
 		onMount(() => {
 			setTimeout(() => {
 				setMounted(true)
@@ -28,8 +28,8 @@ export function createMounted({ suppressWarning }: { suppressWarning?: boolean }
 				}
 			})
 		})
-		onCleanup(dispose)
+		return dispose
 	})
 
-	return mounted
+	return [mounted, dispose] as const
 }

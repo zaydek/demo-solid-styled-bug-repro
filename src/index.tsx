@@ -11,7 +11,6 @@ import { SmileySVG } from "./smiley-svg"
 import { debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
 import { css } from "./utils/solid"
 import { cx, range, round } from "./utils/vanilla"
-import { DEBUG_STATE } from "./debug-state"
 
 ////////////////////////////////////////
 

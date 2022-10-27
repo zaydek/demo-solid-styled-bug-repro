@@ -4,7 +4,7 @@ export function createMediaSignal(media: string) {
 	const mq = window.matchMedia(media)
 	const [matches, setMatches] = createSignal(mq.matches)
 
-	createRoot(dispose => {
+	const dispose = createRoot(dispose => {
 		onMount(() => {
 			function handleBreakpoint(e: MediaQueryListEvent) {
 				setMatches(e.matches)
@@ -12,8 +12,8 @@ export function createMediaSignal(media: string) {
 			mq.addEventListener("change", handleBreakpoint, false)
 			onCleanup(() => mq.removeEventListener("change", handleBreakpoint, false))
 		})
-		onCleanup(dispose)
+		return dispose
 	})
 
-	return matches
+	return [matches, dispose] as const
 }
