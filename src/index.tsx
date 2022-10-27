@@ -1,6 +1,6 @@
 import "./css"
 
-import { createResource, createSignal, DEV, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
+import { createEffect, createResource, createSignal, DEV, For, JSX, on, onCleanup, onMount, ParentProps, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
@@ -51,11 +51,15 @@ function Sidebar() {
 			/* sidebar-nav */
 
 			.sidebar-nav {
-				padding: 16px;
+				padding:
+					0     /* Y */
+					24px; /* X */
+				height: var(--search-bar-height);
 
 				/* Flow */
 				display: grid;
 				grid-template-columns: auto 1fr auto auto;
+				align-items: center;
 				gap: 16px;
 			}
 			.sidebar-nav > :nth-child(1) { grid-column: 1; }
@@ -117,8 +121,12 @@ function Sidebar() {
 					<Drawer head={<>
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>VERSION</div>
-							<div>{settings.version().toUpperCase()}</div>
+							<div>
+								VERSION
+							</div>
+							<div>
+								{settings.version().toUpperCase()}
+							</div>
 						</div>
 					</>} open>
 						<div class="drawer-body-content">
@@ -131,16 +139,20 @@ function Sidebar() {
 							</Radiogroup>
 						</div>
 					</Drawer>
+					<Show when={settings.version() === "v1"}>
 
 					{/**************************/}
 
-					<Show when={settings.version() === "v1"}>
 						<Drawer head={<>
 							<div class="line-x"></div>
 							<div class="drawer-head-content">
 								<Dynamic component={SmileySVG} class="drawer-head-icon" />
-								<div>VARIANT (V1)</div>
-								<div>{settings.variantV1().toUpperCase()}</div>
+								<div>
+									VARIANT (V1)
+								</div>
+								<div>
+									{settings.variantV1().toUpperCase()}
+								</div>
 							</div>
 						</>} open>
 							<div class="drawer-body-content">
@@ -154,16 +166,20 @@ function Sidebar() {
 							</div>
 						</Drawer>
 					</Show>
+					<Show when={settings.version() === "v2"}>
 
 					{/**************************/}
 
-					<Show when={settings.version() === "v2"}>
 						<Drawer head={<>
 							<div class="line-x"></div>
 							<div class="drawer-head-content">
 								<Dynamic component={SmileySVG} class="drawer-head-icon" />
-								<div>VARIANT (V2)</div>
-								<div>{settings.variantV2().toUpperCase()}</div>
+								<div>
+									VARIANT (V2)
+								</div>
+								<div>
+									{settings.variantV2().toUpperCase()}
+								</div>
 							</div>
 						</>} open>
 							<div class="drawer-body-content">
@@ -184,15 +200,18 @@ function Sidebar() {
 						<div class="line-x"></div>
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>COPY TO CLIPBOARD</div>
-							<div>{settings.framework().toUpperCase()}</div>
+							<div>
+								COPY TO CLIPBOARD
+							</div>
+							<div>
+								{settings.framework().toUpperCase()}
+							</div>
 						</div>
 					</>} open>
 						<div class="drawer-body-content">
 							<Checkbox checked={settings.license()} setChecked={settings.setLicense}>
 								INCLUDE MIT LICENSE
 							</Checkbox>
-							{/* <Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]"> */}
 							<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
 								<For<{ style: JSX.CSSProperties, value: Framework }, JSX.Element> each={[
 									{ style: { "--color": "#ffb13b", "--alpha-color": "#ffb13b66" }, value: "svg"   },
@@ -213,8 +232,13 @@ function Sidebar() {
 						<div class="line-x"></div>
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>SIZE</div>
-							<div>{round(settings.scale() * 100)}%, {round(settings.scale() * 32, { precision: 1 }).toFixed(1)}PX</div>
+							<div>
+								SIZE
+							</div>
+							<div>
+								{round(settings.scale() * 100)}%,{" "}
+								{round(settings.scale() * 32, { precision: 1 }).toFixed(1)}PX
+							</div>
 						</div>
 					</>} open>
 						<div class="drawer-body-content">
@@ -228,12 +252,16 @@ function Sidebar() {
 						<div class="line-x"></div>
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>STROKE WIDTH</div>
-							<div>{settings.stroke()}</div>
+							<div>
+								STROKE
+							</div>
+							<div>
+								{settings.stroke()}
+							</div>
 						</div>
 					</>} open>
 						<div class="drawer-body-content">
-							<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={2.5} step={0.01} />
+							<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={settings.version() === "v1" ? 3.5 : 2.5} step={0.01} />
 						</div>
 						<div class="line-x"></div>
 					</Drawer>
@@ -315,7 +343,7 @@ function Demo() {
 				padding:
 					0     /* Y */
 					24px; /* X */
-				font: 400 16px /
+				font: 400 17px /
 					normal system-ui;
 			}
 
@@ -622,81 +650,239 @@ function LoadController() {
 	</>
 }
 
-render(
-	function Root() {
-		onMount(() => {
-			window.addEventListener("keydown", e => {
-				if (e.key === "`") {
-					debugCSS.toggle()
-				}
-			})
+function App() {
+	onMount(() => {
+		window.addEventListener("keydown", e => {
+			if (e.key === "`") {
+				debugCSS.toggle()
+			}
 		})
+	})
 
-		//// console.log(darkMode.theme())
-		//// darkMode.toggle()
-		////
-		//// console.log(debugCSS.enabled())
-		//// debugCSS.toggle()
+	return <>
+		{css`
+			:root {
+				/* Enable HiDPI antialiasing */
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+				/* Disable scroll bounce on <html> */
+				overscroll-behavior-y: none;
+			}
+			@media (hover: none) { :root { -webkit-text-size-adjust: 100%; } }           /* Disable font scaling */
+			@media (hover: none) { :root { -webkit-tap-highlight-color: transparent; } } /* Disable touch highlight */
 
-		return <>
-			{css`
-				:root {
-					/* Enable HiDPI antialiasing */
-					-webkit-font-smoothing: antialiased;
-					-moz-osx-font-smoothing: grayscale;
-					/* Disable scroll bounce on <html> */
-					overscroll-behavior-y: none;
-				}
-				@media (hover: none) { :root { -webkit-text-size-adjust: 100%; } }           /* Disable font scaling */
-				@media (hover: none) { :root { -webkit-tap-highlight-color: transparent; } } /* Disable touch highlight */
+			/* This code is specifically implemented to support bottomsheet panning.
+			Dragging the bottomsheet interferes with body scrolling on iOS Safari.
+			Therefore disable <body> scrolling on and enable <main> scrolling. */
+			/* Disable <body> scrolling */
+			@media (hover: none) { :root:has(.bottomsheet) {
+				position: fixed;
+				inset: 0;
+				overflow: hidden;
+			} }
+			/* Enable <main> scrolling */
+			:root:has(.bottomsheet) main {
+				height: calc(var(--screen-y) - var(--search-bar-height) - var(--sheet-draggable-size));
+				overflow-y: auto;
+			}
 
-				/* This code is specifically implemented to support bottomsheet panning.
-				Dragging the bottomsheet interferes with body scrolling on iOS Safari.
-				Therefore disable <body> scrolling on and enable <main> scrolling. */
-				/* Disable <body> scrolling */
-				@media (hover: none) { :root:has(.bottomsheet) {
-					position: fixed;
-					inset: 0;
-					overflow: hidden;
-				} }
-				/* Enable <main> scrolling */
-				:root:has(.bottomsheet) main {
-					height: calc(var(--screen-y) - var(--search-bar-height) - var(--sheet-draggable-size));
-					overflow-y: auto;
-				}
+			/* COMPAT/the-new-css-reset */
+			:focus-visible { outline: revert; }
 
-				/* COMPAT/the-new-css-reset */
-				:focus-visible { outline: revert; }
+			/******************************/
 
-				/******************************/
+			/* DEBUG */
+			:root.debug-css *:not(svg *) {
+				outline: 2px solid hsl(0 100% 50% / 10%);
+				outline-offset: -1px;
+			}
 
-				/* DEBUG */
-				:root.debug-css *:not(svg *) {
-					outline: 2px solid hsl(0 100% 50% / 10%);
-					outline-offset: -1px;
-				}
+			/******************************/
 
-				/******************************/
+			:root {
+				--search-bar-height: 72px;
+				--sidebar-width: 448px;
+				--results-item-height: 96px;
+				--line-thickness: 4px;
+			}
 
-				:root {
-					--search-bar-height: 64px;
-					--sidebar-width: 448px;
-					--results-item-height: 96px;
-					--line-thickness: 4px;
-				}
+			/******************************/
 
-				/******************************/
+			.line-y { width:  var(--line-thickness); background-color: hsl(0 0% 90%); }
+			.line-x { height: var(--line-thickness); background-color: hsl(0 0% 90%); }
 
-				.line-y { width:  var(--line-thickness); background-color: hsl(0 0% 90%); }
-				.line-x { height: var(--line-thickness); background-color: hsl(0 0% 90%); }
+			.line-y.collapsed { position: relative; z-index: 10; isolation: isolate; margin-left: calc(-1 * var(--line-thickness)); }
+			.line-x.collapsed { position: relative; z-index: 10; isolation: isolate; margin-top:  calc(-1 * var(--line-thickness)); }
+		`}
+		<ProgressBarProvider>
+			<LoadController />
+		</ProgressBarProvider>
+	</>
+}
 
-				.line-y.collapsed { position: relative; z-index: 10; isolation: isolate; margin-left: calc(-1 * var(--line-thickness)); }
-				.line-x.collapsed { position: relative; z-index: 10; isolation: isolate; margin-top:  calc(-1 * var(--line-thickness)); }
-			`}
-			<ProgressBarProvider>
-				<LoadController />
-			</ProgressBarProvider>
-		</>
-	},
+function App2(props: ParentProps<{
+	head: JSX.Element
+
+	open?: boolean
+}>) {
+	const [ref, setRef] = createSignal<HTMLElement>()
+	const [headRef, setHeadRef] = createSignal<HTMLElement>()
+
+	const [open, setOpen] = createSignal(props.open ?? true)
+	//// const [transition, setTransition] = createSignal(false)
+
+	//// // Synchronize transition
+	//// createEffect(on(open, () => {
+	//// 	setTransition(true)
+	//// }, { defer: true }))
+
+	// DEBUG
+	window.addEventListener("keydown", e => {
+		if (e.key === "d") {
+			setOpen(curr => !curr)
+		}
+	})
+
+	onMount(() => {
+		ref()!.style.setProperty("--__min-height", `${headRef()!.scrollHeight}px`)
+		ref()!.style.setProperty("--__max-height", `${ref()!.scrollHeight}px`)
+	})
+
+	return <>
+		{css`
+			.drawer {
+				--__min-height: auto;
+				--__max-height: auto;
+			}
+			.drawer {
+				transition: 1000ms cubic-bezier(0, 1, 0.25, 1);
+				transition-property: height;
+
+				cursor: pointer;
+				-webkit-user-select: none;
+				user-select: none;
+			}
+			.drawer.closed {
+				height: var(--__min-height);
+				overflow-y: clip;
+			}
+			.drawer.open {
+				height: var(--__max-height);
+				overflow-y: clip;
+			}
+
+			/********************************/
+
+			.drawer .drawer-body {
+				transition: 1000ms cubic-bezier(0, 1, 0.25, 1);
+				transition-property: transform, opacity;
+			}
+			.drawer.open .drawer-body {
+				transform: scale(1);
+				opacity: 1;
+			}
+			.drawer.closed .drawer-body {
+				transform: scale(0.9);
+				opacity: 0;
+			}
+		`}
+		<div ref={setRef} class={cx(`drawer ${open() ? "open" : "closed"}`)}>
+			<AriaButton ref={setHeadRef} class="drawer-head" onClick={e => setOpen(curr => !curr)}>
+				{props.head}
+			</AriaButton>
+			<div class="drawer-body">
+				{props.children}
+			</div>
+		</div>
+	</>
+}
+
+function DrawerDemo() {
+	return <>
+		{css`
+			.container {
+				margin:
+					64px
+					auto;
+				width: 448px;
+				/* background-color: whitesmoke; */
+			}
+			.line {
+				height: 4px;
+				background-color: hsl(0 0% 90%);
+			}
+			:focus-visible { outline: revert; }
+
+			.drawer-head {
+				padding:
+					16px
+					24px;
+
+				/* Flex */
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 8px;
+			}
+			.drawer-head > :nth-child(2) { flex-grow: 1; }
+			.drawer-body {
+				padding:
+					16px
+					24px;
+				padding-top: 0; /* Override */
+			}
+		`}
+		<div class="container">
+			<div class="line"></div>
+			<App2 head={<>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+			</>} open>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+			</App2>
+			<div class="line"></div>
+			<App2 head={<>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+			</>} open>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+			</App2>
+			<div class="line"></div>
+			<App2 head={<>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+			</>} open>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+			</App2>
+			<div class="line"></div>
+			<App2 head={<>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+			</>} open>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+				<div>Hello, world!</div>
+			</App2>
+			<div class="line"></div>
+		</div>
+	</>
+}
+
+render(
+	() => <DrawerDemo />,
 	document.getElementById("root")!,
 )

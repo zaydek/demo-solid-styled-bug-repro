@@ -10,7 +10,7 @@ async function cache<T>(key: string, value: T): Promise<T> {
 		return _cache.get(key) as T
 	} else {
 		if (DEV) {
-			await new Promise(resolve => setTimeout(resolve, 500))
+			await new Promise(resolve => setTimeout(resolve, 1_000))
 		}
 		_cache.set(key, value)
 		return value
@@ -59,9 +59,9 @@ export const settings = createRoot(() => {
 		return value
 	})(), "svg")
 
-	// Grid density
-	const [densityOpen, setDensityOpen] = createDirtySignal(searchParams.boolean("density-open"), false)
-	const [density, setDensity] = createDirtySignal(searchParams.number("density"), 96)
+	//// // Grid density
+	//// const [densityOpen, setDensityOpen] = createDirtySignal(searchParams.boolean("density-open"), false)
+	//// const [density, setDensity] = createDirtySignal(searchParams.number("density"), 96)
 
 	// Scale
 	const [scaleOpen, setScaleOpen] = createDirtySignal(searchParams.boolean("scale-open"), false)
@@ -69,7 +69,7 @@ export const settings = createRoot(() => {
 
 	// Stroke width
 	const [strokeOpen, setStrokeOpen] = createDirtySignal(searchParams.boolean("stroke-open"), false)
-	const [stroke, setStroke] = createDirtySignal(searchParams.number("stroke") || 1.5, 1.5) // TODO: Depends on version
+	const [stroke, setStroke] = createDirtySignal(searchParams.number("stroke"), version() === "v1" ? 2 : 1.5)
 
 	// Resources
 	const [manifest] = createResource(version, async version => {
@@ -105,8 +105,8 @@ export const settings = createRoot(() => {
 		textarea,
 		license,
 		framework,
-		densityOpen,
-		density,
+		//// densityOpen,
+		//// density,
 		scaleOpen,
 		scale,
 		strokeOpen,
@@ -124,8 +124,8 @@ export const settings = createRoot(() => {
 		setTextarea,
 		setLicense,
 		setFramework,
-		setDensityOpen,
-		setDensity,
+		//// setDensityOpen,
+		//// setDensity,
 		setScaleOpen,
 		setScale,
 		setStrokeOpen,

@@ -193,7 +193,7 @@ export function DrawerContainer(props: ParentProps) {
 						0    /* R */
 						auto /* B */
 						0;   /* L */
-					background-color: white;
+					/* background-color: white; */
 				}
 				.drawer {
 					transition: 400ms cubic-bezier(0, 1, 0.25, 1);
