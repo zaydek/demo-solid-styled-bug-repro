@@ -488,7 +488,7 @@ function Skeleton() {
 				display: grid;
 				grid-template-columns: auto 1fr;
 				align-items: center;
-				gap: calc(var(--search-bar-height) / 4);
+				/* gap: calc(var(--search-bar-height) / 4); */
 			}
 			@media (hover: none), not (min-width: 800px) { .sk-search-bar { margin-right: 0; } } /* Override */
 			.sk-search-bar-icon {
@@ -497,9 +497,12 @@ function Skeleton() {
 				border-radius: 1000px;
 				background-color: lightgray;
 			}
+			.sk-search-bar-text-field-container {
+				padding: 0 24px;
+			}
 			.sk-search-bar-text-field {
 				height: 8px;
-				aspect-ratio: 16;
+				aspect-ratio: 10;
 				border-radius: 1000px;
 				background-color: lightgray;
 			}
@@ -576,7 +579,11 @@ function Skeleton() {
 		`}
 		<div class="sk-search-bar">
 			<div class="sk-search-bar-icon"></div>
-			{/* <div class="sk-search-bar-text-field"></div> */}
+			<Show when={search.canonicalValue()}>
+				<div class="sk-search-bar-text-field-container">
+					<div class="sk-search-bar-text-field"></div>
+				</div>
+			</Show>
 		</div>
 		<div class="sk-sidebar"></div>
 		<div class="sk-results">
