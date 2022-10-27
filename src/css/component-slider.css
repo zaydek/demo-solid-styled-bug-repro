@@ -33,7 +33,7 @@
   background-color: white;
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%);
-		/* 0 0 0 8px hsl(0 0% 0% / 10%); */
+		/* 0 0 0 4px hsl(0 0% 0% / 10%); */
 }
 
 /**************************************/
@@ -42,10 +42,10 @@
 .component-slider:hover .component-slider-thumb {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
-		0 0 0 8px hsl(0 0% 0% / 10%);
+		0 0 0 4px hsl(0 0% 0% / 10%);
 }
 .component-slider:active .component-slider-thumb {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
-		0 0 0 8px hsl(200 100% 50% / 40%);
+		0 0 0 4px hsl(200 100% 50% / 40%);
 }

@@ -1,4 +1,4 @@
-import { createSignal, JSX, ParentProps, Setter, VoidProps } from "solid-js"
+import { Accessor, createSignal, JSX, ParentProps, Setter, VoidProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { AriaCheckbox, AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from "./aria"
 import { SmileySVG } from "./smiley-svg"
@@ -51,7 +51,7 @@ export function Checkbox(props: ParentProps<{
 	</>
 }
 
-// TODO
+// TODO: Are we accepting style for CSS variables?
 export function Radio(props: ParentProps<{
 	value: string
 
@@ -72,9 +72,17 @@ export function Radio(props: ParentProps<{
 	</>
 }
 
-// TODO
-export function Radiogroup(props: ParentProps<CSSProps>) {
-	const [groupValue, setGroupValue] = createSignal("foo")
+export function Radiogroup(props: ParentProps<CSSProps & {
+	groupValue?:    string
+	setGroupValue?: Setter<string>
+}>) {
+	const [fallback, setFallback] = createSignal("foo")
+	const [groupValue, setGroupValue] = [
+		props.groupValue
+			? () => props.groupValue! // Use ! to assert presence for TypeScript
+			: fallback,
+		props.setGroupValue ?? setFallback,
+	]
 
 	return <>
 		<AriaRadiogroup class={props.class} style={props.style} groupValue={groupValue()} setGroupValue={setGroupValue}>

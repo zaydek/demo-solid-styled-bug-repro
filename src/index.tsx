@@ -1,6 +1,6 @@
 import "./css"
 
-import { createResource, createSignal, For, onMount, Show, Suspense } from "solid-js"
+import { createResource, createSignal, DEV, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
@@ -8,9 +8,10 @@ import { Drawer, DrawerContainer } from "./drawer"
 import { ProgressBarProvider, useProgressBar } from "./progress-bar"
 import { Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
-import { debugCSS, search, settings } from "./state"
+import { debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
 import { css } from "./utils/solid"
 import { cx, range, round } from "./utils/vanilla"
+import { DEBUG_STATE } from "./debug-state"
 
 ////////////////////////////////////////
 
@@ -117,15 +118,15 @@ function Sidebar() {
 					<Drawer head={<>
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>Hello, world!</div>
-							<div>Foo</div>
+							<div>VERSION</div>
+							<div>{settings.version().toUpperCase()}</div>
 						</div>
 					</>} open>
 						<div class="drawer-body-content">
-							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
-								<For each={["foo", "bar"]}>{value => <>
+							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.version()} setGroupValue={settings.setVersion}>
+								<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
 									<Radio value={value}>
-										Hello, world!
+										{value.toUpperCase()}
 									</Radio>
 								</>}</For>
 							</Radiogroup>
@@ -134,24 +135,49 @@ function Sidebar() {
 
 					{/**************************/}
 
-					<Drawer head={<>
-						<div class="line-x"></div>
-						<div class="drawer-head-content">
-							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>Hello, world!</div>
-							<div>Foo</div>
-						</div>
-					</>} open>
-						<div class="drawer-body-content">
-							<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]">
-								<For each={["foo", "bar", "baz"]}>{value => <>
-									<Radio value={value}>
-										Hello, world!
-									</Radio>
-								</>}</For>
-							</Radiogroup>
-						</div>
-					</Drawer>
+					<Show when={settings.version() === "v1"}>
+						<Drawer head={<>
+							<div class="line-x"></div>
+							<div class="drawer-head-content">
+								<Dynamic component={SmileySVG} class="drawer-head-icon" />
+								<div>VARIANT (V1)</div>
+								<div>{settings.variantV1().toUpperCase()}</div>
+							</div>
+						</>} open>
+							<div class="drawer-body-content">
+								<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
+									<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
+										<Radio value={value}>
+											{value.toUpperCase()}
+										</Radio>
+									</>}</For>
+								</Radiogroup>
+							</div>
+						</Drawer>
+					</Show>
+
+					{/**************************/}
+
+					<Show when={settings.version() === "v2"}>
+						<Drawer head={<>
+							<div class="line-x"></div>
+							<div class="drawer-head-content">
+								<Dynamic component={SmileySVG} class="drawer-head-icon" />
+								<div>VARIANT (V2)</div>
+								<div>{settings.variantV2().toUpperCase()}</div>
+							</div>
+						</>} open>
+							<div class="drawer-body-content">
+								<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
+									<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
+										<Radio value={value}>
+											{value.toUpperCase()}
+										</Radio>
+									</>}</For>
+								</Radiogroup>
+							</div>
+						</Drawer>
+					</Show>
 
 					{/**************************/}
 
@@ -159,23 +185,23 @@ function Sidebar() {
 						<div class="line-x"></div>
 						<div class="drawer-head-content">
 							<Dynamic component={SmileySVG} class="drawer-head-icon" />
-							<div>Hello, world!</div>
-							<div>Foo</div>
+							<div>COPY TO CLIPBOARD</div>
+							<div>{settings.framework().toUpperCase()}</div>
 						</div>
 					</>} open>
 						<div class="drawer-body-content">
-							<Checkbox>
-								Hello, world!
+							<Checkbox checked={settings.license()} setChecked={settings.setLicense}>
+								INCLUDE MIT LICENSE
 							</Checkbox>
 							{/* <Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]"> */}
-							<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]">
-								<For each={[
-									{ style: { "--color": "#ffb13b", "--alpha-color": "#ffb13b66" }, value: "foo" },
-									{ style: { "--color": "#61dafb", "--alpha-color": "#61dafb66" }, value: "bar" },
-									{ style: { "--color": "#4fc08d", "--alpha-color": "#4fc08d66" }, value: "baz" },
+							<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
+								<For<{ style: JSX.CSSProperties, value: Framework }, JSX.Element> each={[
+									{ style: { "--color": "#ffb13b", "--alpha-color": "#ffb13b66" }, value: "svg"   },
+									{ style: { "--color": "#61dafb", "--alpha-color": "#61dafb66" }, value: "react" },
+									{ style: { "--color": "#4fc08d", "--alpha-color": "#4fc08d66" }, value: "vue"   },
 								]}>{({ style, value }) => <>
 									<Radio style={style} value={value}>
-										{value}
+										{value.toUpperCase()}
 									</Radio>
 								</>}</For>
 							</Radiogroup>
@@ -239,9 +265,9 @@ function Sidebar() {
 }
 
 function Demo() {
-	const progressBar = useProgressBar()
-
-	onMount(progressBar.actions.end)
+	//// const progressBar = useProgressBar()
+	////
+	//// onMount(progressBar.actions.end)
 
 	//// const [show, setShow] = createSignal(false)
 	////
@@ -326,7 +352,7 @@ function Demo() {
 				/* Flow */
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
-				grid-auto-rows: calc(var(--results-item-height) + 24px); /* COMPAT/Safari */
+				grid-auto-rows: var(--results-item-height); /* COMPAT/Safari */
 			}
 			:root:has(.sidesheet.closed)                   .results { margin-right: 0; }                        /* Override */
 			@media (hover: none), not (min-width: 500px) { .results { margin-right: 0; padding-right: 16px; } } /* Override */
@@ -356,7 +382,7 @@ function Demo() {
 				align-content: start; /* Center children on the y-axis from the start */
 			}
 			.results-item-typography {
-				font: 400 12.5px /
+				font: 400 12px /
 					normal system-ui;
 				/* letter-spacing: -0.0125em; */
 				text-align: center; /* Center x-axis */
@@ -371,7 +397,6 @@ function Demo() {
 			/* 	vertical-align: middle; /* Center y-axis *!/ */
 			/* } */
 			/* .results-item-typography.match .results-item-typography-icon { color: hsl(25 100% 25%); } /* Override *!/ */
-			.results-item-typography-highlight { display: inline-block; } /* CSS reset */
 			.results-item-typography-highlight {
 				border-radius: 1px;
 				color: hsl(25 100% 10%);
@@ -428,7 +453,10 @@ function Demo() {
 function Skeleton() {
 	const progressBar = useProgressBar()
 
-	onMount(() => progressBar.actions.start())
+	onMount(() => {
+		progressBar.actions.start()
+		onCleanup(progressBar.actions.end) // TODO
+	})
 
 	return <>
 		{css`
@@ -507,7 +535,7 @@ function Skeleton() {
 				/* Flow */
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
-				grid-auto-rows: calc(var(--results-item-height) + 24px); /* COMPAT/Safari */
+				grid-auto-rows: var(--results-item-height); /* COMPAT/Safari */
 			}
 			@media (hover: none), not (min-width: 500px) { .sk-results { margin-right: 0; padding-right: 16px; } } /* Override */
 			.sk-results-item {
@@ -565,15 +593,20 @@ function Skeleton() {
 	</>
 }
 
-function Controller() {
-	const [foo] = createResource(async () => {
-		await new Promise(r => setTimeout(r, 1_000))
-		return "foo"
-	})
+function LoadController() {
+	let slow
+	if (DEV) {
+		[slow] = createResource(async () => {
+			await new Promise(r => setTimeout(r, 1_000))
+			return "foo"
+		})
+	}
 
 	return <>
 		<Suspense fallback={<Skeleton />}>
-			{void foo()}
+			<Show when={DEV}>
+				{void slow?.()}
+			</Show>
 			<Demo />
 		</Suspense>
 	</>
@@ -637,8 +670,8 @@ render(
 
 				:root {
 					--search-bar-height: 64px;
-					--sidebar-width: 384px;
-					--results-item-height: 80px;
+					--sidebar-width: 448px;
+					--results-item-height: 96px;
 					--line-thickness: 4px;
 				}
 
@@ -651,7 +684,7 @@ render(
 				.line-x.collapsed { position: relative; z-index: 10; isolation: isolate; margin-top:  calc(-1 * var(--line-thickness)); }
 			`}
 			<ProgressBarProvider>
-				<Controller />
+				<LoadController />
 			</ProgressBarProvider>
 		</>
 	},

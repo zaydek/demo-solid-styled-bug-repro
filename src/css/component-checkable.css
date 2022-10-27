@@ -89,7 +89,7 @@
 ) {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
-		0 0 0 8px hsl(0 0% 0% / 10%);
+		0 0 0 4px hsl(0 0% 0% / 10%);
 }
 
 .component-checkable-container[aria-checked=true] :is(
@@ -107,5 +107,5 @@
 ) {
 	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
 		0 0 0 4px hsl(0 0% 0% / 10%),
-		0 0 0 8px var(--alpha-color);
+		0 0 0 4px var(--alpha-color);
 }

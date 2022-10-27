@@ -20,8 +20,8 @@ async function cache<T>(key: string, value: T): Promise<T> {
 ////////////////////////////////////////
 
 export type Version   = "v1" | "v2"
-export type VariantV1 = "outline" | "solid"
-export type VariantV2 = "20/solid" | "24/outline" | "24/solid"
+export type VariantV1 = "solid" | "outline"
+export type VariantV2 = "20/solid" | "24/solid" | "24/outline"
 export type Framework = "svg" | "react" | "vue"
 
 export const settings = createRoot(() => {
