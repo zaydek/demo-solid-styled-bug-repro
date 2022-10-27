@@ -1,11 +1,11 @@
 import "./css"
 
-import { createResource, createSignal, DEV, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
+import { createEffect, createResource, createSignal, DEV, For, JSX, onCleanup, onMount, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer } from "./drawer"
-import { ProgressBarProvider, useProgressBar } from "./progress-bar"
+import { LoadingBar, loadingBar } from "./loading-bar"
 import { Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
 import { debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
@@ -444,13 +444,6 @@ function Demo() {
 }
 
 function Skeleton() {
-	const progressBar = useProgressBar()
-
-	onMount(() => {
-		progressBar.actions.start()
-		onCleanup(progressBar.actions.end) // TODO
-	})
-
 	return <>
 		{css`
 			/********************************/
@@ -695,13 +688,79 @@ function App() {
 			.line-y.collapsed { margin-left: calc(-1 * var(--line-thickness)); }
 			.line-x.collapsed { margin-top:  calc(-1 * var(--line-thickness)); }
 		`}
-		<ProgressBarProvider>
-			<LoadController />
-		</ProgressBarProvider>
+		<LoadController />
+	</>
+}
+
+function Nested() {
+	const [foo, { refetch }] = createResource(async () => {
+		await new Promise(r => setTimeout(r, 500))
+		return "This is nested"
+	})
+
+	createEffect(() => {
+		if (foo.loading) { return }
+		onMount(loadingBar.end)
+	})
+
+	return <>
+		<div class="nested" onClick={e => {
+			e.stopPropagation()
+			refetch()
+		}}>
+			<Suspense fallback={<>
+				{/* Start the loading bar */}
+				{loadingBar.start()}
+				<div>Loading</div>
+			</>}>
+				<div>{foo()}</div>
+			</Suspense>
+		</div>
+	</>
+}
+
+function SuspenseExample() {
+	const [foo, { refetch }] = createResource(async () => {
+		await new Promise(r => setTimeout(r, 500))
+		return "This is top-level"
+	})
+
+	return <>
+		{css`
+			.top {
+				padding: 16px;
+				/* background-color: lightcoral; */
+
+				/* FLEX */
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+			}
+			.nested {
+				padding: 16px;
+				/* background-color: pink; */
+
+				cursor: pointer;
+			}
+		`}
+		<div class="top" onClick={refetch}>
+			<Suspense fallback={<>
+				{/* Start the loading bar */}
+				{loadingBar.start()}
+				<div>Loading</div>
+			</>}>
+				<div>{foo()}</div>
+				<Nested />
+			</Suspense>
+		</div>
 	</>
 }
 
 render(
-	() => <App />,
+	//// () => <App />,
+	() => <>
+		<LoadingBar />
+		<SuspenseExample />
+	</>,
 	document.getElementById("root")!,
 )
