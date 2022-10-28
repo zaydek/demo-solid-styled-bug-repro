@@ -1,0 +1,114 @@
+$realistic-box-shadow: (
+	0  1px  2px  -1px hsl(var(--base-h) var(--base-s) 10% / 25%),
+	0  2px  4px  -2px hsl(var(--base-h) var(--base-s) 10% / 25%),
+	0  4px  8px  -4px hsl(var(--base-h) var(--base-s) 10% / 25%),
+	0  8px 16px  -8px hsl(var(--base-h) var(--base-s) 10% / 25%),
+	0 16px 32px -16px hsl(var(--base-h) var(--base-s) 10% / 25%),
+	0 32px 64px -32px hsl(var(--base-h) var(--base-s) 10% / 25%),
+);
+
+$realistic-color-box-shadow: (
+	0  1px  2px  -1px hsl(var(--base-h) var(--base-s) 50% / 25%),
+	0  2px  4px  -2px hsl(var(--base-h) var(--base-s) 50% / 25%),
+	0  4px  8px  -4px hsl(var(--base-h) var(--base-s) 50% / 25%),
+	0  8px 16px  -8px hsl(var(--base-h) var(--base-s) 50% / 25%),
+	0 16px 32px -16px hsl(var(--base-h) var(--base-s) 50% / 25%),
+	0 32px 64px -32px hsl(var(--base-h) var(--base-s) 50% / 25%),
+);
+
+$theme: (
+	// Anonymous CSS variables
+	hairline-thickness: 1px,
+	realistic-box-shadow: $realistic-box-shadow,
+	realistic-color-box-shadow: $realistic-color-box-shadow,
+
+	//////////////////////////////////////
+
+	base-h: 220,
+	base-s: 25%,
+
+	trim-h: (
+		light: 200,
+		dark:  220,
+	),
+	trim-s: 100%,
+	trim-l: (
+		light: 50%,
+		dark:  60%,
+	),
+
+	focus-ring-h: var(--trim-h),
+	focus-ring-s: var(--trim-s),
+	focus-ring-l: var(--trim-l),
+
+	//////////////////////////////////////
+
+	trim-color: (
+		light: hsl(var(--trim-h) var(--trim-s) 50%),
+		dark:  hsl(var(--trim-h) var(--trim-s) 60%),
+	),
+	trim-color-is-hover: (
+		light: hsl(var(--trim-h) var(--trim-s) 50% / 25%),
+		dark:  hsl(var(--trim-h) var(--trim-s) 60% / 25%),
+	),
+
+	//////////////////////////////////////
+
+	card-color: (
+		light: hsl(var(--base-h) var(--base-s) 100%),
+		dark:  hsl(var(--base-h) var(--base-s) 10%),
+	),
+	card-backdrop-color: hsl(0 0% 0% / 15%),
+	card-lightgray-color: (
+		light: hsl(var(--base-h) var(--base-s) 92.5%),
+		dark:  hsl(var(--base-h) var(--base-s) 17.5%),
+	),
+	card-hairline-color: (
+		light: hsl(var(--base-h) var(--base-s) 85%),
+		dark:  hsl(var(--base-h) var(--base-s) 25%),
+	),
+	card-inset-hairline-box-shadow: inset 0 0 0 var(--hairline-thickness) var(--card-hairline-color),
+	card-hairline-box-shadow: 0 0 0 var(--hairline-thickness) var(--card-hairline-color),
+	card-inset-box-shadow: (
+		light: (var(--card-inset-hairline-box-shadow), var(--realistic-color-box-shadow)),
+		dark:  (var(--card-inset-hairline-box-shadow), var(--realistic-box-shadow)),
+	),
+	card-box-shadow: (
+		light: (var(--card-hairline-box-shadow), var(--realistic-color-box-shadow)),
+		dark:  (var(--card-hairline-box-shadow), var(--realistic-box-shadow)),
+	),
+
+	//////////////////////////////////////
+
+	form-color: (
+		light: var(--card-color),
+		dark:  hsl(var(--base-h) var(--base-s) 20%),
+	),
+	form-inset-box-shadow: var(--card-inset-box-shadow),
+	form-box-shadow: var(--card-box-shadow),
+
+	//////////////////////////////////////
+
+	fill-100-color: (
+		light: hsl(var(--base-h) var(--base-s) 15%),
+		dark:  hsl(var(--base-h) var(--base-s) 95%),
+	),
+	fill-200-color: (
+		light: hsl(var(--base-h) var(--base-s) 25%),
+		dark:  hsl(var(--base-h) var(--base-s) 85%),
+	),
+	fill-300-color: (
+		light: hsl(var(--base-h) var(--base-s) 35%),
+		dark:  hsl(var(--base-h) var(--base-s) 75%),
+	),
+
+	//////////////////////////////////////
+
+	// https://simpleicons.org
+	github-color:  #181717,
+	html-color:    #e34f26,
+	react-color:   #61dafb,
+	svg-color:     #ffb13b,
+	twitter-color: #1da1f2,
+	vue-color:     #4fc08d,
+);

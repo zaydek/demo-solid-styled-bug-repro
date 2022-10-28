@@ -1,0 +1,14 @@
+@use "sass:map";
+@use "sass:meta";
+
+// Interpolates light and dark themes as :root CSS variables
+@mixin define-theme($vars, $variant: light) {
+	@each $property, $value in $vars {
+		@if meta.type-of($value) == map {
+			$variant-value: map.get($value, $variant);
+			--#{$property}: #{$variant-value};
+		} @else {
+			--#{$property}: #{$value};
+		}
+	}
+}
