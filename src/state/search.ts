@@ -6,9 +6,6 @@ export type SearchResult = {
 	kebab: string
 	camel: string
 	title: string
-
-	// TODO: DEPRECATE
-	index?: number
 	parts: undefined | [string, string, string]
 }
 
@@ -41,7 +38,6 @@ export const search = createRoot(() => {
 				const s2 = index + canonicalValue().length
 				_results.push({
 					...info,
-					index, // TODO: DEPRECATE
 					parts: [
 						info.kebab.slice(0, s1),
 						info.kebab.slice(s1, s2),
@@ -52,7 +48,6 @@ export const search = createRoot(() => {
 		}
 		// Assumes all results have parts
 		if (!_results.length) { return } // Defer to fallback
-		//// _results.sort((a, b) => a.index! - b.index!)
 		_results.sort((a, b) => a.parts![0].length -
 			b.parts![0].length)
 		return _results

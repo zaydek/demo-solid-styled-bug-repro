@@ -2,13 +2,11 @@
 .\[aspect-ratio\:16_\/_9\]{aspect-ratio:16 / 9;}
 .\[background-color\:gray\]{background-color:gray;}
 .\[border-radius\:8px\]{border-radius:8px;}
-.\[display\:flex\]{display:flex;}
 .\[display\:grid\]{display:grid;}
-.\[flex-direction\:column\]{flex-direction:column;}
-.\[flex-direction\:row\]{flex-direction:row;}
 .\[flex-grow\:1\]{flex-grow:1;}
 .\[gap\:16px\]{gap:16px;}
 .\[gap\:8px\]{gap:8px;}
+.\[grid-template-columns\:auto_1fr\]{grid-template-columns:auto 1fr;}
 .\[grid-template-columns\:repeat\(3\,_1fr\)\]{grid-template-columns:repeat(3, 1fr);}
 .\[height\:80px\]{height:80px;}
 .\[padding\:16px\]{padding:16px;}

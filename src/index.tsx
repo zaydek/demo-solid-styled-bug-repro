@@ -36,12 +36,11 @@ function Sidebar() {
 			.sidesheet-content {
 				height: var(--screen-y);
 
-				/* FLEX */
-				display: flex;
-				flex-direction: column;
+				/* Flow */
+				display: grid;
+				grid-template-rows: auto 1fr auto;
 			}
-			.sidesheet-content > :is(:nth-child(1), :nth-child(3)) { flex-shrink: 0; }
-			.sidesheet-content > :nth-child(2) { flex-grow: 1; overflow-y: auto; }
+			.sidesheet-content > :nth-child(2) { overflow-y: auto; }
 
 			/********************************/
 			/* sidebar-nav */
@@ -52,13 +51,12 @@ function Sidebar() {
 					24px; /* X */
 				height: var(--search-bar-height);
 
-				/* FLEX */
-				display: flex;
-				flex-direction: row;
+				/* Flow */
+				display: grid;
+				grid-template-columns: auto 1fr auto auto;
 				align-items: center;
 				gap: 16px;
 			}
-			.sidebar-nav > :nth-child(2) { flex-grow: 1; }
 
 			/********************************/
 			/* drawer */
@@ -68,13 +66,12 @@ function Sidebar() {
 					16px
 					24px;
 
-				/* FLEX */
-				display: flex;
-				flex-direction: row;
+				/* Flow */
+				display: grid;
+				grid-template-columns: auto 1fr auto;
 				align-items: center;
 				gap: 8px;
 			}
-			.drawer-head > :nth-child(2) { flex-grow: 1; }
 			.drawer-head-icon {
 				height: 16px;
 				aspect-ratio: 1;
@@ -84,9 +81,8 @@ function Sidebar() {
 				padding: 16px;
 				padding-top: 0; /* Override */
 
-				/* FLEX */
-				display: flex;
-				flex-direction: column;
+				/* Flow */
+				display: grid;
 				gap: 8px;
 			}
 		`}
@@ -114,7 +110,7 @@ function Sidebar() {
 					</div>
 				</>} open>
 					<div class="drawer-body-content">
-						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.version()} setGroupValue={settings.setVersion}>
+						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.version()} setGroupValue={settings.setVersion}>
 							<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
 								<Radio value={value}>
 									{value.toUpperCase()}
@@ -137,7 +133,7 @@ function Sidebar() {
 							{settings.variantV1().toUpperCase()}
 						</div>
 					</>} open>
-						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
+						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
 							<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
 								<Radio value={value}>
 									{value.toUpperCase()}
@@ -160,7 +156,7 @@ function Sidebar() {
 							{settings.variantV2().toUpperCase()}
 						</div>
 					</>} open>
-						<Radiogroup class="[display:flex] [flex-direction:column] [gap:8px]" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
+						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
 							<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
 								<Radio value={value}>
 									{value.toUpperCase()}
@@ -235,7 +231,7 @@ function Sidebar() {
 			</div>
 			<div>
 				<div class="line-x collapsed"></div>
-				<div class="[padding:16px] [display:flex] [flex-direction:row] [gap:16px]">
+				<div class="[padding:16px] [display:grid] [grid-template-columns:auto_1fr] [gap:16px]">
 					<div class="[height:80px] [aspect-ratio:16_/_9] [border-radius:8px] [background-color:gray]"></div>
 					<div class="[flex-grow:1]">
 						<div>Hello, world!</div>
@@ -296,8 +292,12 @@ function App() {
 				padding:
 					0     /* Y */
 					24px; /* X */
+
+				/* Typography */
 				font: 400 17px /
 					normal system-ui;
+				/* letter-spacing: -0.0125em; */
+				color: hsl(0 0% 25%);
 			}
 
 			/********************************/
@@ -348,12 +348,13 @@ function App() {
 				align-content: start; /* Center children on the y-axis from the start */
 			}
 			.results-item-typography {
+				text-align: center; /* Center x-axis */
+
+				/* Typography */
 				font: 400 12px /
 					normal system-ui;
 				/* letter-spacing: -0.0125em; */
-				text-align: center; /* Center x-axis */
 				color: hsl(0 0% 40%);
-				/* opacity: 0; */ /* TODO */
 			}
 			.results-item-typography-highlight {
 				border-radius: 1px;
@@ -388,9 +389,8 @@ function App() {
 						/>
 					</AriaButton>
 					<div class="results-item-typography-container">
-						<div class={cx(`results-item-typography ${"index" in result ? "match" : ""}`)}>
-							{/* <Dynamic component={settings.icons()?.[result.title]} class="results-item-typography-icon" /> */}
-							<Show when={"parts" in result} fallback={result.kebab}>
+						<div class={cx(`results-item-typography ${result.parts ? "match" : ""}`)}>
+							<Show when={result.parts} fallback={result.kebab}>
 								{result.parts![0]}
 								<span class="results-item-typography-highlight">
 									{result.parts![1]}
