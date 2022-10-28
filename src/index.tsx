@@ -1,6 +1,6 @@
 import "./css"
 
-import { For, JSX, onMount, Show, Suspense } from "solid-js"
+import { createResource, createSignal, For, JSX, onMount, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
@@ -8,7 +8,7 @@ import { Drawer } from "./drawer"
 import { LoadingBar } from "./loading-bar"
 import { Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
-import { debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
+import { darkMode, debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
 import { css } from "./utils/solid"
 import { cx, range, round } from "./utils/vanilla"
 
@@ -96,7 +96,7 @@ function Sidebar() {
 					<NavIcon />
 					<NavIcon />
 				</nav>
-				<div class="line-x"></div>
+				<div class="hairline-x"></div>
 			</div>
 			<div>
 
@@ -125,7 +125,7 @@ function Sidebar() {
 				{/****************************/}
 
 				<Show when={settings.version() === "v1"}>
-					<div class="line-x"></div>
+					<div class="hairline-x"></div>
 					<Drawer head={<>
 						<Dynamic component={SmileySVG} class="drawer-head-icon" />
 						<div>
@@ -148,7 +148,7 @@ function Sidebar() {
 				{/****************************/}
 
 				<Show when={settings.version() === "v2"}>
-					<div class="line-x"></div>
+					<div class="hairline-x"></div>
 					<Drawer head={<>
 						<Dynamic component={SmileySVG} class="drawer-head-icon" />
 						<div>
@@ -170,7 +170,7 @@ function Sidebar() {
 
 				{/****************************/}
 
-				<div class="line-x"></div>
+				<div class="hairline-x"></div>
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
 					<div>
@@ -198,7 +198,7 @@ function Sidebar() {
 
 				{/****************************/}
 
-				<div class="line-x"></div>
+				<div class="hairline-x"></div>
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
 					<div>
@@ -215,7 +215,7 @@ function Sidebar() {
 
 				{/****************************/}
 
-				<div class="line-x"></div>
+				<div class="hairline-x"></div>
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
 					<div>
@@ -228,13 +228,13 @@ function Sidebar() {
 				</>} open>
 					<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={settings.version() === "v1" ? 3.5 : 2.5} step={0.01} />
 				</Drawer>
-				<div class="line-x"></div>
+				<div class="hairline-x"></div>
 
 				{/****************************/}
 
 			</div>
 			<div>
-				<div class="line-x collapsed"></div>
+				<div class="hairline-x collapsed"></div>
 				<div class="[padding:16px] [display:grid] [grid-template-columns:auto_1fr] [gap:16px]">
 					<div class="[height:80px] [aspect-ratio:16_/_9] [border-radius:8px] [background-color:gray]"></div>
 					<div class="[flex-grow:1]">
@@ -244,7 +244,7 @@ function Sidebar() {
 						<div>Hello, world!</div>
 					</div>
 				</div>
-				<div class="line-x"></div>
+				<div class="hairline-x"></div>
 				<div class="[padding:16px]">
 					<div>This is the last block</div>
 					<div>This is the last block</div>
@@ -273,8 +273,8 @@ function App() {
 					0     /* Y */
 					24px; /* X */
 				height: var(--search-bar-height);
-				background-color: white;
-				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+				background-color: var(--card-color);
+				box-shadow: var(--card-hairline-box-shadow);
 
 				/* Flow */
 				display: grid;
@@ -432,8 +432,8 @@ function Skeleton() {
 					0     /* Y */
 					24px; /* X */
 				height: var(--search-bar-height);
-				background-color: white;
-				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+				background-color: var(--card-color);
+				box-shadow: var(--card-hairline-box-shadow);
 
 				/* Flow */
 				display: grid;
@@ -446,7 +446,7 @@ function Skeleton() {
 				height: 32px;
 				aspect-ratio: 1;
 				border-radius: 1000px;
-				background-color: lightgray;
+				background-color: var(--skeleton-color);
 			}
 			.sk-search-bar-text-field-container {
 				padding: 0 24px;
@@ -455,7 +455,7 @@ function Skeleton() {
 				height: 8px;
 				aspect-ratio: 10;
 				border-radius: 1000px;
-				background-color: lightgray;
+				background-color: var(--skeleton-color);
 			}
 
 			/********************************/
@@ -470,14 +470,14 @@ function Skeleton() {
 					0     /* B */
 					auto; /* L */
 				width: var(--sidebar-width);
-				background-color: white;
-				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+				background-color: var(--card-color);
+				box-shadow: var(--card-hairline-box-shadow);
 			}
 			@media (hover: none), not (min-width: 800px) { .sk-sidebar { display: none; } }
 			.sk-sidebar-nav {
 				height: var(--search-bar-height);
-				background-color: white;
-				box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%);
+				background-color: var(--card-color);
+				box-shadow: var(--card-hairline-box-shadow);
 			}
 
 			/********************************/
@@ -514,7 +514,7 @@ function Skeleton() {
 				height: 32px;
 				aspect-ratio: 1;
 				border-radius: 1000px;
-				background-color: lightgray;
+				background-color: var(--skeleton-color);
 			}
 			.sk-results-item-typography-container {
 				padding:
@@ -530,7 +530,7 @@ function Skeleton() {
 				height: 8px;
 				aspect-ratio: 8;
 				border-radius: 1000px;
-				background-color: lightgray;
+				background-color: var(--skeleton-color);
 			}
 		`}
 		<div class="sk-search-bar">
@@ -567,12 +567,26 @@ function Skeleton() {
 }
 
 function Root() {
-	onMount(() => {
-		window.addEventListener("keydown", e => {
-			if (e.key === "`") {
-				debugCSS.toggle()
-			}
-		})
+	window.addEventListener("keydown", e => {
+		if (e.key === "\\") {
+			debugCSS.toggle()
+		} else if (e.key === "`") {
+			darkMode.toggle()
+		}
+	})
+
+	//// const [done, setDone] = createSignal(false)
+	////
+	//// window.addEventListener("keydown", e => {
+	//// 	if (e.key === "d") {
+	//// 		setDone(true)
+	//// 	}
+	//// })
+	////
+	//// const [forever] = createResource(done, _done => {
+	const [forever] = createResource(() => {
+		//// if (_done) { return "ok" }
+		return new Promise(r => setTimeout(r, 10_000))
 	})
 
 	return <>
@@ -624,23 +638,44 @@ function Root() {
 				--search-bar-height: 72px;
 				--sidebar-width: 448px;
 				--results-item-height: 96px;
-				--line-thickness: 4px;
+
+				--sheet-backdrop-background-color: var(--card-backdrop-color);
+				--sheet-card-background-color: var(--card-color);
+				--sheet-card-box-shadow: var(--card-hairline-box-shadow);
+
+				/* --sheet-backdrop-background-color: hsl(0 0% 0% / 25%); */
+				/* --sheet-backdrop-transition-duration: 1200ms; */
+				/* --sheet-card-background-color: hsl(0 0% 100%); */
+				/* --sheet-card-border-radius: 24px 24px 0 0; */
+				/* --sheet-card-box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%); */
+				/* --sheet-card-hairline-background-color: hsl(0 0% 90%); */
+				/* --sheet-drag-indicator-background-color: hsl(0 0% 50%); */
+				/* --sheet-drag-indicator-active-background-color: hsl(0 0% 25%); */
+				/* --sheet-drag-indicator-size-aspect-ratio: 12; */
+				/* --sheet-drag-indicator-size: 4px; */
+				/* --sheet-draggable-size: 40px; */
+				/* --sheet-transition-duration: 600ms; */
+				/* --sheet-transition-timing-function: cubic-bezier(0, 1, 0.25, 1); */
+				/* --sheet-z-index: 100; */
+
+				background-color: var(--card-color);
 			}
 
 			/******************************/
 
-			.line-y { width:  var(--line-thickness); background-color: hsl(0 0% 90%); }
-			.line-x { height: var(--line-thickness); background-color: hsl(0 0% 90%); }
+			.hairline-y { width:  var(--line-thickness); background-color: var(--card-hairline-color); }
+			.hairline-x { height: var(--line-thickness); background-color: var(--card-hairline-color); }
 
-			.line-y.collapsed { margin-left: calc(-1 * var(--line-thickness)); }
-			.line-x.collapsed { margin-top:  calc(-1 * var(--line-thickness)); }
+			.hairline-y.collapsed { margin-left: calc(-1 * var(--line-thickness)); }
+			.hairline-x.collapsed { margin-top:  calc(-1 * var(--line-thickness)); }
 		`}
 		<LoadingBar />
-		<Show when={settings.icons()} fallback={Skeleton}>
-			<Suspense fallback={Skeleton}>
+		<Suspense fallback={Skeleton}>
+			{/* <Show when={forever()} fallback={Skeleton}> */}
+			<Show when={settings.icons()} fallback={Skeleton}>
 				<App />
-			</Suspense>
-		</Show>
+			</Show>
+		</Suspense>
 	</>
 }
 

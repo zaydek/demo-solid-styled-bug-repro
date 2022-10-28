@@ -2,7 +2,7 @@
 	height: 32px;
 	aspect-ratio: 1;
 	border-radius: 1000px;
-	background-color: hsl(0 0% 75%);
+	background-color: whitesmoke; /* TODO */
 
 	/* Flow */
 	display: grid;
@@ -15,5 +15,5 @@
 .component-nav-icon-icon {
 	height: 24px;
 	aspect-ratio: 1;
-	color: hsl(0 0% 25%);
+	color: var(--trim-color);
 }

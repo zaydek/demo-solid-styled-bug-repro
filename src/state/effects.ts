@@ -5,7 +5,9 @@ import { settings } from "./settings"
 function getTitle({ visible }: { visible?: boolean } = {}) {
 	visible ??= true
 	if (!visible) { return "Heroicons" }
-	if (!search.canonicalValue()) {
+	if (!settings.icons()) {
+		return "Loading…"
+	} else if (!search.canonicalValue()) {
 		return "Heroicons"
 	} else if (!search.results()) {
 		return "0 results"
@@ -17,15 +19,15 @@ function getTitle({ visible }: { visible?: boolean } = {}) {
 function getURL() {
 	const params: Record<string, string> = {}
 
-	if (search.canonicalValue())    { params["search"]       = "" + search.canonicalValue() }
-	if (settings.version.dirty())   { params["version"]      = "" + settings.version() }
+	if (search.canonicalValue())    { params["search"]    = "" + search.canonicalValue() }
+	if (settings.version.dirty())   { params["version"]   = "" + settings.version() }
 	if (settings.variantV1.dirty() || settings.variantV2.dirty()) {
 		params["variant"] = "" + settings.variant().split("/").join("-")
 	}
-	if (settings.license.dirty())   { params["license"]        = "" + settings.license() }
-	if (settings.framework.dirty()) { params["framework"]      = "" + settings.framework() }
-	if (settings.scale.dirty())     { params["scale"]          = "" + settings.scale() }
-	if (settings.stroke.dirty())    { params["stroke"]         = "" + settings.stroke() }
+	if (settings.license.dirty())   { params["license"]   = "" + settings.license() }
+	if (settings.framework.dirty()) { params["framework"] = "" + settings.framework() }
+	if (settings.scale.dirty())     { params["scale"]     = "" + settings.scale() }
+	if (settings.stroke.dirty())    { params["stroke"]    = "" + settings.stroke() }
 
 	if (!Object.keys(params).length) { return "/" }
 	const urlParams = new URLSearchParams(params)
@@ -34,8 +36,6 @@ function getURL() {
 
 createRoot(() => {
 	const url = createDeferred(getURL, { timeoutMs: 500 })
-
-	// URL params
 	createEffect(on(url, () => {
 		const url = getURL()
 		const timeoutId = window.setTimeout(() => {
@@ -44,7 +44,6 @@ createRoot(() => {
 		onCleanup(() => window.clearTimeout(timeoutId))
 	}, { defer: true }))
 
-	// Document title
 	createEffect(() => {
 		function handleVisibilityChange(e: Event) {
 			document.title = getTitle({ visible: !document.hidden })

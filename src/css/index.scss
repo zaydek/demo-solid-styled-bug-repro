@@ -11,6 +11,7 @@
 }
 
 // Dark mode CSS variables
-:root.dark {
+:root.dark-mode {
+	color: white; /* DEBUG */
 	@include define-theme($theme, dark);
 }

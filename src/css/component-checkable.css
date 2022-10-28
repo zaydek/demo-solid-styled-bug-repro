@@ -18,7 +18,7 @@
 		8px; /* X */
 	height: 28px;
 	border-radius: 1000px;
-	background-color: hsl(0 0% 90%);
+	background-color: var(--form-label-color);
 
 	/* Flow */
 	display: grid;
@@ -62,7 +62,7 @@
 	height: 24px;
 	aspect-ratio: 1;
 	border-radius: 1000px;
-	background-color: white;
+	background-color: var(--form-input-color);
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%);
 
