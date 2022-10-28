@@ -602,18 +602,18 @@ function Skeleton() {
 
 function LoadController() {
 	let slow
-	if (DEV) {
-		[slow] = createResource(async () => {
-			await new Promise(r => setTimeout(r, 1_000))
-			return "foo"
-		})
-	}
+	//// if (DEV) {
+	//// 	[slow] = createResource(async () => {
+	//// 		await new Promise(r => setTimeout(r, 1_000))
+	//// 		return "foo"
+	//// 	})
+	//// }
 
 	return <>
 		<Suspense fallback={<Skeleton />}>
-			<Show when={DEV}>
+			{/* <Show when={DEV}>
 				{void slow?.()}
-			</Show>
+			</Show> */}
 			<Demo />
 		</Suspense>
 	</>
@@ -774,10 +774,14 @@ function SuspenseExample() {
 }
 
 render(
-	//// () => <App />,
+	//// () => <>
+	//// 	<LoadingBar />
+	//// 	<SuspenseExample />
+	//// </>,
+	////
 	() => <>
 		<LoadingBar />
-		<SuspenseExample />
+		<App />
 	</>,
 	document.getElementById("root")!,
 )

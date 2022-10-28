@@ -50,18 +50,16 @@ export function LoadingBar() {
 		{css`
 			.loading-bar {
 				--__progress: 0;
-
 				position: fixed;
-				z-index: 10;
+				z-index: 1000;
 				inset:
 					0    /* T */
 					0    /* R */
 					auto /* B */
 					0;   /* L */
-				height: 8px;
+				height: 4px;
 				width: calc(var(--__progress) * 1%);
 				background-color: hsl(200 100% 50%);
-
 				transition: 300ms ease;
 				transition-property: width;
 			}

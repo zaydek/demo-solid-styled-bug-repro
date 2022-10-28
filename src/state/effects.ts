@@ -1,73 +1,58 @@
-import { createEffect, createRoot, onCleanup } from "solid-js"
-import { loadingBar } from "../loading-bar"
+import { createDeferred, createEffect, createRoot, on, onCleanup } from "solid-js"
 import { search } from "./search"
 import { settings } from "./settings"
 
-createRoot(() => {
-	// Loading bar
-	let once = false
-	createEffect(() => {
-		if (!settings.manifest()) {
-			if (!once) {
-				once = true
-				return
-			}
-			loadingBar.start()
-		} else {
-			loadingBar.end()
-		}
-	})
-
-	// Gets the next document.title
-	const title = ({ visible }: { visible?: boolean } = {}) => {
-		visible ??= true
-		if (!visible) { return "Heroicons" }
-		if (!search.canonicalValue()) {
-			return "Heroicons"
-		} else if (!search.results()) {
-			return "0 results"
-		}
-		const { length } = search.results()!
-		return `${search.canonicalValue()} — ${length} Icon${length === 1 ? "" : "s"}`
+function getTitle({ visible }: { visible?: boolean } = {}) {
+	visible ??= true
+	if (!visible) { return "Heroicons" }
+	if (!search.canonicalValue()) {
+		return "Heroicons"
+	} else if (!search.results()) {
+		return "0 results"
 	}
+	const { length } = search.results()!
+	return `${search.canonicalValue()} — ${length} Icon${length === 1 ? "" : "s"}`
+}
 
-	// https://.../?foo=bar
-	createEffect(() => {
-		const encoded: Record<string, string> = {}
+function getURL() {
+	const params: Record<string, string> = {}
 
-		if (search.canonicalValue())        { encoded["search"]       = "" + search.canonicalValue() }
-		if (settings.versionOpen.dirty())   { encoded["version-open"] = "" + settings.versionOpen() }
-		if (settings.version.dirty())       { encoded["version"]      = "" + settings.version() }
-		if (settings.variantOpen.dirty())   { encoded["variant-open"] = "" + settings.variantOpen() }
+	if (search.canonicalValue())    { params["search"]       = "" + search.canonicalValue() }
+	if (settings.version.dirty())   { params["version"]      = "" + settings.version() }
+	if (settings.variantV1.dirty() || settings.variantV2.dirty()) {
+		params["variant"] = "" + settings.variant().split("/").join("-")
+	}
+	if (settings.license.dirty())   { params["license"]        = "" + settings.license() }
+	if (settings.framework.dirty()) { params["framework"]      = "" + settings.framework() }
+	if (settings.scale.dirty())     { params["scale"]          = "" + settings.scale() }
+	if (settings.stroke.dirty())    { params["stroke"]         = "" + settings.stroke() }
 
-		if (settings.variantV1.dirty() || settings.variantV2.dirty()) {
-			encoded["variant"] = "" + settings.variant().split("/").join("-")
-		}
+	if (!Object.keys(params).length) { return "/" }
+	const urlParams = new URLSearchParams(params)
+	return `/?${urlParams.toString()}`
+}
 
-		if (settings.clipboardOpen.dirty()) { encoded["clipboard-open"] = "" + settings.clipboardOpen() }
-		if (settings.license.dirty())       { encoded["license"]        = "" + settings.license() }
-		if (settings.framework.dirty())     { encoded["framework"]      = "" + settings.framework() }
-		//// if (settings.densityOpen.dirty())   { encoded["density-open"]   = "" + settings.densityOpen() }
-		//// if (settings.density.dirty())       { encoded["density"]        = "" + settings.density() }
-		if (settings.scaleOpen.dirty())     { encoded["scale-open"]     = "" + settings.scaleOpen() }
-		if (settings.scale.dirty())         { encoded["scale"]          = "" + settings.scale() }
-		if (settings.strokeOpen.dirty())    { encoded["stroke-open"]    = "" + settings.strokeOpen() }
-		if (settings.stroke.dirty())        { encoded["stroke"]         = "" + settings.stroke() }
+createRoot(() => {
+	const url = createDeferred(getURL, { timeoutMs: 500 })
 
-		if (!Object.keys(encoded).length) {
-			window.history.replaceState({}, "", "/")
-		} else {
-			const params = new URLSearchParams(encoded)
-			window.history.replaceState({}, "", `/?${params.toString()}`)
-		}
-	})
+	// URL params
+	let timeoutId = 0
+	createEffect(on(url, () => {
+		const url = getURL()
+		timeoutId = window.setTimeout(() => {
+			window.history.replaceState({}, "", url)
+		}, 100)
+		onCleanup(() => {
+			window.clearTimeout(timeoutId)
+		})
+	}, { defer: true }))
 
-	// <title>...</title>
+	// Document title
 	createEffect(() => {
 		function handleVisibilityChange(e: Event) {
-			document.title = title({ visible: !document.hidden })
+			document.title = getTitle({ visible: !document.hidden })
 		}
-		document.title = title()
+		document.title = getTitle()
 		window.addEventListener("visibilitychange", handleVisibilityChange, false)
 		onCleanup(() => window.removeEventListener("visibilitychange", handleVisibilityChange, false))
 	})
