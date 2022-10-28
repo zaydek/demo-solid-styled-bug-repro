@@ -13,7 +13,7 @@
 	user-select: none;
 }
 .component-nav-icon-icon {
-	height: 75%;
+	height: 24px;
 	aspect-ratio: 1;
 	color: hsl(0 0% 25%);
 }

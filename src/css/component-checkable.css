@@ -2,6 +2,7 @@
 	--color:       hsl(200 100% 50%);
 	--alpha-color: hsl(200 100% 50% / 40%);
 
+	/* Flow */
 	display: grid;
 	grid-template-columns: 1fr auto;
 	align-items: center; /* component-checkable-container and component-checkable-checkbox are 28px and 24px */
@@ -46,7 +47,7 @@
 	place-items: center;
 }
 .component-checkable-checkbox-svg {
-	height: 50%;
+	height: 12px;
 	aspect-ratio: 1;
 	color: white;
 }
