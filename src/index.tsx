@@ -1,21 +1,16 @@
 import "./css"
 
-import { createEffect, createResource, createSignal, DEV, For, JSX, onCleanup, onMount, Show, startTransition, Suspense } from "solid-js"
+import { For, JSX, onMount, Show, Suspense } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer } from "./drawer"
-import { LoadingBar, loadingBar } from "./loading-bar"
+import { LoadingBar } from "./loading-bar"
 import { Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
 import { debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
 import { css } from "./utils/solid"
 import { cx, range, round } from "./utils/vanilla"
-
-////////////////////////////////////////
-
-// Checkboxes
-const [noName, setNoName] = createSignal(false)
 
 ////////////////////////////////////////
 
@@ -32,7 +27,6 @@ function Sidebar() {
 				display: grid;
 				grid-template-rows: 1fr auto;
 			}
-			/* TODO */
 			.bottomsheet-content > :is(:nth-child(1), :nth-child(3)) { display: none; }
 			.bottomsheet-content > :nth-child(2) { overflow-y: auto; }
 
@@ -260,17 +254,7 @@ function Sidebar() {
 	</>
 }
 
-function Demo() {
-	//// const progressBar = useProgressBar()
-	////
-	//// onMount(progressBar.actions.end)
-
-	//// const [show, setShow] = createSignal(false)
-	////
-	//// setInterval(() => {
-	//// 	setShow(curr => !curr)
-	//// }, 5_000)
-
+function App() {
 	return <>
 		{css`
 			/********************************/
@@ -315,20 +299,6 @@ function Demo() {
 				font: 400 17px /
 					normal system-ui;
 			}
-
-			/********************************/
-			/* sidebar */
-
-			/* .sidebar { */
-			/* 	position: fixed; */
-			/* 	z-index: 10; */
-			/* 	inset: 0; */
-			/* 	left: auto; /* Override *!/ */
-			/* 	width: var(--sidebar-width); */
-			/* 	background-color: white; */
-			/* 	box-shadow: 0 0 0 4px hsl(0 0% 0% / 10%); */
-			/* } */
-			/* @media (hover: none) { .sidebar { display: none; } } */
 
 			/********************************/
 			/* results */
@@ -385,14 +355,6 @@ function Demo() {
 				color: hsl(0 0% 40%);
 				/* opacity: 0; */ /* TODO */
 			}
-			/* .results-item-typography-icon { */
-			/* 	margin-right: 6px; */
- 			/* 	height: 1.125em; */
-			/* 	aspect-ratio: 1; */
-			/* 	color: hsl(0 0% 25%); */
-			/* 	vertical-align: middle; /* Center y-axis *!/ */
-			/* } */
-			/* .results-item-typography.match .results-item-typography-icon { color: hsl(25 100% 25%); } /* Override *!/ */
 			.results-item-typography-highlight {
 				border-radius: 1px;
 				color: hsl(25 100% 10%);
@@ -600,26 +562,7 @@ function Skeleton() {
 	</>
 }
 
-function LoadController() {
-	let slow
-	//// if (DEV) {
-	//// 	[slow] = createResource(async () => {
-	//// 		await new Promise(r => setTimeout(r, 1_000))
-	//// 		return "foo"
-	//// 	})
-	//// }
-
-	return <>
-		<Suspense fallback={<Skeleton />}>
-			{/* <Show when={DEV}>
-				{void slow?.()}
-			</Show> */}
-			<Demo />
-		</Suspense>
-	</>
-}
-
-function App() {
+function Root() {
 	onMount(() => {
 		window.addEventListener("keydown", e => {
 			if (e.key === "`") {
@@ -688,100 +631,16 @@ function App() {
 			.line-y.collapsed { margin-left: calc(-1 * var(--line-thickness)); }
 			.line-x.collapsed { margin-top:  calc(-1 * var(--line-thickness)); }
 		`}
-		<LoadController />
-	</>
-}
-
-//// function Nested() {
-//// 	const [foo, { refetch }] = createResource(async () => {
-//// 		await new Promise(r => setTimeout(r, 500))
-//// 		return "This is nested"
-//// 	})
-////
-//// 	let once = false
-//// 	createEffect(() => {
-//// 		if (foo.loading) {
-//// 			if (!once) {
-//// 				once = true
-//// 				return
-//// 			}
-//// 			loadingBar.start()
-//// 		} else {
-//// 			loadingBar.end()
-//// 		}
-//// 	})
-////
-//// 	return <>
-//// 		<div class="nested" onClick={e => {
-//// 			e.stopPropagation()
-//// 			refetch()
-//// 		}}>
-//// 			<Suspense fallback={<>
-//// 				<div>Loading</div>
-//// 			</>}>
-//// 				<div>{foo()}</div>
-//// 			</Suspense>
-//// 		</div>
-//// 	</>
-//// }
-
-function SuspenseExample() {
-	const [foo, { refetch }] = createResource(async () => {
-		await new Promise(r => setTimeout(r, 500))
-		return Date.now()
-	})
-
-	createEffect(() => {
-		if (foo.loading) { return }
-		loadingBar.end()
-	})
-
-	return <>
-		{css`
-			.top {
-				padding: 16px;
-				/* background-color: lightcoral; */
-
-				/* FLEX */
-				display: flex;
-				flex-direction: column;
-				gap: 16px;
-			}
-			.nested {
-				padding: 16px;
-				/* background-color: pink; */
-
-				cursor: pointer;
-			}
-		`}
-		<div class="top" onClick={refetch}>
-			<Suspense fallback={<>
-				<div>Loading</div>
-			</>}>
-				Hello
-				<div
-					onClick={e => {
-						e.stopPropagation()
-						loadingBar.start()
-						startTransition(() => {
-							refetch()
-						})
-					}}
-				>{foo()}</div>
+		<LoadingBar />
+		<Show when={settings.icons()} fallback={Skeleton}>
+			<Suspense fallback={Skeleton}>
+				<App />
 			</Suspense>
-		</div>
+		</Show>
 	</>
 }
 
 render(
-	//// () => <>
-	//// 	<LoadingBar />
-	//// 	<SuspenseExample />
-	//// </>,
-	////
-	() => <>
-		<LoadingBar />
-		<App />
-	</>,
+	() => <Root />,
 	document.getElementById("root")!,
 )

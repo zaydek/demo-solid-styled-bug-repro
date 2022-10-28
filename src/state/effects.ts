@@ -10,8 +10,8 @@ function getTitle({ visible }: { visible?: boolean } = {}) {
 	} else if (!search.results()) {
 		return "0 results"
 	}
-	const { length } = search.results()!
-	return `${search.canonicalValue()} — ${length} Icon${length === 1 ? "" : "s"}`
+	const length = search.results()!.length
+	return `${length} Icon${length === 1 ? "" : "s"}`
 }
 
 function getURL() {
@@ -36,15 +36,12 @@ createRoot(() => {
 	const url = createDeferred(getURL, { timeoutMs: 500 })
 
 	// URL params
-	let timeoutId = 0
 	createEffect(on(url, () => {
 		const url = getURL()
-		timeoutId = window.setTimeout(() => {
+		const timeoutId = window.setTimeout(() => {
 			window.history.replaceState({}, "", url)
 		}, 100)
-		onCleanup(() => {
-			window.clearTimeout(timeoutId)
-		})
+		onCleanup(() => window.clearTimeout(timeoutId))
 	}, { defer: true }))
 
 	// Document title

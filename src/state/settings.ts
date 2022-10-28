@@ -23,8 +23,6 @@ export type VariantV2 = "20/solid" | "24/solid" | "24/outline"
 export type Framework = "svg" | "react" | "vue"
 
 export const settings = createRoot(() => {
-	// Version
-	//// const [versionOpen, setVersionOpen] = createDirtySignal(searchParams.boolean("version-open"), false)
 	const [version, _setVersion] = createDirtySignal<Version>((() => {
 		const value = searchParams.string("version")
 		if (!(value === "v1" || value === "v2")) { return }
@@ -39,8 +37,6 @@ export const settings = createRoot(() => {
 		startTransition(() => _setVersion(next))
 	}) as Setter<Version>
 
-	// Variant
-	//// const [variantOpen, setVariantOpen] = createDirtySignal(searchParams.boolean("variant-open"), true)
 	const [variantV1, _setVariantV1] = createDirtySignal<VariantV1>((() => {
 		const value = searchParams.string("variant")
 		if (!(value === "solid" || value === "outline")) { return }
@@ -69,14 +65,8 @@ export const settings = createRoot(() => {
 		startTransition(() => _setVariantV2(next))
 	}) as Setter<VariantV2>
 
-	const variant = () => version() === "v1"
-		? variantV1()
-		: variantV2()
+	const variant = () => version() === "v1" ? variantV1() : variantV2()
 
-	// Clipboard
-	//
-	// TODO: Add selected?
-	//// const [clipboardOpen, setClipboardOpen] = createDirtySignal(searchParams.boolean("clipboard-open"), true)
 	const [textarea, setTextarea] = createSignal("")
 	const [license, setLicense] = createDirtySignal(searchParams.boolean("license"), true)
 	const [framework, setFramework] = createDirtySignal<Framework>((() => {
@@ -85,16 +75,7 @@ export const settings = createRoot(() => {
 		return value
 	})(), "svg")
 
-	//// // Grid density
-	//// const [densityOpen, setDensityOpen] = createDirtySignal(searchParams.boolean("density-open"), false)
-	//// const [density, setDensity] = createDirtySignal(searchParams.number("density"), 96)
-
-	// Scale
-	//// const [scaleOpen, setScaleOpen] = createDirtySignal(searchParams.boolean("scale-open"), false)
 	const [scale, setScale] = createDirtySignal(searchParams.number("scale"), 1)
-
-	// Stroke width
-	//// const [strokeOpen, setStrokeOpen] = createDirtySignal(searchParams.boolean("stroke-open"), false)
 	const [stroke, setStroke] = createDirtySignal(searchParams.number("stroke"), version() === "v1" ? 2 : 1.5)
 
 	// Resources
@@ -107,59 +88,45 @@ export const settings = createRoot(() => {
 	})
 
 	const [icons] = createResource(() => [version(), variant()] as const, async ([version, variant]) => {
-		//// if (DEV) { await new Promise(r => setTimeout(r, 500)) }
-		let assets // Infer type
+		let promise // Infer type
 		if (version === "v1" && variant === "solid") {
-			assets = cache(variant, await import("../assets/heroicons@1.0.6/solid"))
+			promise = cache(variant, import("../assets/heroicons@1.0.6/solid"))
 		} else if (version === "v1" && variant === "outline") {
-			assets = cache(variant, await import("../assets/heroicons@1.0.6/outline"))
+			promise = cache(variant, import("../assets/heroicons@1.0.6/outline"))
 		} else if (version === "v2" && variant === "20/solid") {
-			assets = cache(variant, await import("../assets/heroicons@2.0.11/20/solid"))
+			promise = cache(variant, import("../assets/heroicons@2.0.11/20/solid"))
 		} else if (version === "v2" && variant === "24/solid") {
-			assets = cache(variant, await import("../assets/heroicons@2.0.11/24/solid"))
+			promise = cache(variant, import("../assets/heroicons@2.0.11/24/solid"))
 		} else if (version === "v2" && variant === "24/outline") {
-			assets = cache(variant, await import("../assets/heroicons@2.0.11/24/outline"))
+			promise = cache(variant, import("../assets/heroicons@2.0.11/24/outline"))
 		}
+		const resolved = await promise
 		loadingBar.end()
-		return assets
+		return resolved
 	})
 
 	return {
 		// STATE
-		//// versionOpen,
 		version,
-		//// variantOpen,
 		variantV1,
 		variantV2,
 		variant,
-		//// clipboardOpen,
 		textarea,
 		license,
 		framework,
-		//// densityOpen,
-		//// density,
-		//// scaleOpen,
 		scale,
-		//// strokeOpen,
 		stroke,
 		manifest,
 		icons,
 
 		// ACTIONS
-		//// setVersionOpen,
 		setVersion,
-		//// setVariantOpen,
 		setVariantV1,
 		setVariantV2,
-		//// setClipboardOpen,
 		setTextarea,
 		setLicense,
 		setFramework,
-		//// setDensityOpen,
-		//// setDensity,
-		//// setScaleOpen,
 		setScale,
-		//// setStrokeOpen,
 		setStroke,
 	}
 })
