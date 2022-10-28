@@ -1,6 +1,6 @@
 .component-checkable-container {
-	--color:       hsl(200 100% 50%);
-	--alpha-color: hsl(200 100% 50% / 40%);
+	--__color:       hsl(200 100% 50%);
+	--__alpha-color: hsl(200 100% 50% / 40%);
 
 	/* Flow */
 	display: grid;
@@ -29,7 +29,7 @@
 .component-checkable-label-icon {
 	height: 16px;
 	aspect-ratio: 1;
-	color: var(--color);
+	color: var(--__color);
 }
 
 /**************************************/
@@ -38,9 +38,8 @@
 	height: 24px;
 	aspect-ratio: 1;
 	border-radius: 40%;
-	background-color: white;
-	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
-		0 0 0 4px hsl(0 0% 0% / 10%);
+	background-color: var(--form-input-color);
+	box-shadow: var(--form-input-box-shadow);
 
 	/* Flow */
 	display: grid;
@@ -63,8 +62,7 @@
 	aspect-ratio: 1;
 	border-radius: 1000px;
 	background-color: var(--form-input-color);
-	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
-		0 0 0 4px hsl(0 0% 0% / 10%);
+	box-shadow: var(--form-input-box-shadow);
 
 	/* Flow */
 	display: grid;
@@ -97,7 +95,7 @@
 	.component-checkable-checkbox,
 	.component-checkable-radio
 ) {
-	background-color: var(--color);
+	background-color: var(--__color);
 	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
 		0 0 0 4px hsl(0 0% 0% / 10%);
 }
@@ -108,5 +106,5 @@
 ) {
 	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
 		0 0 0 4px hsl(0 0% 0% / 10%),
-		0 0 0 4px var(--alpha-color);
+		0 0 0 4px var(--__alpha-color);
 }

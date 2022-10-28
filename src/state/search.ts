@@ -46,8 +46,7 @@ export const search = createRoot(() => {
 				})
 			}
 		}
-		// Assumes all results have parts
-		if (!_results.length) { return } // Defer to fallback
+		if (!_results.length) { return [] }
 		_results.sort((a, b) => a.parts![0].length -
 			b.parts![0].length)
 		return _results

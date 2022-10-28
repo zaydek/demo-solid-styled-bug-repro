@@ -2,38 +2,36 @@
 	padding: 0 calc(28px / 2);
 }
 .component-slider {
-  height: 28px;
-  width: 100%;
+	height: 28px;
+	width: 100%;
 
-  /* Flow */
-  display: grid;
-  align-items: center;
+	/* Flow */
+	display: grid;
+	align-items: center;
 
 	cursor: grab;
-  -webkit-user-select: none;
-  user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
 	touch-action: pan-x;
 }
 :root:has(.component-slider:active) { cursor: grabbing; }                   /* Use both */
 :root:has(.component-slider:active) .component-slider { cursor: grabbing; } /* Use both */
 .component-slider-track {
-  height: 6px;
-  width: 100%;
-  border-radius: 1000px;
-  background-color: hsl(200 100% 50%);
+	height: 6px;
+	width: 100%;
+	border-radius: 1000px;
+	background-color: hsl(200 100% 50%);
 
-  /* Flow */
-  display: grid;
-  align-content: center;
+	/* Flow */
+	display: grid;
+	align-content: center;
 }
 .component-slider-thumb {
-  height: 28px;
-  aspect-ratio: 1;
-  border-radius: 1000px;
-  background-color: white;
-	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
-		0 0 0 4px hsl(0 0% 0% / 10%);
-		/* 0 0 0 4px hsl(0 0% 0% / 10%); */
+	height: 28px;
+	aspect-ratio: 1;
+	border-radius: 1000px;
+	background-color: var(--form-input-color);
+	box-shadow: var(--form-input-box-shadow);
 }
 
 /**************************************/

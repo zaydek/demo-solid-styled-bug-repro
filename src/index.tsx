@@ -61,13 +61,13 @@ function Sidebar() {
 			/********************************/
 			/* drawer */
 
+			/* Use Flexbox here because the number of children is variable */
 			.drawer-head {
 				padding:
 					16px
 					24px;
 
 				/* Flow */
-				/* Use Flexbox here because the number of children is variable */
 				display: flex;
 				flex-direction: row;
 				align-items: center;
@@ -185,9 +185,9 @@ function Sidebar() {
 					</Checkbox>
 					<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
 						<For<{ style: JSX.CSSProperties, value: Framework }, JSX.Element> each={[
-							{ style: { "--color": "#ffb13b", "--alpha-color": "#ffb13b66" }, value: "svg" },
-							{ style: { "--color": "#61dafb", "--alpha-color": "#61dafb66" }, value: "react" },
-							{ style: { "--color": "#4fc08d", "--alpha-color": "#4fc08d66" }, value: "vue" },
+							{ style: { "--__color": "#ffb13b", "--__alpha-color": "#ffb13b66" }, value: "svg" },
+							{ style: { "--__color": "#61dafb", "--__alpha-color": "#61dafb66" }, value: "react" },
+							{ style: { "--__color": "#4fc08d", "--__alpha-color": "#4fc08d66" }, value: "vue" },
 						]}>{({ style, value }) => <>
 							<Radio style={style} value={value}>
 								{value.toUpperCase()}
@@ -301,7 +301,7 @@ function App() {
 				font: 400 17px /
 					normal system-ui;
 				/* letter-spacing: -0.0125em; */
-				color: hsl(0 0% 25%);
+				color: var(--fill-100-color);
 			}
 
 			/********************************/
@@ -341,7 +341,7 @@ function App() {
 			.results-item-icon {
 				height: 32px;
 				aspect-ratio: 1;
-				color: hsl(0 0% 10%);
+				color: var(--fill-100-color);
 			}
 			/* This is a trick to create a bounding box and center from the top */
 			.results-item-typography-container {
@@ -358,7 +358,7 @@ function App() {
 				font: 400 12px /
 					normal system-ui;
 				/* letter-spacing: -0.0125em; */
-				color: hsl(0 0% 40%);
+				color: var(--fill-300-color);
 			}
 			.results-item-typography-highlight {
 				border-radius: 1px;

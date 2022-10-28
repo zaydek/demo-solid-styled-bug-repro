@@ -7,10 +7,6 @@ function getTitle({ visible }: { visible?: boolean } = {}) {
 	if (!visible) { return "Heroicons" }
 	if (!settings.icons()) {
 		return "Loading…"
-	} else if (!search.canonicalValue()) {
-		return "Heroicons"
-	} else if (!search.results()) {
-		return "0 results"
 	}
 	const length = search.results()!.length
 	return `${length} Icon${length === 1 ? "" : "s"}`
