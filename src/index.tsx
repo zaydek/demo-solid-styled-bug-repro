@@ -67,11 +67,13 @@ function Sidebar() {
 					24px;
 
 				/* Flow */
-				display: grid;
-				grid-template-columns: auto 1fr auto;
+				/* Use Flexbox here because the number of children is variable */
+				display: flex;
+				flex-direction: row;
 				align-items: center;
 				gap: 8px;
 			}
+			.drawer-head > :nth-child(2) { flex-grow: 1; }
 			.drawer-head-icon {
 				height: 16px;
 				aspect-ratio: 1;
@@ -206,6 +208,7 @@ function Sidebar() {
 						{round(settings.scale() * 100)}%,{" "}
 						{round(settings.scale() * 32, { precision: 1 }).toFixed(1)}PX
 					</div>
+					<div>(Reset)</div>
 				</>} open>
 					<Slider value={settings.scale()} setValue={settings.setScale} min={0.5} max={1.5} step={0.01} />
 				</Drawer>
@@ -221,6 +224,7 @@ function Sidebar() {
 					<div>
 						{settings.stroke()}
 					</div>
+					<div>(Reset)</div>
 				</>} open>
 					<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={settings.version() === "v1" ? 3.5 : 2.5} step={0.01} />
 				</Drawer>
