@@ -14,7 +14,7 @@ export const loadingBar = createRoot(() => {
 		})
 		window.clearTimeout(timeoutId)
 		timeoutId = window.setTimeout(() => {
-			setProgress(50)
+			setProgress(75)
 			const id = window.setInterval(() => {
  				if (progress() === 100) {
 					clearInterval(id)

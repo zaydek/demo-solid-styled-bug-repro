@@ -22,7 +22,7 @@ function getURL() {
 	}
 	if (settings.license.dirty())   { params["license"]   = "" + settings.license() }
 	if (settings.framework.dirty()) { params["framework"] = "" + settings.framework() }
-	if (settings.scale.dirty())     { params["scale"]     = "" + settings.scale() }
+	if (settings.size.dirty())      { params["size"]      = "" + settings.size() }
 	if (settings.stroke.dirty())    { params["stroke"]    = "" + settings.stroke() }
 
 	if (!Object.keys(params).length) { return "/" }

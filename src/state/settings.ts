@@ -75,7 +75,7 @@ export const settings = createRoot(() => {
 		return value
 	})(), "svg")
 
-	const [scale, setScale] = createDirtySignal(searchParams.number("scale"), 1)
+	const [size, setSize] = createDirtySignal(searchParams.number("size"), 32)
 	const [stroke, setStroke] = createDirtySignal(searchParams.number("stroke"), version() === "v1" ? 2 : 1.5)
 
 	// Resources
@@ -114,7 +114,7 @@ export const settings = createRoot(() => {
 		textarea,
 		license,
 		framework,
-		scale,
+		size,
 		stroke,
 		manifest,
 		icons,
@@ -126,7 +126,7 @@ export const settings = createRoot(() => {
 		setTextarea,
 		setLicense,
 		setFramework,
-		setScale,
+		setSize,
 		setStroke,
 	}
 })

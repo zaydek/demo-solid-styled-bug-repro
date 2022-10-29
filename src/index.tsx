@@ -3,12 +3,11 @@ import "./css"
 // TODO: This can likely be optimized
 import svg from "./assets/svg.png"
 
-import { createResource, For, JSX, Show, Suspense, VoidComponent } from "solid-js"
+import { For, JSX, Show, Suspense, VoidComponent } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
 import { ReactSVG, VueSVG } from "./brands"
-import { Slider } from "./component-slider"
-import { Checkbox, NavIcon, Radio, Radiogroup } from "./components"
+import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer } from "./drawer"
 import { LoadingBar } from "./loading-bar"
 import { Sheet } from "./sheet"
@@ -238,12 +237,16 @@ function Sidebar() {
 						SIZE
 					</div>
 					<div class="drawer-head-subheader">
-						{round(settings.scale() * 100)}%,{" "}{round(settings.scale() * 32, { precision: 1 }).toFixed
-					(1)}PX
+						{settings.size().toFixed(1)}PX
 					</div>
-					<div>(Reset)</div>
+					<AriaButton onClick={e => {
+						e.stopPropagation()
+						settings.setSize(32)
+					}}>
+						(Reset)
+					</AriaButton>
 				</>} open>
-					<Slider value={settings.scale()} setValue={settings.setScale} min={0.5} max={1.5} step={0.01} />
+					<Slider value={settings.size()} setValue={settings.setSize} min={16} max={48} step={0.1} />
 				</Drawer>
 
 				{/****************************/}
@@ -260,7 +263,12 @@ function Sidebar() {
 						<div class="drawer-head-subheader">
 							{settings.stroke().toFixed(2)}
 						</div>
-						<div>(Reset)</div>
+						<AriaButton onClick={e => {
+							e.stopPropagation()
+							settings.setStroke(settings.version() === "v1" ? 2 : 1.5)
+						}}>
+							(Reset)
+						</AriaButton>
 					</>} open>
 						<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={settings.version() === "v1" ? 3.5 : 2.5} step={0.01} />
 					</Drawer>
@@ -333,7 +341,7 @@ function App() {
 	padding:
 		0     /* Y */
 		24px; /* X */
-	font: 400 17px /
+	font: 400 16px /
 		normal system-ui;
 	color: var(--fill-100-color);
 }
@@ -418,7 +426,7 @@ function App() {
 							component={settings.icons()?.[result.title]}
 							class="results-item-icon"
 							style={{
-								...(settings.scale.dirty() && { "transform": `scale(${settings.scale()})` }),
+								...(settings.size.dirty() && { "transform": `scale(${settings.size() / 32})` }),
 								...(settings.stroke.dirty() && { "stroke-width": settings.stroke() }),
 							}}
 						/>
@@ -582,8 +590,8 @@ function Skeleton() {
 						<div
 							class="sk-results-item-icon"
 							style={{
-								...(settings.scale.dirty() && {
-									"transform": `scale(${settings.scale()})`
+								...(settings.size.dirty() && {
+									"transform": `scale(${settings.size() / 32})`
 								}),
 							}}
 						></div>
@@ -598,26 +606,13 @@ function Skeleton() {
 }
 
 function Root() {
+	// DEBUG
 	window.addEventListener("keydown", e => {
 		if (e.key === "\\") {
 			debugCSS.toggle()
 		} else if (e.key === "`") {
 			darkMode.toggle()
 		}
-	})
-
-	//// const [done, setDone] = createSignal(false)
-	////
-	//// window.addEventListener("keydown", e => {
-	//// 	if (e.key === "d") {
-	//// 		setDone(true)
-	//// 	}
-	//// })
-	////
-	//// const [forever] = createResource(done, _done => {
-	const [forever] = createResource(() => {
-		//// if (_done) { return "ok" }
-		return new Promise(r => setTimeout(r, 10_000))
 	})
 
 	return <>
@@ -692,7 +687,6 @@ Therefore disable <body> scrolling on and enable <main> scrolling. */
 		`}
 		<LoadingBar />
 		<Suspense fallback={Skeleton}>
-			{/* <Show when={forever()} fallback={Skeleton}> */}
 			<Show when={settings.icons()} fallback={Skeleton}>
 				<App />
 			</Show>
@@ -701,7 +695,6 @@ Therefore disable <body> scrolling on and enable <main> scrolling. */
 }
 
 render(
-	//// () => <Thing />,
 	() => <Root />,
 	document.getElementById("root")!,
 )

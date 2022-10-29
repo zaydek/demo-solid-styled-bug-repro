@@ -102,46 +102,46 @@ export function Radiogroup(props: ParentProps<CSSProps & {
 
 ////////////////////////////////////////
 
-//// export function Slider(props: VoidProps<{
-//// 	value?:    number
-//// 	setValue?: Setter<number>
-//// 	min?:      number
-//// 	max?:      number
-//// 	step?:     number
-//// }>) {
-//// 	const [fallback, setFallback] = createSignal(50)
-//// 	const [value, setValue, min, max, step] = [
-//// 		props.value
-//// 			? () => props.value! // Use ! to assert presence for TypeScript
-//// 			: fallback,
-//// 		props.setValue ?? setFallback,
-//// 		props.min
-//// 			? () => props.min!
-//// 			: () => 0,
-//// 		props.max
-//// 			? () => props.max!
-//// 			: () => 100,
-//// 		props.step
-//// 			? () => props.step!
-//// 			: () => 1,
-//// 	]
-////
-//// 	return <>
-//// 		<div class="component-slider-container">
-//// 			<AriaSliderHorizontal class="component-slider" value={value()} setValue={setValue} min={min()} max={max()} step={step()}>
-//// 				{translate => <>
-//// 					<div class="component-slider-track">
-//// 						<AriaSliderThumb
-//// 							class="component-slider-thumb"
-//// 							style={{
-//// 								...(translate() && {
-//// 									"transform": `translateX(${translate()!}px)`,
-//// 								}),
-//// 							}}
-//// 						/>
-//// 					</div>
-//// 				</>}
-//// 			</AriaSliderHorizontal>
-//// 		</div>
-//// 	</>
-//// }
+export function Slider(props: VoidProps<{
+	value?:    number
+	setValue?: Setter<number>
+	min?:      number
+	max?:      number
+	step?:     number
+}>) {
+	const [fallback, setFallback] = createSignal(50)
+	const [value, setValue, min, max, step] = [
+		props.value
+			? () => props.value! // Use ! to assert presence for TypeScript
+			: fallback,
+		props.setValue ?? setFallback,
+		props.min
+			? () => props.min!
+			: () => 0,
+		props.max
+			? () => props.max!
+			: () => 100,
+		props.step
+			? () => props.step!
+			: () => 1,
+	]
+
+	return <>
+		<div class="component-slider-container">
+			<AriaSliderHorizontal class="component-slider" value={value()} setValue={setValue} min={min()} max={max()} step={step()}>
+				{translate => <>
+					<div class="component-slider-track">
+						<AriaSliderThumb
+							class="component-slider-thumb"
+							style={{
+								...(translate() && {
+									"transform": `translateX(${translate()!}px)`,
+								}),
+							}}
+						/>
+					</div>
+				</>}
+			</AriaSliderHorizontal>
+		</div>
+	</>
+}

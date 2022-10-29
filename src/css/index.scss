@@ -1,16 +1,9 @@
-@use "component-nav-icon";
 @use "component-checkable";
-//// @use "component-slider";
+@use "component-nav-icon";
+@use "component-slider";
 
 @use "theme" as *;
 @use "utils/define-theme" as *;
 
-// Light mode CSS variables
-:root {
-	@include define-theme($theme);
-}
-
-// Dark mode CSS variables
-:root.dark-mode {
-	@include define-theme($theme, dark);
-}
+:root { @include define-theme($theme); }
+:root.dark-mode { @include define-theme($theme, dark); }
