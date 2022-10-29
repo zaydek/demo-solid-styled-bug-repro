@@ -14,7 +14,7 @@ export function createCSS(scope?: HTMLElement, { prepend }: { prepend?: boolean 
   const cache = new Map<string, true>()
 
   function css(strings: TemplateStringsArray, ...keys: any[]) {
-    const code = template(strings, ...keys)
+    const code = template(strings, ...keys).trim() + "\n" // EOF
     if (cache.has(code)) { return }
 
     // Create <style type="text/css">

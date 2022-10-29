@@ -7,14 +7,15 @@ import { createResource, For, JSX, Show, Suspense, VoidComponent } from "solid-j
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
 import { ReactSVG, VueSVG } from "./brands"
-import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
+import { Slider } from "./component-slider"
+import { Checkbox, NavIcon, Radio, Radiogroup } from "./components"
 import { Drawer } from "./drawer"
 import { LoadingBar } from "./loading-bar"
 import { Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
 import { darkMode, debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
 import { css, CSSProps } from "./utils/solid"
-import { cx, randGenerator, randHash, range, round } from "./utils/vanilla"
+import { cx, range, round } from "./utils/vanilla"
 
 ////////////////////////////////////////
 
@@ -699,32 +700,31 @@ function Root() {
 	</>
 }
 
-const BASE_36 = "abcdefghijklmnopqrstuvwxyz" + "0123456789"
-
-const rand = randGenerator()
-const hash = (name: string) => `${name}__${randHash(rand, { base: BASE_36, length: 6 })}`
-
-const thing = hash("foo")
-
-console.log(hash("foo"))
-console.log(hash("foo"))
-console.log(hash("foo"))
-console.log(hash("foo"))
-console.log(hash("foo"))
-
-function Thing() {
-	return <>
-		{css`
-			.${thing} {
-				background-color: red;
-			}
-		`}
-		<div class={thing}>lol</div>
-	</>
-}
+//// const drawer = scope("drawer")
+//// const drawerHead = scope("drawer-head")
+//// const drawerBody = scope("drawer-body")
+////
+//// function Thing() {
+//// 	return <>
+//// 		{css`
+//// 			.${drawer} {
+//// 				background-color: red;
+//// 			}
+//// 			.${drawerHead} {
+//// 				background-color: green;
+//// 			}
+//// 			.${drawerBody} {
+//// 				background-color: blue;
+//// 			}
+//// 		`}
+//// 		<div class={drawer}>lol</div>
+//// 		<div class={drawerHead}>lol</div>
+//// 		<div class={drawerBody}>lol</div>
+//// 	</>
+//// }
 
 render(
-	//// () => <Root />,
-	() => <Thing />,
+	//// () => <Thing />,
+	() => <Root />,
 	document.getElementById("root")!,
 )
