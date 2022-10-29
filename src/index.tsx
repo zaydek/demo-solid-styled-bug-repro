@@ -247,7 +247,7 @@ function Sidebar() {
 
 				{/****************************/}
 
-				<Show when={settings.variant().endsWith("/outline")} fallback={<>
+				<Show when={settings.variant().endsWith("outline")} fallback={<>
 					<div class="hairline-x"></div>
 				</>}>
 					<div class="hairline-x"></div>
