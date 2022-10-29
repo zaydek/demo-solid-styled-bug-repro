@@ -29,12 +29,12 @@ $theme: (
 
 	trim-h: (
 		light: 200,
-		dark:  220,
+		dark:  215,
 	),
 	trim-s: 100%,
 	trim-l: (
-		light: 50%,
-		dark:  60%,
+		light: 40%,
+		dark:  50%,
 	),
 
 	focus-ring-h: var(--trim-h),
@@ -47,10 +47,10 @@ $theme: (
 		light: hsl(var(--trim-h) var(--trim-s) 50%),
 		dark:  hsl(var(--trim-h) var(--trim-s) 60%),
 	),
-	trim-color-is-hover: (
-		light: hsl(var(--trim-h) var(--trim-s) 50% / 25%),
-		dark:  hsl(var(--trim-h) var(--trim-s) 60% / 25%),
-	),
+	//// trim-color-on-active: (
+	//// 	light: hsl(var(--trim-h) var(--trim-s) 50% / 25%),
+	//// 	dark:  hsl(var(--trim-h) var(--trim-s) 60% / 25%),
+	//// ),
 
 	//////////////////////////////////////
 
@@ -58,7 +58,7 @@ $theme: (
 		light: hsl(var(--base-h) var(--base-s) 100%),
 		dark:  hsl(var(--base-h) var(--base-s) 10%),
 	),
-	card-backdrop-color: hsl(0 0% 0% / 15%),
+	card-backdrop-color: hsl(0 0% 0% / 25%),
 	//// card-lightgray-color: (
 	//// 	light: hsl(var(--base-h) var(--base-s) 92.5%),
 	//// 	dark:  hsl(var(--base-h) var(--base-s) 17.5%),
@@ -89,13 +89,13 @@ $theme: (
 	),
 	fill-300-color: (
 		light: hsl(var(--base-h) var(--base-s) 40%),
-		dark:  hsl(var(--base-h) var(--base-s) 50%),
+		dark:  hsl(var(--base-h) var(--base-s) 70%),
 	),
 
 	//////////////////////////////////////
 
 	form-label-color: (
-		light: hsl(var(--base-h) var(--base-s) 92.5%),
+		light: hsl(var(--base-h) var(--base-s) 95%),
 		dark:  hsl(var(--base-h) var(--base-s) 20%),
 	),
 	form-input-color: (
@@ -103,10 +103,8 @@ $theme: (
 		dark:  hsl(var(--base-h) var(--base-s) 30%),
 	),
 	form-input-box-shadow: (
-		light: (0 0 0 var(--line-thickness) var(--card-hairline-color),
-			var(--card-box-shadow)),
-		dark:  (0 0 0 var(--line-thickness) hsl(var(--base-h) var(--base-s) 40%), // +10% lightness
-			var(--card-box-shadow)),
+		light: (0 0 0 var(--line-thickness) var(--card-hairline-color), var(--card-box-shadow)),
+		dark:  (0 0 0 var(--line-thickness) hsl(var(--base-h) var(--base-s) 40%), var(--card-box-shadow)),
 	),
 
 	//////////////////////////////////////

@@ -1,8 +1,9 @@
-import { Accessor, createSignal, JSX, ParentProps, Setter, Show, VoidComponent, VoidProps } from "solid-js"
+import { createSignal, JSX, ParentProps, Setter, Show, VoidComponent, VoidProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { AriaCheckbox, AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from "./aria"
 import { SmileySVG } from "./smiley-svg"
-import { CSSProps, RefProps } from "./utils/solid"
+import { CSSProps } from "./utils/solid"
+import { cx } from "./utils/vanilla"
 
 ////////////////////////////////////////
 
@@ -16,9 +17,9 @@ export function NavIcon() {
 
 ////////////////////////////////////////
 
-function CheckSVG(props: VoidProps<RefProps & CSSProps>) {
+function CheckSVG(props: VoidProps<CSSProps>) {
 	return <>
-		<svg ref={el => props.ref?.(el as unknown as HTMLElement)} class={props.class} style={props.style} fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+		<svg class={props.class} style={props.style} fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 			<polyline points="20 6 9 17 4 12"></polyline>
 		</svg>
 	</>
@@ -55,10 +56,13 @@ export function Radio(props: ParentProps<{
 	icon?:  VoidComponent<CSSProps> | string
 	style?: JSX.CSSProperties
 	value:  string
+
+	// .component-checkable-label.center
+	center?: boolean
 }>) {
 	return <>
 		<AriaRadio class="component-checkable-container" style={props.style} value={props.value}>
-			<div class="component-checkable-label">
+			<div class={cx(`component-checkable-label ${props.center ? "center" : ""}`)}>
 				<Show when={!props.icon || typeof props.icon === "function"} fallback={<>
 					{/* <img> */}
 					<img src={props.icon as string} class="component-checkable-label-icon" />

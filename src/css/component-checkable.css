@@ -1,6 +1,6 @@
 .component-checkable-container {
-	--__color:       hsl(200 100% 50%);
-	--__alpha-color: hsl(200 100% 50% / 40%);
+	--__color: var(--trim-color);
+	/* --__alpha-color: var(--trim-color); */
 
 	/* Flow */
 	display: grid;
@@ -19,11 +19,20 @@
 	height: 28px;
 	border-radius: 1000px;
 	background-color: var(--form-label-color);
+	box-shadow: 0 0 0 1px var(--card-hairline-color);
 
 	/* Flow */
 	display: grid;
 	grid-template-columns: auto 1fr;
 	align-items: center;
+	gap: 8px;
+}
+/* Override */
+.component-checkable-label.center {
+	display: flex;
+	flex-direction: row;
+	justify-content: center; /* Center x-axis */
+	align-items: center;     /* Center y-axis */
 	gap: 8px;
 }
 .component-checkable-label-icon {
@@ -107,11 +116,12 @@
 		0 0 0 4px hsl(0 0% 0% / 10%);
 }
 
-.component-checkable-container[aria-checked=true]:is(:hover, :active) :is(
-	.component-checkable-checkbox,
-	.component-checkable-radio
-) {
-	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
-		0 0 0 4px hsl(0 0% 0% / 10%),
-		0 0 0 4px var(--__alpha-color);
-}
+/* TODO */
+/* .component-checkable-container[aria-checked=true]:is(:hover, :active) :is( */
+/* 	.component-checkable-checkbox, */
+/* 	.component-checkable-radio */
+/* ) { */
+/* 	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), *!/ */
+/* 		0 0 0 4px hsl(0 0% 0% / 10%), */
+/* 		0 0 0 4px var(--__alpha-color); */
+/* } */

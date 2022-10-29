@@ -59,7 +59,7 @@ export function LoadingBar() {
 					0;   /* L */
 				height: 4px;
 				width: calc(var(--__progress) * 1%);
-				background-color: hsl(200 100% 50%);
+				background-color: var(--trim-color);
 				transition: 300ms ease;
 				transition-property: width;
 			}

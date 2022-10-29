@@ -13,6 +13,7 @@ import { darkMode, debugCSS, Framework, search, settings, VariantV1, VariantV2, 
 import { css, CSSProps } from "./utils/solid"
 import { cx, range, round } from "./utils/vanilla"
 
+// TODO: This can likely be optimized
 import svg from "./assets/svg.png"
 
 ////////////////////////////////////////
@@ -121,13 +122,19 @@ function Sidebar() {
 
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
-					<div class="drawer-head-header">VERSION</div>
-					<div class="drawer-head-subheader">{settings.version().toUpperCase()}</div>
+					<div class="drawer-head-header">
+						VERSION
+					</div>
+					<div class="drawer-head-subheader">
+						{settings.version().toUpperCase()}
+					</div>
 				</>} open>
 					<div class="drawer-body-content">
 						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.version()} setGroupValue={settings.setVersion}>
 							<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
-								<Radio value={value}>{value.toUpperCase()}</Radio>
+								<Radio value={value}>
+									{value.toUpperCase()}
+								</Radio>
 							</>}</For>
 						</Radiogroup>
 					</div>
@@ -135,33 +142,43 @@ function Sidebar() {
 
 				{/****************************/}
 
-				<Show when={settings.version() === "v1"}>
+				<Show when={settings.version() === "v1"} fallback={<>
+					{/* V1 */}
 					<div class="hairline-x"></div>
 					<Drawer head={<>
 						<Dynamic component={SmileySVG} class="drawer-head-icon" />
-						<div class="drawer-head-header">VARIANT (V1)</div>
-						<div class="drawer-head-subheader">{settings.variantV1().toUpperCase()}</div>
-					</>} open>
-						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
-							<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
-								<Radio value={value}>{value.toUpperCase()}</Radio>
-							</>}</For>
-						</Radiogroup>
-					</Drawer>
-				</Show>
-
-				{/****************************/}
-
-				<Show when={settings.version() === "v2"}>
-					<div class="hairline-x"></div>
-					<Drawer head={<>
-						<Dynamic component={SmileySVG} class="drawer-head-icon" />
-						<div class="drawer-head-header">VARIANT (V2)</div>
-						<div class="drawer-head-subheader">{settings.variantV2().toUpperCase()}</div>
+						<div class="drawer-head-header">
+							VARIANT
+						</div>
+						<div class="drawer-head-subheader">
+							{settings.variantV2().toUpperCase().split("/").join(" × ")}
+						</div>
 					</>} open>
 						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
 							<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
-								<Radio value={value}>{value.toUpperCase().split("/").join(" / ")}</Radio>
+								<Radio value={value}>
+									{value.toUpperCase().split("/").join(" × ")}
+								</Radio>
+							</>}</For>
+						</Radiogroup>
+					</Drawer>
+				</>}>
+					{/* V2 */}
+					<div class="hairline-x"></div>
+					<Drawer head={<>
+						<Dynamic component={SmileySVG} class="drawer-head-icon" />
+						<div class="drawer-head-header">
+							VARIANT
+						</div>
+						<div class="drawer-head-subheader">
+							{settings.variantV1().toUpperCase().split("/").join(" × ")}
+						</div>
+					</>} open>
+						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
+							<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
+								<Radio value={value}>
+									{value.toUpperCase()}
+								</Radio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -172,35 +189,41 @@ function Sidebar() {
 				<div class="hairline-x"></div>
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
-					<div class="drawer-head-header">COPY TO CLIPBOARD</div>
-					<div class="drawer-head-subheader">{settings.framework().toUpperCase()}</div>
+					<div class="drawer-head-header">
+						COPY TO CLIPBOARD
+					</div>
+					<div class="drawer-head-subheader">
+						{settings.framework().toUpperCase()}
+					</div>
 				</>} open>
 					<Checkbox checked={settings.license()} setChecked={settings.setLicense}>
 						INCLUDE MIT LICENSE
 					</Checkbox>
 					<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
 						<For<{
-							icon:  VoidComponent<CSSProps> | string // E.g. <img src={src}>
+							icon:  VoidComponent<CSSProps> | string
 							style: JSX.CSSProperties
 							value: Framework
 						}, JSX.Element> each={[
 							{
 								icon:  svg,
-								style: { "--__color": "#ffb13b", "--__alpha-color": "#ffb13b66" },
+								style: { "--__color": "#ffb13b", /* "--__alpha-color": "#ffb13b66" */ },
 								value: "svg",
 							},
 							{
 								icon:  props => <ReactSVG {...props} strokeWidth={1.5} />,
-								style: { "--__color": "#61dafb", "--__alpha-color": "#61dafb66" },
+								style: { "--__color": "#61dafb", /* "--__alpha-color": "#61dafb66" */ },
 								value: "react",
 							},
 							{
 								icon:  VueSVG,
-								style: { "--__color": "#4fc08d", "--__alpha-color": "#4fc08d66" },
+								style: { "--__color": "#4fc08d", /* "--__alpha-color": "#4fc08d66" */ },
 								value: "vue",
 							},
 						]}>{({ icon, style, value }) => <>
-							<Radio icon={icon} style={style} value={value}>{value.toUpperCase()}</Radio>
+							<Radio icon={icon} style={style} value={value} center>
+								{value.toUpperCase()}
+							</Radio>
 						</>}</For>
 					</Radiogroup>
 				</Drawer>
@@ -210,8 +233,12 @@ function Sidebar() {
 				<div class="hairline-x"></div>
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
-					<div class="drawer-head-header">SIZE</div>
-					<div class="drawer-head-subheader">{round(settings.scale() * 100)}%,{" "}{round(settings.scale() * 32, { precision: 1 }).toFixed(1)}PX
+					<div class="drawer-head-header">
+						SIZE
+					</div>
+					<div class="drawer-head-subheader">
+						{round(settings.scale() * 100)}%,{" "}{round(settings.scale() * 32, { precision: 1 }).toFixed
+					(1)}PX
 					</div>
 					<div>(Reset)</div>
 				</>} open>
@@ -220,16 +247,24 @@ function Sidebar() {
 
 				{/****************************/}
 
-				<div class="hairline-x"></div>
-				<Drawer head={<>
-					<Dynamic component={SmileySVG} class="drawer-head-icon" />
-					<div class="drawer-head-header">STROKE</div>
-					<div class="drawer-head-subheader">{settings.stroke().toFixed(2)}</div>
-					<div>(Reset)</div>
-				</>} open>
-					<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={settings.version() === "v1" ? 3.5 : 2.5} step={0.01} />
-				</Drawer>
-				<div class="hairline-x"></div>
+				<Show when={settings.variant().endsWith("/outline")} fallback={<>
+					<div class="hairline-x"></div>
+				</>}>
+					<div class="hairline-x"></div>
+					<Drawer head={<>
+						<Dynamic component={SmileySVG} class="drawer-head-icon" />
+						<div class="drawer-head-header">
+							STROKE
+						</div>
+						<div class="drawer-head-subheader">
+							{settings.stroke().toFixed(2)}
+						</div>
+						<div>(Reset)</div>
+					</>} open>
+						<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={settings.version() === "v1" ? 3.5 : 2.5} step={0.01} />
+					</Drawer>
+					<div class="hairline-x"></div>
+				</Show>
 
 				{/****************************/}
 
@@ -637,6 +672,8 @@ function Root() {
 				--results-item-height: 96px;
 
 				/* solid-sheet */
+				/* --sheet-drag-indicator-background-color: var(--card-hairline-color); */
+				/* --sheet-drag-indicator-active-background-color: var(--trim-color); */
 				--sheet-backdrop-background-color: var(--card-backdrop-color);
 				--sheet-card-background-color: var(--card-color);
 				--sheet-card-box-shadow: var(--card-hairline-box-shadow);

@@ -20,7 +20,7 @@
 	height: 6px;
 	width: 100%;
 	border-radius: 1000px;
-	background-color: hsl(200 100% 50%);
+	background-color: var(--trim-color);
 
 	/* Flow */
 	display: grid;
