@@ -31,6 +31,13 @@
 	aspect-ratio: 1;
 	color: var(--__color);
 }
+.component-checkable-label-text {
+	font: 500 11px /
+		normal system-ui;
+	font-feature-settings: "tnum";
+	letter-spacing: 0.1em;
+	color: var(--fill-200-color);
+}
 
 /**************************************/
 

@@ -1,4 +1,4 @@
-import { Accessor, createSignal, JSX, ParentProps, Setter, VoidProps } from "solid-js"
+import { Accessor, createSignal, JSX, ParentProps, Setter, Show, VoidComponent, VoidProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { AriaCheckbox, AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from "./aria"
 import { SmileySVG } from "./smiley-svg"
@@ -51,16 +51,21 @@ export function Checkbox(props: ParentProps<{
 	</>
 }
 
-// TODO: Are we accepting style for CSS variables?
 export function Radio(props: ParentProps<{
-	value: string
-
+	icon?:  VoidComponent<CSSProps> | string
 	style?: JSX.CSSProperties
+	value:  string
 }>) {
 	return <>
 		<AriaRadio class="component-checkable-container" style={props.style} value={props.value}>
 			<div class="component-checkable-label">
-				<Dynamic component={SmileySVG} class="component-checkable-label-icon" />
+				<Show when={!props.icon || typeof props.icon === "function"} fallback={<>
+					{/* <img> */}
+					<img src={props.icon as string} class="component-checkable-label-icon" />
+				</>}>
+					{/* <svg> */}
+					<Dynamic component={props.icon ?? SmileySVG} class="component-checkable-label-icon" />
+				</Show>
 				<div class="component-checkable-label-text">
 					{props.children}
 				</div>

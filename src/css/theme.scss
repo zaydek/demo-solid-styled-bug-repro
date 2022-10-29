@@ -79,8 +79,6 @@ $theme: (
 		light: hsl(var(--base-h) var(--base-s) 85%),
 		dark:  hsl(var(--base-h) var(--base-s) 35%)
 	),
-
-	// TODO: Rename to shades?
 	fill-100-color: (
 		light: hsl(var(--base-h) var(--base-s) 15%),
 		dark:  hsl(var(--base-h) var(--base-s) 95%),
@@ -90,8 +88,8 @@ $theme: (
 		dark:  hsl(var(--base-h) var(--base-s) 85%),
 	),
 	fill-300-color: (
-		light: hsl(var(--base-h) var(--base-s) 35%),
-		dark:  hsl(var(--base-h) var(--base-s) 75%),
+		light: hsl(var(--base-h) var(--base-s) 40%),
+		dark:  hsl(var(--base-h) var(--base-s) 50%),
 	),
 
 	//////////////////////////////////////
@@ -113,11 +111,11 @@ $theme: (
 
 	//////////////////////////////////////
 
-	// https://simpleicons.org
-	github-color:  #181717,
-	html-color:    #e34f26,
-	react-color:   #61dafb,
-	svg-color:     #ffb13b,
-	twitter-color: #1da1f2,
-	vue-color:     #4fc08d,
+	//// // https://simpleicons.org
+	//// github-color:  #181717,
+	//// html-color:    #e34f26,
+	//// react-color:   #61dafb,
+	//// svg-color:     #ffb13b,
+	//// twitter-color: #1da1f2,
+	//// vue-color:     #4fc08d,
 );

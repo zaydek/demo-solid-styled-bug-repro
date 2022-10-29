@@ -1,16 +1,19 @@
 import "./css"
 
-import { createResource, createSignal, For, JSX, onMount, Show, Suspense } from "solid-js"
+import { createResource, For, JSX, Show, Suspense, VoidComponent } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
+import { ReactSVG, VueSVG } from "./brands"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer } from "./drawer"
 import { LoadingBar } from "./loading-bar"
 import { Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
 import { darkMode, debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
-import { css } from "./utils/solid"
+import { css, CSSProps } from "./utils/solid"
 import { cx, range, round } from "./utils/vanilla"
+
+import svg from "./assets/svg.png"
 
 ////////////////////////////////////////
 
@@ -74,6 +77,20 @@ function Sidebar() {
 				gap: 8px;
 			}
 			.drawer-head > :nth-child(2) { flex-grow: 1; }
+			.drawer-head-header {
+				font: 500 11px /
+					normal system-ui;
+				font-feature-settings: "tnum";
+				letter-spacing: 0.1em;
+				color: var(--fill-100-color);
+			}
+			.drawer-head-subheader {
+				font: 500 11px /
+					normal system-ui;
+				font-feature-settings: "tnum";
+				letter-spacing: 0.1em;
+				color: var(--fill-300-color);
+			}
 			.drawer-head-icon {
 				height: 16px;
 				aspect-ratio: 1;
@@ -104,19 +121,13 @@ function Sidebar() {
 
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
-					<div>
-						VERSION
-					</div>
-					<div>
-						{settings.version().toUpperCase()}
-					</div>
+					<div class="drawer-head-header">VERSION</div>
+					<div class="drawer-head-subheader">{settings.version().toUpperCase()}</div>
 				</>} open>
 					<div class="drawer-body-content">
 						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.version()} setGroupValue={settings.setVersion}>
 							<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
-								<Radio value={value}>
-									{value.toUpperCase()}
-								</Radio>
+								<Radio value={value}>{value.toUpperCase()}</Radio>
 							</>}</For>
 						</Radiogroup>
 					</div>
@@ -128,18 +139,12 @@ function Sidebar() {
 					<div class="hairline-x"></div>
 					<Drawer head={<>
 						<Dynamic component={SmileySVG} class="drawer-head-icon" />
-						<div>
-							VARIANT (V1)
-						</div>
-						<div>
-							{settings.variantV1().toUpperCase()}
-						</div>
+						<div class="drawer-head-header">VARIANT (V1)</div>
+						<div class="drawer-head-subheader">{settings.variantV1().toUpperCase()}</div>
 					</>} open>
 						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
 							<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
-								<Radio value={value}>
-									{value.toUpperCase()}
-								</Radio>
+								<Radio value={value}>{value.toUpperCase()}</Radio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -151,18 +156,12 @@ function Sidebar() {
 					<div class="hairline-x"></div>
 					<Drawer head={<>
 						<Dynamic component={SmileySVG} class="drawer-head-icon" />
-						<div>
-							VARIANT (V2)
-						</div>
-						<div>
-							{settings.variantV2().toUpperCase()}
-						</div>
+						<div class="drawer-head-header">VARIANT (V2)</div>
+						<div class="drawer-head-subheader">{settings.variantV2().toUpperCase()}</div>
 					</>} open>
 						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
 							<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
-								<Radio value={value}>
-									{value.toUpperCase()}
-								</Radio>
+								<Radio value={value}>{value.toUpperCase().split("/").join(" / ")}</Radio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -173,25 +172,35 @@ function Sidebar() {
 				<div class="hairline-x"></div>
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
-					<div>
-						COPY TO CLIPBOARD
-					</div>
-					<div>
-						{settings.framework().toUpperCase()}
-					</div>
+					<div class="drawer-head-header">COPY TO CLIPBOARD</div>
+					<div class="drawer-head-subheader">{settings.framework().toUpperCase()}</div>
 				</>} open>
 					<Checkbox checked={settings.license()} setChecked={settings.setLicense}>
 						INCLUDE MIT LICENSE
 					</Checkbox>
 					<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
-						<For<{ style: JSX.CSSProperties, value: Framework }, JSX.Element> each={[
-							{ style: { "--__color": "#ffb13b", "--__alpha-color": "#ffb13b66" }, value: "svg" },
-							{ style: { "--__color": "#61dafb", "--__alpha-color": "#61dafb66" }, value: "react" },
-							{ style: { "--__color": "#4fc08d", "--__alpha-color": "#4fc08d66" }, value: "vue" },
-						]}>{({ style, value }) => <>
-							<Radio style={style} value={value}>
-								{value.toUpperCase()}
-							</Radio>
+						<For<{
+							icon:  VoidComponent<CSSProps> | string // E.g. <img src={src}>
+							style: JSX.CSSProperties
+							value: Framework
+						}, JSX.Element> each={[
+							{
+								icon:  svg,
+								style: { "--__color": "#ffb13b", "--__alpha-color": "#ffb13b66" },
+								value: "svg",
+							},
+							{
+								icon:  props => <ReactSVG {...props} strokeWidth={1.5} />,
+								style: { "--__color": "#61dafb", "--__alpha-color": "#61dafb66" },
+								value: "react",
+							},
+							{
+								icon:  VueSVG,
+								style: { "--__color": "#4fc08d", "--__alpha-color": "#4fc08d66" },
+								value: "vue",
+							},
+						]}>{({ icon, style, value }) => <>
+							<Radio icon={icon} style={style} value={value}>{value.toUpperCase()}</Radio>
 						</>}</For>
 					</Radiogroup>
 				</Drawer>
@@ -201,12 +210,8 @@ function Sidebar() {
 				<div class="hairline-x"></div>
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
-					<div>
-						SIZE
-					</div>
-					<div>
-						{round(settings.scale() * 100)}%,{" "}
-						{round(settings.scale() * 32, { precision: 1 }).toFixed(1)}PX
+					<div class="drawer-head-header">SIZE</div>
+					<div class="drawer-head-subheader">{round(settings.scale() * 100)}%,{" "}{round(settings.scale() * 32, { precision: 1 }).toFixed(1)}PX
 					</div>
 					<div>(Reset)</div>
 				</>} open>
@@ -218,12 +223,8 @@ function Sidebar() {
 				<div class="hairline-x"></div>
 				<Drawer head={<>
 					<Dynamic component={SmileySVG} class="drawer-head-icon" />
-					<div>
-						STROKE
-					</div>
-					<div>
-						{settings.stroke()}
-					</div>
+					<div class="drawer-head-header">STROKE</div>
+					<div class="drawer-head-subheader">{settings.stroke().toFixed(2)}</div>
 					<div>(Reset)</div>
 				</>} open>
 					<Slider value={settings.stroke()} setValue={settings.setStroke} min={0.5} max={settings.version() === "v1" ? 3.5 : 2.5} step={0.01} />
@@ -296,11 +297,8 @@ function App() {
 				padding:
 					0     /* Y */
 					24px; /* X */
-
-				/* Typography */
 				font: 400 17px /
 					normal system-ui;
-				/* letter-spacing: -0.0125em; */
 				color: var(--fill-100-color);
 			}
 
@@ -344,23 +342,20 @@ function App() {
 				color: var(--fill-100-color);
 			}
 			/* This is a trick to create a bounding box and center from the top */
-			.results-item-typography-container {
+			.results-item-label-container {
 				height: 24px;
 
 				/* Flow */
 				display: grid;
 				align-content: start; /* Center children on the y-axis from the start */
 			}
-			.results-item-typography {
+			.results-item-label {
 				text-align: center; /* Center x-axis */
-
-				/* Typography */
 				font: 400 12px /
 					normal system-ui;
-				/* letter-spacing: -0.0125em; */
 				color: var(--fill-300-color);
 			}
-			.results-item-typography-highlight {
+			.results-item-label-highlight {
 				border-radius: 1px;
 				color: hsl(25 100% 10%);
 				background-color: hsl(50 100% 90%);
@@ -392,11 +387,11 @@ function App() {
 							}}
 						/>
 					</AriaButton>
-					<div class="results-item-typography-container">
-						<div class={cx(`results-item-typography ${result.parts ? "match" : ""}`)}>
+					<div class="results-item-label-container">
+						<div class={cx(`results-item-label ${result.parts ? "match" : ""}`)}>
 							<Show when={result.parts} fallback={result.kebab}>
 								{result.parts![0]}
-								<span class="results-item-typography-highlight">
+								<span class="results-item-label-highlight">
 									{result.parts![1]}
 								</span>
 								{result.parts![2]}
@@ -516,7 +511,7 @@ function Skeleton() {
 				border-radius: 1000px;
 				background-color: var(--skeleton-color);
 			}
-			.sk-results-item-typography-container {
+			.sk-results-item-label-container {
 				padding:
 					4px /* Y */
 					0;  /* X */
@@ -526,7 +521,7 @@ function Skeleton() {
 				display: grid;
 				justify-items: center; /* Center children on the x-axis */
 			}
-			.sk-results-item-typography {
+			.sk-results-item-label {
 				height: 8px;
 				aspect-ratio: 8;
 				border-radius: 1000px;
@@ -557,8 +552,8 @@ function Skeleton() {
 							}}
 						></div>
 					</div>
-					<div class="sk-results-item-typography-container">
-						<div class="sk-results-item-typography"></div>
+					<div class="sk-results-item-label-container">
+						<div class="sk-results-item-label"></div>
 					</div>
 				</div>
 			</>}</For>
@@ -601,6 +596,11 @@ function Root() {
 			@media (hover: none) { :root { -webkit-text-size-adjust: 100%; } }           /* Disable font scaling */
 			@media (hover: none) { :root { -webkit-tap-highlight-color: transparent; } } /* Disable touch highlight */
 
+			:focus-visible { outline: revert; }
+			svg { overflow: visible; }
+
+			/******************************/
+
 			/* This code is specifically implemented to support bottomsheet panning.
 			Dragging the bottomsheet interferes with body scrolling on iOS Safari.
 			Therefore disable <body> scrolling on and enable <main> scrolling. */
@@ -621,9 +621,6 @@ function Root() {
 				overflow-y: hidden;
 			}
 
-			/* COMPAT/the-new-css-reset */
-			:focus-visible { outline: revert; }
-
 			/******************************/
 
 			/* DEBUG */
@@ -639,24 +636,10 @@ function Root() {
 				--sidebar-width: 448px;
 				--results-item-height: 96px;
 
+				/* solid-sheet */
 				--sheet-backdrop-background-color: var(--card-backdrop-color);
 				--sheet-card-background-color: var(--card-color);
 				--sheet-card-box-shadow: var(--card-hairline-box-shadow);
-
-				/* --sheet-backdrop-background-color: hsl(0 0% 0% / 25%); */
-				/* --sheet-backdrop-transition-duration: 1200ms; */
-				/* --sheet-card-background-color: hsl(0 0% 100%); */
-				/* --sheet-card-border-radius: 24px 24px 0 0; */
-				/* --sheet-card-box-shadow: 0 0 0 4px hsl(0 0% 0% / 25%); */
-				/* --sheet-card-hairline-background-color: hsl(0 0% 90%); */
-				/* --sheet-drag-indicator-background-color: hsl(0 0% 50%); */
-				/* --sheet-drag-indicator-active-background-color: hsl(0 0% 25%); */
-				/* --sheet-drag-indicator-size-aspect-ratio: 12; */
-				/* --sheet-drag-indicator-size: 4px; */
-				/* --sheet-draggable-size: 40px; */
-				/* --sheet-transition-duration: 600ms; */
-				/* --sheet-transition-timing-function: cubic-bezier(0, 1, 0.25, 1); */
-				/* --sheet-z-index: 100; */
 
 				background-color: var(--card-color);
 			}
