@@ -105,6 +105,16 @@ function Sidebar() {
 	display: grid;
 	gap: 8px;
 }
+/* Repeat flow for nested radiogroups */
+.drawer-body > .radiogroup {
+	display: grid;
+	gap: 8px;
+}
+.drawer-body > .radiogroup.horizontal {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+}
 		`}
 		<Sheet>
 			<div>
@@ -129,15 +139,13 @@ function Sidebar() {
 						{settings.version().toUpperCase()}
 					</div>
 				</>} open>
-					<div class="drawer-body-content">
-						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.version()} setGroupValue={settings.setVersion}>
-							<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
-								<Radio value={value}>
-									{value.toUpperCase()}
-								</Radio>
-							</>}</For>
-						</Radiogroup>
-					</div>
+					<Radiogroup class="radiogroup" groupValue={settings.version()} setGroupValue={settings.setVersion}>
+						<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
+							<Radio value={value}>
+								{value.toUpperCase()}
+							</Radio>
+						</>}</For>
+					</Radiogroup>
 				</Drawer>
 
 				{/****************************/}
@@ -154,7 +162,7 @@ function Sidebar() {
 							{settings.variantV2().toUpperCase().split("/").join(" × ")}
 						</div>
 					</>} open>
-						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
+						<Radiogroup class="radiogroup" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
 							<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
 								<Radio value={value}>
 									{value.toUpperCase().split("/").join(" × ")}
@@ -174,7 +182,7 @@ function Sidebar() {
 							{settings.variantV1().toUpperCase().split("/").join(" × ")}
 						</div>
 					</>} open>
-						<Radiogroup class="[display:grid] [gap:8px]" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
+						<Radiogroup class="radiogroup" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
 							<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
 								<Radio value={value}>
 									{value.toUpperCase()}
@@ -199,27 +207,15 @@ function Sidebar() {
 					<Checkbox checked={settings.license()} setChecked={settings.setLicense}>
 						INCLUDE MIT LICENSE
 					</Checkbox>
-					<Radiogroup class="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:16px]" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
+					<Radiogroup class="radiogroup horizontal" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
 						<For<{
 							icon:  VoidComponent<CSSProps> | string
 							style: JSX.CSSProperties
 							value: Framework
 						}, JSX.Element> each={[
-							{
-								icon:  svg,
-								style: { "--__color": "#ffb13b", /* "--__alpha-color": "#ffb13b66" */ },
-								value: "svg",
-							},
-							{
-								icon:  props => <ReactSVG {...props} strokeWidth={1.5} />,
-								style: { "--__color": "#61dafb", /* "--__alpha-color": "#61dafb66" */ },
-								value: "react",
-							},
-							{
-								icon:  VueSVG,
-								style: { "--__color": "#4fc08d", /* "--__alpha-color": "#4fc08d66" */ },
-								value: "vue",
-							},
+							{ icon: svg, style: { "--__color": "#ffb13b", /* "--__alpha-color": "#ffb13b66" */ }, value: "svg" },
+							{ icon: props => <ReactSVG {...props} strokeWidth={1.5} />, style: { "--__color": "#61dafb", /* "--__alpha-color": "#61dafb66" */ }, value: "react" },
+							{ icon: VueSVG, style: { "--__color": "#4fc08d", /* "--__alpha-color": "#4fc08d66" */ }, value: "vue" },
 						]}>{({ icon, style, value }) => <>
 							<Radio icon={icon} style={style} value={value} center>
 								{value.toUpperCase()}

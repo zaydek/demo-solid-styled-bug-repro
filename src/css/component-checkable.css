@@ -19,7 +19,8 @@
 	height: 28px;
 	border-radius: 1000px;
 	background-color: var(--form-label-color);
-	box-shadow: 0 0 0 1px var(--card-hairline-color);
+	/* Use inset here */
+	box-shadow: inset 0 0 0 1px var(--card-hairline-color);
 
 	/* Flow */
 	display: grid;
