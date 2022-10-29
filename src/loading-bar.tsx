@@ -53,10 +53,10 @@ export function LoadingBar() {
 				position: fixed;
 				z-index: 1000;
 				inset:
-					0    /* T */
-					0    /* R */
-					auto /* B */
-					0;   /* L */
+					/* T */ 0
+					/* R */ 0
+					/* B */ auto
+					/* L */ 0;
 				height: 4px;
 				width: calc(var(--__progress) * 1%);
 				background-color: var(--trim-color);

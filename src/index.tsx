@@ -51,8 +51,8 @@ function Sidebar() {
 
 .sidebar-nav {
 	padding:
-		0     /* Y */
-		24px; /* X */
+		/* Y */ 0
+		/* X */ 24px;
 	height: var(--search-bar-height);
 
 	/* Flow */
@@ -305,14 +305,14 @@ function App() {
 	position: fixed;
 	z-index: 10;
 	inset:
-		0    /* T */
-		0    /* R */
-		auto /* B */
-		0;   /* L */
+		/* T */ 0
+		/* R */ 0
+		/* B */ auto
+		/* L */ 0;
 	margin-right: var(--sidebar-width);
 	padding:
-		0     /* Y */
-		24px; /* X */
+		/* Y */ 0
+		/* X */ 24px;
 	height: var(--search-bar-height);
 	background-color: var(--card-color);
 	box-shadow: var(--card-hairline-box-shadow);
@@ -335,8 +335,8 @@ function App() {
 .search-bar-text-field:focus-visible { outline: none; } /* CSS reset */
 .search-bar-text-field {
 	padding:
-		0     /* Y */
-		24px; /* X */
+		/* Y */ 0
+		/* X */ 24px;
 	font: 400 16px /
 		normal system-ui;
 	color: var(--fill-100-color);
@@ -347,15 +347,15 @@ function App() {
 
 .results {
 	margin:
-		var(--search-bar-height) /* T */
-		var(--sidebar-width)     /* R */
-		0                        /* B */
-		0;                       /* L */
+		/* T */ var(--search-bar-height)
+		/* R */ var(--sidebar-width)
+		/* B */ 0
+		/* L */ 0;
 	padding:
-		16px                        /* T */
-		var(--sheet-draggable-size) /* R */
-		calc(16px * 3)              /* B */
-		16px;                       /* L */
+		/* T */ 16px
+		/* R */ var(--sheet-draggable-size)
+		/* B */ calc(16px * 3)
+		/* L */ 16px;
 
 	/* Flow */
 	display: grid;
@@ -366,8 +366,8 @@ function App() {
 @media (hover: none), not (min-width: 800px) { .results { margin-right: 0; padding-right: 16px; } } /* Override */
 .results-item {
 	padding:
-		0    /* Y */
-		4px; /* X */
+		/* Y */ 0
+		/* X */ 4px;
 }
 .results-item-icon-container {
 	height: calc(var(--results-item-height) - 24px);
@@ -454,18 +454,18 @@ function Skeleton() {
 	position: fixed;
 	z-index: 10;
 	inset:
-		0    /* T */
-		0    /* R */
-		auto /* B */
-		0;   /* L */
+		/* T */ 0
+		/* R */ 0
+		/* B */ auto
+		/* L */ 0;
 	margin:
-		0                    /* T */
-		var(--sidebar-width) /* R */
-		0                    /* B */
-		0;                   /* L */
+		/* T */ 0
+		/* R */ var(--sidebar-width)
+		/* B */ 0
+		/* L */ 0;
 	padding:
-		0     /* Y */
-		24px; /* X */
+		/* Y */ 0
+		/* X */ 24px;
 	height: var(--search-bar-height);
 	background-color: var(--card-color);
 	box-shadow: var(--card-hairline-box-shadow);
@@ -500,10 +500,10 @@ function Skeleton() {
 	position: fixed;
 	z-index: 10;
 	inset:
-		0     /* T */
-		0     /* R */
-		0     /* B */
-		auto; /* L */
+		/* T */ 0
+		/* R */ 0
+		/* B */ 0
+		/* L */ auto;
 	width: var(--sidebar-width);
 	background-color: var(--card-color);
 	box-shadow: var(--card-hairline-box-shadow);
@@ -520,10 +520,10 @@ function Skeleton() {
 
 .sk-results {
 	margin:
-		var(--search-bar-height) /* T */
-		var(--sidebar-width)     /* R */
-		0                        /* B */
-		0;                       /* L */
+		/* T */ var(--search-bar-height)
+		/* R */ var(--sidebar-width)
+		/* B */ 0
+		/* L */ 0;
 	padding: 16px;
 	padding-right: var(--sheet-draggable-size); /* Override */
 
@@ -535,8 +535,8 @@ function Skeleton() {
 @media (hover: none), not (min-width: 800px) { .sk-results { margin-right: 0; padding-right: 16px; } } /* Override */
 .sk-results-item {
 	padding:
-		0    /* Y */
-		4px; /* X */
+		/* Y */ 0
+		/* X */ 4px;
 }
 .sk-results-item-icon-container {
 	height: calc(var(--results-item-height) - 24px);
@@ -553,8 +553,8 @@ function Skeleton() {
 }
 .sk-results-item-label-container {
 	padding:
-		4px /* Y */
-		0;  /* X */
+		/* Y */ 4px
+		/* X */ 0;
 	height: 24px;
 
 	/* Flow */

@@ -14,13 +14,12 @@
 }
 .component-checkable-label {
 	padding:
-		0    /* Y */
-		8px; /* X */
+		/* Y */ 0
+		/* X */ 8px;
 	height: 28px;
 	border-radius: 1000px;
 	background-color: var(--form-label-color);
-	/* Use inset here */
-	box-shadow: inset 0 0 0 1px var(--card-hairline-color);
+	box-shadow: inset 0 0 0 1px var(--card-hairline-color); /* Use inset here */
 
 	/* Flow */
 	display: grid;

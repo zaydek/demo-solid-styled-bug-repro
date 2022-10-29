@@ -12,12 +12,6 @@ export function Drawer(props: ParentProps<{
 	const [headRef, setHeadRef] = createSignal<HTMLElement>()
 
 	const [open, setOpen] = createSignal(props.open ?? true)
-	//// const [transition, setTransition] = createSignal(false)
-
-	//// // Synchronize transition
-	//// createEffect(on(open, () => {
-	//// 	setTransition(true)
-	//// }, { defer: true }))
 
 	// DEBUG
 	window.addEventListener("keydown", e => {
@@ -33,41 +27,41 @@ export function Drawer(props: ParentProps<{
 
 	return <>
 		{css`
-			.drawer {
-				--__min-height: auto;
-				--__max-height: auto;
-			}
-			.drawer {
-				transition: 300ms cubic-bezier(0, 1, 0.25, 1.05);
-				transition-property: height;
+.drawer {
+	--__min-height: auto;
+	--__max-height: auto;
+}
+.drawer {
+	transition: 300ms cubic-bezier(0, 1, 0.25, 1.05);
+	transition-property: height;
 
-				cursor: pointer;
-				-webkit-user-select: none;
-				user-select: none;
-			}
-			.drawer.closed {
-				height: var(--__min-height);
-				overflow-y: clip;
-			}
-			.drawer.open {
-				height: var(--__max-height);
-				overflow-y: clip;
-			}
+	cursor: pointer;
+	-webkit-user-select: none;
+	user-select: none;
+}
+.drawer.closed {
+	height: var(--__min-height);
+	overflow-y: clip;
+}
+.drawer.open {
+	height: var(--__max-height);
+	overflow-y: clip;
+}
 
-			/********************************/
+/**************************************/
 
-			.drawer-body {
-				transition: 300ms cubic-bezier(0, 1, 0.25, 1.05);
-				transition-property: transform, opacity;
-			}
-			.drawer.open .drawer-body {
-				transform: scale(1);
-				opacity: 1;
-			}
-			.drawer.closed .drawer-body {
-				transform: scale(0.9);
-				opacity: 0;
-			}
+.drawer-body {
+	transition: 300ms cubic-bezier(0, 1, 0.25, 1.05);
+	transition-property: transform, opacity;
+}
+.drawer.open .drawer-body {
+	transform: scale(1);
+	opacity: 1;
+}
+.drawer.closed .drawer-body {
+	transform: scale(0.9);
+	opacity: 0;
+}
 		`}
 		<div ref={setRef} class={cx(`drawer ${open() ? "open" : "closed"}`)}>
 			<AriaButton ref={setHeadRef} class="drawer-head" onClick={e => setOpen(curr => !curr)}>
