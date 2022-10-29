@@ -1,5 +1,8 @@
 import "./css"
 
+// TODO: This can likely be optimized
+import svg from "./assets/svg.png"
+
 import { createResource, For, JSX, Show, Suspense, VoidComponent } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
@@ -11,10 +14,7 @@ import { Sheet } from "./sheet"
 import { SmileySVG } from "./smiley-svg"
 import { darkMode, debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
 import { css, CSSProps } from "./utils/solid"
-import { cx, range, round } from "./utils/vanilla"
-
-// TODO: This can likely be optimized
-import svg from "./assets/svg.png"
+import { cx, randGenerator, randHash, range, round } from "./utils/vanilla"
 
 ////////////////////////////////////////
 
@@ -699,7 +699,32 @@ function Root() {
 	</>
 }
 
+const BASE_36 = "abcdefghijklmnopqrstuvwxyz" + "0123456789"
+
+const rand = randGenerator()
+const hash = (name: string) => `${name}__${randHash(rand, { base: BASE_36, length: 6 })}`
+
+const thing = hash("foo")
+
+console.log(hash("foo"))
+console.log(hash("foo"))
+console.log(hash("foo"))
+console.log(hash("foo"))
+console.log(hash("foo"))
+
+function Thing() {
+	return <>
+		{css`
+			.${thing} {
+				background-color: red;
+			}
+		`}
+		<div class={thing}>lol</div>
+	</>
+}
+
 render(
-	() => <Root />,
+	//// () => <Root />,
+	() => <Thing />,
 	document.getElementById("root")!,
 )

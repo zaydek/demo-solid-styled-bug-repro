@@ -27,5 +27,7 @@ function createSearchParams(url: string) {
 	return { boolean, number, string }
 }
 
-export const searchParams =
-	createSearchParams(window.location.search)
+export let searchParams: ReturnType<typeof createSearchParams>
+if (typeof window !== "undefined") {
+	searchParams = createSearchParams(window.location.search)
+}

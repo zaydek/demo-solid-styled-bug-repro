@@ -1,4 +1,5 @@
 export const BASE_26 = "abcdefghijklmnopqrstuvwxyz"
+export const BASE_36 = "abcdefghijklmnopqrstuvwxyz" + "0123456789"
 export const BASE_52 = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 export const BASE_62 = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789"
 
