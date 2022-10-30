@@ -711,7 +711,7 @@ disable <body> scrolling on and enable <main> scrolling. */
 function Foo() {
 	return <>
 		{css`
-:focus-visible { outline: revert; }
+/* :focus-visible { outline: revert; } */
 
 .column {
 	margin:
@@ -732,15 +732,15 @@ function Foo() {
 }
 		`}
 		<div class="column">
-			<Checkbox style={{ "--__color": "red"   }} center>HELLO WORLD</Checkbox>
-			<Checkbox style={{ "--__color": "blue"  }} center>HELLO WORLD</Checkbox>
-			<Checkbox style={{ "--__color": "green" }} center>HELLO WORLD</Checkbox>
+			<Checkbox /* style={{ "--__color": "red"   }} */ center>HELLO WORLD</Checkbox>
+			<Checkbox /* style={{ "--__color": "blue"  }} */ center>HELLO WORLD</Checkbox>
+			<Checkbox /* style={{ "--__color": "green" }} */ center>HELLO WORLD</Checkbox>
 			<Checkbox center>HELLO WORLD</Checkbox>
 			<div></div>
 			<Radiogroup>
-				<Radio style={{ "--__color": "red"   }} value="foo" center>HELLO WORLD</Radio>
-				<Radio style={{ "--__color": "blue"  }} value="bar" center>HELLO WORLD</Radio>
-				<Radio style={{ "--__color": "green" }} value="baz" center>HELLO WORLD</Radio>
+				<Radio /* style={{ "--__color": "red"   }} */ value="foo" center>HELLO WORLD</Radio>
+				<Radio /* style={{ "--__color": "blue"  }} */ value="bar" center>HELLO WORLD</Radio>
+				<Radio /* style={{ "--__color": "green" }} */ value="baz" center>HELLO WORLD</Radio>
 				<Radio value="qux" center>HELLO WORLD</Radio>
 			</Radiogroup>
 		</div>

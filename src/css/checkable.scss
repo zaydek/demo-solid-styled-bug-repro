@@ -1,6 +1,7 @@
 .checkable-container {
 	--__color: var(--trim-color);
-	/* --__alpha-color: var(--trim-color); */
+	--__alpha-color: hsl(var(--base-h) var(--base-s) 50% / 10%);
+	--__alpha-color-state-active: hsl(var(--trim-h) var(--trim-s) 50% / 25%);
 
 	/* Flow */
 	display: grid;
@@ -59,30 +60,37 @@
 	aspect-ratio: 1;
 	border-radius: 40%;
 	background-color: var(--card-color);
-	box-shadow: var(--card-inset-box-shadow);
+	box-shadow:
+		0 0 0 0 transparent,
+		var(--card-box-shadow);
+	transition: 100ms cubic-bezier(0, 1, 0.25, 1.25);
+	transition-property: box-shadow;
 
 	/* Flow */
 	display: grid;
 	place-items: center;
+}
+[aria-checked=true] .checkable-checkbox {
+	box-shadow:
+		0 0 0 0 transparent,
+		var(--card-inset-box-shadow); /* Use inset when checked */
 }
 
 .checkable-checkbox { position: relative; isolation: isolate; }
 .checkable-checkbox::before {
 	content: "";
 	position: absolute;
-	z-index: -1; /* Use a negative z-index because of "isolation: isolate" */
+	z-index: -1;
 	inset: 0;
 	border-radius: inherit;
 	background-color: var(--__color);
-	transition: 200ms cubic-bezier(0, 1, 0.25, 1.05);
+	transition: 100ms cubic-bezier(0, 1, 0.25, 1.25);
 	transition-property: transform, opacity;
 
-	// checked=false
 	transform: scale(0);
 	opacity: 0;
 }
 [aria-checked=true] .checkable-checkbox::before {
-	// checked=true
 	transform: scale(1);
 	opacity: 1;
 }
@@ -91,15 +99,13 @@
 	height: 50%;
 	aspect-ratio: 1;
 	color: white;
-	transition: 200ms cubic-bezier(0, 1, 0.25, 1.05);
+	transition: 100ms cubic-bezier(0, 1, 0.25, 1.25);
 	transition-property: transform, opacity;
 
-	// checked=false
 	transform: scale(0);
 	opacity: 0;
 }
 [aria-checked=true] .checkable-checkbox-icon {
-	// checked=true
 	transform: scale(1);
 	opacity: 1;
 }
@@ -112,30 +118,37 @@
 	aspect-ratio: 1;
 	border-radius: 1000px;
 	background-color: var(--card-color);
-	box-shadow: var(--card-inset-box-shadow);
+	box-shadow:
+		0 0 0 0 transparent,
+		var(--card-box-shadow);
+	transition: 100ms cubic-bezier(0, 1, 0.25, 1.25);
+	transition-property: box-shadow;
 
 	/* Flow */
 	display: grid;
 	place-items: center;
+}
+[aria-checked=true] .checkable-radio {
+	box-shadow:
+		0 0 0 0 transparent,
+		var(--card-inset-box-shadow); /* Use inset when checked */
 }
 
 .checkable-radio { position: relative; isolation: isolate; }
 .checkable-radio::before {
 	content: "";
 	position: absolute;
-	z-index: -1; /* Use a negative z-index because of "isolation: isolate" */
+	z-index: -1;
 	inset: 0;
 	border-radius: inherit;
 	background-color: var(--__color);
-	transition: 200ms cubic-bezier(0, 1, 0.25, 1.05);
+	transition: 100ms cubic-bezier(0, 1, 0.25, 1.25);
 	transition-property: transform, opacity;
 
-	// checked=false
 	transform: scale(0);
 	opacity: 0;
 }
 [aria-checked=true] .checkable-radio::before {
-	// checked=true
 	transform: scale(1);
 	opacity: 1;
 }
@@ -145,15 +158,13 @@
 	aspect-ratio: 1;
 	border-radius: 1000px;
 	background-color: white;
-	transition: 200ms cubic-bezier(0, 1, 0.25, 1.05);
+	transition: 100ms cubic-bezier(0, 1, 0.25, 1.25);
 	transition-property: transform, opacity;
 
-	// checked=false
 	transform: scale(0);
 	opacity: 0;
 }
 [aria-checked=true] .checkable-radio-icon {
-	// checked=true
 	transform: scale(1);
 	opacity: 1;
 }
@@ -161,20 +172,20 @@
 /**************************************/
 
 /* Override */
-.checkable-container[aria-checked=false]:is(:hover, :active) :is(
+.checkable-container:is(:hover, :active) :is(
 	.checkable-checkbox,
 	.checkable-radio
 ) {
-	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
-		0 0 0 4px hsl(0 0% 0% / 10%),
-		0 0 0 4px hsl(0 0% 0% / 10%);
+	box-shadow:
+		0 0 0 8px var(--__alpha-color),
+		var(--card-box-shadow);
 }
 
-//// .checkable-container[aria-checked=true] :is(
-//// 	.checkable-checkbox,
-//// 	.checkable-radio
-//// ) {
-//// 	background-color: var(--__color);
-//// 	box-shadow: /* 0 0 0 1px hsl(0 0% 0% / 10%), */
-//// 		0 0 0 4px hsl(0 0% 0% / 10%);
-//// }
+.checkable-container[aria-checked=true]:is(:hover, :active) :is(
+	.checkable-checkbox,
+	.checkable-radio
+) {
+	box-shadow:
+		0 0 0 8px var(--__alpha-color-state-active),
+		var(--card-inset-box-shadow); /* Use inset when checked */
+}
