@@ -208,19 +208,77 @@ function Sidebar() {
 						INCLUDE MIT LICENSE
 					</Checkbox>
 					<Radiogroup class="radiogroup horizontal" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
-						<For<{
+						<Radio
+							icon={svg}
+							style={{
+								"--__color": "#ffb13b",
+								"--__alpha-color": "#ffb13b3f",
+							}}
+							value="svg"
+							center
+						>
+							SVG
+						</Radio>
+						<Radio
+							icon={props => <ReactSVG {...props} strokeWidth={1.5} />}
+							style={{
+								"--__color": "#61dafb",
+								"--__alpha-color": "#61dafb3f",
+							}}
+							value="react"
+							center
+						>
+							REACT
+						</Radio>
+						<Radio
+							icon={VueSVG}
+							style={{
+								"--__color": "#4fc08d",
+								"--__alpha-color": "#4fc08d3f",
+							}}
+							value="vue"
+							center
+						>
+							VUE
+						</Radio>
+
+						{/* <For<{
 							icon:  VoidComponent<CSSProps> | string
 							style: JSX.CSSProperties
 							value: Framework
 						}, JSX.Element> each={[
-							{ icon: svg, style: { "--__color": "#ffb13b", /* "--__alpha-color": "#ffb13b66" */ }, value: "svg" },
-							{ icon: props => <ReactSVG {...props} strokeWidth={1.5} />, style: { "--__color": "#61dafb", /* "--__alpha-color": "#61dafb66" */ }, value: "react" },
-							{ icon: VueSVG, style: { "--__color": "#4fc08d", /* "--__alpha-color": "#4fc08d66" */ }, value: "vue" },
+							{
+								icon:
+								svg,
+								style: {
+									"--__color": "#ffb13b",
+									"--__alpha-color": "#ffb13b66",
+								},
+								value: "svg",
+							},
+							{
+								icon:
+								props => <ReactSVG {...props} strokeWidth={1.5} />,
+								style: {
+									"--__color": "#61dafb",
+									"--__alpha-color": "#61dafb66",
+								},
+								value: "react",
+							},
+							{
+								icon:
+								VueSVG,
+								style: {
+									"--__color": "#4fc08d",
+									"--__alpha-color": "#4fc08d66",
+								},
+								value: "vue",
+							},
 						]}>{({ icon, style, value }) => <>
 							<Radio icon={icon} style={style} value={value} center>
 								{value.toUpperCase()}
 							</Radio>
-						</>}</For>
+						</>}</For> */}
 					</Radiogroup>
 				</Drawer>
 
@@ -748,7 +806,7 @@ function Foo() {
 }
 
 render(
-	//// () => <Root />,
-	() => <Foo />,
+	() => <Root />,
+	//// () => <Foo />,
 	document.getElementById("root")!,
 )

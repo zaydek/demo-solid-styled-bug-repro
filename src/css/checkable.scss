@@ -1,7 +1,9 @@
 .checkable-container {
 	--__color: var(--trim-color);
-	--__alpha-color: hsl(var(--base-h) var(--base-s) 50% / 10%);
-	--__alpha-color-state-active: hsl(var(--trim-h) var(--trim-s) 50% / 25%);
+
+	/* TODO: Extract */
+	--__base-alpha-color: hsl(var(--base-h) var(--base-s) 50% / 10%);
+	--__alpha-color: hsl(var(--trim-h) var(--trim-s) 50% / 25%);
 
 	/* Flow */
 	display: grid;
@@ -177,7 +179,7 @@
 	.checkable-radio
 ) {
 	box-shadow:
-		0 0 0 8px var(--__alpha-color),
+		0 0 0 8px var(--__base-alpha-color),
 		var(--card-box-shadow);
 }
 
@@ -186,6 +188,6 @@
 	.checkable-radio
 ) {
 	box-shadow:
-		0 0 0 8px var(--__alpha-color-state-active),
+		0 0 0 8px var(--__alpha-color),
 		var(--card-inset-box-shadow); /* Use inset when checked */
 }
