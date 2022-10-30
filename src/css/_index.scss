@@ -1,8 +1,8 @@
-@use "component-checkable";
-@use "component-nav-icon";
-@use "component-slider";
+@use "checkable";
+@use "nav-icon";
+@use "slider";
 
-@use "theme" as *;
+@use "_theme" as *;
 @use "utils/define-theme" as *;
 
 :root { @include define-theme($theme); }

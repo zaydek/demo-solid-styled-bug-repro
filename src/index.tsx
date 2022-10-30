@@ -1,5 +1,5 @@
 import "the-new-css-reset"
-import "./css/index.scss"
+import "./css/_index.scss"
 
 // TODO: This can likely be optimized
 import svg from "./assets/svg.png"
@@ -7,7 +7,7 @@ import svg from "./assets/svg.png"
 import { For, JSX, Show, Suspense, VoidComponent } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
-import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
+import { CheckableCheckbox, NavIcon, CheckableRadio, Radiogroup, Slider } from "./components"
 import { Drawer } from "./drawer"
 import { LoadingBar } from "./loading-bar"
 import { Sheet } from "./sheet"
@@ -141,9 +141,9 @@ function Sidebar() {
 				</>} open>
 					<Radiogroup class="radiogroup" groupValue={settings.version()} setGroupValue={settings.setVersion}>
 						<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
-							<Radio value={value}>
+							<CheckableRadio value={value}>
 								{value.toUpperCase()}
-							</Radio>
+							</CheckableRadio>
 						</>}</For>
 					</Radiogroup>
 				</Drawer>
@@ -164,9 +164,9 @@ function Sidebar() {
 					</>} open>
 						<Radiogroup class="radiogroup" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
 							<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
-								<Radio value={value}>
+								<CheckableRadio value={value}>
 									{value.toUpperCase().split("/").join(" × ")}
-								</Radio>
+								</CheckableRadio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -184,9 +184,9 @@ function Sidebar() {
 					</>} open>
 						<Radiogroup class="radiogroup" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
 							<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
-								<Radio value={value}>
+								<CheckableRadio value={value}>
 									{value.toUpperCase()}
-								</Radio>
+								</CheckableRadio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -204,9 +204,9 @@ function Sidebar() {
 						{settings.framework().toUpperCase()}
 					</div>
 				</>} open>
-					<Checkbox checked={settings.license()} setChecked={settings.setLicense}>
+					<CheckableCheckbox checked={settings.license()} setChecked={settings.setLicense}>
 						INCLUDE MIT LICENSE
-					</Checkbox>
+					</CheckableCheckbox>
 					<Radiogroup class="radiogroup horizontal" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
 						<For<{
 							icon:  VoidComponent<CSSProps> | string
@@ -217,9 +217,9 @@ function Sidebar() {
 							{ icon: props => <ReactSVG {...props} strokeWidth={1.5} />, style: { "--__color": "#61dafb", /* "--__alpha-color": "#61dafb66" */ }, value: "react" },
 							{ icon: VueSVG, style: { "--__color": "#4fc08d", /* "--__alpha-color": "#4fc08d66" */ }, value: "vue" },
 						]}>{({ icon, style, value }) => <>
-							<Radio icon={icon} style={style} value={value} center>
+							<CheckableRadio icon={icon} style={style} value={value} center>
 								{value.toUpperCase()}
-							</Radio>
+							</CheckableRadio>
 						</>}</For>
 					</Radiogroup>
 				</Drawer>

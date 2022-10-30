@@ -1,7 +1,7 @@
-.component-slider-container {
+.slider-container {
 	padding: 0 calc(28px / 2);
 }
-.component-slider {
+.slider {
 	height: 28px;
 	width: 100%;
 
@@ -14,9 +14,9 @@
 	user-select: none;
 	touch-action: pan-x;
 }
-:root:has(.component-slider:active) { cursor: grabbing; }                   /* Use both */
-:root:has(.component-slider:active) .component-slider { cursor: grabbing; } /* Use both */
-.component-slider-track {
+:root:has(.slider:active) { cursor: grabbing; }                   /* Use both */
+:root:has(.slider:active) .slider { cursor: grabbing; } /* Use both */
+.slider-track {
 	height: 6px;
 	width: 100%;
 	border-radius: 1000px;
@@ -26,7 +26,7 @@
 	display: grid;
 	align-content: center;
 }
-.component-slider-thumb {
+.slider-thumb {
 	height: 28px;
 	aspect-ratio: 1;
 	border-radius: 1000px;
@@ -37,12 +37,12 @@
 /**************************************/
 
 /* Overrides */
-.component-slider:hover .component-slider-thumb {
+.slider:hover .slider-thumb {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%);
 }
-.component-slider:active .component-slider-thumb {
+.slider:active .slider-thumb {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(200 100% 50% / 40%);

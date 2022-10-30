@@ -1,3 +1,4 @@
+import { onCleanup } from "solid-js"
 import { template } from "../vanilla"
 
 // Returns whether an element has a class name
@@ -14,25 +15,24 @@ export function createCSS(scope?: HTMLElement, { prepend }: { prepend?: boolean 
 	const cache = new Map<string, true>()
 
 	function css(strings: TemplateStringsArray, ...keys: any[]) {
-		const code = template(strings, ...keys).trim() + "\n" // EOF
-		if (cache.has(code)) { return }
+		const _css = template(strings, ...keys).trim() + "\n" // EOF
+		if (cache.has(_css)) { return }
 
 		// Create <style type="text/css">
 		const style = document.createElement("style")
 		style.setAttribute("type", "text/css")
-		style.textContent = code
-		scope ??= document.head // Globally or locally-scoped
-		cache.set(code, true)
+		style.textContent = _css
+		scope ??= document.head // Globally or locally-scoped?
+		cache.set(_css, true)
 		if (prepend) {
 			scope!.prepend(style)
 		} else {
 			scope!.append(style)
 		}
-		// TODO: Technically this should remove <style>
-		//// onCleanup(() => {
-		//// 	cache.delete(code)
-		//// 	style.remove()
-		//// })
+		onCleanup(() => {
+			cache.delete(_css)
+			style.remove()
+		})
 
 		return void 0
 	}

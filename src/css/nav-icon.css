@@ -1,4 +1,4 @@
-.component-nav-icon {
+.nav-icon {
 	height: 32px;
 	aspect-ratio: 1;
 	border-radius: 1000px;
@@ -12,7 +12,7 @@
 	-webkit-user-select: none;
 	user-select: none;
 }
-.component-nav-icon-icon {
+.nav-icon-icon {
 	height: 24px;
 	aspect-ratio: 1;
 	color: var(--trim-color);

@@ -9,8 +9,8 @@ import { cx } from "./utils/vanilla"
 
 export function NavIcon() {
 	return <>
-		<div class="component-nav-icon">
-			<Dynamic component={SmileySVG} class="component-nav-icon-icon" />
+		<div class="nav-icon">
+			<Dynamic component={SmileySVG} class="nav-icon-icon" />
 		</div>
 	</>
 }
@@ -25,7 +25,7 @@ function CheckSVG(props: VoidProps<CSSProps>) {
 	</>
 }
 
-export function Checkbox(props: ParentProps<{
+export function CheckableCheckbox(props: ParentProps<{
 	checked?:    boolean
 	setChecked?: Setter<boolean>
 }>) {
@@ -38,44 +38,44 @@ export function Checkbox(props: ParentProps<{
 	]
 
 	return <>
-		<AriaCheckbox class="component-checkable-container" checked={checked()} setChecked={setChecked}>
-			<div class="component-checkable-label">
-				<Dynamic component={SmileySVG} class="component-checkable-label-icon" />
-				<div class="component-checkable-label-text">
+		<AriaCheckbox class="checkable-container" checked={checked()} setChecked={setChecked}>
+			<div class="checkable-label">
+				<Dynamic component={SmileySVG} class="checkable-label-icon" />
+				<div class="checkable-label-text">
 					{props.children}
 				</div>
 			</div>
-			<div class="component-checkable-checkbox">
-				<Dynamic component={CheckSVG} class="component-checkable-checkbox-svg" style={{ "stroke-width": "7" }} />
+			<div class="checkable-checkbox">
+				<Dynamic component={CheckSVG} class="checkable-checkbox-svg" style={{ "stroke-width": "7" }} />
 			</div>
 		</AriaCheckbox>
 	</>
 }
 
-export function Radio(props: ParentProps<{
+export function CheckableRadio(props: ParentProps<{
 	icon?:  VoidComponent<CSSProps> | string
 	style?: JSX.CSSProperties
 	value:  string
 
-	// .component-checkable-label.center
+	// .checkable-label.center
 	center?: boolean
 }>) {
 	return <>
-		<AriaRadio class="component-checkable-container" style={props.style} value={props.value}>
-			<div class={cx(`component-checkable-label ${props.center ? "center" : ""}`)}>
+		<AriaRadio class="checkable-container" style={props.style} value={props.value}>
+			<div class={cx(`checkable-label ${props.center ? "center" : ""}`)}>
 				<Show when={!props.icon || typeof props.icon === "function"} fallback={<>
 					{/* <img> */}
-					<img src={props.icon as string} class="component-checkable-label-icon" />
+					<img src={props.icon as string} class="checkable-label-icon" />
 				</>}>
 					{/* <svg> */}
-					<Dynamic component={props.icon ?? SmileySVG} class="component-checkable-label-icon" />
+					<Dynamic component={props.icon ?? SmileySVG} class="checkable-label-icon" />
 				</Show>
-				<div class="component-checkable-label-text">
+				<div class="checkable-label-text">
 					{props.children}
 				</div>
 			</div>
-			<div class="component-checkable-radio">
-				<div class="component-checkable-radio-icon"></div>
+			<div class="checkable-radio">
+				<div class="checkable-radio-icon"></div>
 			</div>
 		</AriaRadio>
 	</>
@@ -127,12 +127,12 @@ export function Slider(props: VoidProps<{
 	]
 
 	return <>
-		<div class="component-slider-container">
-			<AriaSliderHorizontal class="component-slider" value={value()} setValue={setValue} min={min()} max={max()} step={step()}>
+		<div class="slider-container">
+			<AriaSliderHorizontal class="slider" value={value()} setValue={setValue} min={min()} max={max()} step={step()}>
 				{translate => <>
-					<div class="component-slider-track">
+					<div class="slider-track">
 						<AriaSliderThumb
-							class="component-slider-thumb"
+							class="slider-thumb"
 							style={{
 								...(translate() && {
 									"transform": `translateX(${translate()!}px)`,
