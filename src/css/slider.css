@@ -36,7 +36,7 @@
 
 /**************************************/
 
-/* Overrides */
+/* Override */
 .slider:hover .slider-thumb {
 	box-shadow: 0 0 0 1px hsl(0 0% 0% / 10%),
 		0 0 0 4px hsl(0 0% 0% / 10%),

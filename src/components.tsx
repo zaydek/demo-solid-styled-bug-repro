@@ -25,10 +25,16 @@ function CheckSVG(props: VoidProps<CSSProps>) {
 	</>
 }
 
-export function CheckableCheckbox(props: ParentProps<{
+export function Checkbox(props: ParentProps<{
+	icon?:       VoidComponent<CSSProps> | string
+	style?:      JSX.CSSProperties
 	checked?:    boolean
 	setChecked?: Setter<boolean>
+
+	center?: boolean
 }>) {
+	const variantCenter = () => props.center || undefined
+
 	const [fallback, setFallback] = createSignal(false)
 	const [checked, setChecked] = [
 		typeof props.checked === "boolean"
@@ -38,36 +44,39 @@ export function CheckableCheckbox(props: ParentProps<{
 	]
 
 	return <>
-		<AriaCheckbox class="checkable-container" checked={checked()} setChecked={setChecked}>
-			<div class="checkable-label">
-				<Dynamic component={SmileySVG} class="checkable-label-icon" />
+		<AriaCheckbox class="checkable-container" style={props.style} checked={checked()} setChecked={setChecked}>
+			<div class={cx(`checkable-label ${variantCenter() ? "variant-center" : ""}`)}>
+				<Show when={!props.icon || typeof props.icon === "function"} fallback={<>
+					<img src={props.icon as string} class="checkable-label-icon" />
+				</>}>
+					<Dynamic component={props.icon ?? SmileySVG} class="checkable-label-icon" />
+				</Show>
 				<div class="checkable-label-text">
 					{props.children}
 				</div>
 			</div>
 			<div class="checkable-checkbox">
-				<Dynamic component={CheckSVG} class="checkable-checkbox-svg" style={{ "stroke-width": "7" }} />
+				<Dynamic component={CheckSVG} class="checkable-checkbox-icon" style={{ "stroke-width": "7" }} />
 			</div>
 		</AriaCheckbox>
 	</>
 }
 
-export function CheckableRadio(props: ParentProps<{
+export function Radio(props: ParentProps<{
 	icon?:  VoidComponent<CSSProps> | string
 	style?: JSX.CSSProperties
 	value:  string
 
-	// .checkable-label.center
 	center?: boolean
 }>) {
+	const variantCenter = () => props.center || undefined
+
 	return <>
 		<AriaRadio class="checkable-container" style={props.style} value={props.value}>
-			<div class={cx(`checkable-label ${props.center ? "center" : ""}`)}>
+			<div class={cx(`checkable-label ${variantCenter() ? "variant-center" : ""}`)}>
 				<Show when={!props.icon || typeof props.icon === "function"} fallback={<>
-					{/* <img> */}
 					<img src={props.icon as string} class="checkable-label-icon" />
 				</>}>
-					{/* <svg> */}
 					<Dynamic component={props.icon ?? SmileySVG} class="checkable-label-icon" />
 				</Show>
 				<div class="checkable-label-text">

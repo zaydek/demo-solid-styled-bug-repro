@@ -67,7 +67,12 @@ $theme: (
 		light: hsl(var(--base-h) var(--base-s) 85%),
 		dark:  hsl(var(--base-h) var(--base-s) 25%),
 	),
+	card-hairline-inset-box-shadow: inset 0 0 0 var(--line-thickness) var(--card-hairline-color),
 	card-hairline-box-shadow: 0 0 0 var(--line-thickness) var(--card-hairline-color),
+	card-inset-box-shadow: (
+		light: (var(--card-hairline-inset-box-shadow), var(--realistic-color-box-shadow)),
+		dark:  (var(--card-hairline-inset-box-shadow), var(--realistic-box-shadow)),
+	),
 	card-box-shadow: (
 		light: (var(--card-hairline-box-shadow), var(--realistic-color-box-shadow)),
 		dark:  (var(--card-hairline-box-shadow), var(--realistic-box-shadow)),

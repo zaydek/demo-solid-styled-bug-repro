@@ -7,7 +7,7 @@ import svg from "./assets/svg.png"
 import { For, JSX, Show, Suspense, VoidComponent } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
-import { CheckableCheckbox, NavIcon, CheckableRadio, Radiogroup, Slider } from "./components"
+import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer } from "./drawer"
 import { LoadingBar } from "./loading-bar"
 import { Sheet } from "./sheet"
@@ -141,9 +141,9 @@ function Sidebar() {
 				</>} open>
 					<Radiogroup class="radiogroup" groupValue={settings.version()} setGroupValue={settings.setVersion}>
 						<For<Version, JSX.Element> each={["v1", "v2"]}>{value => <>
-							<CheckableRadio value={value}>
+							<Radio value={value}>
 								{value.toUpperCase()}
-							</CheckableRadio>
+							</Radio>
 						</>}</For>
 					</Radiogroup>
 				</Drawer>
@@ -164,9 +164,9 @@ function Sidebar() {
 					</>} open>
 						<Radiogroup class="radiogroup" groupValue={settings.variantV2()} setGroupValue={settings.setVariantV2}>
 							<For<VariantV2, JSX.Element> each={["20/solid", "24/solid", "24/outline"]}>{value => <>
-								<CheckableRadio value={value}>
+								<Radio value={value}>
 									{value.toUpperCase().split("/").join(" × ")}
-								</CheckableRadio>
+								</Radio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -184,9 +184,9 @@ function Sidebar() {
 					</>} open>
 						<Radiogroup class="radiogroup" groupValue={settings.variantV1()} setGroupValue={settings.setVariantV1}>
 							<For<VariantV1, JSX.Element> each={["solid", "outline"]}>{value => <>
-								<CheckableRadio value={value}>
+								<Radio value={value}>
 									{value.toUpperCase()}
-								</CheckableRadio>
+								</Radio>
 							</>}</For>
 						</Radiogroup>
 					</Drawer>
@@ -204,9 +204,9 @@ function Sidebar() {
 						{settings.framework().toUpperCase()}
 					</div>
 				</>} open>
-					<CheckableCheckbox checked={settings.license()} setChecked={settings.setLicense}>
+					<Checkbox checked={settings.license()} setChecked={settings.setLicense}>
 						INCLUDE MIT LICENSE
-					</CheckableCheckbox>
+					</Checkbox>
 					<Radiogroup class="radiogroup horizontal" groupValue={settings.framework()} setGroupValue={settings.setFramework}>
 						<For<{
 							icon:  VoidComponent<CSSProps> | string
@@ -217,9 +217,9 @@ function Sidebar() {
 							{ icon: props => <ReactSVG {...props} strokeWidth={1.5} />, style: { "--__color": "#61dafb", /* "--__alpha-color": "#61dafb66" */ }, value: "react" },
 							{ icon: VueSVG, style: { "--__color": "#4fc08d", /* "--__alpha-color": "#4fc08d66" */ }, value: "vue" },
 						]}>{({ icon, style, value }) => <>
-							<CheckableRadio icon={icon} style={style} value={value} center>
+							<Radio icon={icon} style={style} value={value} center>
 								{value.toUpperCase()}
-							</CheckableRadio>
+							</Radio>
 						</>}</For>
 					</Radiogroup>
 				</Drawer>
@@ -708,7 +708,47 @@ disable <body> scrolling on and enable <main> scrolling. */
 	</>
 }
 
+function Foo() {
+	return <>
+		{css`
+:focus-visible { outline: revert; }
+
+.column {
+	margin:
+		/* Y */ 0
+		/* X */ auto;
+	padding:
+		/* Y */ 64px
+		/* X */ 0;
+	width: 448px;
+
+	/* Flow */
+	display: grid;
+	gap: 8px;
+}
+.column > [role=radiogroup] {
+	display: grid;
+	gap: 8px;
+}
+		`}
+		<div class="column">
+			<Checkbox style={{ "--__color": "red"   }} center>HELLO WORLD</Checkbox>
+			<Checkbox style={{ "--__color": "blue"  }} center>HELLO WORLD</Checkbox>
+			<Checkbox style={{ "--__color": "green" }} center>HELLO WORLD</Checkbox>
+			<Checkbox center>HELLO WORLD</Checkbox>
+			<div></div>
+			<Radiogroup>
+				<Radio style={{ "--__color": "red"   }} value="foo" center>HELLO WORLD</Radio>
+				<Radio style={{ "--__color": "blue"  }} value="bar" center>HELLO WORLD</Radio>
+				<Radio style={{ "--__color": "green" }} value="baz" center>HELLO WORLD</Radio>
+				<Radio value="qux" center>HELLO WORLD</Radio>
+			</Radiogroup>
+		</div>
+	</>
+}
+
 render(
-	() => <Root />,
+	//// () => <Root />,
+	() => <Foo />,
 	document.getElementById("root")!,
 )
