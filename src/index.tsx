@@ -1,4 +1,5 @@
-import "./css"
+import "the-new-css-reset"
+import "./css/index.scss"
 
 // TODO: This can likely be optimized
 import svg from "./assets/svg.png"
@@ -274,11 +275,29 @@ function Sidebar() {
 				{/****************************/}
 
 			</div>
+			{css`
+				/* TODO: Extract to component? */
+
+				.sidebar-panel {
+					padding: 16px;
+				}
+				.sidebar-panel.type-sponsor {
+					display: grid;
+					grid-template-columns: auto 1fr;
+					gap: 16px;
+				}
+				.sponsor-media {
+					height: 80px;
+					aspect-ratio: 16 / 9;
+					border-radius: 8px;
+					background-color: gray;
+				}
+			`}
 			<div>
 				<div class="hairline-x collapsed"></div>
-				<div class="[padding:16px] [display:grid] [grid-template-columns:auto_1fr] [gap:16px]">
-					<div class="[height:80px] [aspect-ratio:16_/_9] [border-radius:8px] [background-color:gray]"></div>
-					<div class="[flex-grow:1]">
+				<div class="sidebar-panel type-sponsor">
+					<figure class="sponsor-media"></figure>
+					<div>
 						<div>Hello, world!</div>
 						<div>Hello, world!</div>
 						<div>Hello, world!</div>
@@ -286,7 +305,7 @@ function Sidebar() {
 					</div>
 				</div>
 				<div class="hairline-x"></div>
-				<div class="[padding:16px]">
+				<div class="sidebar-panel">
 					<div>This is the last block</div>
 					<div>This is the last block</div>
 				</div>
@@ -323,7 +342,7 @@ function App() {
 	align-items: center;
 	/* Defer to search-bar-text-field for padding */
 }
-:root:has(.sidesheet.closed)                   .search-bar { margin-right: 0; }   /* Override */
+:root:has(.sidesheet.state-closed)             .search-bar { margin-right: 0; }   /* Override */
 @media (hover: none), not (min-width: 800px) { .search-bar { margin-right: 0; } } /* Override */
 .search-bar-icon {
 	height: 32px;
@@ -362,7 +381,7 @@ function App() {
 	grid-template-columns: repeat(auto-fill, minmax(var(--results-item-height), 1fr));
 	grid-auto-rows: var(--results-item-height); /* COMPAT/Safari */
 }
-:root:has(.sidesheet.closed)                   .results { margin-right: 0; }                        /* Override */
+:root:has(.sidesheet.state-closed)             .results { margin-right: 0; }                        /* Override */
 @media (hover: none), not (min-width: 800px) { .results { margin-right: 0; padding-right: 16px; } } /* Override */
 .results-item {
 	padding:
@@ -629,8 +648,9 @@ svg { overflow: visible; }
 /**************************************/
 
 /* This code is specifically implemented to support bottomsheet panning.
-Dragging the bottomsheet interferes with body scrolling on iOS Safari.
-Therefore disable <body> scrolling on and enable <main> scrolling. */
+Dragging the bottomsheet interferes with body scrolling on iOS Safari. Therefore
+disable <body> scrolling on and enable <main> scrolling. */
+
 /* Disable <body> scrolling */
 @media (hover: none) { :root:has(.bottomsheet) {
 	position: fixed;
@@ -642,9 +662,8 @@ Therefore disable <body> scrolling on and enable <main> scrolling. */
 	height: calc(var(--screen-y) - var(--search-bar-height) - var(--sheet-draggable-size));
 	overflow-y: auto;
 }
-
 /* Disable body scrolling when bottomsheet=open or sidesheet=expanded */
-:root:has(:is(.bottomsheet.open, .sidesheet.expanded)) body {
+:root:has(:is(.bottomsheet.state-open, .sidesheet.state-expanded)) body {
 	overflow-y: hidden;
 }
 

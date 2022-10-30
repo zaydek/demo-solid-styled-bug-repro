@@ -10,24 +10,24 @@ const UNPKG_CSS_SELECTOR = "css-xt128v"
 
 async function run() {
 	// Create a playwright context and browser
-  const browser = await playwright.chromium.launch({ headless: false })
-  const context = await browser.newContext(devices["Desktop Chrome HiDPI"])
+	const browser = await playwright.chromium.launch({ headless: false })
+	const context = await browser.newContext(devices["Desktop Chrome HiDPI"])
 	// Close the playwright context and browser
 	async function teardown() {
 		await context.close() // Close in reverse order
 		await browser.close()
 	}
 	// Get package metadata
-  const page1 = await context.newPage()
-  await page1.goto("https://unpkg.com/browse/heroicons/")
+	const page1 = await context.newPage()
+	await page1.goto("https://unpkg.com/browse/heroicons/")
 	const groups = /@(\d+\.\d+\.\d+)/.exec(page1.url())
 	if (groups === null) {
 		await teardown()
 		return
 	}
 	const version = groups[1]
-  const page2 = await context.newPage()
-  await page2.goto("https://npmjs.com/package/heroicons/")
+	const page2 = await context.newPage()
+	await page2.goto("https://npmjs.com/package/heroicons/")
 	const created = await page2.evaluate(() => {
 		return document.getElementsByTagName("time")[0].dateTime
 	})
@@ -99,9 +99,9 @@ async function run() {
 		UNPKG_CSS_SELECTOR,
 	])
 	// Get SVG and JSX contents
-  const p1 = await context.newPage()
-  const p2 = await context.newPage()
-  const p3 = await context.newPage()
+	const p1 = await context.newPage()
+	const p2 = await context.newPage()
+	const p3 = await context.newPage()
 	for (const icon of dataset.payload) {
 		for (const tuple of [
 			{ page: p1, size: 20, variant: "solid"   },

@@ -39,11 +39,11 @@ export function Drawer(props: ParentProps<{
 	-webkit-user-select: none;
 	user-select: none;
 }
-.drawer.closed {
+.drawer.state-closed {
 	height: var(--__min-height);
 	overflow-y: clip;
 }
-.drawer.open {
+.drawer.state-open {
 	height: var(--__max-height);
 	overflow-y: clip;
 }
@@ -54,16 +54,16 @@ export function Drawer(props: ParentProps<{
 	transition: 300ms cubic-bezier(0, 1, 0.25, 1.05);
 	transition-property: transform, opacity;
 }
-.drawer.open .drawer-body {
+.drawer.state-open .drawer-body {
 	transform: scale(1);
 	opacity: 1;
 }
-.drawer.closed .drawer-body {
+.drawer.state-closed .drawer-body {
 	transform: scale(0.9);
 	opacity: 0;
 }
 		`}
-		<div ref={setRef} class={cx(`drawer ${open() ? "open" : "closed"}`)}>
+		<div ref={setRef} class={cx(`drawer ${open() ? "state-open" : "state-closed"}`)}>
 			<AriaButton ref={setHeadRef} class="drawer-head" onClick={e => setOpen(curr => !curr)}>
 				{props.head}
 			</AriaButton>

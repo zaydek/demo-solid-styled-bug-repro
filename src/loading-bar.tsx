@@ -63,6 +63,7 @@ export function LoadingBar() {
 				transition: 300ms ease;
 				transition-property: width;
 			}
+			@media (hover: none), not (min-width: 500px) { .loading-bar { height: 2px; } } /* Override */
 			.loading-bar.done {
 				transition: opacity 300ms ease 300ms;
 				opacity: 0%;

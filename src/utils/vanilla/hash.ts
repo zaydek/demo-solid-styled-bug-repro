@@ -16,8 +16,8 @@ export const BASE_62 =
 export function createRandom() {
 	let seed = 1
 	return () => {
-    const x = Math.sin(seed++) * 10e3
-    return x - Math.floor(x)
+		const x = Math.sin(seed++) * 10e3
+		return x - Math.floor(x)
 	}
 }
 
