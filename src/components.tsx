@@ -1,7 +1,7 @@
 import { createSignal, JSX, ParentProps, Setter, Show, VoidComponent, VoidProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { AriaCheckbox, AriaRadio, AriaRadiogroup, AriaSliderHorizontal, AriaSliderThumb } from "./aria"
-import { SmileySVG } from "./smiley-svg"
+import { SmileySVG } from "./svg"
 import { CSSProps } from "./utils/solid"
 import { cx } from "./utils/vanilla"
 

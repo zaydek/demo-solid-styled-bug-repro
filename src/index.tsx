@@ -7,15 +7,14 @@ import svg from "./assets/svg.png"
 import { For, JSX, Show, Suspense, VoidComponent } from "solid-js"
 import { Dynamic, render } from "solid-js/web"
 import { AriaButton } from "./aria"
-import { ReactSVG, VueSVG } from "./brands"
 import { Checkbox, NavIcon, Radio, Radiogroup, Slider } from "./components"
 import { Drawer } from "./drawer"
 import { LoadingBar } from "./loading-bar"
 import { Sheet } from "./sheet"
-import { SmileySVG } from "./smiley-svg"
 import { darkMode, debugCSS, Framework, search, settings, VariantV1, VariantV2, Version } from "./state"
+import { ReactSVG, SmileySVG, VueSVG } from "./svg"
 import { css, CSSProps } from "./utils/solid"
-import { cx, range, round } from "./utils/vanilla"
+import { cx, range } from "./utils/vanilla"
 
 ////////////////////////////////////////
 

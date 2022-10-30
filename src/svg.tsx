@@ -1,7 +1,18 @@
-import { splitProps, VoidProps } from "solid-js"
+import { VoidProps } from "solid-js"
 import { CSSProps } from "./utils/solid"
 
+// TODO: Extract to assets/*.svg?
+export function SmileySVG(props: VoidProps<CSSProps>) {
+	return <>
+		<svg class={props.class} style={props.style} fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+			<path clip-rule="evenodd" fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-2.625 6c-.54 0-.828.419-.936.634a1.96 1.96 0 00-.189.866c0 .298.059.605.189.866.108.215.395.634.936.634.54 0 .828-.419.936-.634.13-.26.189-.568.189-.866 0-.298-.059-.605-.189-.866-.108-.215-.395-.634-.936-.634zm4.314.634c.108-.215.395-.634.936-.634.54 0 .828.419.936.634.13.26.189.568.189.866 0 .298-.059.605-.189.866-.108.215-.395.634-.936.634-.54 0-.828-.419-.936-.634a1.96 1.96 0 01-.189-.866c0-.298.059-.605.189-.866zm2.023 6.828a.75.75 0 10-1.06-1.06 3.75 3.75 0 01-5.304 0 .75.75 0 00-1.06 1.06 5.25 5.25 0 007.424 0z" />
+		</svg>
+	</>
+}
+
 // Sourced from https://github.com
+//
+// TODO: Extract to assets/*.svg?
 export function GitHubSVG(props: VoidProps<CSSProps>) {
 	return <>
 		<svg class={props.class} style={props.style} fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -11,6 +22,8 @@ export function GitHubSVG(props: VoidProps<CSSProps>) {
 }
 
 // Sourced from https://figma.com
+//
+// TODO: Extract to assets/*.svg?
 export function FigmaSVG(props: VoidProps<CSSProps>) {
 	return <>
 		<svg class={props.class} style={props.style} viewBox="0 0 38 57" xmlns="http://www.w3.org/2000/svg">
@@ -24,6 +37,8 @@ export function FigmaSVG(props: VoidProps<CSSProps>) {
 }
 
 // Sourced from https://twitter.com/home
+//
+// TODO: Extract to assets/*.svg?
 export function TwitterSVG(props: VoidProps<CSSProps>) {
 	return <>
 		<svg class={props.class} style={props.style} fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -33,6 +48,8 @@ export function TwitterSVG(props: VoidProps<CSSProps>) {
 }
 
 // Sourced from https://reactjs.org
+//
+// TODO: Extract to assets/*.svg?
 export function ReactSVG(props: VoidProps<CSSProps & {
 	strokeWidth?: number
 }>) {
@@ -49,6 +66,8 @@ export function ReactSVG(props: VoidProps<CSSProps & {
 }
 
 // Sourced from https://vuejs.org
+//
+// TODO: Extract to assets/*.svg?
 export function VueSVG(props: VoidProps<CSSProps>) {
 	return <>
 		<svg class={props.class} style={props.style} viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">

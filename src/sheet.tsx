@@ -6,8 +6,6 @@ const [showBottomsheet] = createMediaSignal(`(hover: none), not (min-width: 500p
 
 export function Sheet(props: ParentProps) {
 	return <>
-		{/* Use <Show> so we can use :root:has(.sidesheet) and
-		:root:has(.bottomsheet) */}
 		<Show when={showBottomsheet()}>
 			<Bottomsheet initialState="closed">
 				{props.children}
