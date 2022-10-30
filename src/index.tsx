@@ -212,7 +212,7 @@ function Sidebar() {
 							icon={svg}
 							style={{
 								"--__color": "#ffb13b",
-								"--__alpha-color": "#ffb13b3f",
+								"--__alpha-color": "#ffb13b32",
 							}}
 							value="svg"
 							center
@@ -223,7 +223,7 @@ function Sidebar() {
 							icon={props => <ReactSVG {...props} strokeWidth={1.5} />}
 							style={{
 								"--__color": "#61dafb",
-								"--__alpha-color": "#61dafb3f",
+								"--__alpha-color": "#61dafb32",
 							}}
 							value="react"
 							center
@@ -234,7 +234,7 @@ function Sidebar() {
 							icon={VueSVG}
 							style={{
 								"--__color": "#4fc08d",
-								"--__alpha-color": "#4fc08d3f",
+								"--__alpha-color": "#4fc08d32",
 							}}
 							value="vue"
 							center

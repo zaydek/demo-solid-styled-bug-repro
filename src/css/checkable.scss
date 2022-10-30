@@ -1,9 +1,7 @@
 .checkable-container {
 	--__color: var(--trim-color);
-
-	/* TODO: Extract */
 	--__base-alpha-color: hsl(var(--base-h) var(--base-s) 50% / 10%);
-	--__alpha-color: hsl(var(--trim-h) var(--trim-s) 50% / 25%);
+	--__alpha-color: hsl(var(--trim-h) var(--trim-s) 50% / 20%);
 
 	/* Flow */
 	display: grid;
@@ -79,8 +77,8 @@
 }
 
 .checkable-checkbox { position: relative; isolation: isolate; }
+.checkable-checkbox::before { content: ""; }
 .checkable-checkbox::before {
-	content: "";
 	position: absolute;
 	z-index: -1;
 	inset: 0;
@@ -137,8 +135,8 @@
 }
 
 .checkable-radio { position: relative; isolation: isolate; }
+.checkable-radio::before { content: ""; }
 .checkable-radio::before {
-	content: "";
 	position: absolute;
 	z-index: -1;
 	inset: 0;

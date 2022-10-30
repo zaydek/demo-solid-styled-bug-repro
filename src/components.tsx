@@ -56,7 +56,7 @@ export function Checkbox(props: ParentProps<{
 				</div>
 			</div>
 			<div class="checkable-checkbox">
-				<Dynamic component={CheckSVG} class="checkable-checkbox-icon" style={{ "stroke-width": "7" }} />
+				<Dynamic component={CheckSVG} class="checkable-checkbox-icon" style={{ "stroke-width": "8" }} />
 			</div>
 		</AriaCheckbox>
 	</>
